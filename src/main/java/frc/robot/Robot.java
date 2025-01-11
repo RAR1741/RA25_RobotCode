@@ -86,15 +86,15 @@ public class Robot extends LoggedRobot {
     double rot = m_rotRateLimiter.calculate(m_driverController.getTurnAxis());
     
     // slowScaler should scale between k_slowScaler and 1
-    double slowScaler = 1.0; //RobotConstants.robotConfig.SwerveDrive.k_slowScaler + ((1 - m_driverController.getSlowScaler()) * (1 - RobotConstants.robotConfig.SwerveDrive.k_slowScaler));
+    double slowScaler = RobotConstants.robotConfig.SwerveDrive.k_slowScaler + ((1 - m_driverController.getSlowScaler()) * (1 - RobotConstants.robotConfig.SwerveDrive.k_slowScaler));
     // boostScaler should scale between 1 and k_boostScaler
-    double boostScaler = 1.0; //1 + (m_driverController.getBoostScaler() * (RobotConstants.robotConfig.SwerveDrive.k_boostScaler - 1));
+    double boostScaler = 1 + (m_driverController.getBoostScaler() * (RobotConstants.robotConfig.SwerveDrive.k_boostScaler - 1));
 
     xSpeed *= slowScaler * boostScaler;
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
 
-    m_swerve.drive(xSpeed,ySpeed,rot, true);
+    m_swerve.drive(xSpeed,ySpeed,rot, false);
   }
 
   @Override

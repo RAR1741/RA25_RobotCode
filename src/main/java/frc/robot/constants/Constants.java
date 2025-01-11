@@ -30,7 +30,7 @@ public class Constants {
 
     // Max speeds
     public double k_maxSpeed = 2.5; // Meters per second
-    public double k_maxBoostSpeed; // Meters per second
+    public double k_maxBoostSpeed = 1; // Meters per second
     public double k_maxAngularSpeed = Math.PI * 2.0; // Radians per second
 
     public double k_maxDemoSpeed = k_maxSpeed / 2.0;
@@ -42,7 +42,7 @@ public class Constants {
     public double k_maxAngularAcceleration = Math.PI * 8.0; // Radians per second^2
 
     public double k_slowScaler; // % reduction in speed
-    public double k_boostScaler; // % increase in speed
+    public double k_boostScaler = 1; // % increase in speed
 
     public double k_wheelRadiusIn; // inches
     public double k_driveGearRatio = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
@@ -59,14 +59,14 @@ public class Constants {
 
       public int k_currentLimit = 40;
 
-      public double k_P = 1.5;
+      public double k_P = 0.5;
       public double k_I = 0.0;
       public double k_D = 0.0;
       public double k_IZone = 0.0;
 
-      public double k_FFS;
-      public double k_FFV;
-      public double k_FFA;
+      public double k_FFS = 0.0;
+      public double k_FFV = 0.0;
+      public double k_FFA = 0.0;
     }
 
     public TurnConstants Turn = new TurnConstants();
@@ -91,7 +91,7 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public double k_P = 1.0;
+      public double k_P = 2.5;
       public double k_I = 0.0;
       public double k_D = 0.0;
       public double k_IZone = 0.0;

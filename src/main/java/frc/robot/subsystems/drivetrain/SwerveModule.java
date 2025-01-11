@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import org.littletonrobotics.junction.AutoLogOutput;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -134,35 +135,15 @@ public class SwerveModule {
   public void setDesiredState(SwerveModuleState desiredState) {
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(Rotation2d.fromRadians(getTurnPosition()));
+    
     desiredState.angle = new Rotation2d(Helpers.modRadians(desiredState.angle.getRadians()));
     // m_periodicIO.shouldChangeState = !desiredState.equals(m_periodicIO.desiredState);
+    
     m_periodicIO.desiredState = desiredState;
-  }
-
-  // Pass voltage into drive motor and set turn motor to 0 deg
-  public void sysidDrive(double volts) {
-    m_turningPIDController.setReference(0, ControlType.kPosition);
-
-    m_driveMotor.setVoltage(volts);
-  }
-
-  // Pass voltage into turn motor and set drive motor to 0 volts⚡
-  public void sysidTurn(double volts) {
-    // m_drivePIDController.setReference(0, ControlType.kVoltage);
-
-    m_turnMotor.setVoltage(volts);
   }
 
   public SwerveModuleState getDesiredState() {
     return m_periodicIO.desiredState;
-  }
-
-  public void pointForward() {
-    //TODO: Reimplement this
-    // m_periodicIO.desiredState.speedMetersPerSecond = 0.0;
-    // m_periodicIO.desiredState.angle = new Rotation2d(0.0);
-    // m_periodicIO.desiredState.optimize(Rotation2d.fromRadians(getTurnPosition()));
-    // m_periodicIO.shouldChangeState = true;
   }
 
   public void periodic() {
