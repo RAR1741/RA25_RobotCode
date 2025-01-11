@@ -49,21 +49,21 @@ public class Constants {
     public double k_boostScaler; // % increase in speed
 
     public double k_wheelRadiusIn; // inches
-    public double k_driveGearRatio;
+    public double k_driveGearRatio = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
     public double k_turnGearRatio = 7.0 / 150.0;
 
     public DriveConstants Drive = new DriveConstants();
 
     // Drivetrain drive motor constants
     public class DriveConstants {
-      public int k_FLMotorId = 6;
-      public int k_FRMotorId = 8;
-      public int k_BRMotorId = 10;
-      public int k_BLMotorId = 12;
+      public final int k_FLMotorId = 5;
+      public final int k_FRMotorId = 6;
+      public final int k_BLMotorId = 7;
+      public final int k_BRMotorId = 8;
 
       public int k_currentLimit = 40;
 
-      public double k_P;
+      public double k_P = 2.5;
       public double k_I = 0.0;
       public double k_D = 0.0;
       public double k_IZone = 0.0;
@@ -90,12 +90,12 @@ public class Constants {
 
       public int k_currentLimit = 25;
 
-      public int k_FLMotorId = 5;
-      public int k_FRMotorId = 7;
-      public int k_BRMotorId = 9;
-      public int k_BLMotorId = 11;
+      public final int k_FLMotorId = 9;
+      public final int k_FRMotorId = 10;
+      public final int k_BLMotorId = 11;
+      public final int k_BRMotorId = 12;
 
-      public double k_P = 5.6906;
+      public double k_P = 2.0;
       public double k_I = 0.0;
       public double k_D = 0.1976;
       public double k_IZone = 0.0;

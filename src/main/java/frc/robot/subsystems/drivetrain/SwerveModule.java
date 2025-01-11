@@ -51,16 +51,16 @@ public class SwerveModule {
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
-    driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.config.SwerveDrive.k_driveGearRatio;
+    driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
     // m_driveConfiguration.Feedback.RotorToSensorRatio = 0.0f; TODO: DO THIS PLEASE GOD I HOPE
 
-    driveConfig.Slot0.kP = RobotConstants.config.SwerveDrive.Drive.k_P;
-    driveConfig.Slot0.kI = RobotConstants.config.SwerveDrive.Drive.k_I;
-    driveConfig.Slot0.kD = RobotConstants.config.SwerveDrive.Drive.k_D;
+    driveConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Drive.k_P;
+    driveConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Drive.k_I;
+    driveConfig.Slot0.kD = RobotConstants.robotConfig.SwerveDrive.Drive.k_D;
 
-    driveConfig.Slot0.kS = RobotConstants.config.SwerveDrive.Drive.k_FFS;
-    driveConfig.Slot0.kV = RobotConstants.config.SwerveDrive.Drive.k_FFV;
-    driveConfig.Slot0.kA = RobotConstants.config.SwerveDrive.Drive.k_FFA;
+    driveConfig.Slot0.kS = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFS;
+    driveConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
+    driveConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
 
     // m_driveMotor.setSmartCurrentLimit(Constants.Drivetrain.Drive.k_driveCurrentLimit);
 
@@ -72,20 +72,20 @@ public class SwerveModule {
     config.idleMode(IdleMode.kCoast);
     config.inverted(true);
 
-    config.encoder.positionConversionFactor(RobotConstants.config.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
-    config.encoder.velocityConversionFactor(RobotConstants.config.SwerveDrive.k_driveGearRatio * 2.0 * Math.PI / 60.0);
+    config.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
+    config.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio * 2.0 * Math.PI / 60.0);
 
-    config.closedLoop.p(RobotConstants.config.SwerveDrive.Turn.k_P);
-    config.closedLoop.i(RobotConstants.config.SwerveDrive.Turn.k_I);
-    config.closedLoop.d(RobotConstants.config.SwerveDrive.Turn.k_D);
+    config.closedLoop.p(RobotConstants.robotConfig.SwerveDrive.Turn.k_P);
+    config.closedLoop.i(RobotConstants.robotConfig.SwerveDrive.Turn.k_I);
+    config.closedLoop.d(RobotConstants.robotConfig.SwerveDrive.Turn.k_D);
     config.closedLoop.positionWrappingEnabled(true);
     config.closedLoop.positionWrappingMinInput(0.0);
     config.closedLoop.positionWrappingMaxInput(2.0 * Math.PI);
     config.closedLoop.outputRange(
-      RobotConstants.config.SwerveDrive.Turn.k_minOutput,
-      RobotConstants.config.SwerveDrive.Turn.k_maxOutput);
+      RobotConstants.robotConfig.SwerveDrive.Turn.k_minOutput,
+      RobotConstants.robotConfig.SwerveDrive.Turn.k_maxOutput);
     
-    // m_turnMotor.setSmartCurrentLimit(Constants.SwerveDrive.Drive.k_turnCurrentLimit);
+    // m_turnMotor.setSmartCurrentLimit(RobotConstants.SwerveDrive.Drive.k_turnCurrentLimit);
     // m_turningAbsEncoder = new TalonSRXMagEncoder(turningEncoderChannel);
 
     m_turnMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -167,7 +167,7 @@ public class SwerveModule {
   public void periodic() {
     // if (m_periodicIO.shouldChangeState) {
     // if (!m_moduleDisabled) {
-    double wheelCirc = RobotConstants.config.SwerveDrive.k_wheelRadiusIn * 2.0d * Math.PI; // TODO: Move this
+    double wheelCirc = RobotConstants.robotConfig.SwerveDrive.k_wheelRadiusIn * 2.0d * Math.PI; // TODO: Move this
 
     VelocityVoltage request = new VelocityVoltage(getDriveTargetVelocity() / wheelCirc).withSlot(0);
     // PositionVoltage request = new PositionVoltage(0).withSlot(0);

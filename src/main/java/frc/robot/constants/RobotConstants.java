@@ -11,7 +11,7 @@ public final class RobotConstants {
   public static String m_rioSerial = "empty";
   private static final double k_robotInitDelay = 2.0; // Seconds to wait before starting robot code
 
-  public static Constants config;
+  public static Constants robotConfig;
 
   public final String k_compSerial = "00000000";
   public final String k_pracSerial = "00000000";
@@ -42,7 +42,7 @@ public final class RobotConstants {
         // Set (riiiiiiiiiiiiiiiight the constants) all the constants (designed)
         // specifically for the simulation
       default:
-        // Set all the constants specifically for the robot
+        robotConfig = new Constants();  // TODO: change this once we have an actual robot
         break;
     }
 
@@ -59,18 +59,22 @@ public final class RobotConstants {
       // config = new ApolloConstants();
       RobotTelemetry.print(System.getenv("serialnum"));
       DriverStation.reportError(
-          "Could not match rio to robot config; defaulting to APOLLO robot config",
+          "Could not match rio to robot config; defaulting to INSERT_ROBOT_NAME_HERE robot config",
           false);
-      RobotTelemetry.print("Robot Type: APOLLO 2024");
+      RobotTelemetry.print("Robot Type: INSERT_ROBOT_NAME_HERE");
     }
     return m_robotType;
   }
 
   public RobotType getRobotType() {
-    return m_robotType;
+    if(m_robotType != null) {
+      return m_robotType;
+    } else {
+      return RobotType.MAIN;
+    }
   }
   
   public enum RobotType {
-    SIM
+    SIM, MAIN
   }
 }
