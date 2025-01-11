@@ -8,8 +8,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.Constants;
 import frc.robot.subsystems.Subsystem;
+
+import frc.robot.constants.RobotConstants;
+import frc.robot.constants.Constants;
 
 public class SwerveDrive extends Subsystem {
   private static SwerveDrive m_swerve = null;
@@ -21,32 +23,32 @@ public class SwerveDrive extends Subsystem {
   // Robot "forward" is +x
   // Robot "left" is +y
   // Robot "clockwise" is -z
-  private final Translation2d m_frontLeftLocation = new Translation2d(Constants.SwerveDrive.k_xCenterDistance,
-      Constants.SwerveDrive.k_yCenterDistance);
-  private final Translation2d m_frontRightLocation = new Translation2d(Constants.SwerveDrive.k_xCenterDistance,
-      -Constants.SwerveDrive.k_yCenterDistance);
-  private final Translation2d m_backLeftLocation = new Translation2d(-Constants.SwerveDrive.k_xCenterDistance,
-      Constants.SwerveDrive.k_yCenterDistance);
-  private final Translation2d m_backRightLocation = new Translation2d(-Constants.SwerveDrive.k_xCenterDistance,
-      -Constants.SwerveDrive.k_yCenterDistance);
+  private final Translation2d m_frontLeftLocation = new Translation2d(RobotConstants.config.SwerveDrive.k_xCenterDistance,
+      RobotConstants.config.SwerveDrive.k_yCenterDistance);
+  private final Translation2d m_frontRightLocation = new Translation2d(RobotConstants.config.SwerveDrive.k_xCenterDistance,
+      -RobotConstants.config.SwerveDrive.k_yCenterDistance);
+  private final Translation2d m_backLeftLocation = new Translation2d(-RobotConstants.config.SwerveDrive.k_xCenterDistance,
+      RobotConstants.config.SwerveDrive.k_yCenterDistance);
+  private final Translation2d m_backRightLocation = new Translation2d(-RobotConstants.config.SwerveDrive.k_xCenterDistance,
+      -RobotConstants.config.SwerveDrive.k_yCenterDistance);
 
   private static final SwerveModule[] m_modules = {
-      new SwerveModule(Constants.SwerveDrive.Drive.k_FLMotorId,
-          Constants.SwerveDrive.Turn.k_FLMotorId,
-          Constants.SwerveDrive.Turn.k_FLAbsId,
-          Constants.SwerveDrive.Turn.k_FLOffset), // 0
-      new SwerveModule(Constants.SwerveDrive.Drive.k_FRMotorId,
-          Constants.SwerveDrive.Turn.k_FRMotorId,
-          Constants.SwerveDrive.Turn.k_FRAbsId,
-          Constants.SwerveDrive.Turn.k_FROffset), // 1
-      new SwerveModule(Constants.SwerveDrive.Drive.k_BRMotorId,
-          Constants.SwerveDrive.Turn.k_BRMotorId,
-          Constants.SwerveDrive.Turn.k_BRAbsId,
-          Constants.SwerveDrive.Turn.k_BROffset), // 2
-      new SwerveModule(Constants.SwerveDrive.Drive.k_BLMotorId,
-          Constants.SwerveDrive.Turn.k_BLMotorId,
-          Constants.SwerveDrive.Turn.k_BLAbsId,
-          Constants.SwerveDrive.Turn.k_BLOffset) // 3
+      new SwerveModule(RobotConstants.config.SwerveDrive.Drive.k_FLMotorId,
+          RobotConstants.config.SwerveDrive.Turn.k_FLMotorId,
+          RobotConstants.config.SwerveDrive.Turn.k_FLAbsId,
+          RobotConstants.config.SwerveDrive.Turn.k_FLOffset), // 0
+      new SwerveModule(RobotConstants.config.SwerveDrive.Drive.k_FRMotorId,
+          RobotConstants.config.SwerveDrive.Turn.k_FRMotorId,
+          RobotConstants.config.SwerveDrive.Turn.k_FRAbsId,
+          RobotConstants.config.SwerveDrive.Turn.k_FROffset), // 1
+      new SwerveModule(RobotConstants.config.SwerveDrive.Drive.k_BRMotorId,
+          RobotConstants.config.SwerveDrive.Turn.k_BRMotorId,
+          RobotConstants.config.SwerveDrive.Turn.k_BRAbsId,
+          RobotConstants.config.SwerveDrive.Turn.k_BROffset), // 2
+      new SwerveModule(RobotConstants.config.SwerveDrive.Drive.k_BLMotorId,
+          RobotConstants.config.SwerveDrive.Turn.k_BLMotorId,
+          RobotConstants.config.SwerveDrive.Turn.k_BLAbsId,
+          RobotConstants.config.SwerveDrive.Turn.k_BLOffset) // 3
   };
 
   private SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -90,7 +92,7 @@ public class SwerveDrive extends Subsystem {
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, RAROdometry.getInstance().getGyro().getRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
 
-    double maxBoostSpeed = Constants.SwerveDrive.k_maxSpeed * Constants.SwerveDrive.k_boostScaler;
+    double maxBoostSpeed = RobotConstants.config.SwerveDrive.k_maxSpeed * RobotConstants.config.SwerveDrive.k_boostScaler;
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, maxBoostSpeed);
 
     for (int i = 0; i < m_modules.length; i++) {
