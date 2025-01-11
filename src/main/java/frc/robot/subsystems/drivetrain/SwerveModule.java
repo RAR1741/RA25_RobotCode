@@ -158,9 +158,10 @@ public class SwerveModule {
   }
 
   public void pointForward() {
-    m_periodicIO.desiredState.speedMetersPerSecond = 0.0;
-    m_periodicIO.desiredState.angle = new Rotation2d(0.0);
-    m_periodicIO.desiredState.optimize(Rotation2d.fromRadians(getTurnPosition()));
+    //TODO: Reimplement this
+    // m_periodicIO.desiredState.speedMetersPerSecond = 0.0;
+    // m_periodicIO.desiredState.angle = new Rotation2d(0.0);
+    // m_periodicIO.desiredState.optimize(Rotation2d.fromRadians(getTurnPosition()));
     // m_periodicIO.shouldChangeState = true;
   }
 

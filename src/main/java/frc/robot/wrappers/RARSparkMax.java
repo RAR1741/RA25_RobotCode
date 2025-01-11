@@ -21,7 +21,7 @@ public class RARSparkMax extends SparkMax {
      */
 
     //TODO: Is this correct?
-    setControlFramePeriodMs(1000);
+    // setControlFramePeriodMs(1000); //our code peaked in 2018 (this line breaks everything)
     // setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000); // Analog Sensor
     // setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000); // Alternative Encoder
     // setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000); // Duty Cycle Encoder

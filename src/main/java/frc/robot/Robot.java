@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 
 /**
@@ -21,9 +23,11 @@ import frc.robot.subsystems.drivetrain.SwerveDrive;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
+  private final RobotConstants m_constants;
   private final ArrayList<Subsystem> m_subsystems;
 
   private final SwerveDrive m_swerve;
+  private final RAROdometry m_odometry;
   private final DriverController m_driverController;
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -37,15 +41,17 @@ public class Robot extends LoggedRobot {
    */
   public Robot() {
     m_subsystems = new ArrayList<>();
-    RobotConstants.getInstance();
+    m_constants = RobotConstants.getInstance();
     m_swerve = SwerveDrive.getInstance();
-    m_driverController = new DriverController(0);
+    m_odometry = RAROdometry.getInstance();
 
+    m_driverController = new DriverController(0);
     m_xRateLimiter = new SlewRateLimiter(3);
     m_yRateLimiter = new SlewRateLimiter(3);
     m_rotRateLimiter = new SlewRateLimiter(3);
     
     m_subsystems.add(m_swerve);
+    m_subsystems.add(m_odometry);
   }
 
   @Override
@@ -88,7 +94,7 @@ public class Robot extends LoggedRobot {
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
 
-    m_swerve.drive(xSpeed, ySpeed, rot, false); //TODO: do field relative
+    m_swerve.drive(xSpeed,ySpeed,rot, true);
   }
 
   @Override

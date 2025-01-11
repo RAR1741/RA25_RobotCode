@@ -13,13 +13,11 @@ public class DriverController extends FilteredController {
 
   // Drive
   public double getForwardAxis() {
-    // return -this.getFilteredAxis(Axis.LEFT_Y_AXIS);
-    return -this.getFilteredAxis(Axis.LEFT_Y_AXIS) * k_allianceMultiplier;
+    return -this.getFilteredAxis(Axis.LEFT_Y_AXIS);
   }
 
   public double getStrafeAxis() {
-    // return -this.getFilteredAxis(Axis.LEFT_X_AXIS);
-    return -this.getFilteredAxis(Axis.LEFT_X_AXIS) * k_allianceMultiplier;
+    return -this.getFilteredAxis(Axis.LEFT_X_AXIS);
   }
 
   public double getTurnAxis() {

@@ -1,9 +1,5 @@
 package frc.robot.constants;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -12,8 +8,8 @@ public class Constants {
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
 
   public static class RobotConstants {
-    public double k_width = 32.0; // Inches
-    public double k_length = 28.0; // Inches
+    public double k_width = 27.0; // Inches
+    public double k_length = 30.0; // Inches
 
     public double k_bumperStart = 1.0; // Inches
     public double k_bumperHeight = 5.0; // Inches
@@ -63,7 +59,7 @@ public class Constants {
 
       public int k_currentLimit = 40;
 
-      public double k_P = 2.5;
+      public double k_P = 1.5;
       public double k_I = 0.0;
       public double k_D = 0.0;
       public double k_IZone = 0.0;
@@ -95,9 +91,9 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public double k_P = 2.0;
+      public double k_P = 1.0;
       public double k_I = 0.0;
-      public double k_D = 0.1976;
+      public double k_D = 0.0;
       public double k_IZone = 0.0;
 
       // We only use FF and are too scared to delete the others

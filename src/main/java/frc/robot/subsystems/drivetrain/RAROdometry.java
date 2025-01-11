@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -121,8 +123,12 @@ public class RAROdometry extends Subsystem {
     RobotTelemetry.print("Stopping Odometry!");
   }
 
-  private enum LimelightInstance {
-    LEFT, RIGHT, CENTER
+  @AutoLogOutput(key = "Odometry/Gyro/Accumulated Angle")
+  public double getGyroAngle() {
+    return m_gyro.getAngle();
   }
 
+//   private enum LimelightInstance {
+//     LEFT, RIGHT, CENTER
+//   }
 }
