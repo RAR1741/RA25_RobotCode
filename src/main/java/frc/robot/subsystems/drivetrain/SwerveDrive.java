@@ -32,19 +32,23 @@ public class SwerveDrive extends Subsystem {
       -RobotConstants.robotConfig.SwerveDrive.k_yCenterDistance);
 
   private static final SwerveModule[] m_modules = {
-      new SwerveModule(RobotConstants.robotConfig.SwerveDrive.Drive.k_FLMotorId,
+      new SwerveModule("FL",
+          RobotConstants.robotConfig.SwerveDrive.Drive.k_FLMotorId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_FLMotorId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_FLAbsId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_FLOffset), // 0
-      new SwerveModule(RobotConstants.robotConfig.SwerveDrive.Drive.k_FRMotorId,
+      new SwerveModule("FR",
+          RobotConstants.robotConfig.SwerveDrive.Drive.k_FRMotorId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_FRMotorId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_FRAbsId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_FROffset), // 1
-      new SwerveModule(RobotConstants.robotConfig.SwerveDrive.Drive.k_BRMotorId,
+      new SwerveModule("BR",
+          RobotConstants.robotConfig.SwerveDrive.Drive.k_BRMotorId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_BRMotorId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_BRAbsId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_BROffset), // 2
-      new SwerveModule(RobotConstants.robotConfig.SwerveDrive.Drive.k_BLMotorId,
+      new SwerveModule("BL",
+          RobotConstants.robotConfig.SwerveDrive.Drive.k_BLMotorId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_BLMotorId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_BLAbsId,
           RobotConstants.robotConfig.SwerveDrive.Turn.k_BLOffset) // 3

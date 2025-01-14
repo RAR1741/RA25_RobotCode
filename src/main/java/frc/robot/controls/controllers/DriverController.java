@@ -3,10 +3,6 @@ package frc.robot.controls.controllers;
 public class DriverController extends FilteredController {
   public double k_triggerActivationThreshold = 0.5;
 
-  public DriverController(int port) {
-    super(port, false, false);
-  }
-
   public DriverController(int port, boolean useDeadband, boolean useSquaredInput) {
     super(port, useDeadband, useSquaredInput);
   }

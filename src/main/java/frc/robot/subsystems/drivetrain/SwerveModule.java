@@ -8,6 +8,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -21,6 +23,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
 import frc.robot.wrappers.RARSparkMax;
 
@@ -37,6 +40,7 @@ public class SwerveModule {
   private final PeriodicIO m_periodicIO = new PeriodicIO();
 
   private final double m_turningOffset;
+  private final String m_moduleName;
 
   private static class PeriodicIO {
     SwerveModuleState desiredState = new SwerveModuleState();
@@ -45,28 +49,29 @@ public class SwerveModule {
 
   private boolean m_moduleDisabled = false;
 
-  public SwerveModule(int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel, double turningOffset) {
+  public SwerveModule(String moduleName, int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel, double turningOffset) {
+    m_moduleName = moduleName;
     m_turningOffset = turningOffset;
 
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
+    Slot0Configs slot0Config = new Slot0Configs();
 
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
     // m_driveConfiguration.Feedback.RotorToSensorRatio = 0.0f; TODO: DO THIS PLEASE GOD I HOPE
 
-    driveConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Drive.k_P;
-    driveConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Drive.k_I;
-    driveConfig.Slot0.kD = RobotConstants.robotConfig.SwerveDrive.Drive.k_D;
+    slot0Config.kP = RobotConstants.robotConfig.SwerveDrive.Drive.k_P;
+    slot0Config.kI = RobotConstants.robotConfig.SwerveDrive.Drive.k_I;
+    slot0Config.kD = RobotConstants.robotConfig.SwerveDrive.Drive.k_D;
 
-    driveConfig.Slot0.kS = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFS;
-    driveConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
-    driveConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
+    slot0Config.kS = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFS;
+    slot0Config.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
+    slot0Config.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
 
-    // m_driveMotor.setSmartCurrentLimit(Constants.Drivetrain.Drive.k_driveCurrentLimit);
-
-    TalonFXConfigurator driveConfigurator = m_driveMotor.getConfigurator();
-    driveConfigurator.apply(driveConfig);
+    // TalonFXConfigurator driveConfigurator = m_driveMotor.getConfigurator();
+    m_driveMotor.getConfigurator().apply(driveConfig);
+    m_driveMotor.getConfigurator().apply(slot0Config);
 
     m_turnMotor = new RARSparkMax(turningMotorChannel, MotorType.kBrushless);
     SparkMaxConfig config = new SparkMaxConfig();
@@ -74,7 +79,7 @@ public class SwerveModule {
     config.inverted(true);
 
     config.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
-    config.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio * 2.0 * Math.PI / 60.0);
+    config.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
 
     config.closedLoop.p(RobotConstants.robotConfig.SwerveDrive.Turn.k_P);
     config.closedLoop.i(RobotConstants.robotConfig.SwerveDrive.Turn.k_I);
@@ -124,14 +129,6 @@ public class SwerveModule {
     m_driveMotor.setPosition(0.0);
   }
 
-  // public void resetTurnConfig() {
-  //   if (getAsbEncoderIsConnected()) {
-  //     m_turningRelEncoder.setPosition(
-  //         Helpers.modRadians(Units.rotationsToRadians(m_turningAbsEncoder.getPosition() - m_turningOffset)));
-  //     m_moduleDisabled = false;
-  //   }
-  // }
-
   public void setDesiredState(SwerveModuleState desiredState) {
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(Rotation2d.fromRadians(getTurnPosition()));
@@ -147,27 +144,17 @@ public class SwerveModule {
   }
 
   public void periodic() {
-    // if (m_periodicIO.shouldChangeState) {
-    // if (!m_moduleDisabled) {
-    double wheelCirc = RobotConstants.robotConfig.SwerveDrive.k_wheelRadiusIn * 2.0d * Math.PI; // TODO: Move this
+    double velocity = getDriveTargetVelocity(); /// Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference) * 60;
+    // double velocity = getDriveTargetVelocity() / (2.0 * Math.PI) * Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelRadiusIn);
+    // double angularVelocity = getDriveTargetVelocity() / Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelRadiusIn);
 
-    VelocityVoltage request = new VelocityVoltage(getDriveTargetVelocity() / wheelCirc).withSlot(0);
+    VelocityVoltage request = new VelocityVoltage(velocity).withSlot(0);
+    // VelocityVoltage request = new VelocityVoltage(getDriveTargetVelocity() / RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference).withSlot(0);
     // PositionVoltage request = new PositionVoltage(0).withSlot(0);
-    // request.Velocity = getDriveTargetVelocity() / wheelCirc;
+    // request.Velocity = angularVelocity;//getDriveTargetVelocity() / RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference;
+    // VelocityVoltage request = new VelocityVoltage(1);
     m_driveMotor.setControl(request);
     m_turningPIDController.setReference(getTurnTargetAngleRadians(), ControlType.kPosition, ClosedLoopSlot.kSlot0);
-    
-    // } else {
-    //   DriverStation.reportWarning(m_moduleName + " is disabled, encoder is probably not plugged in!", false);
-    //   m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
-      // m_turnMotor.setIdleMode(IdleMode.kCoast);
-
-    //   // m_drivePIDController.setReference(0, ControlType.kVoltage);
-    //   m_turningPIDController.setReference(0, ControlType.kVoltage);
-    // }
-
-    // m_periodicIO.shouldChangeState = false;
-    // }
   }
 
   // Logged

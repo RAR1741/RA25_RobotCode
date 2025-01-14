@@ -7,7 +7,7 @@ import frc.robot.controls.Deadband;
 import frc.robot.controls.SquaredInput;
 
 public class FilteredController extends GenericHID {
-  private static final double DEADBAND_LIMIT = 0.03;
+  private static final double DEADBAND_LIMIT = 0.06;
 
   private boolean m_useDeadband;
   private boolean m_useSquaredInput;
