@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
@@ -94,7 +93,8 @@ public class Robot extends LoggedRobot {
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
 
-    m_swerve.drive(xSpeed,ySpeed,rot, false);
+    m_swerve.drive(xSpeed, ySpeed, rot, false);
+    // m_swerve.drive(1, 0, 0, false);
   }
 
   @Override

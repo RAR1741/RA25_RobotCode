@@ -45,7 +45,7 @@ public class Constants {
     public double k_boostScaler = 2; // % increase in speed
 
     public double k_wheelRadiusIn = 2.0; // inches
-    public double k_wheelCircumference = k_wheelRadiusIn * 2.0 * Math.PI;
+    public double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
     public double k_driveGearRatio = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
     public double k_turnGearRatio = 7.0 / 150.0;
 
@@ -60,14 +60,17 @@ public class Constants {
 
       public int k_currentLimit = 40;
 
-      public double k_P = 0.0;//00221; // setCory("goated");
+      public double k_P = 0.0; //00221; // setCory("goated");
       public double k_I = 0.0;
       public double k_D = 0.0;
       public double k_IZone = 0.0;
 
-      public double k_FFS = 0.255;
-      public double k_FFV = 2.675;
-      public double k_FFA = 0.525;
+      public double k_FFS = 0.15; // jordan is telling jesse to cook (and he is cooking (very much)) ps. its still not working pps. hey its working now
+      public double k_FFV = 0.65;
+      public double k_FFA = 0.0; // TODO: maybe come back to this?????
+      // public double k_FFS = 0.255;
+      // public double k_FFV = 2.675;
+      // public double k_FFA = 0.525;
     }
 
     public TurnConstants Turn = new TurnConstants();

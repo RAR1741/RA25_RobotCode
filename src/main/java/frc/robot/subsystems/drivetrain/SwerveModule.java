@@ -1,33 +1,29 @@
 package frc.robot.subsystems.drivetrain;
 
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
-import frc.robot.wrappers.RARSparkMax;
-
 import frc.robot.constants.RobotConstants;
+import frc.robot.wrappers.RARSparkMax;
 
 public class SwerveModule {
   private final TalonFX m_driveMotor;
@@ -58,8 +54,10 @@ public class SwerveModule {
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
     Slot0Configs slot0Config = new Slot0Configs();
 
+    // driveConfig.Feedback.SensorToMechanismRatio = 1.0;
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
-    // m_driveConfiguration.Feedback.RotorToSensorRatio = 0.0f; TODO: DO THIS PLEASE GOD I HOPE
+    
+    // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: check back with this if we add CANcoders
 
     slot0Config.kP = RobotConstants.robotConfig.SwerveDrive.Drive.k_P;
     slot0Config.kI = RobotConstants.robotConfig.SwerveDrive.Drive.k_I;
@@ -67,34 +65,34 @@ public class SwerveModule {
 
     slot0Config.kS = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFS;
     slot0Config.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
-    slot0Config.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
+    // slot0Config.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
 
     // TalonFXConfigurator driveConfigurator = m_driveMotor.getConfigurator();
     m_driveMotor.getConfigurator().apply(driveConfig);
     m_driveMotor.getConfigurator().apply(slot0Config);
 
     m_turnMotor = new RARSparkMax(turningMotorChannel, MotorType.kBrushless);
-    SparkMaxConfig config = new SparkMaxConfig();
-    config.idleMode(IdleMode.kCoast);
-    config.inverted(true);
+    SparkMaxConfig turnConfig = new SparkMaxConfig();
+    turnConfig.idleMode(IdleMode.kCoast);
+    turnConfig.inverted(true);
 
-    config.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
-    config.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
+    turnConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
+    turnConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
 
-    config.closedLoop.p(RobotConstants.robotConfig.SwerveDrive.Turn.k_P);
-    config.closedLoop.i(RobotConstants.robotConfig.SwerveDrive.Turn.k_I);
-    config.closedLoop.d(RobotConstants.robotConfig.SwerveDrive.Turn.k_D);
-    config.closedLoop.positionWrappingEnabled(true);
-    config.closedLoop.positionWrappingMinInput(0.0);
-    config.closedLoop.positionWrappingMaxInput(2.0 * Math.PI);
-    config.closedLoop.outputRange(
+    turnConfig.closedLoop.p(RobotConstants.robotConfig.SwerveDrive.Turn.k_P);
+    turnConfig.closedLoop.i(RobotConstants.robotConfig.SwerveDrive.Turn.k_I);
+    turnConfig.closedLoop.d(RobotConstants.robotConfig.SwerveDrive.Turn.k_D);
+    turnConfig.closedLoop.positionWrappingEnabled(true);
+    turnConfig.closedLoop.positionWrappingMinInput(0.0);
+    turnConfig.closedLoop.positionWrappingMaxInput(2.0 * Math.PI);
+    turnConfig.closedLoop.outputRange(
       RobotConstants.robotConfig.SwerveDrive.Turn.k_minOutput,
       RobotConstants.robotConfig.SwerveDrive.Turn.k_maxOutput);
     
     // m_turnMotor.setSmartCurrentLimit(RobotConstants.SwerveDrive.Drive.k_turnCurrentLimit);
     // m_turningAbsEncoder = new TalonSRXMagEncoder(turningEncoderChannel);
 
-    m_turnMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_turningPIDController = m_turnMotor.getClosedLoopController();
     m_turningAbsEncoder = m_turnMotor.getAbsoluteEncoder();
@@ -144,15 +142,11 @@ public class SwerveModule {
   }
 
   public void periodic() {
-    double velocity = getDriveTargetVelocity(); /// Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference) * 60;
-    // double velocity = getDriveTargetVelocity() / (2.0 * Math.PI) * Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelRadiusIn);
+    // double velocity = getDriveTargetVelocity(); // Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference) * 60;
+    double velocity = Helpers.MPSToRPS(getDriveTargetVelocity(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
     // double angularVelocity = getDriveTargetVelocity() / Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelRadiusIn);
 
     VelocityVoltage request = new VelocityVoltage(velocity).withSlot(0);
-    // VelocityVoltage request = new VelocityVoltage(getDriveTargetVelocity() / RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference).withSlot(0);
-    // PositionVoltage request = new PositionVoltage(0).withSlot(0);
-    // request.Velocity = angularVelocity;//getDriveTargetVelocity() / RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference;
-    // VelocityVoltage request = new VelocityVoltage(1);
     m_driveMotor.setControl(request);
     m_turningPIDController.setReference(getTurnTargetAngleRadians(), ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
@@ -205,12 +199,17 @@ public class SwerveModule {
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Velocity")
   public double getDriveVelocity() {
-    return m_driveMotor.getVelocity().getValueAsDouble();
+    return Helpers.RPSToMPS(m_driveMotor.getVelocity().getValueAsDouble(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Position")
-  public double getDrivePosition() {
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/PositionRot")
+  public double getDrivePositionRot() {
     return m_driveMotor.getPosition().getValueAsDouble();
+  }
+
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/PositionMet")
+  public double getDrivePositionMet() {
+    return Helpers.RPSToMPS(m_driveMotor.getPosition().getValueAsDouble(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Position")
