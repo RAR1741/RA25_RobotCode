@@ -105,6 +105,10 @@ public class RAROdometry extends Subsystem {
     setPose(pose);
   }
 
+  private boolean isPoseZero(PoseEstimate estimate) {
+    return estimate.pose.equals(new Pose2d());
+  }
+
   @Override
   public void reset() {
     resetGyro();
@@ -122,9 +126,11 @@ public class RAROdometry extends Subsystem {
             m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
             m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
         });
-    
     PoseEstimate estimate = m_limelight.getPoseEstimation();
-    m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
+
+    if (estimate != null && !isPoseZero(estimate)) {
+      m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
+    }
   }
 
   @Override

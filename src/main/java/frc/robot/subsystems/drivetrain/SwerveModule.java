@@ -57,6 +57,10 @@ public class SwerveModule {
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
     // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: check back with this if we add CANcoders
 
+    // the sound of silence
+    driveConfig.Audio.BeepOnBoot = false;
+    driveConfig.Audio.BeepOnConfig = false;
+
     driveConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Drive.k_P;
     driveConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Drive.k_I;
     driveConfig.Slot0.kD = RobotConstants.robotConfig.SwerveDrive.Drive.k_D;
