@@ -8,7 +8,9 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-// import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotTelemetry;
 import frc.robot.subsystems.Subsystem;
 
@@ -100,10 +102,6 @@ public class RAROdometry extends Subsystem {
     setPose(pose);
   }
 
-  public Pose2d getPose() {
-    return m_poseEstimator.getEstimatedPosition();
-  }
-
   @Override
   public void reset() {
     resetGyro();
@@ -112,6 +110,15 @@ public class RAROdometry extends Subsystem {
 
   @Override
   public void periodic() {
+    m_poseEstimator.updateWithTime(
+        Timer.getFPGATimestamp(),
+        m_gyro.getRotation2d(),
+        new SwerveModulePosition[] {
+            m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
+        });
   }
 
   @Override
@@ -123,9 +130,29 @@ public class RAROdometry extends Subsystem {
     RobotTelemetry.print("Stopping Odometry!");
   }
 
-  @AutoLogOutput(key = "Odometry/Gyro/Accumulated Angle")
-  public double getGyroAngle() {
+  @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
+  public double getGyroYawDeg() {
     return m_gyro.getAngle();
+  }
+
+  @AutoLogOutput(key = "Odometry/Gyro/PitchDeg")
+  public double getGyroPitchDeg() {
+    return m_gyro.getPitch();
+  }
+
+  @AutoLogOutput(key = "Odometry/Gyro/RollDeg")
+  public double getGyroRollDeg() {
+    return m_gyro.getRoll();
+  }
+
+  @AutoLogOutput
+  public double getNavXTimestamp() {
+    return (double) m_gyro.getLastSensorTimestamp();
+  }
+  
+  @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
+  public Pose2d getPose() {
+    return m_poseEstimator.getEstimatedPosition();
   }
 
 //   private enum LimelightInstance {
