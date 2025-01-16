@@ -41,7 +41,7 @@ public class Constants {
     public double k_maxLinearAcceleration = 12.0; // Meters per second^2
     public double k_maxAngularAcceleration = Math.PI * 8.0; // Radians per second^2
 
-    public double k_slowScaler = 1; // % reduction in speed
+    public double k_slowScaler = 0; // % reduction in speed
     public double k_boostScaler = 2; // % increase in speed
 
     public double k_wheelRadiusIn = 2.0; // inches
@@ -95,7 +95,7 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public double k_P = 4.0;
+      public double k_P = 2.0;
       public double k_I = 0.0;
       public double k_D = 0.0;
       public double k_IZone = 0.0;

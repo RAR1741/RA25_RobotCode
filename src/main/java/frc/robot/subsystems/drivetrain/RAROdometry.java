@@ -8,15 +8,17 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotTelemetry;
+import frc.robot.LimelightHelpers.PoseEstimate;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Subsystem;
 
 public class RAROdometry extends Subsystem {
   private static RAROdometry m_instance;
+  
   private final AHRS m_gyro;
+  private final Limelight m_limelight;
 
   private final SwerveDrive m_swerve = SwerveDrive.getInstance();
 
@@ -25,6 +27,7 @@ public class RAROdometry extends Subsystem {
   private RAROdometry() {
     super("Odometry");
 
+    m_limelight = new Limelight("limelight");
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(
@@ -119,6 +122,9 @@ public class RAROdometry extends Subsystem {
             m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
             m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
         });
+    
+    PoseEstimate estimate = m_limelight.getPoseEstimation();
+    m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
   }
 
   @Override

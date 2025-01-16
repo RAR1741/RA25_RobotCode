@@ -7,15 +7,16 @@ import frc.robot.controls.Deadband;
 import frc.robot.controls.SquaredInput;
 
 public class FilteredController extends GenericHID {
-  private static final double DEADBAND_LIMIT = 0.06;
+  private static final double k_deadbandLimit = 0.06;
 
   private boolean m_useDeadband;
   private boolean m_useSquaredInput;
+  private double m_triggerActivationThreshold;
 
   public double k_allianceMultiplier = -1.0;
 
-  private Deadband m_deadband = new Deadband(DEADBAND_LIMIT);
-  private SquaredInput m_squaredInput = new SquaredInput(DEADBAND_LIMIT);
+  private Deadband m_deadband = new Deadband(k_deadbandLimit);
+  private SquaredInput m_squaredInput = new SquaredInput(k_deadbandLimit);
 
   private final DPadButton[] hatButtons = { new DPadButton(this, DPadButton.Direction.UP),
       new DPadButton(this, DPadButton.Direction.DOWN), new DPadButton(this, DPadButton.Direction.LEFT),
@@ -27,10 +28,11 @@ public class FilteredController extends GenericHID {
     m_useSquaredInput = false;
   }
 
-  public FilteredController(int port, boolean useDeadband, boolean useSquaredInput) {
+  public FilteredController(int port, boolean useDeadband, boolean useSquaredInput, double triggerActivationThreshold) {
     this(port);
     this.m_useDeadband = useDeadband;
     this.m_useSquaredInput = useSquaredInput;
+    this.m_triggerActivationThreshold = triggerActivationThreshold;
   }
 
   public void setAllianceMultiplier() {
@@ -44,14 +46,18 @@ public class FilteredController extends GenericHID {
   public double getFilteredAxis(int axis) {
     double value = this.getRawAxis(axis);
 
-    // Apply squared input, if requested
-    if (m_useSquaredInput) {
-      value = m_squaredInput.scale(value);
-    }
+    if (axis == Axis.LEFT_TRIGGER || axis == Axis.RIGHT_TRIGGER) {
+      value = value >= m_triggerActivationThreshold ? value : 0;
+    } else {
+      // Apply squared input, if requested
+      if (m_useSquaredInput) {
+        value = m_squaredInput.scale(value);
+      }
 
-    // Apply deadband, if requested
-    if (m_useDeadband) {
-      value = m_deadband.scale(value);
+      // Apply deadband, if requested
+      if (m_useDeadband) {
+        value = m_deadband.scale(value);
+      }
     }
 
     return value;

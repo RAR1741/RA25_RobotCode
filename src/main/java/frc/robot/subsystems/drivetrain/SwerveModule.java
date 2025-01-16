@@ -2,7 +2,6 @@ package frc.robot.subsystems.drivetrain;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -36,11 +35,13 @@ public class SwerveModule {
   private final PeriodicIO m_periodicIO = new PeriodicIO();
 
   private final double m_turningOffset;
+  
+  @SuppressWarnings("unused")
   private final String m_moduleName;
 
   private static class PeriodicIO {
     SwerveModuleState desiredState = new SwerveModuleState();
-    // boolean shouldChangeState = false;
+    // boolean shouldChangeState = false; // TODO: maybe add this back?
   }
 
   private boolean m_moduleDisabled = false;
@@ -52,24 +53,19 @@ public class SwerveModule {
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-    Slot0Configs slot0Config = new Slot0Configs();
 
-    // driveConfig.Feedback.SensorToMechanismRatio = 1.0;
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
-    
     // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: check back with this if we add CANcoders
 
-    slot0Config.kP = RobotConstants.robotConfig.SwerveDrive.Drive.k_P;
-    slot0Config.kI = RobotConstants.robotConfig.SwerveDrive.Drive.k_I;
-    slot0Config.kD = RobotConstants.robotConfig.SwerveDrive.Drive.k_D;
+    driveConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Drive.k_P;
+    driveConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Drive.k_I;
+    driveConfig.Slot0.kD = RobotConstants.robotConfig.SwerveDrive.Drive.k_D;
 
-    slot0Config.kS = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFS;
-    slot0Config.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
-    // slot0Config.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
+    driveConfig.Slot0.kS = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFS;
+    driveConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
+    driveConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
 
-    // TalonFXConfigurator driveConfigurator = m_driveMotor.getConfigurator();
     m_driveMotor.getConfigurator().apply(driveConfig);
-    m_driveMotor.getConfigurator().apply(slot0Config);
 
     m_turnMotor = new RARSparkMax(turningMotorChannel, MotorType.kBrushless);
     SparkMaxConfig turnConfig = new SparkMaxConfig();
@@ -142,7 +138,6 @@ public class SwerveModule {
   }
 
   public void periodic() {
-    // double velocity = getDriveTargetVelocity(); // Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference) * 60;
     double velocity = Helpers.MPSToRPS(getDriveTargetVelocity(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
     // double angularVelocity = getDriveTargetVelocity() / Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelRadiusIn);
 
@@ -184,7 +179,7 @@ public class SwerveModule {
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Abs/getTurnPosition")
   public double getAsbEncoderPosition() {
-    return m_turningAbsEncoder.getPosition() - m_turningOffset; // TODO: verify this is the absolute position
+    return m_turningAbsEncoder.getPosition() - m_turningOffset;
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Temperature")

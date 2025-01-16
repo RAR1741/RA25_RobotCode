@@ -148,50 +148,6 @@ public class SwerveDrive extends Subsystem {
     return null;
   }
 
-  // @Override
-  // public void outputTelemetry() {
-  // double currentTime = Timer.getFPGATimestamp();
-
-  // m_poseEstimator.updateWithTime(
-  // currentTime,
-  // m_gyro.getRotation2d(),
-  // new SwerveModulePosition[] {
-  // m_frontLeft.getPosition(),
-  // m_frontRight.getPosition(),
-  // m_backLeft.getPosition(),
-  // m_backRight.getPosition()
-  // });
-
-  // // if (m_limelight.seesAprilTag()) {
-  // // m_poseEstimator.addVisionMeasurement(
-  // // m_limelight.getBotpose2D(),
-  // // m_limelight.getTimeOffset(currentTime));
-  // // }
-
-  // m_frontLeft.outputTelemetry();
-  // m_frontRight.outputTelemetry();
-  // m_backLeft.outputTelemetry();
-  // m_backRight.outputTelemetry();
-
-  // SmartDashboard.putNumberArray("Drivetrain/CurrentStates",
-  // getCurrentStates());
-  // SmartDashboard.putNumberArray("Drivetrain/DesiredStates",
-  // getDesiredStates());
-
-  // SmartDashboard.putNumber("Drivetrain/Gyro/AngleDegrees",
-  // m_gyro.getRotation2d().getDegrees());
-  // SmartDashboard.putNumber("Drivetrain/Gyro/Pitch", m_gyro.getPitch());
-  // SmartDashboard.putNumberArray("Drivetrain/Pose",
-  // new double[] { getPose().getX(), getPose().getY(),
-  // getPose().getRotation().getDegrees() });
-  // }
-
-  // Logged
-  // @AutoLogOutput
-  // public Rotation2d getRotation2d() {
-  //   return m_poseEstimator.getEstimatedPosition().getRotation();
-  // }
-
   @AutoLogOutput
   private SwerveModuleState[] getCurrentStates() {
     SwerveModuleState[] currentStates = {
@@ -215,31 +171,6 @@ public class SwerveDrive extends Subsystem {
 
     return desiredStates;
   }
-
-  // @AutoLogOutput
-  // public boolean hasSetPose() {
-  //   return m_hasSetPose;
-  // }
-
-  // @AutoLogOutput
-  // private double getGyroYaw() {
-  //   return m_gyro.getRotation2d().getDegrees();
-  // }
-
-  // @AutoLogOutput
-  // private double getGyroPitch() {
-  //   return m_gyro.getPitch();
-  // }
-
-  // @AutoLogOutput
-  // public Pose2d getPose() {
-  //   return m_poseEstimator.getEstimatedPosition();
-  // }
-
-  // @AutoLogOutput
-  // public double getNavXTimestamp() {
-  //   return (double) m_gyro.getLastSensorTimestamp();
-  // }
 
   public interface Module {
     int FRONT_LEFT = 0;

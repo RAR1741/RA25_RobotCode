@@ -22,7 +22,6 @@ import frc.robot.subsystems.drivetrain.SwerveDrive;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
-  private final RobotConstants m_constants;
   private final ArrayList<Subsystem> m_subsystems;
 
   private final SwerveDrive m_swerve;
@@ -39,12 +38,12 @@ public class Robot extends LoggedRobot {
    * initialization code.
    */
   public Robot() {
+    RobotConstants.getInstance();
     m_subsystems = new ArrayList<>();
-    m_constants = RobotConstants.getInstance();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
 
-    m_driverController = new DriverController(0, true, true);
+    m_driverController = new DriverController(0, false, false, 0.5);
     m_xRateLimiter = new SlewRateLimiter(3);
     m_yRateLimiter = new SlewRateLimiter(3);
     m_rotRateLimiter = new SlewRateLimiter(3);
