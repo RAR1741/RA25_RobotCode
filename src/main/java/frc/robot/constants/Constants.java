@@ -104,9 +104,9 @@ public class Constants {
       // We only use FF and are too scared to delete the others
       public double k_FF = 0.0;
 
-      public double k_FFS = 0.29745;
-      public double k_FFV = 0.43892; // Not used (fear)
-      public double k_FFA = 0.048573; // Not used (fear)
+      public double k_S = 0.29745;
+      public double k_V = 0.43892; // Not used (fear)
+      public double k_A = 0.048573; // Not used (fear)
 
       public double k_minOutput = -1.0;
       public double k_maxOutput = 1.0;

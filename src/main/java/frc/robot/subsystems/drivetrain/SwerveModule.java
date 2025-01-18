@@ -3,39 +3,42 @@ package frc.robot.subsystems.drivetrain;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
+// import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+// import com.revrobotics.spark.SparkBase.ControlType;
+// import com.revrobotics.spark.SparkBase.PersistMode;
+// import com.revrobotics.spark.SparkBase.ResetMode;
+// import com.revrobotics.spark.SparkClosedLoopController;
+// import com.revrobotics.spark.SparkLowLevel.MotorType;
+// import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+// import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
-import frc.robot.wrappers.RARSparkMax;
+// import frc.robot.wrappers.RARSparkMax;
 
 public class SwerveModule {
   private final TalonFX m_driveMotor;
-  private final RARSparkMax m_turnMotor;
-  
-  private final SparkClosedLoopController m_turningPIDController;
+  private final TalonFX m_turnMotor;
+
+  // private final SparkClosedLoopController m_turningPIDController;
   private final SparkAbsoluteEncoder m_turningAbsEncoder;
   private final RelativeEncoder m_turningRelEncoder;
 
   private final PeriodicIO m_periodicIO = new PeriodicIO();
 
   private final double m_turningOffset;
-  
+
   @SuppressWarnings("unused")
   private final String m_moduleName;
 
@@ -51,8 +54,9 @@ public class SwerveModule {
     m_turningOffset = turningOffset;
 
     m_driveMotor = new TalonFX(driveMotorChannel);
-    m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
+
+    m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
 
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
     // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: check back with this if we add CANcoders
@@ -71,32 +75,56 @@ public class SwerveModule {
 
     m_driveMotor.getConfigurator().apply(driveConfig);
 
-    m_turnMotor = new RARSparkMax(turningMotorChannel, MotorType.kBrushless);
-    SparkMaxConfig turnConfig = new SparkMaxConfig();
-    turnConfig.idleMode(IdleMode.kCoast);
-    turnConfig.inverted(true);
+    m_turnMotor = new TalonFX(turningMotorChannel);
+    TalonFXConfiguration turnConfig = new TalonFXConfiguration();
 
-    turnConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
-    turnConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
+    m_turnMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    turnConfig.closedLoop.p(RobotConstants.robotConfig.SwerveDrive.Turn.k_P);
-    turnConfig.closedLoop.i(RobotConstants.robotConfig.SwerveDrive.Turn.k_I);
-    turnConfig.closedLoop.d(RobotConstants.robotConfig.SwerveDrive.Turn.k_D);
-    turnConfig.closedLoop.positionWrappingEnabled(true);
-    turnConfig.closedLoop.positionWrappingMinInput(0.0);
-    turnConfig.closedLoop.positionWrappingMaxInput(2.0 * Math.PI);
-    turnConfig.closedLoop.outputRange(
-      RobotConstants.robotConfig.SwerveDrive.Turn.k_minOutput,
-      RobotConstants.robotConfig.SwerveDrive.Turn.k_maxOutput);
-    
-    // m_turnMotor.setSmartCurrentLimit(RobotConstants.SwerveDrive.Drive.k_turnCurrentLimit);
-    // m_turningAbsEncoder = new TalonSRXMagEncoder(turningEncoderChannel);
+    turnConfig.Audio.BeepOnBoot = false;
+    turnConfig.Audio.BeepOnConfig = false;
 
-    m_turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // TODO: verify this is equivalent to setInverted(true)
 
-    m_turningPIDController = m_turnMotor.getClosedLoopController();
-    m_turningAbsEncoder = m_turnMotor.getAbsoluteEncoder();
-    m_turningRelEncoder = m_turnMotor.getEncoder();
+    turnConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio; // TODO: verify this works for both position and velocity
+
+    turnConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Turn.k_P;
+    turnConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Turn.k_I;
+    turnConfig.Slot0.kD = RobotConstants.robotConfig.SwerveDrive.Turn.k_D;
+
+    turnConfig.Slot0.kS = RobotConstants.robotConfig.SwerveDrive.Turn.k_S;
+    turnConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Turn.k_V;
+    turnConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Turn.k_A;
+
+    turnConfig.ClosedLoopGeneral.ContinuousWrap = true; // TODO: verify this is PID wrapping
+
+    m_turnMotor.getConfigurator().apply(turnConfig);
+
+    // m_turnMotor = new RARSparkMax(turningMotorChannel, MotorType.kBrushless);
+    // SparkMaxConfig turnConfig = new SparkMaxConfig();
+    // turnConfig.idleMode(IdleMode.kCoast);
+    // turnConfig.inverted(true);
+
+    // turnConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
+    // turnConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
+
+    // turnConfig.closedLoop.p(RobotConstants.robotConfig.SwerveDrive.Turn.k_P);
+    // turnConfig.closedLoop.i(RobotConstants.robotConfig.SwerveDrive.Turn.k_I);
+    // turnConfig.closedLoop.d(RobotConstants.robotConfig.SwerveDrive.Turn.k_D);
+    // turnConfig.closedLoop.positionWrappingEnabled(true);
+    // turnConfig.closedLoop.positionWrappingMinInput(0.0);
+    // turnConfig.closedLoop.positionWrappingMaxInput(2.0 * Math.PI);
+    // turnConfig.closedLoop.outputRange(
+    //   RobotConstants.robotConfig.SwerveDrive.Turn.k_minOutput,
+    //   RobotConstants.robotConfig.SwerveDrive.Turn.k_maxOutput);
+
+    // // m_turnMotor.setSmartCurrentLimit(RobotConstants.SwerveDrive.Drive.k_turnCurrentLimit);
+    // // m_turningAbsEncoder = new TalonSRXMagEncoder(turningEncoderChannel);
+
+    // m_turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    // m_turningPIDController = m_turnMotor.getClosedLoopController();
+    // m_turningAbsEncoder = m_turnMotor.getAbsoluteEncoder();
+    // m_turningRelEncoder = m_turnMotor.getEncoder();
   }
 
   public SwerveModuleState getState() {
@@ -115,13 +143,13 @@ public class SwerveModule {
     return m_driveMotor;
   }
 
-  public RARSparkMax getTurnMotor() {
+  public TalonFX getTurnMotor() {
     return m_turnMotor;
   }
 
-  public void clearTurnPIDAccumulation() {
-    m_turningPIDController.setIAccum(0);
-  }
+  // public void clearTurnPIDAccumulation() {
+  //   m_turningPIDController.setIAccum(0);
+  // }
 
   public void resetDriveEncoder() {
     m_driveMotor.setPosition(0.0);
@@ -130,10 +158,10 @@ public class SwerveModule {
   public void setDesiredState(SwerveModuleState desiredState) {
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(Rotation2d.fromRadians(getTurnPosition()));
-    
+
     desiredState.angle = new Rotation2d(Helpers.modRadians(desiredState.angle.getRadians()));
     // m_periodicIO.shouldChangeState = !desiredState.equals(m_periodicIO.desiredState);
-    
+
     m_periodicIO.desiredState = desiredState;
   }
 
@@ -142,12 +170,17 @@ public class SwerveModule {
   }
 
   public void periodic() {
-    double velocity = Helpers.MPSToRPS(getDriveTargetVelocity(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
+    double driveVelocity = Helpers.MPSToRPS(getDriveTargetVelocity(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
+    double turnPosition = Units.radiansToRotations(getTurnTargetAngleRadians());
     // double angularVelocity = getDriveTargetVelocity() / Units.inchesToMeters(RobotConstants.robotConfig.SwerveDrive.k_wheelRadiusIn);
 
-    VelocityVoltage request = new VelocityVoltage(velocity).withSlot(0);
-    m_driveMotor.setControl(request);
-    m_turningPIDController.setReference(getTurnTargetAngleRadians(), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    VelocityVoltage driveRequest = new VelocityVoltage(driveVelocity).withSlot(0);
+    m_driveMotor.setControl(driveRequest);
+
+    PositionVoltage turnRequest = new PositionVoltage(turnPosition).withSlot(0);
+    m_turnMotor.setControl(turnRequest);
+
+    // m_turningPIDController.setReference(getTurnTargetAngleRadians(), ControlType.kPosition, ClosedLoopSlot.kSlot0);
   }
 
   // Logged
@@ -163,12 +196,12 @@ public class SwerveModule {
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Voltage")
   public double getTurnMotorVoltage() {
-    return Helpers.getVoltage(m_turnMotor);
+    return m_turnMotor.getMotorVoltage().getValueAsDouble();
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Current")
   public double getTurnMotorCurrent() {
-    return m_turnMotor.getOutputCurrent();
+    return m_turnMotor.getStatorCurrent().getValueAsDouble();
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Voltage")
@@ -186,14 +219,14 @@ public class SwerveModule {
     return m_turningAbsEncoder.getPosition() - m_turningOffset;
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Temperature")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/TemperatureC")
   public double getDriveTemp() {
     return m_driveMotor.getDeviceTemp().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Temperature")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/TemperatureC")
   public double getTurnTemp() {
-    return m_turnMotor.getMotorTemperature();
+    return m_turnMotor.getDeviceTemp().getValueAsDouble();
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Velocity")
