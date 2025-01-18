@@ -155,10 +155,6 @@ public class SwerveModule {
     return m_turnMotor;
   }
 
-  // public void clearTurnPIDAccumulation() {
-  //   m_turningPIDController.setIAccum(0);
-  // }
-
   public void resetDriveEncoder() {
     m_driveMotor.setPosition(0.0);
   }
