@@ -109,6 +109,21 @@ public class Robot extends LoggedRobot {
       m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.GROUND);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
     }
+    if(m_operatorController.getWantsLeftIntakeStow()) {
+      m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.STOW);
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
+    }
+
+    if(m_operatorController.getWantsRightIntakeGround()) {
+      m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.GROUND);
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
+    }
+
+    if(m_operatorController.getWantsRightIntakeStow()) {
+      m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.STOW);
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
+    }
+
   }
 
   @Override

@@ -12,4 +12,16 @@ public class OperatorController extends FilteredController {
   public boolean getWantsLeftIntakeGround() {
     return getRawButtonPressed(Button.LEFT_BUMPER);
   }
+
+  public boolean getWantsLeftIntakeStow() {
+    return getRawButtonReleased(Button.LEFT_BUMPER);
+  }
+
+  public boolean getWantsRightIntakeStow() {
+    return getRawButtonReleased(Button.RIGHT_BUMPER);
+  }
+
+  public boolean getWantsRightIntakeGround() {
+    return getRawButtonPressed(Button.RIGHT_BUMPER);
+  } 
 }

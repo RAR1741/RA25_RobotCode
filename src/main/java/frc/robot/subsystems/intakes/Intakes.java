@@ -7,9 +7,6 @@ import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.intakes.Intake.IntakePivotTarget;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 
-//* dear all programmers seeing this, this is my first year as a SPEC member, expect this file of java code to be a dumpster file
-//* i am sorry
-
 public class Intakes extends Subsystem {
   private static Intakes m_instance;
   private final ArrayList<Intake> m_intakes;
@@ -18,6 +15,7 @@ public class Intakes extends Subsystem {
     super("Intakes");
 
     m_intakes = new ArrayList<>();
+
     m_intakes.add(new Intake("Left",RobotConstants.robotConfig.Intake.k_intakeMotorIdLeft,
         RobotConstants.robotConfig.Intake.k_pivotMotorIdLeft, 
         RobotConstants.robotConfig.Intake.k_pivotEncoderIdLeft));
@@ -32,6 +30,10 @@ public class Intakes extends Subsystem {
       m_instance = new Intakes();
     }
     return m_instance;
+  }
+
+  public Intake getIntake(IntakeVariant intake) {
+    return m_intakes.get(intake.ordinal());
   }
 
   public void setIntakeState(IntakeVariant intakeVariant, IntakeState intakeState) {
@@ -60,7 +62,6 @@ public class Intakes extends Subsystem {
 
   @Override
   public void stop() {
-    // TODO Auto-generated method stub
     m_intakes.forEach(intake -> intake.stop());
   }
 

@@ -46,6 +46,8 @@ public class Constants {
     public double k_pivotOffset = 0.0;
 
     public double k_groundAngle = 0.0;
+    public double k_ejectAngle = 0.0;
+    public double k_stowAngle = 0.0;
     
   }
 

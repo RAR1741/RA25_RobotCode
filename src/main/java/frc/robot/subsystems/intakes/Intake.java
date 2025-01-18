@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intakes;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.AutoLogOutputManager;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -16,11 +17,8 @@ import frc.robot.constants.RobotConstants;
 import frc.robot.wrappers.RARSparkMax;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 
-//* dear all programmers seeing this, this is my first year as a SPEC member, expect this file of java code to be a dumpster fire
-//* i am sorry
-//* - Sarthak Ghoshal & Chase Cleveland (2025)
-
 public class Intake {
+  @SuppressWarnings("unused")
   private final String m_intakeName;
   
   private final RARSparkMax m_pivotMotor;
@@ -30,7 +28,6 @@ public class Intake {
 
   private final ProfiledPIDController m_pivotMotorPID;
   private final ArmFeedforward m_pivotFeedForward;
-
 
   private static class PeriodicIO {
     IntakeState desiredIntakeState = IntakeState.NONE;
@@ -42,6 +39,7 @@ public class Intake {
 
   public Intake(String intakeName, int pivotMotorID, int intakeMotorID, int absoluteEncoderID) {
     m_intakeName = intakeName;
+    AutoLogOutputManager.addObject(this);
 
     m_pivotMotor = new RARSparkMax(pivotMotorID, MotorType.kBrushless);
     m_intakeMotor = new RARSparkMax(intakeMotorID, MotorType.kBrushless);
@@ -80,7 +78,6 @@ public class Intake {
         RobotConstants.robotConfig.Intake.k_pivotMotorKA);
 
     m_periodicIO = new PeriodicIO();
-    //TODO: Wait until u get logic in to add pivot encoder :p
   }
 
   public void setPivotTarget(IntakePivotTarget target) {
@@ -112,17 +109,17 @@ public class Intake {
     m_periodicIO.desiredPivotTarget = IntakePivotTarget.NONE;
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/DesiredIntakeState")
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/IntakeState")
   public String getDesiredIntakeState() {
     return m_periodicIO.desiredIntakeState.toString();
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/DesiredPivotTarget")
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotTarget")
   public String getDesiredPivotTarget() {
     return m_periodicIO.desiredPivotTarget.toString();
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/DesiredIntakeSpeed")
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/IntakeSpeed")
   public double getDesiredIntakeSpeed() {
     switch(m_periodicIO.desiredIntakeState) {
       case NONE -> {
@@ -131,13 +128,16 @@ public class Intake {
       case INTAKE -> {
         return 0.8;
       }
+      case EJECT -> {
+        return -0.8;
+      }
       default -> {
         return 0.0;
       }
     }
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/getTargetPivotAngle")
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotAngleFromTarget")
   public double getTargetPivotAngle() {
     switch(m_periodicIO.desiredPivotTarget) {
       case NONE -> {
@@ -146,18 +146,24 @@ public class Intake {
       case GROUND -> {
         return RobotConstants.robotConfig.Intake.k_groundAngle;
       }
+      case EJECT -> {
+        return RobotConstants.robotConfig.Intake.k_ejectAngle;
+      }
+      case STOW -> {
+        return RobotConstants.robotConfig.Intake.k_stowAngle;
+      }
       default -> {
         return 0.0;
       }
     }
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/getPivotAngle")
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotAngle")
   public double getPivotAngle() {
     return Units.rotationsToDegrees(m_pivotAbsEncoder.get()); //TODO: was getAbsolutePosition() so make sure this works
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/getPivotReferenceToHorizal")
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotReferenceToHorizontal")
   public double getPivotReferenceToHorizontal() {
     return getPivotAngle() - RobotConstants.robotConfig.Intake.k_pivotOffset;
   }
@@ -166,16 +172,12 @@ public class Intake {
     NONE,
     GROUND,
     EJECT,
-    PIVOT,
-    AMP,
     STOW
   }
 
   public enum IntakeState {
     NONE,
     INTAKE,
-    EJECT,
-    PULSE,
-    FEED_SHOOTER
+    EJECT
   }
 }
