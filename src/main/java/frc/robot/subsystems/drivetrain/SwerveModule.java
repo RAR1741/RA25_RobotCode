@@ -192,7 +192,7 @@ public class SwerveModule {
   }
 
   // Logged
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/targetAngle")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/targetAngleRads")
   private double getTurnTargetAngleRadians() {
     return m_periodicIO.desiredState.angle.getRadians();
   }
@@ -202,27 +202,27 @@ public class SwerveModule {
     return m_periodicIO.desiredState.speedMetersPerSecond;
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Voltage")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/VoltageV")
   public double getTurnMotorVoltage() {
     return m_turnMotor.getMotorVoltage().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Current")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/CurrentA")
   public double getTurnMotorCurrent() {
     return m_turnMotor.getStatorCurrent().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Voltage")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/VoltageV")
   public double getDriveMotorVoltage() {
     return m_driveMotor.getMotorVoltage().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Current")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/CurrentA")
   public double getDriveMotorCurrent() {
     return m_driveMotor.getTorqueCurrent().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Abs/Rot")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Abs/Rotations")
   public double getTurnAbsEncoderPosition() {
     // return m_turningCANcoder.getPosition() - m_turningOffset;
     return m_turningCANcoder.getAbsolutePosition().getValueAsDouble();
@@ -238,7 +238,7 @@ public class SwerveModule {
     return m_turnMotor.getDeviceTemp().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/Velocity")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/VelocityMPS")
   public double getDriveVelocity() {
     return Helpers.RPSToMPS(m_driveMotor.getVelocity().getValueAsDouble(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
@@ -253,7 +253,7 @@ public class SwerveModule {
     return Helpers.RPSToMPS(m_driveMotor.getPosition().getValueAsDouble(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Position")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/PositionRads")
   public double getTurnPosition() {
     // return Helpers.modRadians(m_turningRelEncoder.getPosition());
     return Units.rotationsToRadians(m_turnMotor.getPosition().getValueAsDouble());
@@ -264,7 +264,7 @@ public class SwerveModule {
     return m_turnMotor.getVelocity().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/error")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/ErrorDeg")
   public double getTurnError() {
     return getState().angle.minus(m_periodicIO.desiredState.angle).getDegrees();
   }

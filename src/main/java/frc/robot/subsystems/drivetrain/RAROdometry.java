@@ -16,7 +16,7 @@ import frc.robot.subsystems.Subsystem;
 
 public class RAROdometry extends Subsystem {
   private static RAROdometry m_instance;
-  
+
   private final AHRS m_gyro;
   private final Limelight m_limelight;
 
@@ -161,7 +161,7 @@ public class RAROdometry extends Subsystem {
   public double getNavXTimestamp() {
     return (double) m_gyro.getLastSensorTimestamp();
   }
-  
+
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
