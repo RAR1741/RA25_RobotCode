@@ -15,17 +15,18 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.RobotTelemetry;
+import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Elevator extends Subsystem {
-  /*-------------------------------- Private instance variables ---------------------------------*/
   private static Elevator m_instance;
   private PeriodicIO m_periodicIO;
 
-  // private static final double kPivotCLRampRate = 0.5;
-  // private static final double kCLRampRate = 0.5;
+  private LaserCanHandler m_laserCan;
+
+  // private static final double k_pivotCLRampRate = 0.5;
+  // private static final double k_CLRampRate = 0.5;
 
   public static Elevator getInstance() {
     if (m_instance == null) {
@@ -39,8 +40,8 @@ public class Elevator extends Subsystem {
   private SparkClosedLoopController m_leftPIDController;
 
   private SimulatableCANSparkMax m_rightMotor;
-  private RelativeEncoder m_rightEncoder;
-  private SparkClosedLoopController m_rightPIDController;
+  // private RelativeEncoder m_rightEncoder;
+  // private SparkClosedLoopController m_rightPIDController;
 
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
@@ -51,6 +52,7 @@ public class Elevator extends Subsystem {
     super("Elevator");
 
     m_periodicIO = new PeriodicIO();
+    m_laserCan = LaserCanHandler.getInstance();
 
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
@@ -75,8 +77,8 @@ public class Elevator extends Subsystem {
 
     // RIGHT ELEVATOR MOTOR
     m_rightMotor = new SimulatableCANSparkMax(RobotConstants.robotConfig.Elevator.k_elevatorRightMotorId, MotorType.kBrushless);
-    m_rightEncoder = m_rightMotor.getEncoder();
-    m_rightPIDController = m_rightMotor.getClosedLoopController();
+    // m_rightEncoder = m_rightMotor.getEncoder();
+    // m_rightPIDController = m_rightMotor.getClosedLoopController();
     m_rightMotor.configure(
         elevatorConfig.follow(m_leftMotor),
         ResetMode.kResetSafeParameters,
@@ -107,8 +109,6 @@ public class Elevator extends Subsystem {
 
     ElevatorState state = ElevatorState.STOW;
   }
-
-  /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
   @Override
   public void periodic() {
@@ -161,8 +161,6 @@ public class Elevator extends Subsystem {
     m_leftEncoder.setPosition(0.0);
   }
 
-  /*---------------------------------- Custom Public Functions ----------------------------------*/
-
   public ElevatorState getState() {
     return m_periodicIO.state;
   }
@@ -171,6 +169,30 @@ public class Elevator extends Subsystem {
     putNumber("setElevatorPower", power);
     m_periodicIO.is_elevator_pos_control = false;
     m_periodicIO.elevator_power = power;
+  }
+
+  public void goToElevatorPosition(ElevatorState position) {
+    if (!m_laserCan.getIndexSeesCoral() && !m_laserCan.getEntranceSeesCoral()) {
+      switch (position) {
+        case STOW:
+          goToElevatorStow();
+          break;
+        case L1:
+          goToElevatorL1();
+          break;
+        case L2:
+          goToElevatorL2();
+          break;
+        case L3:
+          goToElevatorL3();
+          break;
+        case L4:
+          goToElevatorL4();
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   public void goToElevatorStow() {
@@ -214,8 +236,6 @@ public class Elevator extends Subsystem {
   //   m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kHighAlgaeHeight;
   //   m_periodicIO.state = ElevatorState.A2;
   // }
-
-  /*---------------------------------- Custom Private Functions ---------------------------------*/
 
   @AutoLogOutput(key = "Elevator/Position/Current")
   private double getCurrentPosition() {

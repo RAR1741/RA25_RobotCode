@@ -6,6 +6,8 @@ public class Constants {
   public RobotConstants Robot = new RobotConstants();
   public FieldConstants Field = new FieldConstants();
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
+  public ElevatorConstants Elevator = new ElevatorConstants();
+  public LaserCanConstants LaserCAN = new LaserCanConstants();
 
   public static class RobotConstants {
     public double k_width = 27.0; // Inches
@@ -113,9 +115,7 @@ public class Constants {
     }
   }
 
-  public ElevatorConstants Elevator = new ElevatorConstants();
-
-  public class ElevatorConstants {
+  public static class ElevatorConstants {
     //TODO: Make these IDs real values
     public final int k_elevatorLeftMotorId = 13;
     public final int k_elevatorRightMotorId = 14;
@@ -142,6 +142,12 @@ public class Constants {
     public final double k_groundAlgaeHeight = 0.0;
     // public final double k_lowAlgaeHeight = 24.8;
     // public final double k_highAlgaeHeight = 42.5;
+  }
+
+  public static class LaserCanConstants {
+    public final int k_indexId = 15;
+    public final int k_entranceId = 16;
+    public final int k_exitId = 17;
   }
 
   // TODO: add Gamepiece class for Coral- and Algae-related constants
