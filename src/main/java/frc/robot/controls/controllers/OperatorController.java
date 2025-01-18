@@ -8,4 +8,8 @@ public class OperatorController extends FilteredController {
   public OperatorController(int port, boolean useDeadband, boolean useSquaredInput, double triggerActivationThreshold) {
     super(port, useDeadband, useSquaredInput, triggerActivationThreshold);
   }
+
+  public boolean getWantsLeftIntakeGround() {
+    return getRawButtonPressed(Button.LEFT_BUMPER);
+  }
 }

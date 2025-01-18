@@ -12,9 +12,14 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
+import frc.robot.controls.controllers.OperatorController;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.intakes.Intakes;
+import frc.robot.subsystems.intakes.Intake.IntakePivotTarget;
+import frc.robot.subsystems.intakes.Intake.IntakeState;
+import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -26,7 +31,9 @@ public class Robot extends LoggedRobot {
 
   private final SwerveDrive m_swerve;
   private final RAROdometry m_odometry;
+  private final Intakes m_intakes;
   private final DriverController m_driverController;
+  private final OperatorController m_operatorController;
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xRateLimiter;
@@ -42,14 +49,17 @@ public class Robot extends LoggedRobot {
     m_subsystems = new ArrayList<>();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
+    m_intakes = Intakes.getInstance();
 
     m_driverController = new DriverController(0, false, false, 0.5);
+    m_operatorController = new OperatorController(1);
     m_xRateLimiter = new SlewRateLimiter(3);
     m_yRateLimiter = new SlewRateLimiter(3);
     m_rotRateLimiter = new SlewRateLimiter(3);
     
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
+    m_subsystems.add(m_intakes);
   }
 
   @Override
@@ -94,6 +104,11 @@ public class Robot extends LoggedRobot {
 
     m_swerve.drive(xSpeed, ySpeed, rot, false);
     // m_swerve.drive(1, 0, 0, false);
+
+    if(m_operatorController.getWantsLeftIntakeGround()) {
+      m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.GROUND);
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
+    }
   }
 
   @Override
