@@ -89,9 +89,9 @@ public class Constants {
       public double k_BLOffset;
 
       public int k_FLAbsId = 4;
-      public int k_FRAbsId = 6;
-      public int k_BRAbsId = 7;
-      public int k_BLAbsId = 8;
+      public int k_FRAbsId = 5;
+      public int k_BRAbsId = 6;
+      public int k_BLAbsId = 7;
 
       public int k_currentLimit = 25;
 
