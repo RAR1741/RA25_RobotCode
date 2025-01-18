@@ -15,6 +15,7 @@ import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 
@@ -104,15 +105,15 @@ public class Robot extends LoggedRobot {
     // m_swerve.drive(1, 0, 0, false);
 
     if (m_operatorController.getWantsGoToStow()) {
-      m_elevator.goToElevatorStow();
+      m_elevator.goToElevatorPosition(ElevatorState.STOW);
     } else if (m_operatorController.getWantsGoToL1()) {
-      m_elevator.goToElevatorL1();
+      m_elevator.goToElevatorPosition(ElevatorState.L1);
     } else if (m_operatorController.getWantsGoToL2()) {
-      m_elevator.goToElevatorL2();
+      m_elevator.goToElevatorPosition(ElevatorState.L2);
     } else if (m_operatorController.getWantsGoToL3()) {
-      m_elevator.goToElevatorL3();
+      m_elevator.goToElevatorPosition(ElevatorState.L3);
     } else if (m_operatorController.getWantsGoToL4()) {
-      m_elevator.goToElevatorL4();
+      m_elevator.goToElevatorPosition(ElevatorState.L4);
     }
   }
 

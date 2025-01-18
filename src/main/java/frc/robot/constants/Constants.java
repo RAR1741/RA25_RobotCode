@@ -8,6 +8,7 @@ public class Constants {
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
   public ElevatorConstants Elevator = new ElevatorConstants();
   public LaserCanConstants LaserCAN = new LaserCanConstants();
+  public EndEffectorConstants EndEffector = new EndEffectorConstants();
 
   public static class RobotConstants {
     public double k_width = 27.0; // Inches
@@ -148,6 +149,20 @@ public class Constants {
     public final int k_indexId = 15;
     public final int k_entranceId = 16;
     public final int k_exitId = 17;
+  }
+
+  public static class EndEffectorConstants {
+    public final int k_leftMotorId = 18;
+    public final int k_rightMotorId = 19;
+    public final double k_P = 1.0;
+    public final double k_I = 0.0;
+    public final double k_D = 0.0;
+    public final double k_FF = 0.0;
+    public final double k_minOutput = 0.0;
+    public final double k_maxOutput = 0.0;
+    public final double k_indexSpeed = 0.0;
+    public final double k_branchesSpeed = 0.0;
+    public final double k_troughSpeed = 0.0;
   }
 
   // TODO: add Gamepiece class for Coral- and Algae-related constants

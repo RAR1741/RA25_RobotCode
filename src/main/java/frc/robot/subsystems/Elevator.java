@@ -195,31 +195,31 @@ public class Elevator extends Subsystem {
     }
   }
 
-  public void goToElevatorStow() {
+  private void goToElevatorStow() {
     m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_stowHeight;
     m_periodicIO.state = ElevatorState.STOW;
   }
 
-  public void goToElevatorL1() {
+  private void goToElevatorL1() {
     m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L1Height;
     m_periodicIO.state = ElevatorState.L1;
   }
 
-  public void goToElevatorL2() {
+  private void goToElevatorL2() {
     m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L2Height;
     m_periodicIO.state = ElevatorState.L2;
   }
 
-  public void goToElevatorL3() {
+  private void goToElevatorL3() {
     m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L3Height;
     m_periodicIO.state = ElevatorState.L3;
   }
 
-  public void goToElevatorL4() {
+  private void goToElevatorL4() {
     m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L4Height;
     m_periodicIO.state = ElevatorState.L4;
