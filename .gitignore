@@ -188,3 +188,4 @@ compile_commands.json
 
 # Generated file for build constants
 src/main/java/frc/robot/BuildConstants.java
+vendordeps/

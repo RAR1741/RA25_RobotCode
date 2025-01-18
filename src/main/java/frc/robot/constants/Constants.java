@@ -6,7 +6,8 @@ public class Constants {
   public RobotConstants Robot = new RobotConstants();
   public FieldConstants Field = new FieldConstants();
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
-
+  public IntakeConstants Intake = new IntakeConstants();
+  
   public static class RobotConstants {
     public double k_width = 27.0; // Inches
     public double k_length = 30.0; // Inches
@@ -18,6 +19,12 @@ public class Constants {
   public static class FieldConstants {
     public double k_width = Units.feetToMeters(54.0); //TODO: Use the 2025 field perimeter
     public double k_length = Units.feetToMeters(27.0);
+  }
+
+  public static class IntakeConstants {
+    public int k_pivotEncoderIdLeft = 0; //^ LEFT
+    public int k_pivotEncoderIdRight = 1; //^ RIGHT (pibot)
+    
   }
 
   public static class SwerveDriveConstants {
