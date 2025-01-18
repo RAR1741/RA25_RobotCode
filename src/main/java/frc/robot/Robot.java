@@ -102,6 +102,18 @@ public class Robot extends LoggedRobot {
 
     m_swerve.drive(xSpeed, ySpeed, rot, false);
     // m_swerve.drive(1, 0, 0, false);
+
+    if (m_operatorController.getWantsGoToStow()) {
+      m_elevator.goToElevatorStow();
+    } else if (m_operatorController.getWantsGoToL1()) {
+      m_elevator.goToElevatorL1();
+    } else if (m_operatorController.getWantsGoToL2()) {
+      m_elevator.goToElevatorL2();
+    } else if (m_operatorController.getWantsGoToL3()) {
+      m_elevator.goToElevatorL3();
+    } else if (m_operatorController.getWantsGoToL4()) {
+      m_elevator.goToElevatorL4();
+    }
   }
 
   @Override
@@ -121,4 +133,5 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void simulationPeriodic() {}
+
 }

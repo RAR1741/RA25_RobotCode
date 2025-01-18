@@ -117,31 +117,31 @@ public class Constants {
 
   public class ElevatorConstants {
     //TODO: Make these IDs real values
-    public static final int kElevatorLeftMotorId = 13;
-    public static final int kElevatorRightMotorId = 14;
+    public final int k_elevatorLeftMotorId = 13;
+    public final int k_elevatorRightMotorId = 14;
 
-    public static final double kP = 0.15;
-    public static final double kI = 0;
-    public static final double kD = 0.0;
-    public static final double kIZone = 5.0;
-    public static final double kG = 0.5;
+    public final double k_P = 0.15;
+    public final double k_I = 0;
+    public final double k_D = 0.0;
+    public final double k_IZone = 5.0;
+    public final double k_FF = 0.5;
 
-    public static final double kMaxVelocity = 65;
-    public static final double kMaxAcceleration = 200;
+    public final double k_maxVelocity = 65;
+    public final double k_maxAcceleration = 200;
 
-    public static final int kMaxCurrent = 40;
-    public static final double kMaxPowerUp = -0.1;
-    public static final double kMaxPowerDown = 0.1;
+    public final int k_maxCurrent = 40;
+    public final double k_maxPowerUp = -0.1;
+    public final double k_maxPowerDown = 0.1;
 
-    public static final double kStowHeight = 0.0;
-    public static final double kL2Height = 9.0;
-    public static final double kL3Height = 25.14;
-    public static final double kL4Height = 52.0;
-    public static final double kMaxHeight = 56.2;
-    public static final double kGroundAlgaeHeight = 0.0;
-    public static final double kScoreAlgaeHeight = 0.0;
-    public static final double kLowAlgaeHeight = 24.8;
-    public static final double kHighAlgaeHeight = 42.5;
+    public final double k_stowHeight = 0.0; // TODO Confirm units
+    public final double k_L1Height = 0.0; //TODO Get height
+    public final double k_L2Height = 9.0;
+    public final double k_L3Height = 25.14;
+    public final double k_L4Height = 52.0;
+    public final double k_maxHeight = 56.2;
+    public final double k_groundAlgaeHeight = 0.0;
+    // public final double k_lowAlgaeHeight = 24.8;
+    // public final double k_highAlgaeHeight = 42.5;
   }
 
   // TODO: add Gamepiece class for Coral- and Algae-related constants

@@ -15,11 +15,11 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
 import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Elevator extends Subsystem {
-
   /*-------------------------------- Private instance variables ---------------------------------*/
   private static Elevator m_instance;
   private PeriodicIO m_periodicIO;
@@ -55,17 +55,17 @@ public class Elevator extends Subsystem {
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
     elevatorConfig.closedLoop
-        .pid(RobotConstants.robotConfig.Elevator.kP, RobotConstants.robotConfig.Elevator.kI, RobotConstants.robotConfig.Elevator.kD)
-        .iZone(RobotConstants.robotConfig.Elevator.kIZone)
-        .minOutput(RobotConstants.robotConfig.Elevator.kMaxPowerDown)
-        .maxOutput(RobotConstants.robotConfig.Elevator.kMaxPowerUp);
+        .pid(RobotConstants.robotConfig.Elevator.k_P, RobotConstants.robotConfig.Elevator.k_I, RobotConstants.robotConfig.Elevator.k_D)
+        .iZone(RobotConstants.robotConfig.Elevator.k_IZone)
+        .minOutput(RobotConstants.robotConfig.Elevator.k_maxPowerDown)
+        .maxOutput(RobotConstants.robotConfig.Elevator.k_maxPowerUp);
 
-    elevatorConfig.smartCurrentLimit(RobotConstants.robotConfig.Elevator.kMaxCurrent);
+    elevatorConfig.smartCurrentLimit(RobotConstants.robotConfig.Elevator.k_maxCurrent);
 
     elevatorConfig.idleMode(IdleMode.kBrake);
 
     // LEFT ELEVATOR MOTOR
-    m_leftMotor = new SimulatableCANSparkMax(RobotConstants.robotConfig.Elevator.kElevatorLeftMotorId, MotorType.kBrushless);
+    m_leftMotor = new SimulatableCANSparkMax(RobotConstants.robotConfig.Elevator.k_elevatorLeftMotorId, MotorType.kBrushless);
     m_leftEncoder = m_leftMotor.getEncoder();
     m_leftPIDController = m_leftMotor.getClosedLoopController();
     m_leftMotor.configure(
@@ -74,7 +74,7 @@ public class Elevator extends Subsystem {
         PersistMode.kPersistParameters);
 
     // RIGHT ELEVATOR MOTOR
-    m_rightMotor = new SimulatableCANSparkMax(RobotConstants.robotConfig.Elevator.kElevatorRightMotorId, MotorType.kBrushless);
+    m_rightMotor = new SimulatableCANSparkMax(RobotConstants.robotConfig.Elevator.k_elevatorRightMotorId, MotorType.kBrushless);
     m_rightEncoder = m_rightMotor.getEncoder();
     m_rightPIDController = m_rightMotor.getClosedLoopController();
     m_rightMotor.configure(
@@ -84,18 +84,19 @@ public class Elevator extends Subsystem {
 
     m_profile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
-            RobotConstants.robotConfig.Elevator.kMaxVelocity,
-            RobotConstants.robotConfig.Elevator.kMaxAcceleration));
+            RobotConstants.robotConfig.Elevator.k_maxVelocity,
+            RobotConstants.robotConfig.Elevator.k_maxAcceleration));
   }
 
   public enum ElevatorState {
     NONE,
     STOW,
+    L1,
     L2,
     L3,
     L4,
-    A1,
-    A2
+    // A1, // Algae L2
+    // A2 // Algae L3
   }
 
   private static class PeriodicIO {
@@ -137,7 +138,7 @@ public class Elevator extends Subsystem {
           m_currentState.position,
           SparkBase.ControlType.kPosition,
           ClosedLoopSlot.kSlot0,
-          RobotConstants.robotConfig.Elevator.kG,
+          RobotConstants.robotConfig.Elevator.k_FF,
           ArbFFUnits.kVoltage);
     } else {
       m_currentState.position = m_leftEncoder.getPosition();
@@ -174,45 +175,56 @@ public class Elevator extends Subsystem {
 
   public void goToElevatorStow() {
     m_periodicIO.is_elevator_pos_control = true;
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kStowHeight;
+    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_stowHeight;
     m_periodicIO.state = ElevatorState.STOW;
+  }
+
+  public void goToElevatorL1() {
+    m_periodicIO.is_elevator_pos_control = true;
+    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L1Height;
+    m_periodicIO.state = ElevatorState.L1;
   }
 
   public void goToElevatorL2() {
     m_periodicIO.is_elevator_pos_control = true;
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kL2Height;
+    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L2Height;
     m_periodicIO.state = ElevatorState.L2;
   }
 
   public void goToElevatorL3() {
     m_periodicIO.is_elevator_pos_control = true;
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kL3Height;
+    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L3Height;
     m_periodicIO.state = ElevatorState.L3;
   }
 
   public void goToElevatorL4() {
     m_periodicIO.is_elevator_pos_control = true;
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kL4Height;
+    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L4Height;
     m_periodicIO.state = ElevatorState.L4;
   }
 
-  public void goToAlgaeLow() {
-    m_periodicIO.is_elevator_pos_control = true;
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kLowAlgaeHeight;
-    m_periodicIO.state = ElevatorState.A1;
-  }
+  // public void goToAlgaeLow() {
+  //   m_periodicIO.is_elevator_pos_control = true;
+  //   m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kLowAlgaeHeight;
+  //   m_periodicIO.state = ElevatorState.A1;
+  // }
 
-  public void goToAlgaeHigh() {
-    m_periodicIO.is_elevator_pos_control = true;
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kHighAlgaeHeight;
-    m_periodicIO.state = ElevatorState.A2;
-  }
+  // public void goToAlgaeHigh() {
+  //   m_periodicIO.is_elevator_pos_control = true;
+  //   m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.kHighAlgaeHeight;
+  //   m_periodicIO.state = ElevatorState.A2;
+  // }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
   @AutoLogOutput(key = "Elevator/Position/Current")
   private double getCurrentPosition() {
     return m_leftEncoder.getPosition();
+  }
+
+  @AutoLogOutput(key = "Elevator/ElevatorStateOrdinal")
+  public int getElevatorStateOrdinal() {
+    return m_periodicIO.state.ordinal();
   }
 
   @AutoLogOutput(key = "Elevator/Position/Target")
