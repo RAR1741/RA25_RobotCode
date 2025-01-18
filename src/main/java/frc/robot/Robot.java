@@ -12,6 +12,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
+import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
@@ -26,6 +27,8 @@ public class Robot extends LoggedRobot {
 
   private final SwerveDrive m_swerve;
   private final RAROdometry m_odometry;
+  private final Conveyor m_conveyor;
+
   private final DriverController m_driverController;
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -42,6 +45,7 @@ public class Robot extends LoggedRobot {
     m_subsystems = new ArrayList<>();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
+    m_conveyor = Conveyor.getInstance();
 
     m_driverController = new DriverController(0, false, false, 0.5);
     m_xRateLimiter = new SlewRateLimiter(3);
@@ -50,6 +54,8 @@ public class Robot extends LoggedRobot {
     
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
+    m_subsystems.add(m_conveyor);
+    
   }
 
   @Override
@@ -75,7 +81,9 @@ public class Robot extends LoggedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    m_conveyor.start();
+  }
 
   @Override
   public void teleopPeriodic() {
@@ -97,7 +105,9 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_conveyor.stop();
+  }
 
   @Override
   public void disabledPeriodic() {}

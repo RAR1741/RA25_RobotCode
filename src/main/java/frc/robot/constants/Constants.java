@@ -6,6 +6,7 @@ public class Constants {
   public RobotConstants Robot = new RobotConstants();
   public FieldConstants Field = new FieldConstants();
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
+  public ConveyorConstants Conveyor = new ConveyorConstants();
 
   public static class RobotConstants {
     public double k_width = 27.0; // Inches
@@ -18,6 +19,11 @@ public class Constants {
   public static class FieldConstants {
     public double k_width = Units.feetToMeters(54.0); //TODO: Use the 2025 field perimeter
     public double k_length = Units.feetToMeters(27.0);
+  }
+
+  public static class ConveyorConstants {
+    public int k_conveyorMotorId = 25;
+    public double k_conveyorSpeed = 0.5;
   }
 
   public static class SwerveDriveConstants {
