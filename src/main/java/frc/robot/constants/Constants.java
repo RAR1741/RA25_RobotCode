@@ -8,6 +8,8 @@ public class Constants {
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
 
   public static class RobotConstants {
+    public String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the Drivetrain CANivore
+
     public double k_width = 27.0; // Inches
     public double k_length = 30.0; // Inches
 
@@ -21,6 +23,8 @@ public class Constants {
   }
 
   public static class SwerveDriveConstants {
+    public String k_canBus = "Drivetrain";
+
     // Drivetrain wheel offsets
     //TODO: Make this match 2025 robot
     public double k_xDistance = 0.762; // 30 inches Forward/Backward
@@ -84,10 +88,10 @@ public class Constants {
       public double k_BROffset;
       public double k_BLOffset;
 
-      public int k_FLAbsId = 0;
-      public int k_FRAbsId = 1;
-      public int k_BRAbsId = 2;
-      public int k_BLAbsId = 3;
+      public int k_FLAbsId = 4;
+      public int k_FRAbsId = 6;
+      public int k_BRAbsId = 7;
+      public int k_BLAbsId = 8;
 
       public int k_currentLimit = 25;
 

@@ -2,22 +2,16 @@ package frc.robot.subsystems.drivetrain;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.RelativeEncoder;
-// import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-// import com.revrobotics.spark.SparkBase.ControlType;
-// import com.revrobotics.spark.SparkBase.PersistMode;
-// import com.revrobotics.spark.SparkBase.ResetMode;
-// import com.revrobotics.spark.SparkClosedLoopController;
-// import com.revrobotics.spark.SparkLowLevel.MotorType;
-// import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-// import com.revrobotics.spark.config.SparkMaxConfig;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -25,19 +19,18 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
-// import frc.robot.wrappers.RARSparkMax;
 
 public class SwerveModule {
   private final TalonFX m_driveMotor;
   private final TalonFX m_turnMotor;
 
   // private final SparkClosedLoopController m_turningPIDController;
-  private final SparkAbsoluteEncoder m_turningAbsEncoder;
-  private final RelativeEncoder m_turningRelEncoder;
+  private final CANcoder m_turningCANcoder;
+  // private final RelativeEncoder m_turningRelEncoder;
 
   private final PeriodicIO m_periodicIO = new PeriodicIO();
 
-  private final double m_turningOffset;
+  private double m_turningOffset;
 
   @SuppressWarnings("unused")
   private final String m_moduleName;
@@ -49,11 +42,11 @@ public class SwerveModule {
 
   private boolean m_moduleDisabled = false;
 
-  public SwerveModule(String moduleName, int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel, double turningOffset) {
+  public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID,  double turningOffset) {
     m_moduleName = moduleName;
     m_turningOffset = turningOffset;
 
-    m_driveMotor = new TalonFX(driveMotorChannel);
+    m_driveMotor = new TalonFX(driveMotorID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -75,7 +68,7 @@ public class SwerveModule {
 
     m_driveMotor.getConfigurator().apply(driveConfig);
 
-    m_turnMotor = new TalonFX(turningMotorChannel);
+    m_turnMotor = new TalonFX(turningMotorID);
     TalonFXConfiguration turnConfig = new TalonFXConfiguration();
 
     m_turnMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -95,9 +88,9 @@ public class SwerveModule {
     turnConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Turn.k_V;
     turnConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Turn.k_A;
 
-    turnConfig.ClosedLoopGeneral.ContinuousWrap = true; // TODO: verify this is PID wrapping
+    turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
-    m_turnMotor.getConfigurator().apply(turnConfig);
+    m_turningOffset = turningOffset;
 
     // m_turnMotor = new RARSparkMax(turningMotorChannel, MotorType.kBrushless);
     // SparkMaxConfig turnConfig = new SparkMaxConfig();
@@ -125,6 +118,21 @@ public class SwerveModule {
     // m_turningPIDController = m_turnMotor.getClosedLoopController();
     // m_turningAbsEncoder = m_turnMotor.getAbsoluteEncoder();
     // m_turningRelEncoder = m_turnMotor.getEncoder();
+
+    m_turningCANcoder = new CANcoder(turningCANcoderID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
+
+    CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
+
+    // TODO: check that this doesnt interfere with the inversion of the turn motor output
+    canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    canCoderConfig.MagnetSensor.MagnetOffset = m_turningOffset;
+
+    m_turningCANcoder.getConfigurator().apply(canCoderConfig);
+
+    turnConfig.Feedback.FeedbackRemoteSensorID = m_turningCANcoder.getDeviceID();
+    turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+
+    m_turnMotor.getConfigurator().apply(turnConfig);
   }
 
   public SwerveModuleState getState() {
@@ -214,9 +222,10 @@ public class SwerveModule {
     return m_driveMotor.getTorqueCurrent().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Abs/getTurnPosition")
-  public double getAsbEncoderPosition() {
-    return m_turningAbsEncoder.getPosition() - m_turningOffset;
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Abs/Rot")
+  public double getTurnAbsEncoderPosition() {
+    // return m_turningCANcoder.getPosition() - m_turningOffset;
+    return m_turningCANcoder.getAbsolutePosition().getValueAsDouble();
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/TemperatureC")
@@ -246,17 +255,13 @@ public class SwerveModule {
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Position")
   public double getTurnPosition() {
-    return Helpers.modRadians(m_turningRelEncoder.getPosition());
+    // return Helpers.modRadians(m_turningRelEncoder.getPosition());
+    return Units.rotationsToRadians(m_turnMotor.getPosition().getValueAsDouble());
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/absPosition")
-  public double getTurnAbsPosition() {
-    return Helpers.modRotations(m_turningAbsEncoder.getPosition() - m_turningOffset);
-  }
-
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/Velocity")
+  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/VelocityRPS")
   public double getTurnVelocity() {
-    return m_turningRelEncoder.getVelocity();
+    return m_turnMotor.getVelocity().getValueAsDouble();
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/error")
@@ -264,10 +269,10 @@ public class SwerveModule {
     return getState().angle.minus(m_periodicIO.desiredState.angle).getDegrees();
   }
 
-  @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/errorRelToAbs")
-  public double getTurnErrorRelToAbs() {
-    return getState().angle.minus(Rotation2d.fromRotations(getTurnAbsPosition())).getDegrees();
-  }
+  // @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/errorRelToAbs")
+  // public double getTurnErrorRelToAbs() {
+  //   return getState().angle.minus(Rotation2d.fromRotations(getTurnAbsPosition())).getDegrees();
+  // }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/ModuleDisabled")
   public boolean isModuleDisabled() {
