@@ -15,6 +15,7 @@ import frc.robot.controls.controllers.DriverController;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.Arm;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -27,6 +28,7 @@ public class Robot extends LoggedRobot {
   private final SwerveDrive m_swerve;
   private final RAROdometry m_odometry;
   private final DriverController m_driverController;
+  private final Arm m_arm;
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xRateLimiter;
@@ -42,6 +44,7 @@ public class Robot extends LoggedRobot {
     m_subsystems = new ArrayList<>();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
+    m_arm = Arm.getInstance();
 
     m_driverController = new DriverController(0, false, false, 0.5);
     m_xRateLimiter = new SlewRateLimiter(3);
@@ -50,6 +53,7 @@ public class Robot extends LoggedRobot {
     
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
+    m_subsystems.add(m_arm);
   }
 
   @Override

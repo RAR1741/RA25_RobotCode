@@ -1,9 +1,17 @@
 package frc.robot.subsystems;
 
 public class Arm extends Subsystem{
+    private static Arm m_arm = null;
 
     private Arm() {
         super("Arm");
+    }
+
+    public static Arm getInstance(){
+        if (m_arm == null) {
+            m_arm = new Arm();
+        }
+        return m_arm;
     }
 
     @Override
