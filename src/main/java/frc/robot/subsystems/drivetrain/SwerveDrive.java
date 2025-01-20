@@ -21,43 +21,47 @@ public class SwerveDrive extends Subsystem {
   // Robot "forward" is +x
   // Robot "left" is +y
   // Robot "clockwise" is -z
-  private final Translation2d m_frontLeftLocation = new Translation2d(RobotConstants.robotConfig.SwerveDrive.k_xCenterDistance,
+  private final Translation2d m_frontLeftLocation = new Translation2d(
+      RobotConstants.robotConfig.SwerveDrive.k_xCenterDistance,
       RobotConstants.robotConfig.SwerveDrive.k_yCenterDistance);
-  private final Translation2d m_frontRightLocation = new Translation2d(RobotConstants.robotConfig.SwerveDrive.k_xCenterDistance,
+  private final Translation2d m_frontRightLocation = new Translation2d(
+      RobotConstants.robotConfig.SwerveDrive.k_xCenterDistance,
       -RobotConstants.robotConfig.SwerveDrive.k_yCenterDistance);
-  private final Translation2d m_backLeftLocation = new Translation2d(-RobotConstants.robotConfig.SwerveDrive.k_xCenterDistance,
+  private final Translation2d m_backLeftLocation = new Translation2d(
+      -RobotConstants.robotConfig.SwerveDrive.k_xCenterDistance,
       RobotConstants.robotConfig.SwerveDrive.k_yCenterDistance);
-  private final Translation2d m_backRightLocation = new Translation2d(-RobotConstants.robotConfig.SwerveDrive.k_xCenterDistance,
+  private final Translation2d m_backRightLocation = new Translation2d(
+      -RobotConstants.robotConfig.SwerveDrive.k_xCenterDistance,
       -RobotConstants.robotConfig.SwerveDrive.k_yCenterDistance);
 
   private static final SwerveModule[] m_modules = {
       new SwerveModule(
-        "FL",
-        RobotConstants.robotConfig.SwerveDrive.Drive.k_FLMotorId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_FLMotorId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_FLAbsId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_FLOffset), // 0
+          "FL",
+          RobotConstants.robotConfig.SwerveDrive.Drive.k_FLMotorId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_FLMotorId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_FLAbsId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_FLOffset), // 0
 
       new SwerveModule(
-        "FR",
-        RobotConstants.robotConfig.SwerveDrive.Drive.k_FRMotorId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_FRMotorId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_FRAbsId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_FROffset), // 1
+          "FR",
+          RobotConstants.robotConfig.SwerveDrive.Drive.k_FRMotorId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_FRMotorId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_FRAbsId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_FROffset), // 1
 
       new SwerveModule(
-        "BR",
-        RobotConstants.robotConfig.SwerveDrive.Drive.k_BRMotorId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_BRMotorId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_BRAbsId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_BROffset), // 2
+          "BL",
+          RobotConstants.robotConfig.SwerveDrive.Drive.k_BLMotorId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_BLMotorId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_BLAbsId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_BLOffset), // 2
 
       new SwerveModule(
-        "BL",
-        RobotConstants.robotConfig.SwerveDrive.Drive.k_BLMotorId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_BLMotorId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_BLAbsId,
-        RobotConstants.robotConfig.SwerveDrive.Turn.k_BLOffset) // 3
+          "BR",
+          RobotConstants.robotConfig.SwerveDrive.Drive.k_BRMotorId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_BRMotorId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_BRAbsId,
+          RobotConstants.robotConfig.SwerveDrive.Turn.k_BROffset) // 3
   };
 
   private SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -72,7 +76,7 @@ public class SwerveDrive extends Subsystem {
 
   public void setBrake(boolean isBrake) {
     for (SwerveModule module : m_modules) {
-      if(isBrake) {
+      if (isBrake) {
         module.getDriveMotor().setNeutralMode(NeutralModeValue.Brake);
       } else {
         module.getDriveMotor().setNeutralMode(NeutralModeValue.Coast);
@@ -92,10 +96,12 @@ public class SwerveDrive extends Subsystem {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, RAROdometry.getInstance().getGyro().getRotation2d())
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
+                RAROdometry.getInstance().getGyro().getRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
 
-    double maxBoostSpeed = RobotConstants.robotConfig.SwerveDrive.k_maxSpeed * RobotConstants.robotConfig.SwerveDrive.k_boostScaler;
+    double maxBoostSpeed = RobotConstants.robotConfig.SwerveDrive.k_maxSpeed
+        * RobotConstants.robotConfig.SwerveDrive.k_boostScaler;
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, maxBoostSpeed);
 
     for (int i = 0; i < m_modules.length; i++) {
@@ -131,18 +137,18 @@ public class SwerveDrive extends Subsystem {
   }
 
   public SwerveModule getModule(int module) {
-    switch(module) {
+    switch (module) {
       case Module.FRONT_LEFT -> {
         return m_modules[Module.FRONT_LEFT];
       }
       case Module.FRONT_RIGHT -> {
-        return m_modules[Module.FRONT_LEFT];
+        return m_modules[Module.FRONT_RIGHT];
       }
       case Module.BACK_LEFT -> {
-        return m_modules[Module.FRONT_LEFT];
+        return m_modules[Module.BACK_LEFT];
       }
       case Module.BACK_RIGHT -> {
-        return m_modules[Module.FRONT_LEFT];
+        return m_modules[Module.BACK_RIGHT];
       }
     }
     return null;
@@ -153,8 +159,8 @@ public class SwerveDrive extends Subsystem {
     SwerveModuleState[] currentStates = {
         m_modules[Module.FRONT_LEFT].getState(),
         m_modules[Module.FRONT_RIGHT].getState(),
-        m_modules[Module.BACK_RIGHT].getState(),
-        m_modules[Module.BACK_LEFT].getState()
+        m_modules[Module.BACK_LEFT].getState(),
+        m_modules[Module.BACK_RIGHT].getState()
     };
 
     return currentStates;
@@ -165,8 +171,8 @@ public class SwerveDrive extends Subsystem {
     SwerveModuleState[] desiredStates = {
         m_modules[Module.FRONT_LEFT].getDesiredState(),
         m_modules[Module.FRONT_RIGHT].getDesiredState(),
-        m_modules[Module.BACK_RIGHT].getDesiredState(),
-        m_modules[Module.BACK_LEFT].getDesiredState()
+        m_modules[Module.BACK_LEFT].getDesiredState(),
+        m_modules[Module.BACK_RIGHT].getDesiredState()
     };
 
     return desiredStates;
@@ -175,8 +181,8 @@ public class SwerveDrive extends Subsystem {
   public interface Module {
     int FRONT_LEFT = 0;
     int FRONT_RIGHT = 1;
-    int BACK_RIGHT = 2;
-    int BACK_LEFT = 3;
+    int BACK_LEFT = 2;
+    int BACK_RIGHT = 3;
   }
 
   @Override
