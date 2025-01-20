@@ -6,9 +6,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -18,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
+import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
 
 public class SwerveModule {
@@ -25,7 +24,7 @@ public class SwerveModule {
   private final TalonFX m_turnMotor;
 
   // private final SparkClosedLoopController m_turningPIDController;
-  private final CANcoder m_turningCANcoder;
+  // private final CANcoder m_turningCANcoder; //TODO: Add this back when we have CANCoders
   // private final RelativeEncoder m_turningRelEncoder;
 
   private final PeriodicIO m_periodicIO = new PeriodicIO();
@@ -46,13 +45,14 @@ public class SwerveModule {
     m_moduleName = moduleName;
     m_turningOffset = turningOffset;
 
-    m_driveMotor = new TalonFX(driveMotorID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
+    //START DRIVE MOTOR INIT
+    m_driveMotor = new TalonFX(driveMotorID, "rio");//, RobotConstants.robotConfig.SwerveDrive.k_canBus); //TODO: Add this back when we get a CANivore
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
 
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
-    // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: check back with this if we add CANcoders
+    // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: Add this when we have CANCoders
 
     // the sound of silence
     driveConfig.Audio.BeepOnBoot = false;
@@ -67,7 +67,9 @@ public class SwerveModule {
     driveConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
 
     m_driveMotor.getConfigurator().apply(driveConfig);
+    //END DRIVE MOTOR INIT
 
+    //START TURN MOTOR INIT
     m_turnMotor = new TalonFX(turningMotorID);
     TalonFXConfiguration turnConfig = new TalonFXConfiguration();
 
@@ -75,9 +77,7 @@ public class SwerveModule {
 
     turnConfig.Audio.BeepOnBoot = false;
     turnConfig.Audio.BeepOnConfig = false;
-
-    turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // TODO: verify this is equivalent to setInverted(true)
-
+    turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;// TODO: maybe come back to this later
     turnConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio; // TODO: verify this works for both position and velocity
 
     turnConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Turn.k_P;
@@ -89,50 +89,23 @@ public class SwerveModule {
     turnConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Turn.k_A;
 
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-
     m_turningOffset = turningOffset;
 
-    // m_turnMotor = new RARSparkMax(turningMotorChannel, MotorType.kBrushless);
-    // SparkMaxConfig turnConfig = new SparkMaxConfig();
-    // turnConfig.idleMode(IdleMode.kCoast);
-    // turnConfig.inverted(true);
-
-    // turnConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
-    // turnConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
-
-    // turnConfig.closedLoop.p(RobotConstants.robotConfig.SwerveDrive.Turn.k_P);
-    // turnConfig.closedLoop.i(RobotConstants.robotConfig.SwerveDrive.Turn.k_I);
-    // turnConfig.closedLoop.d(RobotConstants.robotConfig.SwerveDrive.Turn.k_D);
-    // turnConfig.closedLoop.positionWrappingEnabled(true);
-    // turnConfig.closedLoop.positionWrappingMinInput(0.0);
-    // turnConfig.closedLoop.positionWrappingMaxInput(2.0 * Math.PI);
-    // turnConfig.closedLoop.outputRange(
-    //   RobotConstants.robotConfig.SwerveDrive.Turn.k_minOutput,
-    //   RobotConstants.robotConfig.SwerveDrive.Turn.k_maxOutput);
-
-    // // m_turnMotor.setSmartCurrentLimit(RobotConstants.SwerveDrive.Drive.k_turnCurrentLimit);
-    // // m_turningAbsEncoder = new TalonSRXMagEncoder(turningEncoderChannel);
-
-    // m_turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    // m_turningPIDController = m_turnMotor.getClosedLoopController();
-    // m_turningAbsEncoder = m_turnMotor.getAbsoluteEncoder();
-    // m_turningRelEncoder = m_turnMotor.getEncoder();
-
-    m_turningCANcoder = new CANcoder(turningCANcoderID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
-
+    // m_turningCANcoder = new CANcoder(turningCANcoderID);//, RobotConstants.robotConfig.SwerveDrive.k_canBus); //TODO: Add this back when we get a CANivore
+    RobotTelemetry.print("We should be making a CANCoder with the id " + turningCANcoderID + " but we aren't yet");
     CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
 
     // TODO: check that this doesnt interfere with the inversion of the turn motor output
     canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     canCoderConfig.MagnetSensor.MagnetOffset = m_turningOffset;
 
-    m_turningCANcoder.getConfigurator().apply(canCoderConfig);
+    // m_turningCANcoder.getConfigurator().apply(canCoderConfig); //TODO: Add this back when we get CANCoders
 
-    turnConfig.Feedback.FeedbackRemoteSensorID = m_turningCANcoder.getDeviceID();
-    turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    // turnConfig.Feedback.FeedbackRemoteSensorID = m_turningCANcoder.getDeviceID(); //TODO: Add this back when we get CANCoders
+    // turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
     m_turnMotor.getConfigurator().apply(turnConfig);
+    //END TURN MOTOR INIT
   }
 
   public SwerveModuleState getState() {
@@ -221,7 +194,8 @@ public class SwerveModule {
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Abs/Rotations")
   public double getTurnAbsEncoderPosition() {
     // return m_turningCANcoder.getPosition() - m_turningOffset;
-    return m_turningCANcoder.getAbsolutePosition().getValueAsDouble();
+    // return m_turningCANcoder.getAbsolutePosition().getValueAsDouble(); //TODO: Add this back when we have CANCoders
+    return 0.0;
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/TemperatureC")

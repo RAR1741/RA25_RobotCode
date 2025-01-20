@@ -52,7 +52,7 @@ public class Constants {
     public double k_wheelRadiusIn = 2.0; // inches
     public double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
     public double k_driveGearRatio = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
-    public double k_turnGearRatio = 7.0 / 150.0;
+    public double k_turnGearRatio = 150.0 / 7.0;
 
     public DriveConstants Drive = new DriveConstants();
 
@@ -100,7 +100,7 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public double k_P = 2.0;
+      public double k_P = 10.0;
       public double k_I = 0.0;
       public double k_D = 0.0;
       public double k_IZone = 0.0;
@@ -108,9 +108,9 @@ public class Constants {
       // We only use FF and are too scared to delete the others
       public double k_FF = 0.0;
 
-      public double k_S = 0.29745;
-      public double k_V = 0.43892; // Not used (fear)
-      public double k_A = 0.048573; // Not used (fear)
+      public double k_S = 0.0; //0.29745;
+      public double k_V = 0.0; //0.43892; // Not used (fear)
+      public double k_A = 0.0; //0.048573; // Not used (fear)
 
       public double k_minOutput = -1.0;
       public double k_maxOutput = 1.0;
