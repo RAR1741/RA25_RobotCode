@@ -14,7 +14,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Helpers;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.simulation.SimulatableCANSparkMax;
@@ -245,6 +247,43 @@ public class Elevator extends Subsystem {
   @AutoLogOutput(key = "Elevator/ElevatorStateOrdinal")
   public int getElevatorStateOrdinal() {
     return m_periodicIO.state.ordinal();
+  }
+
+  @AutoLogOutput(key = "Elevator/ElevatorState")
+  public ElevatorState getElevatorState() {
+    return m_periodicIO.state;
+  }
+
+  @AutoLogOutput
+  public double getElevatorPosition() {
+    return Units.rotationsToDegrees(Helpers.modRotations(
+        m_leftEncoder.getPosition()
+            /*- Units.degreesToRotations(RobotConstants.config.Shooter.k_absPivotOffset)*/)); // TODO I have no clue what this value should be replaced with
+  }
+
+  private double getElevatorTargetFromState(ElevatorState state) {
+    switch (state) {
+      case STOW:
+        return RobotConstants.robotConfig.Elevator.k_stowHeight;
+      case L1:
+        return RobotConstants.robotConfig.Elevator.k_L1Height;
+      case L2:
+        return RobotConstants.robotConfig.Elevator.k_L2Height;
+      case L3:
+        return RobotConstants.robotConfig.Elevator.k_L3Height;
+      case L4:
+        return RobotConstants.robotConfig.Elevator.k_L4Height;
+      default:
+        return RobotConstants.robotConfig.Elevator.k_stowHeight;
+    }
+  }
+
+  @AutoLogOutput(key = "Elevator/IsAtState")
+  public boolean getIsAtState() {
+    double angle = getElevatorPosition();
+    double target_angle = getElevatorTargetFromState(m_periodicIO.state);
+
+    return angle >= Math.abs(target_angle - 2); // TODO Find new threshold
   }
 
   @AutoLogOutput(key = "Elevator/Position/Target")
