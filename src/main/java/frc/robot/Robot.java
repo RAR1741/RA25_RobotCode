@@ -14,8 +14,10 @@ import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.EndAffector;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.EndAffector.EndEffectorState;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 
@@ -29,6 +31,7 @@ public class Robot extends LoggedRobot {
 
   private final SwerveDrive m_swerve;
   private final Elevator m_elevator;
+  private final EndAffector m_endAffector;
   private final RAROdometry m_odometry;
   private final DriverController m_driverController;
   private final OperatorController m_operatorController;
@@ -48,17 +51,19 @@ public class Robot extends LoggedRobot {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
     m_elevator = Elevator.getInstance();
+    m_endAffector = EndAffector.getInstance();
 
     m_driverController = new DriverController(0, false, false, 0.5);
     m_xRateLimiter = new SlewRateLimiter(3);
     m_yRateLimiter = new SlewRateLimiter(3);
     m_rotRateLimiter = new SlewRateLimiter(3);
 
-    m_operatorController = new OperatorController(1);
+    m_operatorController = new OperatorController(1, false, false, 0.5);
     
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
     m_subsystems.add(m_elevator);
+    m_subsystems.add(m_endAffector);
   }
 
   @Override
@@ -114,6 +119,14 @@ public class Robot extends LoggedRobot {
       m_elevator.goToElevatorPosition(ElevatorState.L3);
     } else if (m_operatorController.getWantsGoToL4()) {
       m_elevator.goToElevatorPosition(ElevatorState.L4);
+    }
+
+    if (m_operatorController.getWantsScore() > 0) {
+      m_endAffector.setState(EndEffectorState.SCORE_BRANCHES);
+    } else if (m_operatorController.getWantsScore() < 0) {
+      m_endAffector.setState(EndEffectorState.SCORE_TROUGH);
+    } else {
+      m_endAffector.setState(EndEffectorState.OFF);
     }
   }
 
