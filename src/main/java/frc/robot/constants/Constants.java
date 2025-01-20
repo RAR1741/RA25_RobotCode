@@ -100,14 +100,14 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public double k_P = 10.0;
+      public double k_P = 100.0;
       public double k_I = 0.0;
-      public double k_D = 0.0;
+      public double k_D = 1.0;
       public double k_IZone = 0.0;
 
       // We only use FF and are too scared to delete the others
       public double k_FF = 0.0;
-
+      
       public double k_S = 0.0; //0.29745;
       public double k_V = 0.0; //0.43892; // Not used (fear)
       public double k_A = 0.0; //0.048573; // Not used (fear)

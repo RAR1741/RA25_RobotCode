@@ -4,7 +4,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -88,6 +88,10 @@ public class SwerveModule {
     turnConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Turn.k_V;
     turnConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Turn.k_A;
 
+    turnConfig.MotionMagic.MotionMagicAcceleration = 1000;
+    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
+    // turnConfig.MotionMagic.MotionMagicJerk = 1600;
+
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
     m_turningOffset = turningOffset;
 
@@ -154,7 +158,10 @@ public class SwerveModule {
     VelocityVoltage driveRequest = new VelocityVoltage(driveVelocity).withSlot(0);
     m_driveMotor.setControl(driveRequest);
 
-    PositionVoltage turnRequest = new PositionVoltage(turnPosition).withSlot(0);
+    // DynamicMotionMagicVoltage turnRequest = new DynamicMotionMagicVoltage(turnPosition,80,160,1600);
+    // turnRequest.EnableFOC = true;
+    MotionMagicVoltage turnRequest = new MotionMagicVoltage(turnPosition).withSlot(0);
+    turnRequest.EnableFOC = true;
     m_turnMotor.setControl(turnRequest);
 
     // m_turningPIDController.setReference(getTurnTargetAngleRadians(), ControlType.kPosition, ClosedLoopSlot.kSlot0);
