@@ -4,13 +4,17 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.studica.frc.AHRS;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.RobotTelemetry;
 import frc.robot.LimelightHelpers.PoseEstimate;
+import frc.robot.RobotTelemetry;
+import frc.robot.constants.RobotConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Subsystem;
 
@@ -22,6 +26,8 @@ public class RAROdometry extends Subsystem {
 
   private final SwerveDrive m_swerve = SwerveDrive.getInstance();
 
+  private VisionConstants m_visionConstants;
+
   private SwerveDrivePoseEstimator m_poseEstimator;
 
   private RAROdometry() {
@@ -31,20 +37,22 @@ public class RAROdometry extends Subsystem {
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(
-      m_swerve.getKinematics(),
-      m_gyro.getRotation2d(),
-      new SwerveModulePosition[] {
-          m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
-          m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
-          m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition(),
-          m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition()
-      },
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)) // TODO: CLARIFY THIS WORKS
+        m_swerve.getKinematics(),
+        m_gyro.getRotation2d(),
+        new SwerveModulePosition[] {
+            m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition()
+        },
+        new Pose2d(0, 0, Rotation2d.fromDegrees(0)) // we clarified this works
     );
+
+    m_visionConstants = new VisionConstants(1,100,0,100);
   }
 
   public static RAROdometry getInstance() {
-    if(m_instance == null) {
+    if (m_instance == null) {
       m_instance = new RAROdometry();
     }
     return m_instance;
@@ -70,10 +78,10 @@ public class RAROdometry extends Subsystem {
     m_poseEstimator.resetPosition(
         m_gyro.getRotation2d(),
         new SwerveModulePosition[] {
-          m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
-          m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
-          m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition(),
-          m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition()
+            m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition(),
+            m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition()
         },
         pose);
   }
@@ -105,8 +113,66 @@ public class RAROdometry extends Subsystem {
     setPose(pose);
   }
 
+  Pose2d nullPose = new Pose2d();
+
   private boolean isPoseZero(PoseEstimate estimate) {
-    return estimate.pose.equals(new Pose2d());
+    return estimate.pose.equals(nullPose);
+  }
+
+  private boolean checkPose(PoseEstimate estimate) {
+    if (estimate == null) {
+      return false;
+    }
+
+    if (isPoseZero(estimate)) {
+      return false;
+    }
+
+    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConfig.Field.k_width) {
+      return false;
+    }
+
+    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConfig.Field.k_length) {
+      return false;
+    }
+
+    if (estimate.tagCount <= 0) {
+      return false;
+    }
+
+    if (Math.abs(m_gyro.getRate()) > 720) {
+      return false;
+    }
+
+    return true;
+  }
+
+  //TODO: Add these to Constants when we're done testing them
+  private double xyStdDevCoefficient = 0.005;
+  private double thetaStdDevCoefficient = 0.01;
+  private double stdDevFactor = 0.5; //TODO: Add more!
+  private boolean useVisionRotation = true;
+
+  private void updatePoseWithStdDev(PoseEstimate estimate) {
+    double avgDistance = estimate.avgTagDist;
+    double xyStdDev = xyStdDevCoefficient
+        * Math.pow(avgDistance, 2.0)
+        / estimate.tagCount
+        * stdDevFactor
+        * (DriverStation.isAutonomous() ? m_visionConstants.autoStdDevScale : 1.0);
+
+    double thetaStdDev = useVisionRotation
+        ? thetaStdDevCoefficient
+            * Math.pow(avgDistance, 2.0)
+            / estimate.tagCount
+            * stdDevFactor
+            * (DriverStation.isAutonomous() ? m_visionConstants.autoStdDevScale : 1.0)
+        : Double.POSITIVE_INFINITY;
+
+    m_poseEstimator.addVisionMeasurement(
+        estimate.pose,
+        estimate.timestampSeconds,
+        VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
   }
 
   @Override
@@ -127,6 +193,10 @@ public class RAROdometry extends Subsystem {
             m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
         });
     PoseEstimate estimate = m_limelight.getPoseEstimation();
+
+    if(checkPose(estimate)) {
+      updatePoseWithStdDev(estimate);
+    }
 
     if (estimate != null && !isPoseZero(estimate)) {
       m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
@@ -157,9 +227,14 @@ public class RAROdometry extends Subsystem {
     return m_gyro.getRoll();
   }
 
-  @AutoLogOutput
+  @AutoLogOutput(key = "Odometry/Gyro/NavXTimestamp")
   public double getNavXTimestamp() {
     return (double) m_gyro.getLastSensorTimestamp();
+  }
+
+  @AutoLogOutput(key = "Odometry/Limelight/LimelightPoseEstimation")
+  public Pose2d getLimelightPose2d() {
+    return m_limelight.getPoseEstimation().pose;
   }
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
@@ -167,7 +242,7 @@ public class RAROdometry extends Subsystem {
     return m_poseEstimator.getEstimatedPosition();
   }
 
-//   private enum LimelightInstance {
-//     LEFT, RIGHT, CENTER
-//   }
+  // private enum LimelightInstance {
+  // LEFT, RIGHT, CENTER
+  // }
 }

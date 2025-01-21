@@ -102,7 +102,7 @@ public class SwerveDrive extends Subsystem {
 
     double maxBoostSpeed = RobotConstants.robotConfig.SwerveDrive.k_maxSpeed
         * RobotConstants.robotConfig.SwerveDrive.k_boostScaler;
-        
+
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, maxBoostSpeed);
 
     for (int i = 0; i < m_modules.length; i++) {
