@@ -8,7 +8,8 @@ public class Constants {
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
 
   public static class RobotConstants {
-    public String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the Drivetrain CANivore
+    public String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
+                                    // Drivetrain CANivore
 
     public double k_width = 27.0; // Inches
     public double k_length = 30.0; // Inches
@@ -18,7 +19,7 @@ public class Constants {
   }
 
   public static class FieldConstants {
-    public double k_width = Units.feetToMeters(54.0); //TODO: Use the 2025 field perimeter
+    public double k_width = Units.feetToMeters(54.0); // TODO: Use the 2025 field perimeter
     public double k_length = Units.feetToMeters(27.0);
   }
 
@@ -26,9 +27,9 @@ public class Constants {
     public String k_canBus = "Drivetrain";
 
     // Drivetrain wheel offsets
-    //TODO: Make this match 2025 robot
-    public double k_xDistance = 0.762; // 30 inches Forward/Backward
-    public double k_yDistance = 0.762; // in meters! Side-to-Side
+    // TODO: Make this match 2025 robot
+    public double k_xDistance = Units.inchesToMeters(26.75); // 30 inches Forward/Backward
+    public double k_yDistance = Units.inchesToMeters(22.75); // in meters! Side-to-Side
 
     public double k_xCenterDistance = k_xDistance / 2.0;
     public double k_yCenterDistance = k_yDistance / 2.0;
@@ -37,10 +38,6 @@ public class Constants {
     public double k_maxSpeed = 1.5; // Meters per second
     public double k_maxBoostSpeed = 4.5; // Meters per second
     public double k_maxAngularSpeed = Math.PI * 2.0; // Radians per second
-
-    public double k_maxDemoSpeed = k_maxSpeed / 2.0;
-    public double k_maxDemoAngularSpeed = k_maxAngularSpeed / 2.0;
-    public double k_maxDemoBoostSpeed = 4.5;
 
     // Max acceleration
     public double k_maxLinearAcceleration = 12.0; // Meters per second^2
@@ -65,17 +62,14 @@ public class Constants {
 
       public int k_currentLimit = 40;
 
-      public double k_P = 0.0; //00221; // setCory("goated");
+      public double k_P = 0.84992; // setCory("goated");
       public double k_I = 0.0;
       public double k_D = 0.0;
       public double k_IZone = 0.0;
 
-      public double k_FFS = 0.15; // jordan is telling jesse to cook (and he is cooking (very much)) ps. its still not working pps. hey its working now
-      public double k_FFV = 0.65;
-      public double k_FFA = 0.0; // TODO: maybe come back to this?????
-      // public double k_FFS = 0.255;
-      // public double k_FFV = 2.675;
-      // public double k_FFA = 0.525;
+      public double k_FFS = 0.2368;
+      public double k_FFV = 0.67229;
+      public double k_FFA = 0.080151;
     }
 
     public TurnConstants Turn = new TurnConstants();
@@ -107,10 +101,10 @@ public class Constants {
 
       // We only use FF and are too scared to delete the others
       public double k_FF = 0.0;
-      
-      public double k_S = 0.0; //0.29745;
-      public double k_V = 0.0; //0.43892; // Not used (fear)
-      public double k_A = 0.0; //0.048573; // Not used (fear)
+
+      public double k_S = 0.0; // 0.29745;
+      public double k_V = 0.0; // 0.43892; // Not used (fear)
+      public double k_A = 0.0; // 0.048573; // Not used (fear)
 
       public double k_minOutput = -1.0;
       public double k_maxOutput = 1.0;

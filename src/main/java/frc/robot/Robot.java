@@ -7,21 +7,19 @@ package frc.robot;
 import java.util.ArrayList;
 
 import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
-import frc.robot.wrappers.REVThroughBoreEncoder;
 
 /**
- * The methods in this class are called automatically corresponding to each mode, as described in
- * the TimedRobot documentation. If you change the name of this class or the package after creating
+ * The methods in this class are called automatically corresponding to each
+ * mode, as described in
+ * the TimedRobot documentation. If you change the name of this class or the
+ * package after creating
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
@@ -31,13 +29,9 @@ public class Robot extends LoggedRobot {
   private final RAROdometry m_odometry;
   private final DriverController m_driverController;
 
-  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
-  private final SlewRateLimiter m_xRateLimiter;
-  private final SlewRateLimiter m_yRateLimiter;
-  private final SlewRateLimiter m_rotRateLimiter;
-
   /**
-   * This function is run when the robot is first started up and should be used for any
+   * This function is run when the robot is first started up and should be used
+   * for any
    * initialization code.
    */
   public Robot() {
@@ -47,10 +41,6 @@ public class Robot extends LoggedRobot {
     m_odometry = RAROdometry.getInstance();
 
     m_driverController = new DriverController(0, false, false, 0.5);
-    m_xRateLimiter = new SlewRateLimiter(3);
-    m_yRateLimiter = new SlewRateLimiter(3);
-    m_rotRateLimiter = new SlewRateLimiter(3);
-    
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
   }
@@ -72,48 +62,59 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+  }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   @Override
   public void teleopPeriodic() {
-    double xSpeed = m_xRateLimiter.calculate(m_driverController.getForwardAxis());
-    double ySpeed = m_yRateLimiter.calculate(m_driverController.getStrafeAxis());
-    double rot = m_rotRateLimiter.calculate(m_driverController.getTurnAxis());
-    
+    double xSpeed = m_driverController.getForwardAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxSpeed;
+    double ySpeed = m_driverController.getStrafeAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxSpeed;
+    double rot = m_driverController.getTurnAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxAngularSpeed;
+
     // slowScaler should scale between k_slowScaler and 1
-    double slowScaler = RobotConstants.robotConfig.SwerveDrive.k_slowScaler + ((1 - m_driverController.getSlowScaler()) * (1 - RobotConstants.robotConfig.SwerveDrive.k_slowScaler));
+    double slowScaler = RobotConstants.robotConfig.SwerveDrive.k_slowScaler
+        + ((1 - m_driverController.getSlowScaler()) * (1 - RobotConstants.robotConfig.SwerveDrive.k_slowScaler));
     // boostScaler should scale between 1 and k_boostScaler
-    double boostScaler = 1 + (m_driverController.getBoostScaler() * (RobotConstants.robotConfig.SwerveDrive.k_boostScaler - 1));
+    double boostScaler = 1
+        + (m_driverController.getBoostScaler() * (RobotConstants.robotConfig.SwerveDrive.k_boostScaler - 1));
 
     xSpeed *= slowScaler * boostScaler;
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
 
-    m_swerve.drive(xSpeed, ySpeed, rot, false);
+    m_swerve.drive(xSpeed, ySpeed, rot, true);
     // m_swerve.drive(1, 0, 0, false);
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void testInit() {}
+  public void testInit() {
+  }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }
