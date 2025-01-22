@@ -202,12 +202,12 @@ public class RAROdometry extends Subsystem {
         updatePoseWithStdDev(estimate);
       }
 
-      if (estimate != null && !isPoseZero(estimate)) {
-        m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
-      }
+      // if (estimate != null && !isPoseZero(estimate)) {
+      //   m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
+      // }
     } else {
       PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
-      if(!megatag1estimate.pose.equals(new Pose2d())) {
+      if(megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d())) {
         m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
         m_hasSetPose = true;
       }
@@ -223,40 +223,40 @@ public class RAROdometry extends Subsystem {
     RobotTelemetry.print("Stopping Odometry!");
   }
 
-  @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
-  public double getGyroYawDeg() {
-    return m_gyro.getAngle();
-  }
+  // @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
+  // public double getGyroYawDeg() {
+  //   return m_gyro.getAngle();
+  // }
 
-  @AutoLogOutput(key = "Odometry/Gyro/PitchDeg")
-  public double getGyroPitchDeg() {
-    return m_gyro.getPitch();
-  }
+  // @AutoLogOutput(key = "Odometry/Gyro/PitchDeg")
+  // public double getGyroPitchDeg() {
+  //   return m_gyro.getPitch();
+  // }
 
-  @AutoLogOutput(key = "Odometry/Gyro/RollDeg")
-  public double getGyroRollDeg() {
-    return m_gyro.getRoll();
-  }
+  // @AutoLogOutput(key = "Odometry/Gyro/RollDeg")
+  // public double getGyroRollDeg() {
+  //   return m_gyro.getRoll();
+  // }
 
-  @AutoLogOutput(key = "Odometry/Gyro/NavXTimestamp")
-  public double getNavXTimestamp() {
-    return (double) m_gyro.getLastSensorTimestamp();
-  }
+  // @AutoLogOutput(key = "Odometry/Gyro/NavXTimestamp")
+  // public double getNavXTimestamp() {
+  //   return (double) m_gyro.getLastSensorTimestamp();
+  // }
 
-  @AutoLogOutput(key = "Odometry/Limelight/LimelightPoseEstimation")
-  public Pose2d getLimelightPose2d() {
-    return m_limelight.getPoseEstimation().pose;
-  }
+  // @AutoLogOutput(key = "Odometry/Limelight/LimelightPoseEstimation")
+  // public Pose2d getLimelightPose2d() {
+  //   return m_limelight.getPoseEstimation().pose;
+  // }
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
   }
 
-  @AutoLogOutput(key = "Odometry/PoseEstimator/DistanceMetersFromNearestAprilTag")
-  public double getDistanceMetersFromNearestAprilTag() {
-    return m_limelight.getPoseEstimation().avgTagDist;
-  }
+  // @AutoLogOutput(key = "Odometry/PoseEstimator/DistanceMetersFromNearestAprilTag")
+  // public double getDistanceMetersFromNearestAprilTag() {
+  //   return m_limelight.getPoseEstimation().avgTagDist;
+  // }
 
   // private enum LimelightInstance {
   // LEFT, RIGHT, CENTER

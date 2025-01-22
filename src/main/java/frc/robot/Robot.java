@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import frc.robot.autonomous.AutoChooser;
+import frc.robot.autonomous.AutoRunner;
+import frc.robot.autonomous.modes.TestMode;
+import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.subsystems.Subsystem;
@@ -29,6 +33,10 @@ public class Robot extends LoggedRobot {
   private final RAROdometry m_odometry;
   private final DriverController m_driverController;
 
+  private final AutoRunner m_autoRunner;
+  private final AutoChooser m_autoChooser;
+  private Task m_currentTask;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -39,6 +47,8 @@ public class Robot extends LoggedRobot {
     m_subsystems = new ArrayList<>();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
+    m_autoRunner = AutoRunner.getInstance();
+    m_autoChooser = new AutoChooser();
 
     m_driverController = new DriverController(0, false, false, 0.5);
     m_subsystems.add(m_swerve);
@@ -63,6 +73,13 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
+    m_autoRunner.setAutoMode(m_autoChooser.getSelectedAuto());
+    m_currentTask = m_autoRunner.getNextTask();
+
+    // Start the first task
+    if (m_currentTask != null) {
+      m_currentTask.prepare();
+    }
   }
 
   @Override
