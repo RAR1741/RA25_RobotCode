@@ -51,6 +51,10 @@ public class Limelight {
     return m_limelightTable.getEntry("tv").getInteger(0) == 1;
   }
 
+  public PoseEstimate getMegaTag1PoseEstimation() {
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+  }
+
   public double getTimeOffset() {
     return Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline(m_name);
   }

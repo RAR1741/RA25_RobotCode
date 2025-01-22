@@ -30,6 +30,8 @@ public class RAROdometry extends Subsystem {
 
   private SwerveDrivePoseEstimator m_poseEstimator;
 
+  private boolean m_hasSetPose;
+
   private RAROdometry() {
     super("Odometry");
 
@@ -194,12 +196,21 @@ public class RAROdometry extends Subsystem {
         });
     PoseEstimate estimate = m_limelight.getPoseEstimation();
 
-    if(checkPose(estimate)) {
-      updatePoseWithStdDev(estimate);
-    }
+    //TODO: I hate this
+    if(m_hasSetPose) {
+      if(checkPose(estimate)) {
+        updatePoseWithStdDev(estimate);
+      }
 
-    if (estimate != null && !isPoseZero(estimate)) {
-      m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
+      if (estimate != null && !isPoseZero(estimate)) {
+        m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
+      }
+    } else {
+      PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
+      if(!megatag1estimate.pose.equals(new Pose2d())) {
+        m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
+        m_hasSetPose = true;
+      }
     }
   }
 
@@ -240,6 +251,11 @@ public class RAROdometry extends Subsystem {
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
+  }
+
+  @AutoLogOutput(key = "Odometry/PoseEstimator/DistanceMetersFromNearestAprilTag")
+  public double getDistanceMetersFromNearestAprilTag() {
+    return m_limelight.getPoseEstimation().avgTagDist;
   }
 
   // private enum LimelightInstance {

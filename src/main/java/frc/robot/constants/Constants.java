@@ -19,8 +19,8 @@ public class Constants {
   }
 
   public static class FieldConstants {
-    public double k_width = Units.feetToMeters(54.0); // TODO: Use the 2025 field perimeter
-    public double k_length = Units.feetToMeters(27.0);
+    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0/8.0)); // TODO: Use the 2025 field perimeter
+    public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
   }
 
   public static class SwerveDriveConstants {
