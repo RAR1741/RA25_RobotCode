@@ -14,10 +14,10 @@ import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.EndAffector;
+import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.Elevator.ElevatorState;
-import frc.robot.subsystems.EndAffector.EndEffectorState;
+import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 
@@ -31,7 +31,7 @@ public class Robot extends LoggedRobot {
 
   private final SwerveDrive m_swerve;
   private final Elevator m_elevator;
-  private final EndAffector m_endAffector;
+  private final EndEffector m_endAffector;
   private final RAROdometry m_odometry;
   private final DriverController m_driverController;
   private final OperatorController m_operatorController;
@@ -51,7 +51,7 @@ public class Robot extends LoggedRobot {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
     m_elevator = Elevator.getInstance();
-    m_endAffector = EndAffector.getInstance();
+    m_endAffector = EndEffector.getInstance();
 
     m_driverController = new DriverController(0, false, false, 0.5);
     m_xRateLimiter = new SlewRateLimiter(3);

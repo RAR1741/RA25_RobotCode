@@ -18,7 +18,7 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean getWantsGoToL2() {
-    return this.getRawButtonPressed(Button.B);  
+    return this.getRawButtonPressed(Button.B);
   }
 
   public boolean getWantsGoToL3() {

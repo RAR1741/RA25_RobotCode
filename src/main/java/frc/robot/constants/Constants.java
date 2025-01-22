@@ -8,7 +8,7 @@ public class Constants {
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
   public ElevatorConstants Elevator = new ElevatorConstants();
   public LaserCanConstants LaserCan = new LaserCanConstants();
-  public EndAffectorConstants EndAffector = new EndAffectorConstants();
+  public EndEffectorConstants EndEffector = new EndEffectorConstants();
 
   public static class RobotConstants {
     public double k_width = 27.0; // Inches
@@ -151,7 +151,7 @@ public class Constants {
     public final int k_exitId = 17;
   }
 
-  public static class EndAffectorConstants {
+  public static class EndEffectorConstants {
     public final int k_leftMotorId = 18;
     public final int k_rightMotorId = 19;
     public final double k_P = 1.0;
