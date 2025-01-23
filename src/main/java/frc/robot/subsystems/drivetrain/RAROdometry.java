@@ -50,7 +50,7 @@ public class RAROdometry extends Subsystem {
         new Pose2d(0, 0, Rotation2d.fromDegrees(0)) // we clarified this works
     );
 
-    m_visionConstants = new VisionConstants(1,100,0,100);
+    // m_visionConstants = new VisionConstants(1,100,0,100);
   }
 
   public static RAROdometry getInstance() {
@@ -194,24 +194,24 @@ public class RAROdometry extends Subsystem {
             m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
             m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
         });
-    PoseEstimate estimate = m_limelight.getPoseEstimation();
+    // PoseEstimate estimate = m_limelight.getPoseEstimation();
 
-    //TODO: I hate this
-    if(m_hasSetPose) {
-      if(checkPose(estimate)) {
-        updatePoseWithStdDev(estimate);
-      }
+    // //TODO: I hate this
+    // if(m_hasSetPose) {
+    //   if(checkPose(estimate)) {
+    //     updatePoseWithStdDev(estimate);
+    //   }
 
-      if (estimate != null && !isPoseZero(estimate)) {
-        m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
-      }
-    } else {
-      PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
-      if(!megatag1estimate.pose.equals(new Pose2d())) {
-        m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
-        m_hasSetPose = true;
-      }
-    }
+    //   if (estimate != null && !isPoseZero(estimate)) {
+    //     m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
+    //   }
+    // } else {
+    //   PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
+    //   if(!megatag1estimate.pose.equals(new Pose2d())) {
+    //     m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
+    //     m_hasSetPose = true;
+    //   }
+    // }
   }
 
   @Override
@@ -243,20 +243,20 @@ public class RAROdometry extends Subsystem {
     return (double) m_gyro.getLastSensorTimestamp();
   }
 
-  @AutoLogOutput(key = "Odometry/Limelight/LimelightPoseEstimation")
-  public Pose2d getLimelightPose2d() {
-    return m_limelight.getPoseEstimation().pose;
-  }
+  // @AutoLogOutput(key = "Odometry/Limelight/LimelightPoseEstimation")
+  // public Pose2d getLimelightPose2d() {
+  //   return m_limelight.getPoseEstimation().pose;
+  // }
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
   }
 
-  @AutoLogOutput(key = "Odometry/PoseEstimator/DistanceMetersFromNearestAprilTag")
-  public double getDistanceMetersFromNearestAprilTag() {
-    return m_limelight.getPoseEstimation().avgTagDist;
-  }
+  // @AutoLogOutput(key = "Odometry/PoseEstimator/DistanceMetersFromNearestAprilTag")
+  // public double getDistanceMetersFromNearestAprilTag() {
+  //   return m_limelight.getPoseEstimation().avgTagDist;
+  // }
 
   // private enum LimelightInstance {
   // LEFT, RIGHT, CENTER

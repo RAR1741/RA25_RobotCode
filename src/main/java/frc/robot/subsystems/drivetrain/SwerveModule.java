@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -24,8 +25,9 @@ public class SwerveModule {
   private final TalonFX m_turnMotor;
 
   // private final SparkClosedLoopController m_turningPIDController;
-  // private final CANcoder m_turningCANcoder; //TODO: Add this back when we have
-  // CANCoders
+  
+  // private final CANcoder m_turningCANcoder;
+
   // private final RelativeEncoder m_turningRelEncoder;
 
   private final PeriodicIO m_periodicIO = new PeriodicIO();
@@ -42,21 +44,19 @@ public class SwerveModule {
 
   private boolean m_moduleDisabled = false;
 
-  public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID,
-      double turningOffset) {
+  public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID, double turningOffset) {
     m_moduleName = moduleName;
     m_turningOffset = turningOffset;
 
     // START DRIVE MOTOR INIT
-    m_driveMotor = new TalonFX(driveMotorID, "rio");// , RobotConstants.robotConfig.SwerveDrive.k_canBus); //TODO: Add
-                                                    // this back when we get a CANivore
+    m_driveMotor = new TalonFX(driveMotorID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
+
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
 
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
-    // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: Add this when we
-    // have CANCoders
+    // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: Add this when we have CANCoders
 
     // the sound of silence
     driveConfig.Audio.BeepOnBoot = false;
@@ -74,13 +74,15 @@ public class SwerveModule {
     // END DRIVE MOTOR INIT
 
     // START TURN MOTOR INIT
-    m_turnMotor = new TalonFX(turningMotorID);
+    m_turnMotor = new TalonFX(turningMotorID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
+    
     TalonFXConfiguration turnConfig = new TalonFXConfiguration();
 
     m_turnMotor.setNeutralMode(NeutralModeValue.Brake);
 
     turnConfig.Audio.BeepOnBoot = false;
     turnConfig.Audio.BeepOnConfig = false;
+
     turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;// TODO: maybe come back to this later
     turnConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio; // TODO: verify
                                                                                                          // this works
@@ -103,9 +105,8 @@ public class SwerveModule {
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
     m_turningOffset = turningOffset;
 
-    // m_turningCANcoder = new CANcoder(turningCANcoderID);//,
-    // RobotConstants.robotConfig.SwerveDrive.k_canBus); //TODO: Add this back when
-    // we get a CANivore
+    // m_turningCANcoder = new CANcoder(turningCANcoderID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
+
     RobotTelemetry.print("We should be making a CANCoder with the id " + turningCANcoderID + " but we aren't yet");
     CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
 
@@ -127,15 +128,13 @@ public class SwerveModule {
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(
-        getDriveVelocity(), Rotation2d.fromRadians(getTurnPosition()));
+    return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromRadians(getTurnPosition()));
   }
 
   public SwerveModulePosition getPosition() {
     double drivePosition = m_driveMotor.getPosition().getValueAsDouble();
 
-    return new SwerveModulePosition(
-        drivePosition, Rotation2d.fromRadians(getTurnPosition()));
+    return new SwerveModulePosition(drivePosition, Rotation2d.fromRadians(getTurnPosition()));
   }
 
   public TalonFX getDriveMotor() {
@@ -166,8 +165,7 @@ public class SwerveModule {
   }
 
   public void periodic() {
-    double driveVelocity = Helpers.MPSToRPS(getDriveTargetVelocity(),
-        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
+    double driveVelocity = Helpers.MPSToRPS(getDriveTargetVelocity(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
     double turnPosition = Units.radiansToRotations(getTurnTargetAngleRadians());
 
     VelocityVoltage driveRequest = new VelocityVoltage(driveVelocity).withSlot(0);
@@ -229,8 +227,9 @@ public class SwerveModule {
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/VelocityMPS")
   public double getDriveVelocity() {
-    return Helpers.RPSToMPS(m_driveMotor.getVelocity().getValueAsDouble(),
-        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
+    return Helpers.RPSToMPS(
+      m_driveMotor.getVelocity().getValueAsDouble(),
+      RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/PositionRot")
@@ -240,8 +239,9 @@ public class SwerveModule {
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/PositionMet")
   public double getDrivePositionMet() {
-    return Helpers.RPSToMPS(m_driveMotor.getPosition().getValueAsDouble(),
-        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
+    return Helpers.RPSToMPS(
+      m_driveMotor.getPosition().getValueAsDouble(),
+      RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/PositionRads")
