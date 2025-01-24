@@ -77,15 +77,15 @@ public class Constants {
     // Drivetrain (turn) constants
     public class TurnConstants {
       // Drivetrain turning offset constants
-      public double k_FLOffset;
-      public double k_FROffset;
-      public double k_BROffset;
-      public double k_BLOffset;
+      public double k_FLOffset = -0.1521;
+      public double k_FROffset = 0.02417;
+      public double k_BLOffset = 0.408447;
+      public double k_BROffset = 0.419678;
 
-      public int k_FLAbsId = 4;
-      public int k_FRAbsId = 5;
-      public int k_BRAbsId = 6;
-      public int k_BLAbsId = 7;
+      public int k_FLAbsId = 13;
+      public int k_FRAbsId = 14;
+      public int k_BLAbsId = 15;
+      public int k_BRAbsId = 16;
 
       public int k_currentLimit = 25;
 
@@ -94,7 +94,7 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public double k_P = 100.0;
+      public double k_P = 70.0;
       public double k_I = 0.0;
       public double k_D = 1.0;
       public double k_IZone = 0.0;

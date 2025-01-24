@@ -40,7 +40,7 @@ public class Robot extends LoggedRobot {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
 
-    m_driverController = new DriverController(0, false, false, 0.5);
+    m_driverController = new DriverController(0, true, false, 0.5);
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
   }
