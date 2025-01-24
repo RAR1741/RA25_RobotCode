@@ -88,11 +88,35 @@ public class EndEffector extends Subsystem {
     }
 
     public void setState(EndEffectorState state) {
-        // if (!m_laserCan.getIndexSeesCoral()) {
-        //     m_periodicIO.state = state;
-        // }
-
         m_periodicIO.state = state;
+    }
+
+    private void off() {
+        setState(EndEffectorState.OFF);
+        m_periodicIO.leftSpeed = 0.0;
+        m_periodicIO.rightSpeed = 0.0;
+    }
+
+    private void index() {
+        setState(EndEffectorState.INDEX);
+        m_periodicIO.leftSpeed = RobotConstants.robotConfig.EndEffector.k_indexSpeed;
+        m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_indexSpeed;
+    }
+
+    private void reverse() {
+        setState(EndEffectorState.REVERSE);
+        m_periodicIO.leftSpeed = -RobotConstants.robotConfig.EndEffector.k_indexSpeed;
+        m_periodicIO.rightSpeed = -RobotConstants.robotConfig.EndEffector.k_indexSpeed;
+    }
+
+    private void branches() {
+        m_periodicIO.leftSpeed = RobotConstants.robotConfig.EndEffector.k_branchesSpeed;
+        m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_branchesSpeed;
+    }
+
+    private void trough() {
+        m_periodicIO.leftSpeed = RobotConstants.robotConfig.EndEffector.k_branchesSpeed;
+        m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_troughSpeed;
     }
 
     @Override
@@ -103,42 +127,7 @@ public class EndEffector extends Subsystem {
 
     @Override
     public void periodic() {
-        updateState();
-
-        if (m_periodicIO.state == EndEffectorState.INDEX || m_periodicIO.state == EndEffectorState.REVERSE) {
-            if (m_laserCan.getEntranceSeesCoral()) {
-                // even if we're in the reverse state, this theoretically should undo those negatives speeds
-                setIndexSpeeds(false);
-            } else if (!m_laserCan.getIndexSeesCoral()) {
-                // neither the entrance or inner LaserCAN can see a coral, so reverse and try to get it back
-                setState(EndEffectorState.REVERSE);
-                setIndexSpeeds(true); // invert the speeds for reversing (its just indexing but not)
-            } else {
-                stop();
-            }
-        } else {
-            if (m_laserCan.getExitSeesCoral()) {
-                if (m_periodicIO.state == EndEffectorState.SCORE_BRANCHES) {
-                    setBranchesScoringSpeeds();
-                } else if (m_periodicIO.state == EndEffectorState.SCORE_TROUGH) {
-                    setTroughScoringSpeeds();
-                } else {
-                    stop(); // if we're just trying to move the piece then stop moving
-                }
-            } else {
-                stop();
-            }
-        }
-    }
-
-    private void updateState() {
-        if (m_laserCan.getEntranceSeesCoral()) {
-            setState(EndEffectorState.INDEX);
-        // } else if (m_periodicIO.state == EndEffectorState.INDEX) {
-        //     stop();
-        } else if (m_periodicIO.state == EndEffectorState.OFF) {
-            setZeroSpeeds();
-        }
+        checkAutoTasks();
     }
 
     @Override
@@ -148,29 +137,6 @@ public class EndEffector extends Subsystem {
         
         m_leftMotor.getClosedLoopController().setReference(limitedLeftSpeed, ControlType.kVelocity);
         m_rightMotor.getClosedLoopController().setReference(limitedRightSpeed, ControlType.kVelocity);
-    }
-
-    private void setIndexSpeeds(boolean invertSpeeds) {
-        m_periodicIO.leftSpeed = m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_indexSpeed;
-
-        // i dont like this but i also dont want to make the world's weirdest ternary
-        if (invertSpeeds) {
-            m_periodicIO.leftSpeed *= -1;
-            m_periodicIO.rightSpeed *= -1;
-        }
-    }
-
-    private void setBranchesScoringSpeeds() {
-        m_periodicIO.leftSpeed = m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_branchesSpeed;
-    }
-
-    private void setTroughScoringSpeeds() {
-        m_periodicIO.leftSpeed = m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_troughSpeed;
-    }
-
-    private void setZeroSpeeds() {
-        m_periodicIO.leftSpeed = 0.0;
-        m_periodicIO.rightSpeed = 0.0;
     }
 
     @AutoLogOutput(key = "EndEffector/State")
@@ -191,7 +157,44 @@ public class EndEffector extends Subsystem {
     @Override
     public void stop() {
         // we might want more here later, but this is enough for testing
-        setState(EndEffectorState.OFF);
-        setZeroSpeeds();
+        off();
+    }
+
+    private void checkAutoTasks() {
+        switch(m_periodicIO.state) {
+            case INDEX:
+                if (!m_laserCan.getEntranceSeesCoral()) {
+                    off();
+                }
+                break;
+            case OFF:
+                if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral()) && m_laserCan.getExitSeesCoral()) {
+                    reverse();
+                } else if (m_laserCan.getEntranceSeesCoral()) {
+                    index();
+                }
+                break;
+            case REVERSE:
+                if (m_laserCan.getIndexSeesCoral()) {
+                    off();
+                }
+                break;
+            case SCORE_BRANCHES:
+                if (!m_laserCan.getExitSeesCoral()) {
+                    off();
+                } else {
+                    branches();
+                }
+                break;
+            case SCORE_TROUGH:
+                if (!m_laserCan.getExitSeesCoral()) {
+                    off();
+                } else {
+                    trough();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
