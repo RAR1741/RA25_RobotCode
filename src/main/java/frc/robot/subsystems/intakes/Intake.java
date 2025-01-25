@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.RobotConstants;
+import frc.robot.wrappers.RARSparkFlex;
 import frc.robot.wrappers.RARSparkMax;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 
@@ -22,7 +24,7 @@ public class Intake {
   private final String m_intakeName;
   
   private final RARSparkMax m_pivotMotor;
-  private final RARSparkMax m_intakeMotor;
+  private final RARSparkFlex m_intakeMotor;
   private final REVThroughBoreEncoder m_pivotAbsEncoder;
   private final PeriodicIO m_periodicIO;
 
@@ -42,12 +44,12 @@ public class Intake {
     AutoLogOutputManager.addObject(this);
 
     m_pivotMotor = new RARSparkMax(pivotMotorID, MotorType.kBrushless);
-    m_intakeMotor = new RARSparkMax(intakeMotorID, MotorType.kBrushless);
+    m_intakeMotor = new RARSparkFlex(intakeMotorID, MotorType.kBrushless);
 
     m_pivotAbsEncoder = new REVThroughBoreEncoder(absoluteEncoderID);
 
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
-    SparkMaxConfig intakeConfig = new SparkMaxConfig();
+    SparkFlexConfig intakeConfig = new SparkFlexConfig();
 
     pivotConfig.idleMode(IdleMode.kCoast);
     pivotConfig.inverted(true);
