@@ -155,6 +155,10 @@ public class SwerveDrive extends Subsystem {
     return null;
   }
 
+  public SwerveModule[] getSwerveModules() {
+    return m_modules;
+  }
+
   @AutoLogOutput
   private SwerveModuleState[] getCurrentStates() {
     SwerveModuleState[] currentStates = {
@@ -187,8 +191,5 @@ public class SwerveDrive extends Subsystem {
   }
 
   @Override
-  public void reset() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'reset'");
-  }
+  public void reset() {}
 }
