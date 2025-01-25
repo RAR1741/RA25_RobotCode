@@ -196,15 +196,6 @@ public class RAROdometry extends Subsystem {
     if(!m_odometryThread.isRunning()) {
       m_odometryThread.start();
     }
-    m_poseEstimator.updateWithTime(
-        Timer.getFPGATimestamp(),
-        m_gyro.getRotation2d(),
-        new SwerveModulePosition[] {
-            m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
-            m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
-            m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
-            m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
-        });
 
     PoseEstimate estimate = m_limelight.getPoseEstimation();
 

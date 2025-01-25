@@ -46,7 +46,6 @@ public class OdometryThread implements Runnable {
   private double lastTime = 0;
   private double currentTime = 0;
 
-  // TODO: LOG DEEZ (NUTS) PLS THANKS
   private int successfulDaqs = 0;
   private int failedDaqs = 0;
   private double averageOdometryLoopTime = 0.0;
@@ -56,7 +55,7 @@ public class OdometryThread implements Runnable {
 
   private int lastThreadPriority = START_THREAD_PRIORITY;
   private volatile int threadPriorityToSet = START_THREAD_PRIORITY;
-  private final int UPDATE_FREQUENCY = 250;
+  private final int UPDATE_FREQUENCY = 5;
 
   public OdometryThread() {
     m_thread = new Thread(this);
@@ -148,10 +147,17 @@ public class OdometryThread implements Runnable {
         for (int i = 0; i < 4; ++i) {
           modulePositions[i] = modules[i].getPosition();
         }
-        double yawDegrees = m_gyro.getYaw(); // TODO: Check if this is right 😈
 
         /* Keep track of previous and current pose to account for the carpet vector */
-        m_poseEstimator.update(Rotation2d.fromDegrees(yawDegrees), modulePositions);
+        m_poseEstimator.updateWithTime(
+          Timer.getFPGATimestamp(),
+          m_gyro.getRotation2d(),
+          new SwerveModulePosition[] {
+              m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
+              m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
+              m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
+              m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
+          });        
         // if (RobotBase.isSimulation()) {
         // simOdometry.update(m_odometry.getRotation2d(),
         // m_odometry.getModulePositions());

@@ -115,8 +115,6 @@ public class SwerveModule {
     m_turningOffset = turningOffset;
 
     m_turningCANcoder = new CANcoder(turningCANcoderID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
-
-    RobotTelemetry.print("We should be making a CANCoder with the id " + turningCANcoderID + " but we aren't yet");
     CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
 
     // TODO: check that this doesnt interfere with the inversion of the turn motor
