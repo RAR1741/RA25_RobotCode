@@ -73,7 +73,7 @@ public final class RobotConstants {
       return RobotType.MAIN;
     }
   }
-  
+
   public enum RobotType {
     SIM, MAIN
   }

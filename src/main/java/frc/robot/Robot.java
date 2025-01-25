@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
@@ -54,7 +56,7 @@ public class Robot extends LoggedRobot {
     // Initialize on-board logging
     DataLogManager.start();
     RobotTelemetry.print("Logging Initialized. Fard.");
-    
+
     m_signalManager.finalizeAll();
   }
 
@@ -95,9 +97,17 @@ public class Robot extends LoggedRobot {
     xSpeed *= slowScaler * boostScaler;
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
-
-    m_swerve.drive(xSpeed, ySpeed, rot, true);
     // m_swerve.drive(1, 0, 0, false);
+
+    if (m_driverController.getWantsAutoPosition()) {
+      Pose2d currentPose = m_odometry.getPose();
+      Pose2d goalPose = new Pose2d(14.027, 5.645, Rotation2d.fromDegrees(-30)); // april tag id 8
+
+      m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, goalPose);
+    }
+    else {
+      m_swerve.drive(xSpeed, ySpeed, rot, true);
+    }
   }
 
   @Override

@@ -38,4 +38,8 @@ public class DriverController extends FilteredController {
   public double testNegative() {
     return this.getFilteredAxis(Axis.RIGHT_TRIGGER);
   }
+
+  public boolean getWantsAutoPosition() {
+    return this.getRawButton(Button.X);
+  }
 }

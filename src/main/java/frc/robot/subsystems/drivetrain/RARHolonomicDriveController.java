@@ -3,11 +3,10 @@ package frc.robot.subsystems.drivetrain;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,8 +21,7 @@ public class RARHolonomicDriveController extends PPHolonomicDriveController {
   private final PIDController xController;
   private final PIDController yController;
   private final ProfiledPIDController rotationController;
-  private final double maxModuleSpeed;
-  private final double mpsToRps;
+
 
   @SuppressWarnings("unused")
   private Translation2d translationError = new Translation2d();
@@ -34,10 +32,9 @@ public class RARHolonomicDriveController extends PPHolonomicDriveController {
   public RARHolonomicDriveController(
       PIDConstants translationConstants,
       PIDConstants rotationConstants,
-      double period,
-      double maxModuleSpeed,
-      double driveBaseRadius) {
-    super(translationConstants, rotationConstants, period, maxModuleSpeed, driveBaseRadius);
+      double period) {
+
+    super(translationConstants, rotationConstants, period);
 
     this.xController = new PIDController(
         translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
@@ -56,9 +53,6 @@ public class RARHolonomicDriveController extends PPHolonomicDriveController {
         period);
     this.rotationController.setIntegratorRange(-rotationConstants.iZone, rotationConstants.iZone);
     this.rotationController.enableContinuousInput(-Math.PI, Math.PI);
-
-    this.maxModuleSpeed = maxModuleSpeed;
-    this.mpsToRps = 1.0 / driveBaseRadius;
   }
 
   public RARHolonomicDriveController(
@@ -66,41 +60,41 @@ public class RARHolonomicDriveController extends PPHolonomicDriveController {
       PIDConstants rotationConstants,
       double maxModuleSpeed,
       double driveBaseRadius) {
-    this(translationConstants, rotationConstants, 0.02, maxModuleSpeed, driveBaseRadius);
+    this(translationConstants, rotationConstants, 0.02);
   }
 
   boolean firstTimeForEverything = true;
 
   @Override
-  public ChassisSpeeds calculateRobotRelativeSpeeds(Pose2d currentPose, PathPlannerTrajectory.State targetState) {
+  public ChassisSpeeds calculateRobotRelativeSpeeds(Pose2d currentPose, PathPlannerTrajectoryState targetState) {
     // This is the only thing we actually changed
     if (firstTimeForEverything) {
       firstTimeForEverything = false;
       rotationController.reset(currentPose.getRotation().getRadians());
     }
 
-    double xFF = targetState.velocityMps * targetState.heading.getCos();
-    double yFF = targetState.velocityMps * targetState.heading.getSin();
+    double xFF = targetState.linearVelocity * targetState.heading.getCos();
+    double yFF = targetState.linearVelocity * targetState.heading.getSin();
 
-    this.translationError = currentPose.getTranslation().minus(targetState.positionMeters);
+    this.translationError = currentPose.getTranslation().minus(targetState.pose.getTranslation());
 
     if (!this.isEnabled) {
       return ChassisSpeeds.fromFieldRelativeSpeeds(xFF, yFF, 0, currentPose.getRotation());
     }
 
-    double xFeedback = this.xController.calculate(currentPose.getX(), targetState.positionMeters.getX());
-    double yFeedback = this.yController.calculate(currentPose.getY(), targetState.positionMeters.getY());
+    double xFeedback = this.xController.calculate(currentPose.getX(), targetState.pose.getX());
+    double yFeedback = this.yController.calculate(currentPose.getY(), targetState.pose.getY());
 
     double angVelConstraint = targetState.constraints.getMaxAngularVelocityRps();
     double maxAngVel = angVelConstraint;
 
-    if (Double.isFinite(maxAngVel)) {
-      // Approximation of available module speed to do rotation with
-      double maxAngVelModule = Math.max(0, maxModuleSpeed - targetState.velocityMps) * mpsToRps;
-      maxAngVel = Math.min(angVelConstraint, maxAngVelModule);
-    }
+    // if (Double.isFinite(maxAngVel)) {
+    //   // Approximation of available module speed to do rotation with
+    //   double maxAngVelModule = Math.max(0, maxModuleSpeed - targetState.velocityMps) * mpsToRps;
+    //   maxAngVel = Math.min(angVelConstraint, maxAngVelModule);
+    // }
 
-    var rotationConstraints = new TrapezoidProfile.Constraints(
+    TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(
         maxAngVel, targetState.constraints.getMaxAngularAccelerationRpsSq());
 
     Rotation2d targetRotation = targetState.targetHolonomicRotation;
@@ -118,7 +112,7 @@ public class RARHolonomicDriveController extends PPHolonomicDriveController {
         xFF + xFeedback, yFF + yFeedback, rotationFF + rotationFeedback, currentPose.getRotation());
   }
 
-  public ChassisSpeeds calculateRobotRelativeSpeeds(Pose2d currentPose, Pose2d goalPose, double maxApproachSpeed, double maxApproachAngularSpeed) {
+  public ChassisSpeeds calculateRobotRelativeSpeeds(Pose2d currentPose, Pose2d goalPose, double maxLinearApproachSpeed, double maxApproachAngularSpeed) {
     if (firstTimeForEverything) {
       firstTimeForEverything = false;
       rotationController.reset(currentPose.getRotation().getRadians());
@@ -132,11 +126,11 @@ public class RARHolonomicDriveController extends PPHolonomicDriveController {
     double rotationError = currentPose.getRotation().minus(goalPose.getRotation()).getRotations();
 
     // times 2 is the decay rate
-    double targetSpeed = Math.min(distance * 2, maxApproachSpeed);
+    double targetSpeed = Math.min(distance * 2, maxLinearApproachSpeed);
     double targetAngularSpeed = Math.min(rotationError * 2, maxApproachAngularSpeed);
 
-    double xFF = targetSpeed * goalPose.getRotation().getCos();
-    double yFF = targetSpeed * goalPose.getRotation().getSin();
+    double xFF = targetSpeed * currentPose.getRotation().getCos();
+    double yFF = targetSpeed * currentPose.getRotation().getSin();
 
     if (!this.isEnabled) {
       return ChassisSpeeds.fromFieldRelativeSpeeds(xFF, yFF, 0, currentPose.getRotation());
@@ -145,15 +139,8 @@ public class RARHolonomicDriveController extends PPHolonomicDriveController {
     double xFeedback = this.xController.calculate(currentPose.getX(), goalPose.getX());
     double yFeedback = this.yController.calculate(currentPose.getY(), goalPose.getY());
 
-    double angVelConstraint = Units.radiansToRotations(RobotConstants.config.SwerveDrive.k_maxAngularSpeed);
-    double angAccConstraint = Units.radiansToRotations(RobotConstants.config.SwerveDrive.k_maxAngularAcceleration);
-    // double maxAngVel = angVelConstraint;
-
-    if (Double.isFinite(angVelConstraint)) {
-      // Approximation of available module speed to do rotation with
-      double maxAngVelModule = Math.max(0, maxModuleSpeed - targetSpeed) * mpsToRps;
-      angVelConstraint = Math.min(angVelConstraint, maxAngVelModule);
-    }
+    double angVelConstraint = Units.radiansToRotations(RobotConstants.robotConfig.SwerveDrive.k_maxAngularSpeed);
+    double angAccConstraint = Units.radiansToRotations(RobotConstants.robotConfig.SwerveDrive.k_maxAngularAcceleration);
 
     TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(angVelConstraint, angAccConstraint);
 
