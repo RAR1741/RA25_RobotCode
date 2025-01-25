@@ -19,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
-import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.SignalManager;
 
@@ -31,7 +30,7 @@ public class SwerveModule {
 
   private final PeriodicIO m_periodicIO;
 
-  private final SignalManager m_signalManager = SignalManager.getInstance();
+  private final SignalManager m_signalManager;
 
   private double m_turningOffset;
 
@@ -47,7 +46,7 @@ public class SwerveModule {
 
   public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID, double turningOffset) {
     m_periodicIO = new PeriodicIO();
-
+    m_signalManager = SignalManager.getInstance();
 
     m_moduleName = moduleName;
     m_turningOffset = turningOffset;
