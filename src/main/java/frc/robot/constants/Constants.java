@@ -109,5 +109,25 @@ public class Constants {
       public double k_minOutput = -1.0;
       public double k_maxOutput = 1.0;
     }
+
+    public ChassisConstants Chassis = new ChassisConstants();
+
+    public class ChassisConstants {
+      public DriveConstants Drive = new DriveConstants();
+
+      public class DriveConstants {
+        public double k_P = 0.0;
+        public double k_I = 0.0;
+        public double k_D = 0.0;
+      }
+
+      public TurnConstants Turn = new TurnConstants();
+
+      public class TurnConstants {
+        public double k_P = 0.0;
+        public double k_I = 0.0;
+        public double k_D = 0.0;
+      }
+    }
   }
 }

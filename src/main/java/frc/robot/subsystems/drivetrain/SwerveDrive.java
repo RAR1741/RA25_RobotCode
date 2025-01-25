@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.wrappers.ProfiledPIDConstants;
 
 public class SwerveDrive extends Subsystem {
   private static SwerveDrive m_swerve = null;
@@ -71,13 +72,15 @@ public class SwerveDrive extends Subsystem {
 
   private final RARHolonomicDriveController m_driveController = new RARHolonomicDriveController(
     new PIDConstants(
-      RobotConstants.robotConfig.SwerveDrive.Drive.k_P,
-      RobotConstants.robotConfig.SwerveDrive.Drive.k_I,
-      RobotConstants.robotConfig.SwerveDrive.Drive.k_D),
-    new PIDConstants(
-      RobotConstants.robotConfig.SwerveDrive.Turn.k_P,
-      RobotConstants.robotConfig.SwerveDrive.Turn.k_I,
-      RobotConstants.robotConfig.SwerveDrive.Turn.k_D),
+      RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_P,
+      RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_I,
+      RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_D),
+    new ProfiledPIDConstants(
+      RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_P,
+      RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_I,
+      RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_D,
+      RobotConstants.robotConfig.SwerveDrive.k_maxAngularSpeed,
+      RobotConstants.robotConfig.SwerveDrive.k_maxAngularAcceleration),
     0.02);
 
   public static SwerveDrive getInstance() {
@@ -140,7 +143,7 @@ public class SwerveDrive extends Subsystem {
 
     // TODO: be able to call RAROdometry from Swerve Drive (maybe pass modules as parameters)
 
-    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(currentPose, targetPose, 2, 0.5);
+    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(currentPose, targetPose, 0.5);
 
     drive(driverChassisSpeeds.plus(targetPoseChassisSpeeds));
   }
