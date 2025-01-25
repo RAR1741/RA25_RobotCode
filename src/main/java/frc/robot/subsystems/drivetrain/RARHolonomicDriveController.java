@@ -1,174 +1,119 @@
 package frc.robot.subsystems.drivetrain;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.util.PIDConstants;
-
-import edu.wpi.first.math.MathUtil;
+import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import frc.robot.constants.RobotConstants;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import frc.robot.wrappers.ProfiledPIDConstants;
 
-public class RARHolonomicDriveController extends PPHolonomicDriveController {
+/** Pose targeter for holonomic drive trains */
+public class RARHolonomicDriveController {
   private final PIDController xController;
   private final PIDController yController;
   private final ProfiledPIDController rotationController;
-  private final double maxModuleSpeed;
-  private final double mpsToRps;
 
-  @SuppressWarnings("unused")
-  private Translation2d translationError = new Translation2d();
   private boolean isEnabled = true;
 
-  private static Supplier<Optional<Rotation2d>> rotationTargetOverride = null;
-
+  /**
+   * Constructs a HolonomicDriveController
+   *
+   * @param translationConstants PID constants for the translation PID controllers
+   * @param rotationConstants PID constants for the rotation controller
+   * @param period Period of the control loop in seconds
+   */
   public RARHolonomicDriveController(
-      PIDConstants translationConstants,
-      PIDConstants rotationConstants,
-      double period,
-      double maxModuleSpeed,
-      double driveBaseRadius) {
-    super(translationConstants, rotationConstants, period, maxModuleSpeed, driveBaseRadius);
-
-    this.xController = new PIDController(
-        translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
+      PIDConstants translationConstants, ProfiledPIDConstants rotationConstants, double period) {
+    this.xController =
+        new PIDController(
+            translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
     this.xController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
 
-    this.yController = new PIDController(
-        translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
+    this.yController =
+        new PIDController(
+            translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
     this.yController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
 
     // Temp rate limit of 0, will be changed in calculate
-    this.rotationController = new ProfiledPIDController(
-        rotationConstants.kP,
-        rotationConstants.kI,
-        rotationConstants.kD,
-        new TrapezoidProfile.Constraints(0, 0),
-        period);
+    this.rotationController =
+        new ProfiledPIDController(
+          rotationConstants.kP,
+          rotationConstants.kI,
+          rotationConstants.kD,
+          new Constraints(rotationConstants.maxVel, rotationConstants.maxAcc),
+          period);
     this.rotationController.setIntegratorRange(-rotationConstants.iZone, rotationConstants.iZone);
     this.rotationController.enableContinuousInput(-Math.PI, Math.PI);
-
-    this.maxModuleSpeed = maxModuleSpeed;
-    this.mpsToRps = 1.0 / driveBaseRadius;
   }
 
+  /**
+   * Constructs a HolonomicDriveController
+   *
+   * @param translationConstants PID constants for the translation PID controllers
+   * @param rotationConstants PID constants for the rotation controller
+   */
   public RARHolonomicDriveController(
-      PIDConstants translationConstants,
-      PIDConstants rotationConstants,
-      double maxModuleSpeed,
-      double driveBaseRadius) {
-    this(translationConstants, rotationConstants, 0.02, maxModuleSpeed, driveBaseRadius);
+      PIDConstants translationConstants, ProfiledPIDConstants rotationConstants) {
+    this(translationConstants, rotationConstants, 0.02);
   }
 
-  boolean firstTimeForEverything = true;
-
-  @Override
-  public ChassisSpeeds calculateRobotRelativeSpeeds(Pose2d currentPose, PathPlannerTrajectory.State targetState) {
-    // This is the only thing we actually changed
-    if (firstTimeForEverything) {
-      firstTimeForEverything = false;
-      rotationController.reset(currentPose.getRotation().getRadians());
-    }
-
-    double xFF = targetState.velocityMps * targetState.heading.getCos();
-    double yFF = targetState.velocityMps * targetState.heading.getSin();
-
-    this.translationError = currentPose.getTranslation().minus(targetState.positionMeters);
-
-    if (!this.isEnabled) {
-      return ChassisSpeeds.fromFieldRelativeSpeeds(xFF, yFF, 0, currentPose.getRotation());
-    }
-
-    double xFeedback = this.xController.calculate(currentPose.getX(), targetState.positionMeters.getX());
-    double yFeedback = this.yController.calculate(currentPose.getY(), targetState.positionMeters.getY());
-
-    double angVelConstraint = targetState.constraints.getMaxAngularVelocityRps();
-    double maxAngVel = angVelConstraint;
-
-    if (Double.isFinite(maxAngVel)) {
-      // Approximation of available module speed to do rotation with
-      double maxAngVelModule = Math.max(0, maxModuleSpeed - targetState.velocityMps) * mpsToRps;
-      maxAngVel = Math.min(angVelConstraint, maxAngVelModule);
-    }
-
-    var rotationConstraints = new TrapezoidProfile.Constraints(
-        maxAngVel, targetState.constraints.getMaxAngularAccelerationRpsSq());
-
-    Rotation2d targetRotation = targetState.targetHolonomicRotation;
-    if (rotationTargetOverride != null) {
-      targetRotation = rotationTargetOverride.get().orElse(targetRotation);
-    }
-
-    double rotationFeedback = rotationController.calculate(
-        currentPose.getRotation().getRadians(),
-        new TrapezoidProfile.State(targetRotation.getRadians(), 0),
-        rotationConstraints);
-    double rotationFF = targetState.holonomicAngularVelocityRps.orElse(rotationController.getSetpoint().velocity);
-
-    return ChassisSpeeds.fromFieldRelativeSpeeds(
-        xFF + xFeedback, yFF + yFeedback, rotationFF + rotationFeedback, currentPose.getRotation());
+  /**
+   * Enables and disables the controller for troubleshooting. When calculate() is called on a
+   * disabled controller, no values are returned.
+   *
+   * @param enabled If the controller is enabled or not
+   */
+  public void setEnabled(boolean enabled) {
+    this.isEnabled = enabled;
   }
 
-  public ChassisSpeeds calculateRobotRelativeSpeeds(Pose2d currentPose, Pose2d goalPose, double maxApproachSpeed, double maxApproachAngularSpeed) {
-    if (firstTimeForEverything) {
-      firstTimeForEverything = false;
-      rotationController.reset(currentPose.getRotation().getRadians());
-    }
+  /**
+   * Resets the controller based on the current state of the robot
+   *
+   * @param currentPose Current robot pose
+   * @param currentSpeeds Current robot relative chassis speeds
+   */
+  public void reset(Pose2d currentPose, ChassisSpeeds currentSpeeds) {
+    xController.reset();
+    yController.reset();
+    rotationController.reset(new State(currentPose.getRotation().getRadians(),
+                                       currentSpeeds.omegaRadiansPerSecond));
+  }
 
-    this.translationError = currentPose.getTranslation().minus(goalPose.getTranslation());
-
-    double distance = currentPose.getTranslation().getDistance(goalPose.getTranslation()); // meters i think?
-
-    // rot-diff between our current rot and what we want to be at (0.5 is the max we can be off)
-    double rotationError = currentPose.getRotation().minus(goalPose.getRotation()).getRotations();
-
-    // times 2 is the decay rate
-    double targetSpeed = Math.min(distance * 2, maxApproachSpeed);
-    double targetAngularSpeed = Math.min(rotationError * 2, maxApproachAngularSpeed);
-
-    double xFF = targetSpeed * goalPose.getRotation().getCos();
-    double yFF = targetSpeed * goalPose.getRotation().getSin();
-
+  /**
+   * Calculates the next output of the path following controller
+   *
+   * @param currentPose The current robot pose
+   * @param targetState The desired trajectory state
+   * @return The next robot relative output of the path following controller
+   */
+  public ChassisSpeeds calculateRobotRelativeSpeeds(
+      Pose2d currentPose, Pose2d goalPose, double maxApproachSpeed) {
+    
     if (!this.isEnabled) {
-      return ChassisSpeeds.fromFieldRelativeSpeeds(xFF, yFF, 0, currentPose.getRotation());
+      return ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, 0, currentPose.getRotation());
     }
+
+    Rotation2d targetHeading = goalPose.getTranslation().minus(currentPose.getTranslation()).getAngle();
+    double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation());
+
+    // As we get closer to the target, we should be ramping down our x/y FF
+    double targetSpeed = Math.min(maxApproachSpeed, translationError * 2);
+
+    double xFF = targetSpeed * targetHeading.getCos();
+    double yFF = targetSpeed * targetHeading.getSin();
 
     double xFeedback = this.xController.calculate(currentPose.getX(), goalPose.getX());
     double yFeedback = this.yController.calculate(currentPose.getY(), goalPose.getY());
 
-    double angVelConstraint = Units.radiansToRotations(RobotConstants.config.SwerveDrive.k_maxAngularSpeed);
-    double angAccConstraint = Units.radiansToRotations(RobotConstants.config.SwerveDrive.k_maxAngularAcceleration);
-    // double maxAngVel = angVelConstraint;
-
-    if (Double.isFinite(angVelConstraint)) {
-      // Approximation of available module speed to do rotation with
-      double maxAngVelModule = Math.max(0, maxModuleSpeed - targetSpeed) * mpsToRps;
-      angVelConstraint = Math.min(angVelConstraint, maxAngVelModule);
-    }
-
-    TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(angVelConstraint, angAccConstraint);
-
-    Rotation2d targetRotation = goalPose.getRotation();
-    if (rotationTargetOverride != null) {
-      targetRotation = rotationTargetOverride.get().orElse(targetRotation);
-    }
-
-    double rotationFeedback = rotationController.calculate(
-        currentPose.getRotation().getRadians(),
-        new TrapezoidProfile.State(targetRotation.getRadians(), 0),
-        rotationConstraints);
-    double rotationFF = targetAngularSpeed;
+    double rotationFeedback =
+        rotationController.calculate(
+            currentPose.getRotation().getRadians(), goalPose.getRotation().getRadians());
 
     return ChassisSpeeds.fromFieldRelativeSpeeds(
-        xFF + xFeedback, yFF + yFeedback, rotationFF + rotationFeedback, currentPose.getRotation());
+        xFF + xFeedback, yFF + yFeedback, rotationFeedback, currentPose.getRotation());
   }
 }
