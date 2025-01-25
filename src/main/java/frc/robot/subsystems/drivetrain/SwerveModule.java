@@ -59,7 +59,6 @@ public class SwerveModule {
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
 
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
-    // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: Add this when we have CANCoders
 
     // the sound of silence
     driveConfig.Audio.BeepOnBoot = false;
@@ -89,12 +88,8 @@ public class SwerveModule {
     turnConfig.Audio.BeepOnBoot = false;
     turnConfig.Audio.BeepOnConfig = false;
 
-    turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;// TODO: maybe come back to this later
-    turnConfig.Feedback.RotorToSensorRatio = RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio; // TODO: verify
-                                                                                                         // this works
-                                                                                                         // for both
-                                                                                                         // position and
-                                                                                                         // velocity
+    turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    turnConfig.Feedback.RotorToSensorRatio = RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio;
 
     turnConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Turn.k_P;
     turnConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Turn.k_I;
@@ -116,8 +111,6 @@ public class SwerveModule {
     m_turningCANcoder = new CANcoder(turningCANcoderID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
     CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
 
-    // TODO: check that this doesnt interfere with the inversion of the turn motor
-    // output
     canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     canCoderConfig.MagnetSensor.MagnetOffset = m_turningOffset;
 
