@@ -56,7 +56,7 @@ public class OdometryThread implements Runnable {
 
   private int lastThreadPriority = START_THREAD_PRIORITY;
   private volatile int threadPriorityToSet = START_THREAD_PRIORITY;
-  private final int UPDATE_FREQUENCY = 5;
+  private final int UPDATE_FREQUENCY = 250;
 
   public OdometryThread() {
     m_thread = new Thread(this);
@@ -115,7 +115,7 @@ public class OdometryThread implements Runnable {
 
   @Override
   public void run() {
-    final long loopTargetTime = 1_000_000_000 / UPDATE_FREQUENCY; //1 sec in ns / update frequency
+    final double loopTargetTime = 1 / UPDATE_FREQUENCY;
 
     /* Make sure all signals update at the correct update frequency */
     BaseStatusSignal.setUpdateFrequencyForAll(UPDATE_FREQUENCY, allSignals);
@@ -123,7 +123,7 @@ public class OdometryThread implements Runnable {
 
     /* Run as fast as possible, our signals will control the timing */
     while (m_running) {
-      long beginningTime = System.nanoTime();
+      currentTime = Timer.getFPGATimestamp();
       /* Synchronously wait for all signals in drivetrain */
       /* Wait up to twice the period of the update frequency */
       StatusCode status = BaseStatusSignal.waitForAll(2.0 / UPDATE_FREQUENCY, allSignals);
@@ -176,19 +176,20 @@ public class OdometryThread implements Runnable {
         lastThreadPriority = threadPriorityToSet;
       }
 
-      long now = System.nanoTime();
-      long elapsedTime = now - beginningTime;
-      long timeLeft = loopTargetTime - elapsedTime;
+      double now = Timer.getFPGATimestamp();
+      double elapsedTime = now - currentTime;
+      double timeLeft = loopTargetTime - elapsedTime;
       Logger.recordOutput("Odometry/Thread/TimeLeft", timeLeft);
       Logger.recordOutput("Odometry/Thread/ElapsedTime", elapsedTime);
 
       if(timeLeft >= 0) {
         try {
-          Thread.sleep(timeLeft / 1000);
+          Thread.sleep((long) Units.millisecondsToSeconds(timeLeft));
         } catch (Exception e) {
           e.printStackTrace();
         }
       }
+      lastTime = Timer.getFPGATimestamp();
     }
   }
 
