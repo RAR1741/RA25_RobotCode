@@ -6,6 +6,7 @@ public class Constants {
   public RobotConstants Robot = new RobotConstants();
   public FieldConstants Field = new FieldConstants();
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
+  public ArmConstants Arm = new ArmConstants();
 
   public static class RobotConstants {
     public double k_width = 27.0; // Inches
@@ -111,5 +112,23 @@ public class Constants {
       public double k_minOutput = -1.0;
       public double k_maxOutput = 1.0;
     }
+  }
+
+  public static class ArmConstants {
+    public int k_motorId = 19; // TODO Find correct id
+
+    public double k_P = 1.0;
+    public double k_I = 0.0;
+    public double k_D = 0.0;
+    public double k_IZone = 0.0;
+    public double k_FF = 1.0;
+
+    public double k_minOutput = 0.0;
+    public double k_maxOutput = 1.0;
+
+    public int k_maxCurrent = 40;
+
+    public double k_maxAcceleration = 0;
+    public double k_maxVelocity = 0;
   }
 }
