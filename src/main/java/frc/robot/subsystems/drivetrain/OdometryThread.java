@@ -179,17 +179,17 @@ public class OdometryThread implements Runnable {
         lastThreadPriority = threadPriorityToSet;
       }
 
-      double now = Timer.getFPGATimestamp();
-      double elapsedTime = now - currentTime;
-      double timeLeft = loopTargetTime - elapsedTime;
+      // double now = Timer.getFPGATimestamp();
+      // double elapsedTime = now - currentTime;
+      // double timeLeft = loopTargetTime - elapsedTime;
 
-      if(timeLeft >= 0) {
-        try {
-          Thread.sleep((long) Units.secondsToMilliseconds(timeLeft));
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
+      // if(timeLeft >= 0) {
+      //   try {
+      //     Thread.sleep((long) Units.secondsToMilliseconds(timeLeft));
+      //   } catch (Exception e) {
+      //     e.printStackTrace();
+      //   }
+      // }
     }
   }
 
@@ -218,6 +218,11 @@ public class OdometryThread implements Runnable {
   @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
   public double getAverageOdometryLoopTime() {
     return averageOdometryLoopTime;
+  }
+
+  @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
+  public int getUpdatesPerSecond() {
+    return (int)(1.0 / getAverageOdometryLoopTime());
   }
 
   @AutoLogOutput(key = "Odometry/Thread/Running")
