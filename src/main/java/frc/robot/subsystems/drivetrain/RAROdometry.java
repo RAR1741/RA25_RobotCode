@@ -199,15 +199,11 @@ public class RAROdometry extends Subsystem {
 
     PoseEstimate estimate = m_limelight.getPoseEstimation();
 
-    // TODO: I hate this
-    // It's ok
+    // TODO: I hate this. This needs to be a button in the future
+    // It's ok i hate it too
     if (m_hasSetPose) {
       if (checkPose(estimate)) {
         updatePoseWithStdDev(estimate);
-      }
-
-      if (estimate != null && !isPoseZero(estimate)) {
-        m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
       }
     } else {
       // PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
@@ -274,7 +270,6 @@ public class RAROdometry extends Subsystem {
     if (pose != null) {
       return pose;
     }
-
     return new Pose2d();
   }
 

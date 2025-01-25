@@ -6,6 +6,7 @@ public class Constants {
   public RobotConstants Robot = new RobotConstants();
   public FieldConstants Field = new FieldConstants();
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
+  public OdometryConstants Odometry = new OdometryConstants();
 
   public static class RobotConstants {
     public String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -19,7 +20,13 @@ public class Constants {
   }
 
   public static class FieldConstants {
-    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0/8.0)); // TODO: Use the 2025 field perimeter
+    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0/8.0));
+    public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+  }
+
+  public static class OdometryConstants {
+    public int k_threadUpdateFrequency = 250;
+    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0/8.0));
     public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
   }
 
@@ -27,7 +34,6 @@ public class Constants {
     public String k_canBus = "Drivetrain";
 
     // Drivetrain wheel offsets
-    // TODO: Make this match 2025 robot
     public double k_xDistance = Units.inchesToMeters(26.75); // 30 inches Forward/Backward
     public double k_yDistance = Units.inchesToMeters(22.75); // in meters! Side-to-Side
 

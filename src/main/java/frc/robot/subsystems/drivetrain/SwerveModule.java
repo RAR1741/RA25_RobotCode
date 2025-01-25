@@ -19,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
-import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.SignalManager;
 
@@ -31,7 +30,7 @@ public class SwerveModule {
 
   private final PeriodicIO m_periodicIO;
 
-  private final SignalManager m_signalManager = SignalManager.getInstance();
+  private final SignalManager m_signalManager;
 
   private double m_turningOffset;
 
@@ -47,7 +46,7 @@ public class SwerveModule {
 
   public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID, double turningOffset) {
     m_periodicIO = new PeriodicIO();
-
+    m_signalManager = SignalManager.getInstance();
 
     m_moduleName = moduleName;
     m_turningOffset = turningOffset;
@@ -60,7 +59,6 @@ public class SwerveModule {
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
 
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
-    // driveConfig.Feedback.RotorToSensorRatio = 0.0f; // TODO: Add this when we have CANCoders
 
     // the sound of silence
     driveConfig.Audio.BeepOnBoot = false;
@@ -90,12 +88,8 @@ public class SwerveModule {
     turnConfig.Audio.BeepOnBoot = false;
     turnConfig.Audio.BeepOnConfig = false;
 
-    turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;// TODO: maybe come back to this later
-    turnConfig.Feedback.RotorToSensorRatio = RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio; // TODO: verify
-                                                                                                         // this works
-                                                                                                         // for both
-                                                                                                         // position and
-                                                                                                         // velocity
+    turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    turnConfig.Feedback.RotorToSensorRatio = RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio;
 
     turnConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Turn.k_P;
     turnConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Turn.k_I;
@@ -117,8 +111,6 @@ public class SwerveModule {
     m_turningCANcoder = new CANcoder(turningCANcoderID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
     CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
 
-    // TODO: check that this doesnt interfere with the inversion of the turn motor
-    // output
     canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     canCoderConfig.MagnetSensor.MagnetOffset = m_turningOffset;
 

@@ -61,7 +61,7 @@ public final class RobotConstants {
       DriverStation.reportError(
           "Could not match rio to robot config; defaulting to INSERT_ROBOT_NAME_HERE robot config",
           false);
-      RobotTelemetry.print("Robot Type: INSERT_ROBOT_NAME_HERE");
+      RobotTelemetry.print("Robot Type: Squeaky");
     }
     return m_robotType;
   }

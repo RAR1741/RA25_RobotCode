@@ -15,6 +15,7 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.constants.RobotConstants;
 
 /**
  * Thread enabling 250Hz odometry. Optimized from CTRE's internal swerve code.
@@ -30,7 +31,8 @@ public class OdometryThread implements Runnable {
   private final Thread m_thread;
   private volatile boolean m_running = false;
 
-  private final BaseStatusSignal[] allSignals;
+  private final BaseStatusSignal[] m_allSignals;
+
   private SwerveDrive m_swerve;
   private RAROdometry m_odometry;
 
@@ -38,29 +40,30 @@ public class OdometryThread implements Runnable {
   private AHRS m_gyro;
 
   /** Lock used for odometry thread. */
-  private final ReadWriteLock stateLock = new ReentrantReadWriteLock();
+  private final ReadWriteLock m_stateLock = new ReentrantReadWriteLock();
 
-  private final MedianFilter peakRemover = new MedianFilter(3);
-  private final LinearFilter lowPass = LinearFilter.movingAverage(50);
-  private double lastTime = 0;
-  private double currentTime = 0;
+  private final MedianFilter m_peakRemover = new MedianFilter(3);
+  private final LinearFilter m_lowPass = LinearFilter.movingAverage(50);
 
-  private int successfulDaqs = 0;
-  private int failedDaqs = 0;
-  private double averageOdometryLoopTime = 0.0;
+  private SwerveModule[] m_modules;
 
-  private SwerveModule[] modules;
-  private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+  private volatile int m_threadPriorityToSet = START_THREAD_PRIORITY;
+  private final int k_updateFrequency = RobotConstants.robotConfig.Odometry.k_threadUpdateFrequency;
+  private int m_lastThreadPriority = START_THREAD_PRIORITY;
 
-  private int lastThreadPriority = START_THREAD_PRIORITY;
-  private volatile int threadPriorityToSet = START_THREAD_PRIORITY;
-  private final int UPDATE_FREQUENCY = 250;
+  private double m_lastTime = 0;
+  private double m_currentTime = 0;
+
+  private double m_averageOdometryLoopTime = 0.0;
+
+  private int m_successfulDaqs = 0;
+  private int m_failedDaqs = 0;
 
   public OdometryThread() {
     m_thread = new Thread(this);
 
     m_swerve = SwerveDrive.getInstance();
-    modules = m_swerve.getSwerveModules();
+    m_modules = m_swerve.getSwerveModules();
     /*
      * Mark this thread as a "daemon" (background) thread
      * so it doesn't hold up program shutdown
@@ -68,13 +71,13 @@ public class OdometryThread implements Runnable {
     m_thread.setDaemon(true);
 
     /* 4 signals for each module + 2 for Pigeon2 */
-    allSignals = new BaseStatusSignal[4 * 4];
+    m_allSignals = new BaseStatusSignal[4 * 4];
     for (int i = 0; i < 4; ++i) {
-      BaseStatusSignal[] signals = modules[i].getSignals();
-      allSignals[(i * 4) + 0] = signals[0];
-      allSignals[(i * 4) + 1] = signals[1];
-      allSignals[(i * 4) + 2] = signals[2];
-      allSignals[(i * 4) + 3] = signals[3];
+      BaseStatusSignal[] signals = m_modules[i].getSignals();
+      m_allSignals[(i * 4) + 0] = signals[0];
+      m_allSignals[(i * 4) + 1] = signals[1];
+      m_allSignals[(i * 4) + 2] = signals[2];
+      m_allSignals[(i * 4) + 3] = signals[3];
     }
   }
 
@@ -113,46 +116,38 @@ public class OdometryThread implements Runnable {
 
   @Override
   public void run() {
-    final double loopTargetTime = 1.0 / UPDATE_FREQUENCY;
-
     /* Make sure all signals update at the correct update frequency */
-    BaseStatusSignal.setUpdateFrequencyForAll(UPDATE_FREQUENCY, allSignals);
+    BaseStatusSignal.setUpdateFrequencyForAll(k_updateFrequency, m_allSignals);
     Threads.setCurrentThreadPriority(true, START_THREAD_PRIORITY);
 
     /* Run as fast as possible, our signals will control the timing */
     while (m_running) {
       /* Synchronously wait for all signals in drivetrain */
       /* Wait up to twice the period of the update frequency */
-      StatusCode status = BaseStatusSignal.waitForAll(2.0 / UPDATE_FREQUENCY, allSignals);
+      StatusCode status = BaseStatusSignal.waitForAll(2.0 / k_updateFrequency, m_allSignals);
 
       try {
-        stateLock.writeLock().lock();
+        m_stateLock.writeLock().lock();
 
-        lastTime = currentTime;
-        currentTime = Timer.getFPGATimestamp();
+        m_lastTime = m_currentTime;
+        m_currentTime = Timer.getFPGATimestamp();
 
         /*
          * We don't care about the peaks, as they correspond to GC events, and we want
          * the period generally low passed
          */
-        averageOdometryLoopTime = lowPass.calculate(peakRemover.calculate(currentTime - lastTime));
+        m_averageOdometryLoopTime = m_lowPass.calculate(m_peakRemover.calculate(m_currentTime - m_lastTime));
 
         /* Get status of first element */
         if (status.isOK()) {
-          successfulDaqs++;
+          m_successfulDaqs++;
         } else {
-          failedDaqs++;
-        }
-
-        /* Now update odometry */
-        /* Keep track of the change in azimuth rotations */
-        for (int i = 0; i < 4; ++i) {
-          modulePositions[i] = modules[i].getPosition();
+          m_failedDaqs++;
         }
 
         /* Keep track of previous and current pose to account for the carpet vector */
         m_poseEstimator.updateWithTime(
-            currentTime,
+            m_currentTime,
             m_gyro.getRotation2d(),
             new SwerveModulePosition[] {
                 m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
@@ -160,34 +155,18 @@ public class OdometryThread implements Runnable {
                 m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
                 m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
             });
-        // if (RobotBase.isSimulation()) {
-        // simOdometry.update(m_odometry.getRotation2d(),
-        // m_odometry.getModulePositions());
-        // }
       } finally {
-        stateLock.writeLock().unlock();
+        m_stateLock.writeLock().unlock();
       }
 
       /**
        * This is inherently synchronous, since lastThreadPriority
        * is only written here and threadPriorityToSet is only read here
        */
-      if (threadPriorityToSet != lastThreadPriority) {
-        Threads.setCurrentThreadPriority(true, threadPriorityToSet);
-        lastThreadPriority = threadPriorityToSet;
+      if (m_threadPriorityToSet != m_lastThreadPriority) {
+        Threads.setCurrentThreadPriority(true, m_threadPriorityToSet);
+        m_lastThreadPriority = m_threadPriorityToSet;
       }
-
-      // double now = Timer.getFPGATimestamp();
-      // double elapsedTime = now - currentTime;
-      // double timeLeft = loopTargetTime - elapsedTime;
-
-      // if(timeLeft >= 0) {
-      // try {
-      // Thread.sleep((long) Units.secondsToMilliseconds(timeLeft));
-      // } catch (Exception e) {
-      // e.printStackTrace();
-      // }
-      // }
     }
   }
 
@@ -200,22 +179,22 @@ public class OdometryThread implements Runnable {
    *                 priority and 0 indicating lower priority.
    */
   public void setThreadPriority(int priority) {
-    threadPriorityToSet = priority;
+    m_threadPriorityToSet = priority;
   }
 
   @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
   public int getSuccessfulDaqs() {
-    return successfulDaqs;
+    return m_successfulDaqs;
   }
 
   @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
   public int getFailedDaqs() {
-    return failedDaqs;
+    return m_failedDaqs;
   }
 
   @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
   public double getAverageOdometryLoopTime() {
-    return averageOdometryLoopTime;
+    return m_averageOdometryLoopTime;
   }
 
   @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
