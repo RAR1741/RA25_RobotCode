@@ -45,7 +45,6 @@ public class OdometryThread implements Runnable {
   private final LinearFilter m_lowPass = LinearFilter.movingAverage(50);
   
   private SwerveModule[] m_modules;
-  private SwerveModulePosition[] m_modulePositions = new SwerveModulePosition[4];
 
   private volatile int m_threadPriorityToSet = START_THREAD_PRIORITY;
   private final int k_updateFrequency = RobotConstants.robotConfig.Odometry.k_threadUpdateFrequency;
@@ -145,12 +144,6 @@ public class OdometryThread implements Runnable {
           m_failedDaqs++;
         }
 
-        /* Now update odometry */
-        /* Keep track of the change in azimuth rotations */
-        for (int i = 0; i < 4; ++i) {
-          m_modulePositions[i] = m_modules[i].getPosition();
-        }
-
         /* Keep track of previous and current pose to account for the carpet vector */
         m_poseEstimator.updateWithTime(
           Timer.getFPGATimestamp(), //TODO: change?
@@ -189,23 +182,23 @@ public class OdometryThread implements Runnable {
   }
 
   @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
-  public int getM_successfulDaqs() {
+  public int getSuccessfulDaqs() {
     return m_successfulDaqs;
   }
 
   @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
-  public int getM_failedDaqs() {
+  public int getFailedDaqs() {
     return m_failedDaqs;
   }
 
   @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
-  public double getM_averageOdometryLoopTime() {
+  public double getAverageOdometryLoopTime() {
     return m_averageOdometryLoopTime;
   }
 
   @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
   public int getUpdatesPerSecond() {
-    return (int)(1.0 / getM_averageOdometryLoopTime());
+    return (int)(1.0 / getAverageOdometryLoopTime());
   }
 
   @AutoLogOutput(key = "Odometry/Thread/Running")
