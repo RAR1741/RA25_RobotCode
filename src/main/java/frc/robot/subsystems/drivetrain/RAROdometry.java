@@ -3,6 +3,7 @@ package frc.robot.subsystems.drivetrain;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXUpdateRate;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -36,7 +37,7 @@ public class RAROdometry extends Subsystem {
     super("Odometry");
 
     m_limelight = new Limelight("limelight");
-    m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
+    m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(
         m_swerve.getKinematics(),
@@ -194,24 +195,27 @@ public class RAROdometry extends Subsystem {
             m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
             m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
         });
-    // PoseEstimate estimate = m_limelight.getPoseEstimation();
+    
+    PoseEstimate estimate = m_limelight.getPoseEstimation();
 
-    // //TODO: I hate this
-    // if(m_hasSetPose) {
-    //   if(checkPose(estimate)) {
-    //     updatePoseWithStdDev(estimate);
-    //   }
+    // TODO: I hate this
+    // It's ok
+    if(m_hasSetPose) {
+      if(checkPose(estimate)) {
+        updatePoseWithStdDev(estimate);
+      }
 
-    //   if (estimate != null && !isPoseZero(estimate)) {
-    //     m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
-    //   }
-    // } else {
-    //   PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
-    //   if(!megatag1estimate.pose.equals(new Pose2d())) {
-    //     m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
-    //     m_hasSetPose = true;
-    //   }
-    // }
+      if (estimate != null && !isPoseZero(estimate)) {
+        m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
+      }
+    } else {
+      PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
+      
+      if(megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d())) {
+        m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
+        m_hasSetPose = true;
+      }
+    }
   }
 
   @Override
@@ -226,6 +230,16 @@ public class RAROdometry extends Subsystem {
   @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
   public double getGyroYawDeg() {
     return m_gyro.getAngle();
+  }
+
+  @AutoLogOutput(key = "Odometry/Gyro/UpdateRate")
+  public double getGyroUpdateRate() {
+    return m_gyro.getActualUpdateRate();
+  }
+
+  @AutoLogOutput
+  public double getGyroUpdateCount() {
+    return m_gyro.getUpdateCount();
   }
 
   @AutoLogOutput(key = "Odometry/Gyro/PitchDeg")
@@ -243,20 +257,26 @@ public class RAROdometry extends Subsystem {
     return (double) m_gyro.getLastSensorTimestamp();
   }
 
-  // @AutoLogOutput(key = "Odometry/Limelight/LimelightPoseEstimation")
-  // public Pose2d getLimelightPose2d() {
-  //   return m_limelight.getPoseEstimation().pose;
-  // }
+  @AutoLogOutput(key = "Odometry/Limelight/LimelightPoseEstimation")
+  public Pose2d getLimelightPose2d() {
+    Pose2d pose = m_limelight.getPoseEstimation().pose;
+
+    if (pose != null) {
+      return pose;
+    }
+    
+    return new Pose2d();
+  }
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
   }
 
-  // @AutoLogOutput(key = "Odometry/PoseEstimator/DistanceMetersFromNearestAprilTag")
-  // public double getDistanceMetersFromNearestAprilTag() {
-  //   return m_limelight.getPoseEstimation().avgTagDist;
-  // }
+  @AutoLogOutput(key = "Odometry/PoseEstimator/DistanceMetersFromNearestAprilTag")
+  public double getDistanceMetersFromNearestAprilTag() {
+    return m_limelight.getPoseEstimation().avgTagDist;
+  }
 
   // private enum LimelightInstance {
   // LEFT, RIGHT, CENTER

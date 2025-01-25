@@ -1,12 +1,16 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class Subsystem extends SubsystemBase {
+  private SignalManager m_signalManager = SignalManager.getInstance();
+    
   public Subsystem(String baseSmartDashboardKey) {
-    this.baseSmartDashboardKey = baseSmartDashboardKey;
+    this.baseSmartDashboardKey = baseSmartDashboardKey; 
   }
 
   /**
@@ -58,6 +62,10 @@ public abstract class Subsystem extends SubsystemBase {
    * {@link #disabledInit()}
    */
   public abstract void stop();
+
+  public void registerSignal(BaseStatusSignal... statuses) {
+    m_signalManager.register(statuses);
+  }
 
   public String baseSmartDashboardKey = "UnknownSubsystem/";
 

@@ -24,12 +24,8 @@ import frc.robot.constants.RobotConstants;
 public class SwerveModule {
   private final TalonFX m_driveMotor;
   private final TalonFX m_turnMotor;
-
-  // private final SparkClosedLoopController m_turningPIDController;
   
   private final CANcoder m_turningCANcoder;
-
-  // private final RelativeEncoder m_turningRelEncoder;
 
   private final PeriodicIO m_periodicIO = new PeriodicIO();
 

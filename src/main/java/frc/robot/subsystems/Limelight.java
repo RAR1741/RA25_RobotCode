@@ -23,6 +23,7 @@ public class Limelight {
    */
   public Limelight(String limelightName) {
     m_name = limelightName;
+    
     m_limelightTable = NetworkTableInstance.getDefault().getTable(m_name);
   }
 
@@ -30,7 +31,9 @@ public class Limelight {
    * Enable the LEDs
    */
   public void setLightEnabled(boolean enabled) {
-    m_limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1);
+    if (m_limelightTable != null) {
+      m_limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1);
+    }
   }
 
   /**
@@ -52,7 +55,7 @@ public class Limelight {
   }
 
   public PoseEstimate getMegaTag1PoseEstimation() {
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue(m_name);
   }
 
   public double getTimeOffset() {
@@ -60,12 +63,15 @@ public class Limelight {
   }
 
   public void outputTelemetry() {
-    for (String key : m_limelightTable.getKeys()) {
-      String type = m_limelightTable.getEntry(key).getType().name().substring(1);
+    if (m_limelightTable != null) {
+      for (String key : m_limelightTable.getKeys()) {
+        String type = m_limelightTable.getEntry(key).getType().name().substring(1);
 
-      SmartDashboard.putString(
-          key, (type.equals("String") || type.equals("Double")) ? m_limelightTable.getEntry(key).toString()
-              : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
+        SmartDashboard.putString(
+          key, (type.equals("String") || type.equals("Double"))
+            ? m_limelightTable.getEntry(key).toString()
+            : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
+      }
     }
   }
 
@@ -86,7 +92,14 @@ public class Limelight {
         // TODO: is this and/or getRate needed?
         // SwerveDrive.getInstance().getGyro().getRate(),
         0, 0, 0, 0, 0);
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_name);
+    
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_name);
+
+    if (estimate != null) {
+      return estimate;
+    }
+
+    return new PoseEstimate();
   }
 
   public double getLatency() {

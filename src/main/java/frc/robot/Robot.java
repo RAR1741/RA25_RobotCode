@@ -11,6 +11,7 @@ import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
+import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
@@ -28,6 +29,7 @@ public class Robot extends LoggedRobot {
   private final SwerveDrive m_swerve;
   private final RAROdometry m_odometry;
   private final DriverController m_driverController;
+  private final SignalManager m_signalManager = SignalManager.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -52,6 +54,8 @@ public class Robot extends LoggedRobot {
     // Initialize on-board logging
     DataLogManager.start();
     RobotTelemetry.print("Logging Initialized. Fard.");
+    
+    m_signalManager.finalizeAll();
   }
 
   @Override
@@ -59,6 +63,8 @@ public class Robot extends LoggedRobot {
     m_subsystems.forEach(subsystem -> subsystem.periodic());
     m_subsystems.forEach(subsystem -> subsystem.writePeriodicOutputs());
     m_subsystems.forEach(subsystem -> subsystem.writeToLog());
+
+    m_signalManager.refresh();
   }
 
   @Override
