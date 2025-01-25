@@ -152,7 +152,7 @@ public class OdometryThread implements Runnable {
 
         /* Keep track of previous and current pose to account for the carpet vector */
         m_poseEstimator.updateWithTime(
-            Timer.getFPGATimestamp(),
+            currentTime,
             m_gyro.getRotation2d(),
             new SwerveModulePosition[] {
                 m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),

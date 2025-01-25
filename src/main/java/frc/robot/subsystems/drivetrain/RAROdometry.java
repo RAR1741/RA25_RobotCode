@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
@@ -233,13 +232,9 @@ public class RAROdometry extends Subsystem {
   }
 
   private void logAprilTagData() {
-    LimelightTarget_Fiducial[] latestFiducials = m_limelight.getLatestFiducials();
-
-    if (latestFiducials != null) {
-      for (LimelightTarget_Fiducial fiducial : latestFiducials) {
-        Logger.recordOutput("Odometry/Limelight/AprilTags/" + fiducial.fiducialID, fiducial.getTargetPose_RobotSpace());
-      }
-    }
+    Logger.recordOutput(
+        "Odometry/Limelight/M2AprilTag",
+        m_limelight.getTargetPose_RobotSpace(getPose()));
   }
 
   @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
