@@ -132,14 +132,14 @@ public class SwerveModule {
     // END TURN MOTOR INIT
 
     BaseStatusSignal.setUpdateFrequencyForAll(250,
-                m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_driveMotor.getAcceleration(), m_driveMotor.getMotorVoltage(),
-                m_turnMotor.getPosition(), m_turnMotor.getVelocity(), m_turnMotor.getAcceleration(), m_turnMotor.getMotorVoltage());
+        m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_driveMotor.getAcceleration(), m_driveMotor.getMotorVoltage(),
+        m_turnMotor.getPosition(), m_turnMotor.getVelocity(), m_turnMotor.getAcceleration(), m_turnMotor.getMotorVoltage());
 
     // register all signals with the SignalManager so that any downstream callers
     // get updated signals
     m_signalManager.register(
-            m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_driveMotor.getAcceleration(), m_driveMotor.getMotorVoltage(),
-            m_turnMotor.getPosition(), m_turnMotor.getVelocity(), m_turnMotor.getAcceleration(), m_turnMotor.getMotorVoltage());
+        m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_driveMotor.getAcceleration(), m_driveMotor.getMotorVoltage(),
+        m_turnMotor.getPosition(), m_turnMotor.getVelocity(), m_turnMotor.getAcceleration(), m_turnMotor.getMotorVoltage());
   }
 
   public SwerveModuleState getState() {

@@ -31,6 +31,8 @@ public class RAROdometry extends Subsystem {
 
   private SwerveDrivePoseEstimator m_poseEstimator;
 
+  private OdometryThread m_odometryThread;
+
   private boolean m_hasSetPose;
 
   private RAROdometry() {
@@ -38,6 +40,7 @@ public class RAROdometry extends Subsystem {
 
     m_limelight = new Limelight("limelight");
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
+    m_odometryThread = new OdometryThread();
 
     m_poseEstimator = new SwerveDrivePoseEstimator(
         m_swerve.getKinematics(),
@@ -190,6 +193,9 @@ public class RAROdometry extends Subsystem {
 
   @Override
   public void periodic() {
+    if(!m_odometryThread.isRunning()) {
+      m_odometryThread.start();
+    }
     m_poseEstimator.updateWithTime(
         Timer.getFPGATimestamp(),
         m_gyro.getRotation2d(),
