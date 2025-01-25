@@ -9,6 +9,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.LimelightResults;
+import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 
@@ -21,7 +23,7 @@ public class Limelight {
    */
   public Limelight(String limelightName) {
     m_name = limelightName;
-    
+
     m_limelightTable = NetworkTableInstance.getDefault().getTable(m_name);
   }
 
@@ -72,9 +74,9 @@ public class Limelight {
         String type = m_limelightTable.getEntry(key).getType().name().substring(1);
 
         SmartDashboard.putString(
-          key, (type.equals("String") || type.equals("Double"))
-            ? m_limelightTable.getEntry(key).toString()
-            : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
+            key, (type.equals("String") || type.equals("Double"))
+                ? m_limelightTable.getEntry(key).toString()
+                : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
       }
     }
   }
@@ -97,7 +99,7 @@ public class Limelight {
         // TODO: is this and/or getRate needed?
         // SwerveDrive.getInstance().getGyro().getRate(),
         0, 0, 0, 0, 0);
-    
+
     PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_name);
 
     if (estimate != null) {
@@ -109,6 +111,14 @@ public class Limelight {
 
   public double getLatency() {
     return LimelightHelpers.getLatency_Capture(m_name) + LimelightHelpers.getLatency_Pipeline(m_name);
+  }
+
+  public LimelightResults getLatestResults() {
+    return LimelightHelpers.getLatestResults(m_name);
+  }
+
+  public LimelightTarget_Fiducial[] getLatestFiducials() {
+    return getLatestResults().targets_Fiducials;
   }
 
   public boolean getLightEnabled() {

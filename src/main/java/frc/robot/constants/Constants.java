@@ -124,7 +124,7 @@ public class Constants {
       public TurnConstants Turn = new TurnConstants();
 
       public class TurnConstants {
-        public double k_P = 0.0;
+        public double k_P = 5.0;
         public double k_I = 0.0;
         public double k_D = 0.0;
       }

@@ -7,21 +7,25 @@
       "height": 1080,
       "state": {
         "sidebar": {
-          "width": 300,
+          "width": 315,
           "expanded": [
             "/RealOutputs",
             "/RealOutputs/SwerveDrive/Modules/FR/Turn",
             "/RealOutputs/SwerveDrive/Modules/BR/Turn",
             "/RealOutputs/Odometry/PoseEstimator/Pose2d",
-            "/RealOutputs/SwerveDrive/Modules",
+            "/RealOutputs/SwerveDrive/Modules/BL/Abs",
+            "/RealOutputs/SwerveDrive/Modules/FL/Abs",
+            "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder",
+            "/RealOutputs/SwerveDrive/Modules/FR/AbsoluteEncoder",
+            "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/BR",
-            "/RealOutputs/Odometry",
-            "/RealOutputs/Odometry/PoseEstimator",
-            "/RealOutputs/Odometry/Limelight"
+            "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder",
+            "/RealOutputs/Odometry/Limelight/LimelightPoseEstimation",
+            "/RealOutputs/SwerveDrive"
           ]
         },
         "tabs": {
-          "selected": 7,
+          "selected": 3,
           "tabs": [
             {
               "type": 0,
@@ -108,6 +112,61 @@
               },
               "controllerUUID": "ibs46t3mi554qmoz417wn12m75mkv5hz",
               "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Odometry/Limelight/LimelightPoseEstimation",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "robot",
+                    "logKey": "/RealOutputs/Odometry/PoseEstimator/Pose2d",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Odometry/GoalPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#0000ff"
+                    }
+                  }
+                ],
+                "game": "2025 Field",
+                "origin": "blue"
+              },
+              "controllerUUID": "d9cpntr1ftmn306j6jsz2v0yxgo0v8h4",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  -8.530151502014435,
+                  8.176268931828693,
+                  6.374840765639649
+                ],
+                "cameraTarget": [
+                  -0.7418851017758871,
+                  -2.1352635454128053,
+                  0.4846687284771812
+                ]
+              },
               "controlsHeight": 200
             },
             {
@@ -355,48 +414,84 @@
               "controlsHeight": 311
             },
             {
-              "type": 3,
-              "title": "3D Field",
+              "type": 1,
+              "title": "Gyro",
               "controller": {
-                "sources": [
+                "leftSources": [],
+                "rightSources": [
                   {
-                    "type": "robot",
-                    "logKey": "/RealOutputs/Odometry/PoseEstimator/Pose2d",
-                    "logType": "Pose2d",
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Odometry/Gyro/YawDeg",
+                    "logType": "Number",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/Odometry/Limelight/LimelightPoseEstimation",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "2025 KitBot",
-                      "color": "#00ff00"
+                      "color": "#2b66a2",
+                      "size": "normal"
                     }
                   }
                 ],
-                "game": "2025 Field",
-                "origin": "blue"
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
               },
-              "controllerUUID": "74ezuyqflqihig1dav3eyks4v237ojvf",
-              "renderer": {
-                "cameraIndex": -1,
-                "orbitFov": 50,
-                "cameraPosition": [
-                  -6.3515631056413815,
-                  10.094155425188717,
-                  7.7621111621547785
+              "controllerUUID": "9ew6dkv9y4aapsb62bhh181kimxe3w09",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Odometry/Thread/AverageLoopTime",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
                 ],
-                "cameraTarget": [
-                  -2.751723258641984,
-                  -0.6571298862029901,
-                  1.2688607259020677
-                ]
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Odometry/Thread/SuccessfulDataAquisitions",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
               },
+              "controllerUUID": "xu8v099seu36nqk1a4qt8qac4dscd4e7",
+              "renderer": null,
               "controlsHeight": 200
             }
           ]

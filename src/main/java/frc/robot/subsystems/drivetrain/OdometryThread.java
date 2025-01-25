@@ -1,20 +1,18 @@
 package frc.robot.subsystems.drivetrain;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
-import com.studica.frc.AHRS;
-
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
+import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -50,7 +48,7 @@ public class OdometryThread implements Runnable {
   private int successfulDaqs = 0;
   private int failedDaqs = 0;
   private double averageOdometryLoopTime = 0.0;
-  
+
   private SwerveModule[] modules;
   private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
 
@@ -60,7 +58,7 @@ public class OdometryThread implements Runnable {
 
   public OdometryThread() {
     m_thread = new Thread(this);
-    
+
     m_swerve = SwerveDrive.getInstance();
     modules = m_swerve.getSwerveModules();
     /*
@@ -154,14 +152,14 @@ public class OdometryThread implements Runnable {
 
         /* Keep track of previous and current pose to account for the carpet vector */
         m_poseEstimator.updateWithTime(
-          Timer.getFPGATimestamp(),
-          m_gyro.getRotation2d(),
-          new SwerveModulePosition[] {
-              m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
-              m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
-              m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
-              m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
-          });        
+            Timer.getFPGATimestamp(),
+            m_gyro.getRotation2d(),
+            new SwerveModulePosition[] {
+                m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
+                m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
+                m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
+                m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
+            });
         // if (RobotBase.isSimulation()) {
         // simOdometry.update(m_odometry.getRotation2d(),
         // m_odometry.getModulePositions());
@@ -184,11 +182,11 @@ public class OdometryThread implements Runnable {
       // double timeLeft = loopTargetTime - elapsedTime;
 
       // if(timeLeft >= 0) {
-      //   try {
-      //     Thread.sleep((long) Units.secondsToMilliseconds(timeLeft));
-      //   } catch (Exception e) {
-      //     e.printStackTrace();
-      //   }
+      // try {
+      // Thread.sleep((long) Units.secondsToMilliseconds(timeLeft));
+      // } catch (Exception e) {
+      // e.printStackTrace();
+      // }
       // }
     }
   }
@@ -222,7 +220,7 @@ public class OdometryThread implements Runnable {
 
   @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
   public int getUpdatesPerSecond() {
-    return (int)(1.0 / getAverageOdometryLoopTime());
+    return (int) (1.0 / getAverageOdometryLoopTime());
   }
 
   @AutoLogOutput(key = "Odometry/Thread/Running")

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXUpdateRate;
@@ -11,7 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
+import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
@@ -75,10 +76,10 @@ public class RAROdometry extends Subsystem {
   public AHRS getGyro() {
     return m_gyro;
   }
-  
+
   public SwerveDrivePoseEstimator getPoseEstimator() {
     return m_poseEstimator;
-  } 
+  }
 
   public Rotation2d getRotation2d() {
     return m_gyro.getRotation2d();
@@ -193,7 +194,7 @@ public class RAROdometry extends Subsystem {
 
   @Override
   public void periodic() {
-    if(!m_odometryThread.isRunning()) {
+    if (!m_odometryThread.isRunning()) {
       m_odometryThread.start();
     }
 
@@ -210,13 +211,16 @@ public class RAROdometry extends Subsystem {
         m_poseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
       }
     } else {
-      PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
+      // PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
 
-      if (megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d())) {
-        m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
-        m_hasSetPose = true;
-      }
+      // if (megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d()))
+      // {
+      // m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
+      m_hasSetPose = true;
+      // }
     }
+
+    logAprilTagData();
   }
 
   @Override
@@ -226,6 +230,16 @@ public class RAROdometry extends Subsystem {
   @Override
   public void stop() {
     RobotTelemetry.print("Stopping Odometry!");
+  }
+
+  private void logAprilTagData() {
+    LimelightTarget_Fiducial[] latestFiducials = m_limelight.getLatestFiducials();
+
+    if (latestFiducials != null) {
+      for (LimelightTarget_Fiducial fiducial : latestFiducials) {
+        Logger.recordOutput("Odometry/Limelight/AprilTags/" + fiducial.fiducialID, fiducial.getTargetPose_RobotSpace());
+      }
+    }
   }
 
   @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
