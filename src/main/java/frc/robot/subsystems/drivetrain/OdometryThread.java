@@ -115,7 +115,7 @@ public class OdometryThread implements Runnable {
 
   @Override
   public void run() {
-    final double loopTargetTime = 1 / UPDATE_FREQUENCY;
+    final double loopTargetTime = 1.0 / UPDATE_FREQUENCY;
 
     /* Make sure all signals update at the correct update frequency */
     BaseStatusSignal.setUpdateFrequencyForAll(UPDATE_FREQUENCY, allSignals);
@@ -123,13 +123,16 @@ public class OdometryThread implements Runnable {
 
     /* Run as fast as possible, our signals will control the timing */
     while (m_running) {
-      currentTime = Timer.getFPGATimestamp();
       /* Synchronously wait for all signals in drivetrain */
       /* Wait up to twice the period of the update frequency */
       StatusCode status = BaseStatusSignal.waitForAll(2.0 / UPDATE_FREQUENCY, allSignals);
 
       try {
         stateLock.writeLock().lock();
+
+        lastTime = currentTime;
+        currentTime = Timer.getFPGATimestamp();
+
         /*
          * We don't care about the peaks, as they correspond to GC events, and we want
          * the period generally low passed
@@ -179,17 +182,14 @@ public class OdometryThread implements Runnable {
       double now = Timer.getFPGATimestamp();
       double elapsedTime = now - currentTime;
       double timeLeft = loopTargetTime - elapsedTime;
-      Logger.recordOutput("Odometry/Thread/TimeLeft", timeLeft);
-      Logger.recordOutput("Odometry/Thread/ElapsedTime", elapsedTime);
 
       if(timeLeft >= 0) {
         try {
-          Thread.sleep((long) Units.millisecondsToSeconds(timeLeft));
+          Thread.sleep((long) Units.secondsToMilliseconds(timeLeft));
         } catch (Exception e) {
           e.printStackTrace();
         }
       }
-      lastTime = Timer.getFPGATimestamp();
     }
   }
 
