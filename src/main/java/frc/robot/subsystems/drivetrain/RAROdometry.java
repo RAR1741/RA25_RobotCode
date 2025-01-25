@@ -260,7 +260,6 @@ public class RAROdometry extends Subsystem {
     if (pose != null) {
       return pose;
     }
-
     return new Pose2d();
   }
 
