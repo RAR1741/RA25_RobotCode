@@ -72,6 +72,10 @@ public class RAROdometry extends Subsystem {
   public AHRS getGyro() {
     return m_gyro;
   }
+  
+  public SwerveDrivePoseEstimator getPoseEstimator() {
+    return m_poseEstimator;
+  } 
 
   public Rotation2d getRotation2d() {
     return m_gyro.getRotation2d();
@@ -150,10 +154,10 @@ public class RAROdometry extends Subsystem {
     return true;
   }
 
-  //TODO: Add these to Constants when we're done testing them
+  // TODO: Add these to Constants when we're done testing them
   private double xyStdDevCoefficient = 0.005;
   private double thetaStdDevCoefficient = 0.01;
-  private double stdDevFactor = 0.5; //TODO: Add more!
+  private double stdDevFactor = 0.5; // TODO: Add more!
   private boolean useVisionRotation = true;
 
   private void updatePoseWithStdDev(PoseEstimate estimate) {
@@ -195,13 +199,13 @@ public class RAROdometry extends Subsystem {
             m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
             m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
         });
-    
+
     PoseEstimate estimate = m_limelight.getPoseEstimation();
 
     // TODO: I hate this
     // It's ok
-    if(m_hasSetPose) {
-      if(checkPose(estimate)) {
+    if (m_hasSetPose) {
+      if (checkPose(estimate)) {
         updatePoseWithStdDev(estimate);
       }
 
@@ -210,8 +214,8 @@ public class RAROdometry extends Subsystem {
       }
     } else {
       PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
-      
-      if(megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d())) {
+
+      if (megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d())) {
         m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
         m_hasSetPose = true;
       }
@@ -264,7 +268,7 @@ public class RAROdometry extends Subsystem {
     if (pose != null) {
       return pose;
     }
-    
+
     return new Pose2d();
   }
 

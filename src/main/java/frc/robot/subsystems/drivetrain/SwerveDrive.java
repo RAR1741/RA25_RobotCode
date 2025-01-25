@@ -155,6 +155,10 @@ public class SwerveDrive extends Subsystem {
     return null;
   }
 
+  public SwerveModule[] getSwerveModules() {
+    return m_modules;
+  }
+
   @AutoLogOutput
   private SwerveModuleState[] getCurrentStates() {
     SwerveModuleState[] currentStates = {

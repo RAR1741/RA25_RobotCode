@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -20,6 +21,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
 import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.SignalManager;
 
 public class SwerveModule {
   private final TalonFX m_driveMotor;
@@ -27,7 +29,9 @@ public class SwerveModule {
   
   private final CANcoder m_turningCANcoder;
 
-  private final PeriodicIO m_periodicIO = new PeriodicIO();
+  private final PeriodicIO m_periodicIO;
+
+  private final SignalManager m_signalManager = SignalManager.getInstance();
 
   private double m_turningOffset;
 
@@ -42,6 +46,9 @@ public class SwerveModule {
   private boolean m_moduleDisabled = false;
 
   public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID, double turningOffset) {
+    m_periodicIO = new PeriodicIO();
+
+
     m_moduleName = moduleName;
     m_turningOffset = turningOffset;
 
@@ -123,6 +130,16 @@ public class SwerveModule {
 
     m_turnMotor.getConfigurator().apply(turnConfig);
     // END TURN MOTOR INIT
+
+    BaseStatusSignal.setUpdateFrequencyForAll(250,
+                m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_driveMotor.getAcceleration(), m_driveMotor.getMotorVoltage(),
+                m_turnMotor.getPosition(), m_turnMotor.getVelocity(), m_turnMotor.getAcceleration(), m_turnMotor.getMotorVoltage());
+
+    // register all signals with the SignalManager so that any downstream callers
+    // get updated signals
+    m_signalManager.register(
+            m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_driveMotor.getAcceleration(), m_driveMotor.getMotorVoltage(),
+            m_turnMotor.getPosition(), m_turnMotor.getVelocity(), m_turnMotor.getAcceleration(), m_turnMotor.getMotorVoltage());
   }
 
   public SwerveModuleState getState() {
@@ -141,6 +158,17 @@ public class SwerveModule {
 
   public TalonFX getTurnMotor() {
     return m_turnMotor;
+  }
+
+  /**
+   * Returns an array of the required signals for odometry.
+   * 
+   * @return the required signals for odometry
+   */
+  public BaseStatusSignal[] getSignals() {
+      return new BaseStatusSignal[] {
+        m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_turnMotor.getPosition(), m_turnMotor.getVelocity() 
+      };
   }
 
   public void resetDriveEncoder() {
