@@ -118,7 +118,7 @@ public class SwerveModule {
 
     // TODO: check that this doesnt interfere with the inversion of the turn motor
     // output
-    canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     canCoderConfig.MagnetSensor.MagnetOffset = m_turningOffset;
 
     m_turningCANcoder.getConfigurator().apply(canCoderConfig);
