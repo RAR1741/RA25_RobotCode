@@ -270,12 +270,24 @@ public class RAROdometry extends Subsystem {
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
   public Pose2d getPose() {
-    return m_poseEstimator.getEstimatedPosition();
+    Pose2d pose = m_poseEstimator.getEstimatedPosition();
+
+    if (pose != null) {
+      return pose;
+    }
+
+    return new Pose2d();
   }
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/DistanceMetersFromNearestAprilTag")
   public double getDistanceMetersFromNearestAprilTag() {
-    return m_limelight.getPoseEstimation().avgTagDist;
+    PoseEstimate estimate = m_limelight.getPoseEstimation();
+
+    if (estimate != null) {
+      return estimate.avgTagDist;
+    }
+
+    return 0.0;
   }
 
   // private enum LimelightInstance {

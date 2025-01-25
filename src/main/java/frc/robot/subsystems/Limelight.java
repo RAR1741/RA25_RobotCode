@@ -8,11 +8,9 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import frc.robot.Helpers;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.drivetrain.RAROdometry;
-// import frc.robot.subsystems.drivetrain.SwerveDrive;
 
 public class Limelight {
   private NetworkTable m_limelightTable;
@@ -51,11 +49,17 @@ public class Limelight {
    * @return If there is a visible AprilTag
    */
   public boolean seesAprilTag() {
-    return m_limelightTable.getEntry("tv").getInteger(0) == 1;
+    return m_limelightTable.getEntry("tv").getInteger(0) == 1; // i think this returns 0 if the value is null, but idk
   }
 
   public PoseEstimate getMegaTag1PoseEstimation() {
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue(m_name);
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(m_name);
+
+    if (estimate != null) {
+      return estimate;
+    }
+
+    return new PoseEstimate();
   }
 
   public double getTimeOffset() {
@@ -86,7 +90,8 @@ public class Limelight {
   }
 
   public PoseEstimate getPoseEstimation() {
-    LimelightHelpers.SetRobotOrientation(m_name,
+    LimelightHelpers.SetRobotOrientation(
+        m_name,
         RAROdometry.getInstance().getRotation2d().getDegrees(),
         // SwerveDrive.getInstance().getGyro().getAngle(),
         // TODO: is this and/or getRate needed?
@@ -107,6 +112,6 @@ public class Limelight {
   }
 
   public boolean getLightEnabled() {
-    return m_limelightTable.getEntry("ledMode").getDouble(1) == 3;
+    return m_limelightTable.getEntry("ledMode").getDouble(1.0) == 3;
   }
 }
