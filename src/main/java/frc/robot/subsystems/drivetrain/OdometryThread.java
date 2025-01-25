@@ -8,12 +8,13 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -114,21 +115,21 @@ public class OdometryThread implements Runnable {
 
   @Override
   public void run() {
+    final long loopTargetTime = 1_000_000_000 / UPDATE_FREQUENCY; //1 sec in ns / update frequency
+
     /* Make sure all signals update at the correct update frequency */
     BaseStatusSignal.setUpdateFrequencyForAll(UPDATE_FREQUENCY, allSignals);
     Threads.setCurrentThreadPriority(true, START_THREAD_PRIORITY);
 
     /* Run as fast as possible, our signals will control the timing */
     while (m_running) {
+      long beginningTime = System.nanoTime();
       /* Synchronously wait for all signals in drivetrain */
       /* Wait up to twice the period of the update frequency */
       StatusCode status = BaseStatusSignal.waitForAll(2.0 / UPDATE_FREQUENCY, allSignals);
 
       try {
         stateLock.writeLock().lock();
-
-        lastTime = currentTime;
-        currentTime = Timer.getFPGATimestamp();
         /*
          * We don't care about the peaks, as they correspond to GC events, and we want
          * the period generally low passed
@@ -173,6 +174,20 @@ public class OdometryThread implements Runnable {
       if (threadPriorityToSet != lastThreadPriority) {
         Threads.setCurrentThreadPriority(true, threadPriorityToSet);
         lastThreadPriority = threadPriorityToSet;
+      }
+
+      long now = System.nanoTime();
+      long elapsedTime = now - beginningTime;
+      long timeLeft = loopTargetTime - elapsedTime;
+      Logger.recordOutput("Odometry/Thread/TimeLeft", timeLeft);
+      Logger.recordOutput("Odometry/Thread/ElapsedTime", elapsedTime);
+
+      if(timeLeft >= 0) {
+        try {
+          Thread.sleep(timeLeft / 1000);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
   }
