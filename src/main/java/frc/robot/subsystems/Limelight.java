@@ -5,6 +5,8 @@ import java.util.Arrays;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
@@ -112,21 +114,12 @@ public class Limelight {
   public Pose3d getTargetPose_RobotSpace(Pose2d botPose) {
     Pose3d botSpaceTagPose = LimelightHelpers.getTargetPose3d_RobotSpace(m_name);
 
-    return botSpaceTagPose;
-
-    // return new Pose3d(
-    // new Translation3d(
-    // 0.0 + botPose.getTranslation().getX(),
-    // 0.0 + botPose.getTranslation().getY(),
-    // 0.0),
-    // new Rotation3d(botPose.getRotation()));
-
-    // return new Pose3d(
-    // new Translation3d(
-    // botSpaceTagPose.getTranslation().getX() + botPose.getTranslation().getX(),
-    // botSpaceTagPose.getTranslation().getY() + botPose.getTranslation().getY(),
-    // botSpaceTagPose.getTranslation().getZ()),
-    // new Rotation3d(botPose.getRotation()));
+    return new Pose3d(
+        new Translation3d(
+            botPose.getTranslation().getX() - botSpaceTagPose.getTranslation().getX(),
+            0.0 + botPose.getTranslation().getY() + botSpaceTagPose.getTranslation().getZ(),
+            0.5),
+        new Rotation3d(botPose.getRotation()));
   }
 
   public boolean getLightEnabled() {
