@@ -89,6 +89,8 @@ public class RARHolonomicDriveController {
    *
    * @param currentPose The current robot pose
    * @param targetState The desired trajectory state
+   * @param goalPose The pose to end at
+   * @param maxApproachSpeed the speed in m/s to run at
    * @return The next robot relative output of the path following controller
    */
   public ChassisSpeeds calculateRobotRelativeSpeeds(
