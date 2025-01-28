@@ -104,8 +104,7 @@ public class Robot extends LoggedRobot {
       Pose2d goalPose = new Pose2d(14.027, 5.645, Rotation2d.fromDegrees(-120)); // april tag id 8
 
       m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, goalPose);
-    }
-    else {
+    } else {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }
   }

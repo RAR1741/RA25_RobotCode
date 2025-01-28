@@ -1,7 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -40,7 +39,7 @@ public class OdometryThread implements Runnable {
   private AHRS m_gyro;
 
   /** Lock used for odometry thread. */
-  private final ReadWriteLock m_stateLock = new ReentrantReadWriteLock();
+  private final ReadWriteLock m_stateLock;
 
   private final MedianFilter m_peakRemover = new MedianFilter(3);
   private final LinearFilter m_lowPass = LinearFilter.movingAverage(50);
@@ -59,7 +58,9 @@ public class OdometryThread implements Runnable {
   private int m_successfulDaqs = 0;
   private int m_failedDaqs = 0;
 
-  public OdometryThread() {
+  public OdometryThread(ReadWriteLock stateLock) {
+    m_stateLock = stateLock;
+
     m_thread = new Thread(this);
 
     m_swerve = SwerveDrive.getInstance();
@@ -168,6 +169,10 @@ public class OdometryThread implements Runnable {
         m_lastThreadPriority = m_threadPriorityToSet;
       }
     }
+  }
+
+  public ReadWriteLock getStateLock() {
+    return m_stateLock;
   }
 
   /**

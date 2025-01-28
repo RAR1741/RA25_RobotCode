@@ -1,5 +1,8 @@
 package frc.robot.subsystems.drivetrain;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -31,6 +34,9 @@ public class RAROdometry extends Subsystem {
 
   private SwerveDrivePoseEstimator m_poseEstimator;
 
+  /** Lock used for odometry thread. */
+  private final ReadWriteLock m_stateLock = new ReentrantReadWriteLock();
+
   private OdometryThread m_odometryThread;
 
   private boolean m_hasSetPose;
@@ -40,7 +46,7 @@ public class RAROdometry extends Subsystem {
 
     m_limelight = new Limelight("limelight");
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
-    m_odometryThread = new OdometryThread();
+    m_odometryThread = new OdometryThread(m_stateLock);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(
         m_swerve.getKinematics(),
@@ -179,10 +185,16 @@ public class RAROdometry extends Subsystem {
             * (DriverStation.isAutonomous() ? m_visionConstants.autoStdDevScale : 1.0)
         : Double.POSITIVE_INFINITY;
 
-    m_poseEstimator.addVisionMeasurement(
-        estimate.pose,
-        estimate.timestampSeconds,
-        VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
+    try {
+      m_stateLock.writeLock().lock();
+
+      m_poseEstimator.addVisionMeasurement(
+          estimate.pose,
+          estimate.timestampSeconds,
+          VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
+    } finally {
+      m_stateLock.writeLock().unlock();
+    }
   }
 
   @Override
