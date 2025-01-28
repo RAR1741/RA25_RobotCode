@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -22,6 +24,8 @@ public class Constants {
   public static class FieldConstants {
     public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
     public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+
+    public Pose2d k_reefPose = new Pose2d(Units.feetToMeters(12.0), (k_length/2.0), new Rotation2d());
   }
 
   public static class OdometryConstants {
@@ -135,5 +139,11 @@ public class Constants {
         public double k_D = 0.0;
       }
     }
+  }
+
+  public PoseAlignerConstants PoseAligner = new PoseAlignerConstants();
+
+  public class PoseAlignerConstants {
+
   }
 }
