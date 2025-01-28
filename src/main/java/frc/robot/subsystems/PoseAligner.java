@@ -27,11 +27,6 @@ public class PoseAligner extends Subsystem {
   }
 
   private static class PeriodicIO {
-    double elevator_target = 0.0;
-    double elevator_power = 0.0;
-
-    boolean is_elevator_pos_control = false;
-
     PoseTarget target = PoseTarget.NONE;
   }
 
