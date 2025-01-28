@@ -42,4 +42,8 @@ public class DriverController extends FilteredController {
   public boolean getWantsAutoPosition() {
     return this.getRawButton(Button.X);
   }
+
+  public boolean getWantsAutoPositionPressed() {
+    return this.getRawButtonPressed(Button.X);
+  }
 }

@@ -99,6 +99,10 @@ public class Robot extends LoggedRobot {
     rot *= slowScaler * boostScaler;
     // m_swerve.drive(1, 0, 0, false);
 
+    if (m_driverController.getWantsAutoPositionPressed()) {
+      m_swerve.resetDriveController();
+    }
+
     if (m_driverController.getWantsAutoPosition()) {
       Pose2d currentPose = m_odometry.getPose();
       Pose2d goalPose = new Pose2d(14.027, 5.645, Rotation2d.fromDegrees(-120)); // april tag id 8

@@ -271,7 +271,7 @@ public class SwerveModule {
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/PositionMet")
   public double getDrivePositionMet() {
     return Helpers.RPSToMPS(
-        m_driveMotor.getPosition().getValueAsDouble(),
+        getDrivePositionRot(),
         RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 

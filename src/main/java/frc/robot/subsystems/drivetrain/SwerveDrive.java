@@ -71,17 +71,17 @@ public class SwerveDrive extends Subsystem {
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
   private final RARHolonomicDriveController m_driveController = new RARHolonomicDriveController(
-    new PIDConstants(
-      RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_P,
-      RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_I,
-      RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_D),
-    new ProfiledPIDConstants(
-      RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_P,
-      RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_I,
-      RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_D,
-      RobotConstants.robotConfig.SwerveDrive.k_maxAngularSpeed,
-      RobotConstants.robotConfig.SwerveDrive.k_maxAngularAcceleration),
-    0.02);
+      new PIDConstants(
+          RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_P,
+          RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_I,
+          RobotConstants.robotConfig.SwerveDrive.Chassis.Drive.k_D),
+      new ProfiledPIDConstants(
+          RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_P,
+          RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_I,
+          RobotConstants.robotConfig.SwerveDrive.Chassis.Turn.k_D,
+          RobotConstants.robotConfig.SwerveDrive.k_maxAngularSpeed,
+          RobotConstants.robotConfig.SwerveDrive.k_maxAngularAcceleration),
+      0.02);
 
   public static SwerveDrive getInstance() {
     if (m_swerve == null) {
@@ -129,23 +129,33 @@ public class SwerveDrive extends Subsystem {
   public void drive(ChassisSpeeds speeds) {
     SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(speeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, RobotConstants.robotConfig.SwerveDrive.k_maxBoostSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
+        RobotConstants.robotConfig.SwerveDrive.k_maxBoostSpeed);
 
     for (int i = 0; i < m_modules.length; i++) {
       m_modules[i].setDesiredState(swerveModuleStates[i]);
     }
   }
 
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, Pose2d currentPose, Pose2d targetPose) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, Pose2d currentPose,
+      Pose2d targetPose) {
     ChassisSpeeds driverChassisSpeeds = fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, RAROdometry.getInstance().getGyro().getRotation2d())
-            : new ChassisSpeeds(xSpeed, ySpeed, rot);
+        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
+            RAROdometry.getInstance().getGyro().getRotation2d())
+        : new ChassisSpeeds(xSpeed, ySpeed, rot);
 
-    // TODO: be able to call RAROdometry from Swerve Drive (maybe pass modules as parameters)
+    // TODO: be able to call RAROdometry from Swerve Drive (maybe pass modules as
+    // parameters)
 
-    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(currentPose, targetPose, 0.5);
+    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(currentPose, targetPose,
+        0.5);
 
     drive(driverChassisSpeeds.plus(targetPoseChassisSpeeds));
+  }
+
+  public void resetDriveController() {
+    Pose2d currentPose = RAROdometry.getInstance().getPose();
+    m_driveController.reset(currentPose, m_kinematics.toChassisSpeeds(getCurrentStates())); // this is fine 🔥
   }
 
   public void resetDriveEncoders() {
@@ -221,6 +231,11 @@ public class SwerveDrive extends Subsystem {
     return desiredStates;
   }
 
+  @AutoLogOutput
+  private ChassisSpeeds getCurrentChassisSpeeds() {
+    return m_kinematics.toChassisSpeeds(getCurrentStates());
+  }
+
   public interface Module {
     int FRONT_LEFT = 0;
     int FRONT_RIGHT = 1;
@@ -229,5 +244,6 @@ public class SwerveDrive extends Subsystem {
   }
 
   @Override
-  public void reset() {}
+  public void reset() {
+  }
 }
