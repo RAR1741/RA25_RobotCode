@@ -26,9 +26,13 @@ public class PoseAligner extends Subsystem {
     return m_poseAligner;
   }
 
-  @Override
-  public void reset() {
+  private static class PeriodicIO {
+    double elevator_target = 0.0;
+    double elevator_power = 0.0;
 
+    boolean is_elevator_pos_control = false;
+
+    PoseTarget target = PoseTarget.NONE;
   }
 
   @Override
@@ -52,7 +56,7 @@ public class PoseAligner extends Subsystem {
     }
 
     // if (robotY < reefY + (diagonal / 2)) {
-    //   angle = 360 - angle;
+    // angle = 360 - angle;
     // }
   }
 
@@ -68,11 +72,19 @@ public class PoseAligner extends Subsystem {
     throw new UnsupportedOperationException("Unimplemented method 'stop'");
   }
 
+  @Override
+  public void reset() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'reset'");
+  }
+
   public void setTarget(PoseTarget target) {
     m_target = target;
   }
 
   public enum PoseTarget {
-    RED_REEF
+    NONE,
+    RED_REEF,
+    BLUE_REEF
   }
 }

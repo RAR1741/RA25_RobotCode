@@ -25,7 +25,13 @@ public class Constants {
     public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
     public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
 
-    public Pose2d k_reefPose = new Pose2d(Units.feetToMeters(12.0), (k_length/2.0), new Rotation2d());
+    public ReefConstants Reef = new ReefConstants();
+
+    public static class ReefConstants {
+      // TOOD: this is wrong
+      public Pose2d k_reefPose = new Pose2d(Units.feetToMeters(12.0), Units.feetToMeters(26.0), new Rotation2d());
+      public double k_reefFaceToFace = Units.inchesToMeters((7 * 12) + 9.5); // 7'9.5" ("REEF ZONE": section 5.3)
+    }
   }
 
   public static class OdometryConstants {
