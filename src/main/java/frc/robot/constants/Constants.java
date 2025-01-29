@@ -27,11 +27,12 @@ public class Constants {
 
     public double k_reefFaceToFaceWidth = Units.inchesToMeters((5 * 12) + 5.5); // 5'5.5" ("REEF ZONE": section 5.3)
 
-    public double k_blueReefX = Units.inchesToMeters(144 + (k_reefFaceToFaceWidth / 2)); // 144 inches + half the width
+    public double k_blueReefX = Units.inchesToMeters(144) + k_reefFaceToFaceWidth / 2; // 144 inches + half the
+                                                                                       // width
     public double k_blueReefY = Units.inchesToMeters(((26 * 12) + 5) / 2); // 26'5" / 2
 
-    public Pose2d k_redReefPose = new Pose2d(k_blueReefX, k_blueReefY, new Rotation2d());
-    public Pose2d k_blueReefPose = new Pose2d(k_length - k_blueReefX, k_blueReefY, new Rotation2d());
+    public Pose2d k_blueReefPose = new Pose2d(k_blueReefX, k_blueReefY, new Rotation2d());
+    public Pose2d k_redReefPose = new Pose2d(k_length - k_blueReefX, k_blueReefY, new Rotation2d());
   }
 
   public static class OdometryConstants {

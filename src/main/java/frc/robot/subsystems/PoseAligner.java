@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.ASPoseHelper;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 
@@ -75,7 +76,16 @@ public class PoseAligner extends Subsystem {
     // m_periodicIO.targetPose = new Pose2d(reefX, reefY,
     // Rotation2d.fromDegrees(angle));
 
-    // m_periodicIO.targetPose = new Pose2d(14.027, 5.645, Rotation2d.fromDegrees(-120)); // april tag id 8
+    // m_periodicIO.targetPose = new Pose2d(14.027, 5.645,
+    // Rotation2d.fromDegrees(-120)); // april tag id 8
+
+    Pose2d[] poses = getBlueReefScoringPoses();
+    for (int i = 0; i < poses.length; i++) {
+      String loggingKey = "BlueReefPose" + i;
+      Pose2d pose = poses[i];
+
+      ASPoseHelper.addPose(loggingKey, pose);
+    }
   }
 
   public Pose2d getTargetPose() {
@@ -85,19 +95,20 @@ public class PoseAligner extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'writePeriodicOutputs'");
+    // throw new UnsupportedOperationException("Unimplemented method
+    // 'writePeriodicOutputs'");
   }
 
   @Override
   public void stop() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'stop'");
+    // throw new UnsupportedOperationException("Unimplemented method 'stop'");
   }
 
   @Override
   public void reset() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'reset'");
+    // throw new UnsupportedOperationException("Unimplemented method 'reset'");
   }
 
   public void setTarget(PoseTarget target) {
@@ -108,5 +119,35 @@ public class PoseAligner extends Subsystem {
     NONE,
     RED_REEF,
     BLUE_REEF
+  }
+
+  /**
+   * Generates a new Pose2d for scoring on all 6 sides of the blue reef.
+   *
+   * @return An array of Pose2d objects representing scoring poses around the blue
+   *         reef.
+   */
+  public Pose2d[] getBlueReefScoringPoses() {
+    Pose2d[] poses = new Pose2d[6];
+    Pose2d blueReefPose = RobotConstants.robotConfig.Field.k_blueReefPose;
+
+    // Calculate poses for each side of the reef (assuming hexagonal reef)
+    // You might need to adjust these offsets based on the actual reef dimensions
+    // and robot's approach
+    double reefX = blueReefPose.getX();
+    double reefY = blueReefPose.getY();
+    double reefRotation = blueReefPose.getRotation().getDegrees(); // Assuming rotation is relevant
+
+    double offset = 1.5; // Offset from the reef center, adjust as needed
+
+    poses[0] = new Pose2d(reefX + offset, reefY, blueReefPose.getRotation()); // Right side
+    poses[1] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866, blueReefPose.getRotation()); // Top-right side
+    poses[2] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866, blueReefPose.getRotation()); // Top-left side
+    poses[3] = new Pose2d(reefX - offset, reefY, blueReefPose.getRotation()); // Left side
+    poses[4] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866, blueReefPose.getRotation()); // Bottom-left side
+    poses[5] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866, blueReefPose.getRotation()); // Bottom-right
+                                                                                                     // side
+
+    return poses;
   }
 }
