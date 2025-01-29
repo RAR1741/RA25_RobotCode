@@ -22,7 +22,11 @@
             "/RealOutputs/ASPoseHelper/BlueReef/target",
             "/RealOutputs/ASPoseHelper/BlueReef",
             "/RealOutputs/loggingKey",
-            "/RealOutputs/ASPoseHelper"
+            "/RealOutputs/ASPoseHelper",
+            "/RealOutputs/ASPoseHelper/Blue",
+            "/RealOutputs/ASPoseHelper/Red",
+            "/RealOutputs/ASPoseHelper/Blue/Reef",
+            "/RealOutputs/ASPoseHelper/Red/Reef"
           ]
         },
         "tabs": {
@@ -385,12 +389,32 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "/RealOutputs/ASPoseHelper/BlueReef/targets",
+                    "logKey": "/RealOutputs/ASPoseHelper/Blue/Reef/targets",
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
                       "model": "2025 KitBot",
                       "color": "#0000ff"
+                    }
+                  },
+                  {
+                    "type": "cone",
+                    "logKey": "/RealOutputs/ASPoseHelper/Blue/Reef/pose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff",
+                      "position": "center"
+                    }
+                  },
+                  {
+                    "type": "cone",
+                    "logKey": "/RealOutputs/ASPoseHelper/Red/Reef/pose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "position": "center"
                     }
                   }
                 ],
@@ -402,17 +426,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  7.20595602548757,
-                  5.008401082144948,
-                  -3.1759430784784866
+                  7.740204683318708,
+                  5.614691547863027,
+                  -4.99210519872424
                 ],
                 "cameraTarget": [
-                  2.69487679006058,
-                  -3.0461283203269987,
-                  0.9320587560155187
+                  -1.6641768333940667,
+                  -5.5281957909779695,
+                  4.821218743919272
                 ]
               },
-              "controlsHeight": 459
+              "controlsHeight": 230
             }
           ]
         }

@@ -1,7 +1,7 @@
 package frc.robot.constants;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -31,8 +31,8 @@ public class Constants {
                                                                                        // width
     public double k_blueReefY = Units.inchesToMeters(((26 * 12) + 5) / 2); // 26'5" / 2
 
-    public Pose2d k_blueReefPose = new Pose2d(k_blueReefX, k_blueReefY, new Rotation2d());
-    public Pose2d k_redReefPose = new Pose2d(k_length - k_blueReefX, k_blueReefY, new Rotation2d());
+    public Pose3d k_blueReefPose = new Pose3d(k_blueReefX, k_blueReefY, 2.0, new Rotation3d());
+    public Pose3d k_redReefPose = new Pose3d(k_length - k_blueReefX, k_blueReefY, 2.0, new Rotation3d());
   }
 
   public static class OdometryConstants {
