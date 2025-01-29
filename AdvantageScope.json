@@ -19,9 +19,10 @@
             "/AdvantageKit",
             "/AdvantageKit/RealOutputs",
             "/RealOutputs",
-            "/RealOutputs/ASPoseHelper",
+            "/RealOutputs/ASPoseHelper/BlueReef/target",
             "/RealOutputs/ASPoseHelper/BlueReef",
-            "/RealOutputs/ASPoseHelper/BlueReef/target"
+            "/RealOutputs/loggingKey",
+            "/RealOutputs/ASPoseHelper"
           ]
         },
         "tabs": {
@@ -384,58 +385,8 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "/RealOutputs/ASPoseHelper/BlueReef/target/0",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "2025 KitBot",
-                      "color": "#0000ff"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/ASPoseHelper/BlueReef/target/1",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "2025 KitBot",
-                      "color": "#0000ff"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/ASPoseHelper/BlueReef/target/2",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "2025 KitBot",
-                      "color": "#0000ff"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/ASPoseHelper/BlueReef/target/3",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "2025 KitBot",
-                      "color": "#0000ff"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/ASPoseHelper/BlueReef/target/4",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "2025 KitBot",
-                      "color": "#0000ff"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/ASPoseHelper/BlueReef/target/5",
-                    "logType": "Pose2d",
+                    "logKey": "/RealOutputs/ASPoseHelper/BlueReef/targets",
+                    "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
                       "model": "2025 KitBot",
@@ -461,7 +412,7 @@
                   0.9320587560155187
                 ]
               },
-              "controlsHeight": 543
+              "controlsHeight": 459
             }
           ]
         }

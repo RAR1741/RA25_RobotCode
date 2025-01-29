@@ -40,9 +40,10 @@ public class PoseAligner extends Subsystem {
   @Override
   public void periodic() {
     // Get the current alliance color
-    Alliance alliance = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red
-        ? Alliance.Red
-        : Alliance.Blue;
+    Alliance alliance = DriverStation.getAlliance().isPresent() &&
+        DriverStation.getAlliance().get() == Alliance.Red
+            ? Alliance.Red
+            : Alliance.Blue;
 
     Pose2d allianceReef = alliance == Alliance.Red ? RobotConstants.robotConfig.Field.k_redReefPose
         : RobotConstants.robotConfig.Field.k_blueReefPose;
@@ -79,13 +80,9 @@ public class PoseAligner extends Subsystem {
     // m_periodicIO.targetPose = new Pose2d(14.027, 5.645,
     // Rotation2d.fromDegrees(-120)); // april tag id 8
 
-    Pose2d[] poses = getBlueReefScoringPoses();
-    for (int i = 0; i < poses.length; i++) {
-      String loggingKey = "BlueReef/target/" + i;
-      Pose2d pose = poses[i];
-
-      ASPoseHelper.addPose(loggingKey, pose);
-    }
+    Pose2d[] poses = getAllianceReefScoringPoses(allianceReef);
+    String loggingKey = (alliance == Alliance.Red ? "RedReef/targets" : "BlueReef/targets");
+    ASPoseHelper.addPose(loggingKey, poses);
   }
 
   public Pose2d getTargetPose() {
@@ -122,31 +119,35 @@ public class PoseAligner extends Subsystem {
   }
 
   /**
-   * Generates a new Pose2d for scoring on all 6 sides of the blue reef.
+   * Generates a new Pose2d for scoring on all 6 sides of the given alliance reef.
    *
-   * @return An array of Pose2d objects representing scoring poses around the blue
-   *         reef.
+   * @param allianceReefPose The Pose2d object representing the alliance reef
+   *                         location.
+   * @return An array of Pose2d objects representing scoring poses around the
+   *         alliance reef.
    */
-  public Pose2d[] getBlueReefScoringPoses() {
+  public Pose2d[] getAllianceReefScoringPoses(Pose2d allianceReefPose) {
     Pose2d[] poses = new Pose2d[6];
-    Pose2d blueReefPose = RobotConstants.robotConfig.Field.k_blueReefPose;
 
     // Calculate poses for each side of the reef (assuming hexagonal reef)
     // You might need to adjust these offsets based on the actual reef dimensions
     // and robot's approach
-    double reefX = blueReefPose.getX();
-    double reefY = blueReefPose.getY();
-    double reefRotation = blueReefPose.getRotation().getDegrees(); // Assuming rotation is relevant
+    double reefX = allianceReefPose.getX();
+    double reefY = allianceReefPose.getY();
+    double reefRotation = allianceReefPose.getRotation().getDegrees(); // Assuming rotation is relevant
 
     double offset = 1.5; // Offset from the reef center, adjust as needed
 
-    poses[0] = new Pose2d(reefX + offset, reefY, blueReefPose.getRotation()); // Right side
-    poses[1] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866, blueReefPose.getRotation()); // Top-right side
-    poses[2] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866, blueReefPose.getRotation()); // Top-left side
-    poses[3] = new Pose2d(reefX - offset, reefY, blueReefPose.getRotation()); // Left side
-    poses[4] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866, blueReefPose.getRotation()); // Bottom-left side
-    poses[5] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866, blueReefPose.getRotation()); // Bottom-right
-                                                                                                     // side
+    poses[0] = new Pose2d(reefX + offset, reefY, allianceReefPose.getRotation()); // Right side
+    poses[1] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866, allianceReefPose.getRotation()); // Top-right
+                                                                                                         // side
+    poses[2] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866, allianceReefPose.getRotation()); // Top-left
+                                                                                                         // side
+    poses[3] = new Pose2d(reefX - offset, reefY, allianceReefPose.getRotation()); // Left side
+    poses[4] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866, allianceReefPose.getRotation()); // Bottom-left
+                                                                                                         // side
+    poses[5] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866, allianceReefPose.getRotation()); // Bottom-right
+                                                                                                         // side
 
     return poses;
   }

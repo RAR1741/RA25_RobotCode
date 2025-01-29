@@ -12,7 +12,15 @@ public class ASPoseHelper {
     Logger.recordOutput(LOGGING_KEY + key_path, pose);
   }
 
+  public static void addPose(String key_path, Pose2d[] pose) {
+    Logger.recordOutput(LOGGING_KEY + key_path, pose);
+  }
+
   public static void addPose(String key_path, Pose3d pose) {
+    Logger.recordOutput(LOGGING_KEY + key_path, pose);
+  }
+
+  public static void addPose(String key_path, Pose3d[] pose) {
     Logger.recordOutput(LOGGING_KEY + key_path, pose);
   }
 }
