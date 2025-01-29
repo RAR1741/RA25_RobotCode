@@ -14,30 +14,28 @@ public class Constants {
     public String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
                                     // Drivetrain CANivore
 
-    public double k_width = 27.0; // Inches
-    public double k_length = 30.0; // Inches
+    public double k_width = 28.0; // Inches
+    public double k_length = 32.0; // Inches
 
     public double k_bumperStart = 1.0; // Inches
     public double k_bumperHeight = 5.0; // Inches
   }
 
   public static class FieldConstants {
-    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
-    public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+    public double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5)
+    public double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
 
-    public ReefConstants Reef = new ReefConstants();
+    public double k_reefFaceToFaceWidth = Units.inchesToMeters((5 * 12) + 5.5); // 5'5.5" ("REEF ZONE": section 5.3)
 
-    public static class ReefConstants {
-      // TOOD: this is wrong
-      public Pose2d k_reefPose = new Pose2d(Units.feetToMeters(12.0), Units.feetToMeters(26.0), new Rotation2d());
-      public double k_reefFaceToFace = Units.inchesToMeters((7 * 12) + 9.5); // 7'9.5" ("REEF ZONE": section 5.3)
-    }
+    public double k_blueReefX = Units.inchesToMeters(144 + (k_reefFaceToFaceWidth / 2)); // 144 inches + half the width
+    public double k_blueReefY = Units.inchesToMeters(((26 * 12) + 5) / 2); // 26'5" / 2
+
+    public Pose2d k_redReefPose = new Pose2d(k_blueReefX, k_blueReefY, new Rotation2d());
+    public Pose2d k_blueReefPose = new Pose2d(k_length - k_blueReefX, k_blueReefY, new Rotation2d());
   }
 
   public static class OdometryConstants {
-    public int k_threadUpdateFrequency = 250;
-    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
-    public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+    public int k_threadUpdateFrequency = 250; // Hz
   }
 
   public static class SwerveDriveConstants {

@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
+import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
@@ -30,6 +30,7 @@ public class Robot extends LoggedRobot {
 
   private final SwerveDrive m_swerve;
   private final RAROdometry m_odometry;
+  private final PoseAligner m_poseAligner;
   private final DriverController m_driverController;
   private final SignalManager m_signalManager = SignalManager.getInstance();
 
@@ -43,14 +44,13 @@ public class Robot extends LoggedRobot {
     m_subsystems = new ArrayList<>();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
+    m_poseAligner = PoseAligner.getInstance();
 
     m_driverController = new DriverController(0, true, false, 0.5);
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
-  }
+    m_subsystems.add(m_poseAligner);
 
-  @Override
-  public void robotInit() {
     new RobotTelemetry();
 
     // Initialize on-board logging
@@ -97,7 +97,6 @@ public class Robot extends LoggedRobot {
     xSpeed *= slowScaler * boostScaler;
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
-    // m_swerve.drive(1, 0, 0, false);
 
     if (m_driverController.getWantsAutoPositionPressed()) {
       m_swerve.resetDriveController();
@@ -105,9 +104,9 @@ public class Robot extends LoggedRobot {
 
     if (m_driverController.getWantsAutoPosition()) {
       Pose2d currentPose = m_odometry.getPose();
-      Pose2d goalPose = new Pose2d(14.027, 5.645, Rotation2d.fromDegrees(-120)); // april tag id 8
+      Pose2d desiredPose = m_poseAligner.getTargetPose();
 
-      m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, goalPose);
+      m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, desiredPose);
     } else {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }

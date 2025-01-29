@@ -2,7 +2,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 
 public class PoseAligner extends Subsystem {
@@ -11,6 +15,7 @@ public class PoseAligner extends Subsystem {
   private final SwerveDrivePoseEstimator m_poseEstimator;
 
   private PoseTarget m_target;
+  private final PeriodicIO m_periodicIO = new PeriodicIO();
 
   private PoseAligner() {
     super("PoseAligner");
@@ -18,7 +23,7 @@ public class PoseAligner extends Subsystem {
     m_poseEstimator = RAROdometry.getInstance().getPoseEstimator();
   }
 
-  public PoseAligner getInstance() {
+  public static PoseAligner getInstance() {
     if (m_poseAligner == null) {
       m_poseAligner = new PoseAligner();
     }
@@ -27,11 +32,21 @@ public class PoseAligner extends Subsystem {
   }
 
   private static class PeriodicIO {
+    Pose2d targetPose = new Pose2d();
+
     PoseTarget target = PoseTarget.NONE;
   }
 
   @Override
   public void periodic() {
+    // Get the current alliance color
+    Alliance alliance = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red
+        ? Alliance.Red
+        : Alliance.Blue;
+
+    Pose2d allianceReef = alliance == Alliance.Red ? RobotConstants.robotConfig.Field.k_redReefPose
+        : RobotConstants.robotConfig.Field.k_blueReefPose;
+
     Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
 
     double robotX = currentPose.getX();
@@ -53,6 +68,16 @@ public class PoseAligner extends Subsystem {
     // if (robotY < reefY + (diagonal / 2)) {
     // angle = 360 - angle;
     // }
+
+    // TODO: set the targetPose
+    // m_periodicIO.targetPose = new Pose2d(reefX, reefY,
+    // Rotation2d.fromDegrees(angle));
+
+    m_periodicIO.targetPose = new Pose2d(14.027, 5.645, Rotation2d.fromDegrees(-120)); // april tag id 8
+  }
+
+  public Pose2d getTargetPose() {
+    return m_periodicIO.targetPose;
   }
 
   @Override
