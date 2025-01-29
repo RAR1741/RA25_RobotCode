@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -53,8 +52,8 @@ public class PoseAligner extends Subsystem {
     double robotY = currentPose.getY();
     // double robotYaw = currentPose.getRotation().getDegrees();
 
-    double reefX = 0.0; // TODO: get a Pose2d corresponding to whichever location we're aligning to
-    double reefY = 0.0;
+    double reefX = allianceReef.getX(); // TODO: get a Pose2d corresponding to whichever location we're aligning to
+    double reefY = allianceReef.getY();
 
     // double diagonal = 3.153; // long diagonal of the reef (meters)
 
@@ -65,6 +64,9 @@ public class PoseAligner extends Subsystem {
       angle = 360 - angle;
     }
 
+    int sector = (int) Math.floor(angle / 60.0);
+    int angleOffset = (sector * 60) + 30;
+
     // if (robotY < reefY + (diagonal / 2)) {
     // angle = 360 - angle;
     // }
@@ -73,7 +75,7 @@ public class PoseAligner extends Subsystem {
     // m_periodicIO.targetPose = new Pose2d(reefX, reefY,
     // Rotation2d.fromDegrees(angle));
 
-    m_periodicIO.targetPose = new Pose2d(14.027, 5.645, Rotation2d.fromDegrees(-120)); // april tag id 8
+    // m_periodicIO.targetPose = new Pose2d(14.027, 5.645, Rotation2d.fromDegrees(-120)); // april tag id 8
   }
 
   public Pose2d getTargetPose() {

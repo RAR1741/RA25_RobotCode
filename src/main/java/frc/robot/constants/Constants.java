@@ -22,7 +22,7 @@ public class Constants {
   }
 
   public static class FieldConstants {
-    public double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5)
+    public double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
     public double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
 
     public double k_reefFaceToFaceWidth = Units.inchesToMeters((5 * 12) + 5.5); // 5'5.5" ("REEF ZONE": section 5.3)
