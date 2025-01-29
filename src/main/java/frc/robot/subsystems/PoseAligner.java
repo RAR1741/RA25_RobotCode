@@ -81,7 +81,7 @@ public class PoseAligner extends Subsystem {
 
     Pose2d[] poses = getBlueReefScoringPoses();
     for (int i = 0; i < poses.length; i++) {
-      String loggingKey = "BlueReefPose" + i;
+      String loggingKey = "BlueReef/target/" + i;
       Pose2d pose = poses[i];
 
       ASPoseHelper.addPose(loggingKey, pose);
