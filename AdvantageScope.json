@@ -23,10 +23,10 @@
             "/RealOutputs/ASPoseHelper/BlueReef",
             "/RealOutputs/loggingKey",
             "/RealOutputs/ASPoseHelper",
-            "/RealOutputs/ASPoseHelper/Blue",
-            "/RealOutputs/ASPoseHelper/Red",
             "/RealOutputs/ASPoseHelper/Blue/Reef",
-            "/RealOutputs/ASPoseHelper/Red/Reef"
+            "/RealOutputs/ASPoseHelper/Red/Reef",
+            "/RealOutputs/ASPoseHelper/VirtualRobotPose",
+            "/RealOutputs/ASPoseHelper/Red"
           ]
         },
         "tabs": {
@@ -408,6 +408,16 @@
                     }
                   },
                   {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/ASPoseHelper/Red/Reef/targets",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#ff0000"
+                    }
+                  },
+                  {
                     "type": "cone",
                     "logKey": "/RealOutputs/ASPoseHelper/Red/Reef/pose",
                     "logType": "Pose3d",
@@ -415,6 +425,36 @@
                     "options": {
                       "color": "#ff0000",
                       "position": "center"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/ASPoseHelper/VirtualRobot/pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2024 KitBot",
+                      "color": "#ff00ff"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "/RealOutputs/ASPoseHelper/TargetAngle",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/ASPoseHelper/VirtualRobot/target",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#00ffff"
                     }
                   }
                 ],
@@ -426,17 +466,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  7.740204683318708,
-                  5.614691547863027,
-                  -4.99210519872424
+                  5.654317841916959,
+                  12.39917377359783,
+                  -0.25880800714849134
                 ],
                 "cameraTarget": [
-                  -1.6641768333940667,
-                  -5.5281957909779695,
-                  4.821218743919272
+                  4.653047697826365,
+                  -1.4806262612039047,
+                  -0.26314867334619496
                 ]
               },
-              "controlsHeight": 230
+              "controlsHeight": 157
             }
           ]
         }
