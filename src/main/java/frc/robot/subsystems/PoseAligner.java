@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -138,20 +139,16 @@ public class PoseAligner extends Subsystem {
     // and robot's approach
     double reefX = allianceReefPose.getX();
     double reefY = allianceReefPose.getY();
-    double reefRotation = allianceReefPose.getRotation().toRotation2d().getDegrees(); // Assuming rotation is relevant
 
     double offset = 1.5; // Offset from the reef center, adjust as needed
 
-    poses[0] = new Pose2d(reefX + offset, reefY, allianceReefPose.getRotation().toRotation2d()); // Right side
-    poses[1] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866, allianceReefPose.getRotation().toRotation2d()); // Top-right
-    // side
-    poses[2] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866, allianceReefPose.getRotation().toRotation2d()); // Top-left
-    // side
-    poses[3] = new Pose2d(reefX - offset, reefY, allianceReefPose.getRotation().toRotation2d()); // Left side
-    poses[4] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866, allianceReefPose.getRotation().toRotation2d()); // Bottom-left
-    // side
-    poses[5] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866, allianceReefPose.getRotation().toRotation2d()); // Bottom-right
-    // side
+    poses[0] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180)); // Right side
+    poses[1] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866, Rotation2d.fromDegrees(240)); // Top-right side
+    poses[2] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866, Rotation2d.fromDegrees(300)); // Top-left side
+    poses[3] = new Pose2d(reefX - offset, reefY, Rotation2d.fromDegrees(0)); // Left side
+    poses[4] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866, Rotation2d.fromDegrees(60)); // Bottom-left side
+    poses[5] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866, Rotation2d.fromDegrees(120)); // Bottom-right
+                                                                                                      // side
 
     return poses;
   }
