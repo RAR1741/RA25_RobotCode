@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -83,31 +85,18 @@ public class PoseAligner extends Subsystem {
 
   @Override
   public void writePeriodicOutputs() {
-    // TODO Auto-generated method stub
-    // throw new UnsupportedOperationException("Unimplemented method
-    // 'writePeriodicOutputs'");
   }
 
   @Override
   public void stop() {
-    // TODO Auto-generated method stub
-    // throw new UnsupportedOperationException("Unimplemented method 'stop'");
   }
 
   @Override
   public void reset() {
-    // TODO Auto-generated method stub
-    // throw new UnsupportedOperationException("Unimplemented method 'reset'");
   }
 
   public void setTarget(PoseTarget target) {
     m_target = target;
-  }
-
-  public enum PoseTarget {
-    NONE,
-    RED_REEF,
-    BLUE_REEF
   }
 
   /**
@@ -129,14 +118,30 @@ public class PoseAligner extends Subsystem {
 
     double offset = 1.5; // Offset from the reef center, adjust as needed
 
-    poses[0] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180)); // Right side
-    poses[1] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866, Rotation2d.fromDegrees(240)); // Top-right side
-    poses[2] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866, Rotation2d.fromDegrees(300)); // Top-left side
-    poses[3] = new Pose2d(reefX - offset, reefY, Rotation2d.fromDegrees(0)); // Left side
-    poses[4] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866, Rotation2d.fromDegrees(60)); // Bottom-left side
-    poses[5] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866, Rotation2d.fromDegrees(120)); // Bottom-right
-                                                                                                      // side
+    poses[ReefStartingPoses.RIGHT_SIDE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
+    poses[ReefStartingPoses.TOP_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866, Rotation2d.fromDegrees(240));
+    poses[ReefStartingPoses.TOP_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866, Rotation2d.fromDegrees(300));
+    poses[ReefStartingPoses.LEFT_SIDE] = new Pose2d(reefX - offset, reefY, Rotation2d.fromDegrees(0));
+    poses[ReefStartingPoses.BOTTOM_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866, Rotation2d.fromDegrees(60));
+    poses[ReefStartingPoses.BOTTOM_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866, Rotation2d.fromDegrees(120));
 
     return poses;
   }
+
+  public enum PoseTarget {
+    NONE,
+    RED_REEF,
+    BLUE_REEF
+  }
+
+  public interface ReefStartingPoses {
+    int RIGHT_SIDE = 0;
+    int TOP_RIGHT_SIDE = 1;
+    int TOP_LEFT_SIDE = 2;
+    int LEFT_SIDE = 3;
+    int BOTTOM_LEFT_SIDE = 4;
+    int BOTTOM_RIGHT_SIDE = 5;
+  }
+
+  // TODO: maybe change the starting pose labels to tag-specific for easier labeling
 }
