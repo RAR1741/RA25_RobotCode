@@ -4,10 +4,10 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ASPoseHelper;
+import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 
@@ -41,6 +41,9 @@ public class PoseAligner extends Subsystem {
 
   @Override
   public void periodic() {
+  }
+
+  public void calculate(Pose2d currentPose) {
     // Get the current alliance color
     Alliance alliance = DriverStation.getAlliance().isPresent() &&
         DriverStation.getAlliance().get() == Alliance.Red
@@ -53,41 +56,25 @@ public class PoseAligner extends Subsystem {
     Pose3d allianceReef = alliance == Alliance.Red ? RobotConstants.robotConfig.Field.k_redReefPose
         : RobotConstants.robotConfig.Field.k_blueReefPose;
 
-    Pose2d currentPose = m_poseEstimator.getEstimatedPosition();
+    ASPoseHelper.addPose("TargetAngle", new Pose2d[] { currentPose, allianceReef.toPose2d() });
 
-    double robotX = currentPose.getX();
-    double robotY = currentPose.getY();
-    // double robotYaw = currentPose.getRotation().getDegrees();
+    double baseAngle = Math.toDegrees(Math.atan2(
+        allianceReef.getY() - currentPose.getY(), allianceReef.getX() - currentPose.getX()));
 
-    double reefX = allianceReef.getX(); // TODO: get a Pose2d corresponding to whichever location we're aligning to
-    double reefY = allianceReef.getY();
+    // 180 to face the red wall, 30 to account for the reef's orientation
+    int correctedAngle = (int) Helpers.modDegrees(baseAngle + 180.0 + 30.0);
 
-    // double diagonal = 3.153; // long diagonal of the reef (meters)
-
-    double angle = Units.radiansToDegrees(Math.atan(Math.abs(robotY - reefY) / Math.abs((robotX - reefX))));
-
-    // the robot is "under" the reef relative to the origin point
-    if (robotY < reefY) {
-      angle = 360 - angle;
-    }
-
-    int sector = (int) Math.floor(angle / 60.0);
-    int angleOffset = (sector * 60) + 30;
-
-    // if (robotY < reefY + (diagonal / 2)) {
-    // angle = 360 - angle;
-    // }
-
-    // TODO: set the targetPose
-    // m_periodicIO.targetPose = new Pose2d(reefX, reefY,
-    // Rotation2d.fromDegrees(angle));
-
-    // m_periodicIO.targetPose = new Pose2d(14.027, 5.645,
-    // Rotation2d.fromDegrees(-120)); // april tag id 8
-
+    // TODO: we only need to do this once/when the alliance changes
     Pose2d[] poses = getAllianceReefScoringPoses(allianceReef);
     String loggingKey = (alliance == Alliance.Red ? "Red/Reef/targets" : "Blue/Reef/targets");
     ASPoseHelper.addPose(loggingKey, poses);
+
+    m_periodicIO.targetPose = poses[Math.floorDiv(correctedAngle, 60)];
+  }
+
+  public Pose2d getAndCalculateTargetPose(Pose2d currentPose) {
+    calculate(currentPose);
+    return getTargetPose();
   }
 
   public Pose2d getTargetPose() {
