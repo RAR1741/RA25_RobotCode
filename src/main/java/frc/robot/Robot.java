@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
+import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
@@ -32,6 +33,7 @@ public class Robot extends LoggedRobot {
   private final RAROdometry m_odometry;
   private final PoseAligner m_poseAligner;
   private final DriverController m_driverController;
+  private final VirtualRobotController m_virtualRobotController;
   private final SignalManager m_signalManager = SignalManager.getInstance();
 
   /**
@@ -47,6 +49,8 @@ public class Robot extends LoggedRobot {
     m_poseAligner = PoseAligner.getInstance();
 
     m_driverController = new DriverController(0, true, false, 0.5);
+    m_virtualRobotController = new VirtualRobotController(2);
+
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
     m_subsystems.add(m_poseAligner);
@@ -62,6 +66,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
+    m_virtualRobotController.updatePose();
+
     m_subsystems.forEach(subsystem -> subsystem.periodic());
     m_subsystems.forEach(subsystem -> subsystem.writePeriodicOutputs());
     m_subsystems.forEach(subsystem -> subsystem.writeToLog());
@@ -101,6 +107,9 @@ public class Robot extends LoggedRobot {
     if (m_driverController.getWantsAutoPositionPressed()) {
       m_swerve.resetDriveController();
     }
+
+    Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(m_virtualRobotController.getCurrentPose());
+    ASPoseHelper.addPose("VirtualRobot/target", targetPose);
 
     if (m_driverController.getWantsAutoPosition()) {
       Pose2d currentPose = m_odometry.getPose();
