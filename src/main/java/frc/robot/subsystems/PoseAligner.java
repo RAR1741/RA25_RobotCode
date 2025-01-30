@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,20 +8,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ASPoseHelper;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
-import frc.robot.subsystems.drivetrain.RAROdometry;
 
 public class PoseAligner extends Subsystem {
   private static PoseAligner m_poseAligner;
 
-  private final SwerveDrivePoseEstimator m_poseEstimator;
-
-  private PoseTarget m_target;
   private final PeriodicIO m_periodicIO = new PeriodicIO();
 
   private PoseAligner() {
     super("PoseAligner");
-
-    m_poseEstimator = RAROdometry.getInstance().getPoseEstimator();
   }
 
   public static PoseAligner getInstance() {
@@ -37,8 +28,6 @@ public class PoseAligner extends Subsystem {
 
   private static class PeriodicIO {
     Pose2d targetPose = new Pose2d();
-
-    PoseTarget target = PoseTarget.NONE;
   }
 
   @Override
@@ -71,6 +60,7 @@ public class PoseAligner extends Subsystem {
     String loggingKey = (alliance == Alliance.Red ? "Red/Reef/targets" : "Blue/Reef/targets");
     ASPoseHelper.addPose(loggingKey, poses);
 
+    // get the pose corresponding to what sector we're in
     m_periodicIO.targetPose = poses[Math.floorDiv(correctedAngle, 60)];
   }
 
@@ -95,10 +85,6 @@ public class PoseAligner extends Subsystem {
   public void reset() {
   }
 
-  public void setTarget(PoseTarget target) {
-    m_target = target;
-  }
-
   /**
    * Generates a new Pose2d for scoring on all 6 sides of the given alliance reef.
    *
@@ -116,22 +102,25 @@ public class PoseAligner extends Subsystem {
     double reefX = allianceReefPose.getX();
     double reefY = allianceReefPose.getY();
 
-    double offset = 1.5; // Offset from the reef center, adjust as needed
+    double offset = 1.5; // TODO: Offset from the reef center, adjust as needed (we might want to change this)
 
     poses[ReefStartingPoses.RIGHT_SIDE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
-    poses[ReefStartingPoses.TOP_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866, Rotation2d.fromDegrees(240));
-    poses[ReefStartingPoses.TOP_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866, Rotation2d.fromDegrees(300));
+
+    poses[ReefStartingPoses.TOP_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866,
+        Rotation2d.fromDegrees(240));
+
+    poses[ReefStartingPoses.TOP_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866,
+        Rotation2d.fromDegrees(300));
+
     poses[ReefStartingPoses.LEFT_SIDE] = new Pose2d(reefX - offset, reefY, Rotation2d.fromDegrees(0));
-    poses[ReefStartingPoses.BOTTOM_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866, Rotation2d.fromDegrees(60));
-    poses[ReefStartingPoses.BOTTOM_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866, Rotation2d.fromDegrees(120));
+
+    poses[ReefStartingPoses.BOTTOM_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866,
+        Rotation2d.fromDegrees(60));
+
+    poses[ReefStartingPoses.BOTTOM_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866,
+        Rotation2d.fromDegrees(120));
 
     return poses;
-  }
-
-  public enum PoseTarget {
-    NONE,
-    RED_REEF,
-    BLUE_REEF
   }
 
   public interface ReefStartingPoses {
@@ -143,5 +132,6 @@ public class PoseAligner extends Subsystem {
     int BOTTOM_RIGHT_SIDE = 5;
   }
 
-  // TODO: maybe change the starting pose labels to tag-specific for easier labeling
+  // TODO: maybe change the starting pose labels to tag-specific for easier
+  // labeling
 }
