@@ -199,8 +199,14 @@ public class RAROdometry extends Subsystem {
 
   @Override
   public void reset() {
+    //1. stop our thread
+    m_odometryThread.stop();
+
+    //2. reset gyro values
     resetGyro();
-    resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+    resetOdometry(new Pose2d());
+
+    m_odometryThread.start();
   }
 
   @Override

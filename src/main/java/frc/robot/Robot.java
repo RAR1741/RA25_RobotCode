@@ -119,6 +119,10 @@ public class Robot extends LoggedRobot {
     } else {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }
+
+    if(m_driverController.getWantsResetOdometry()) {
+      m_odometry.reset();
+    }
   }
 
   @Override

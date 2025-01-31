@@ -46,4 +46,47 @@ public class DriverController extends FilteredController {
   public boolean getWantsAutoPositionPressed() {
     return this.getRawButtonPressed(Button.X);
   }
+
+  public boolean getWantsResetOdometry() {
+    return this.getRawButtonPressed(Button.BACK);
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Sarthak was here

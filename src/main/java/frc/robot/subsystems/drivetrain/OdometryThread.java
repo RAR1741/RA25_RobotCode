@@ -14,6 +14,7 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
 
 /**
@@ -95,24 +96,17 @@ public class OdometryThread implements Runnable {
   }
 
   /**
-   * Stops the odometry thread.
+   * Stops the odometry thread
    */
   public void stop() {
-    stop(0);
-  }
-
-  /**
-   * Stops the odometry thread with a timeout.
-   *
-   * @param millis The time to wait in milliseconds
-   */
-  public void stop(long millis) {
-    m_running = false;
     try {
-      m_thread.join(millis);
+      m_thread.join(1);
     } catch (final InterruptedException ex) {
       Thread.currentThread().interrupt();
     }
+    m_successfulDaqs = 0;
+    m_failedDaqs = 0;
+    m_running = false;
   }
 
   @Override
