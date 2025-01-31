@@ -39,8 +39,6 @@ public class RAROdometry extends Subsystem {
 
   private OdometryThread m_odometryThread;
 
-  private boolean m_hasSetPose;
-
   private RAROdometry() {
     super("Odometry");
 
@@ -144,11 +142,11 @@ public class RAROdometry extends Subsystem {
       return false;
     }
 
-    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConfig.Field.k_width) {
+    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConfig.Field.k_length) {
       return false;
     }
 
-    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConfig.Field.k_length) {
+    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConfig.Field.k_width) {
       return false;
     }
 
@@ -211,20 +209,8 @@ public class RAROdometry extends Subsystem {
 
     PoseEstimate estimate = m_limelight.getPoseEstimation();
 
-    // TODO: I hate this. This needs to be a button in the future
-    // It's ok i hate it too
-    if (m_hasSetPose) {
-      if (checkPose(estimate)) {
-        updatePoseWithStdDev(estimate);
-      }
-    } else {
-      // PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
-
-      // if (megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d()))
-      // {
-      // m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
-      m_hasSetPose = true;
-      // }
+    if (checkPose(estimate)) {
+      updatePoseWithStdDev(estimate);
     }
 
     logAprilTagData();

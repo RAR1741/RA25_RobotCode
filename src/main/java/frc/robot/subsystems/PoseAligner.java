@@ -102,7 +102,8 @@ public class PoseAligner extends Subsystem {
     double reefX = allianceReefPose.getX();
     double reefY = allianceReefPose.getY();
 
-    double offset = 1.5; // TODO: Offset from the reef center, adjust as needed (we might want to change this)
+    double offset = 1.5; // TODO: Offset from the reef center, adjust as needed (we might want to change
+                         // this)
 
     poses[ReefStartingPoses.RIGHT_SIDE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
 

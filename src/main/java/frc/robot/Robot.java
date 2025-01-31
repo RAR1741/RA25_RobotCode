@@ -112,12 +112,11 @@ public class Robot extends LoggedRobot {
     // m_poseAligner.getAndCalculateTargetPose(m_virtualRobotController.getCurrentPose());
     // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
 
+    Pose2d currentPose = m_odometry.getPose();
+    Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(currentPose);
+    ASPoseHelper.addPose("VirtualRobot/target", desiredPose);
+
     if (m_driverController.getWantsAutoPosition()) {
-      Pose2d currentPose = m_odometry.getPose();
-      Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(currentPose);
-
-      ASPoseHelper.addPose("VirtualRobot/target", desiredPose);
-
       m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, desiredPose);
     } else {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
