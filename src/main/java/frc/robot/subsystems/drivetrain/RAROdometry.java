@@ -39,8 +39,6 @@ public class RAROdometry extends Subsystem {
 
   private OdometryThread m_odometryThread;
 
-  private boolean m_hasSetPose;
-
   private RAROdometry() {
     super("Odometry");
 
@@ -121,21 +119,6 @@ public class RAROdometry extends Subsystem {
 
     // We're manually setting the drive encoder positions to 0, since we
     // just reset them, but the encoder isn't reporting 0 yet.
-    // m_poseEstimator = new SwerveDrivePoseEstimator(
-    //     m_swerve.getKinematics(),
-    //     m_gyro.getRotation2d(),
-    //     new SwerveModulePosition[] {
-    //         new SwerveModulePosition(0.0,
-    //             Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getTurnPosition())),
-    //         new SwerveModulePosition(0.0,
-    //             Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getTurnPosition())),
-    //         new SwerveModulePosition(0.0,
-    //             Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getTurnPosition())),
-    //         new SwerveModulePosition(0.0,
-    //             Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getTurnPosition())),
-    //     },
-    //     new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
-
     m_poseEstimator.resetPosition(new Rotation2d(),
         new SwerveModulePosition[] {
             new SwerveModulePosition(0.0,
@@ -167,11 +150,11 @@ public class RAROdometry extends Subsystem {
       return false;
     }
 
-    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConfig.Field.k_width) {
+    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConfig.Field.k_length) {
       return false;
     }
 
-    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConfig.Field.k_length) {
+    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConfig.Field.k_width) {
       return false;
     }
 
@@ -250,20 +233,8 @@ public class RAROdometry extends Subsystem {
 
     PoseEstimate estimate = m_limelight.getPoseEstimation();
 
-    // TODO: I hate this. This needs to be a button in the future
-    // It's ok i hate it too
-    if (m_hasSetPose) {
-      if (checkPose(estimate)) {
-        updatePoseWithStdDev(estimate);
-      }
-    } else {
-      // PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
-
-      // if (megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d()))
-      // {
-      // m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
-      m_hasSetPose = true;
-      // }
+    if (checkPose(estimate)) {
+      updatePoseWithStdDev(estimate);
     }
 
     logAprilTagData();

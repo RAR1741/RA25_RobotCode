@@ -113,7 +113,7 @@
                 "bumpers": "auto",
                 "origin": "blue",
                 "orientation": 0,
-                "size": 30
+                "size": 30 
               },
               "controllerUUID": "ibs46t3mi554qmoz417wn12m75mkv5hz",
               "renderer": null,
