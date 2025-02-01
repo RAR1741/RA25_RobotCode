@@ -215,7 +215,7 @@ public class Limelight implements Runnable {
     double targetTime = 0.0;
     switch(m_limelightType) {
       case LL4 -> {
-        targetTime = 1.0 / 200.0;
+        targetTime = 1.0 / 120.0;
       }
       case LL3 -> {
         targetTime = 1.0 / 50.0;
