@@ -95,7 +95,7 @@ public class Limelight {
   public PoseEstimate getPoseEstimation() {
     LimelightHelpers.SetRobotOrientation(
         m_name,
-        RAROdometry.getInstance().getRotation2d().getDegrees() + 180.0, // TODO: please god i hope fix this
+        RAROdometry.getInstance().getRotation2d().getDegrees(),
         0, 0, 0, 0, 0);
 
     PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_name);

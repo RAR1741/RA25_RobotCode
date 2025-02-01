@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
@@ -80,10 +81,16 @@ public class RAROdometry extends Subsystem {
 
   /**
    * Calls the NavX reset function, resetting the Z angle to 0
+   * ur gae mccabe
    */
   public void resetGyro() {
     m_gyro.reset();
-    m_gyro.setAngleAdjustment(0.0);
+
+    if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      m_gyro.setAngleAdjustment(180.0);
+    } else {
+      m_gyro.setAngleAdjustment(0.0);
+    }
   }
 
   public AHRS getGyro() {
