@@ -247,7 +247,6 @@ public class RAROdometry extends Subsystem {
     }
 
     logAprilTagData();
-    setAllianceGyroAngleAdjustment();
   }
 
   @Override
