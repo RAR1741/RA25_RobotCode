@@ -85,12 +85,6 @@ public class RAROdometry extends Subsystem {
    */
   public void resetGyro() {
     m_gyro.reset();
-
-    if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      m_gyro.setAngleAdjustment(180.0);
-    } else {
-      m_gyro.setAngleAdjustment(0.0);
-    }
   }
 
   public AHRS getGyro() {
@@ -115,6 +109,14 @@ public class RAROdometry extends Subsystem {
             m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition()
         },
         pose);
+  }
+
+  public void setAllianceGyroAngleAdjustment() {
+    if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      m_gyro.setAngleAdjustment(180.0);
+    } else {
+      m_gyro.setAngleAdjustment(0.0);
+    }
   }
 
   public void setGyroAngleAdjustment(double angle) {
@@ -245,6 +247,7 @@ public class RAROdometry extends Subsystem {
     }
 
     logAprilTagData();
+    setAllianceGyroAngleAdjustment();
   }
 
   @Override
