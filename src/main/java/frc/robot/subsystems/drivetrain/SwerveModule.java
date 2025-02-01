@@ -25,7 +25,7 @@ import frc.robot.subsystems.SignalManager;
 public class SwerveModule {
   private final TalonFX m_driveMotor;
   private final TalonFX m_turnMotor;
-  
+
   private final CANcoder m_turningCANcoder;
 
   private final PeriodicIO m_periodicIO;
@@ -44,7 +44,8 @@ public class SwerveModule {
 
   private boolean m_moduleDisabled = false;
 
-  public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID, double turningOffset) {
+  public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID,
+      double turningOffset) {
     m_periodicIO = new PeriodicIO();
     m_signalManager = SignalManager.getInstance();
 
@@ -80,7 +81,7 @@ public class SwerveModule {
 
     // START TURN MOTOR INIT
     m_turnMotor = new TalonFX(turningMotorID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
-    
+
     TalonFXConfiguration turnConfig = new TalonFXConfiguration();
 
     m_turnMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -121,15 +122,30 @@ public class SwerveModule {
     m_turnMotor.getConfigurator().apply(turnConfig);
     // END TURN MOTOR INIT
 
-    BaseStatusSignal.setUpdateFrequencyForAll(250,
-        m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_driveMotor.getAcceleration(), m_driveMotor.getMotorVoltage(),
-        m_turnMotor.getPosition(), m_turnMotor.getVelocity(), m_turnMotor.getAcceleration(), m_turnMotor.getMotorVoltage());
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        RobotConstants.robotConfig.Odometry.k_threadUpdateFrequency,
+        m_driveMotor.getPosition(),
+        m_driveMotor.getVelocity(),
+        m_driveMotor.getAcceleration(),
+        m_driveMotor.getMotorVoltage(),
+
+        m_turnMotor.getPosition(),
+        m_turnMotor.getVelocity(),
+        m_turnMotor.getAcceleration(),
+        m_turnMotor.getMotorVoltage());
 
     // register all signals with the SignalManager so that any downstream callers
     // get updated signals
     m_signalManager.register(
-        m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_driveMotor.getAcceleration(), m_driveMotor.getMotorVoltage(),
-        m_turnMotor.getPosition(), m_turnMotor.getVelocity(), m_turnMotor.getAcceleration(), m_turnMotor.getMotorVoltage());
+        m_driveMotor.getPosition(),
+        m_driveMotor.getVelocity(),
+        m_driveMotor.getAcceleration(),
+        m_driveMotor.getMotorVoltage(),
+
+        m_turnMotor.getPosition(),
+        m_turnMotor.getVelocity(),
+        m_turnMotor.getAcceleration(),
+        m_turnMotor.getMotorVoltage());
   }
 
   public SwerveModuleState getState() {
@@ -137,7 +153,8 @@ public class SwerveModule {
   }
 
   public SwerveModulePosition getPosition() {
-    double drivePosition = m_driveMotor.getPosition().getValueAsDouble();
+    // double drivePosition = m_driveMotor.getPosition().getValueAsDouble();
+    double drivePosition = getDrivePositionMet();
 
     return new SwerveModulePosition(drivePosition, Rotation2d.fromRadians(getTurnPosition()));
   }
@@ -152,13 +169,13 @@ public class SwerveModule {
 
   /**
    * Returns an array of the required signals for odometry.
-   * 
+   *
    * @return the required signals for odometry
    */
   public BaseStatusSignal[] getSignals() {
-      return new BaseStatusSignal[] {
-        m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_turnMotor.getPosition(), m_turnMotor.getVelocity() 
-      };
+    return new BaseStatusSignal[] {
+        m_driveMotor.getPosition(), m_driveMotor.getVelocity(), m_turnMotor.getPosition(), m_turnMotor.getVelocity()
+    };
   }
 
   public void resetDriveEncoder() {
@@ -181,7 +198,8 @@ public class SwerveModule {
   }
 
   public void periodic() {
-    double driveVelocity = Helpers.MPSToRPS(getDriveTargetVelocity(), RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
+    double driveVelocity = Helpers.MPSToRPS(getDriveTargetVelocity(),
+        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
     double turnPosition = Units.radiansToRotations(getTurnTargetAngleRadians());
 
     VelocityVoltage driveRequest = new VelocityVoltage(driveVelocity).withSlot(0);
@@ -241,8 +259,8 @@ public class SwerveModule {
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/VelocityMPS")
   public double getDriveVelocity() {
     return Helpers.RPSToMPS(
-      m_driveMotor.getVelocity().getValueAsDouble(),
-      RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
+        m_driveMotor.getVelocity().getValueAsDouble(),
+        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/PositionRot")
@@ -253,8 +271,8 @@ public class SwerveModule {
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/PositionMet")
   public double getDrivePositionMet() {
     return Helpers.RPSToMPS(
-      m_driveMotor.getPosition().getValueAsDouble(),
-      RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
+        getDrivePositionRot(),
+        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/PositionRads")

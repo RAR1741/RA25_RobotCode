@@ -1,23 +1,32 @@
 {
   "hubs": [
     {
-      "x": 0,
-      "y": 37,
-      "width": 1728,
-      "height": 1080,
+      "x": -8,
+      "y": -1088,
+      "width": 1936,
+      "height": 1048,
       "state": {
         "sidebar": {
           "width": 300,
           "expanded": [
-            "/RealOutputs",
             "/RealOutputs/SwerveDrive/Modules/FR/Turn",
             "/RealOutputs/SwerveDrive/Modules/BR/Turn",
             "/RealOutputs/Odometry/PoseEstimator/Pose2d",
             "/RealOutputs/SwerveDrive/Modules",
             "/RealOutputs/SwerveDrive/Modules/BR",
-            "/RealOutputs/Odometry",
             "/RealOutputs/Odometry/PoseEstimator",
-            "/RealOutputs/Odometry/Limelight"
+            "/RealOutputs/Odometry/Limelight",
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs",
+            "/RealOutputs",
+            "/RealOutputs/ASPoseHelper/BlueReef/target",
+            "/RealOutputs/ASPoseHelper/BlueReef",
+            "/RealOutputs/loggingKey",
+            "/RealOutputs/ASPoseHelper",
+            "/RealOutputs/ASPoseHelper/Blue/Reef",
+            "/RealOutputs/ASPoseHelper/Red/Reef",
+            "/RealOutputs/ASPoseHelper/VirtualRobotPose",
+            "/RealOutputs/ASPoseHelper/Red"
           ]
         },
         "tabs": {
@@ -104,7 +113,7 @@
                 "bumpers": "auto",
                 "origin": "blue",
                 "orientation": 0,
-                "size": 30
+                "size": 30 
               },
               "controllerUUID": "ibs46t3mi554qmoz417wn12m75mkv5hz",
               "renderer": null,
@@ -377,6 +386,76 @@
                       "model": "2025 KitBot",
                       "color": "#00ff00"
                     }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/ASPoseHelper/Blue/Reef/targets",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#0000ff"
+                    }
+                  },
+                  {
+                    "type": "cone",
+                    "logKey": "/RealOutputs/ASPoseHelper/Blue/Reef/pose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff",
+                      "position": "center"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/ASPoseHelper/Red/Reef/targets",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#ff0000"
+                    }
+                  },
+                  {
+                    "type": "cone",
+                    "logKey": "/RealOutputs/ASPoseHelper/Red/Reef/pose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "position": "center"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/ASPoseHelper/VirtualRobot/pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2024 KitBot",
+                      "color": "#ff00ff"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "/RealOutputs/ASPoseHelper/TargetAngle",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/ASPoseHelper/VirtualRobot/target",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#00ffff"
+                    }
                   }
                 ],
                 "game": "2025 Field",
@@ -387,17 +466,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -6.3515631056413815,
-                  10.094155425188717,
-                  7.7621111621547785
+                  5.654317841916959,
+                  12.39917377359783,
+                  -0.25880800714849134
                 ],
                 "cameraTarget": [
-                  -2.751723258641984,
-                  -0.6571298862029901,
-                  1.2688607259020677
+                  4.653047697826365,
+                  -1.4806262612039047,
+                  -0.26314867334619496
                 ]
               },
-              "controlsHeight": 200
+              "controlsHeight": 157
             }
           ]
         }

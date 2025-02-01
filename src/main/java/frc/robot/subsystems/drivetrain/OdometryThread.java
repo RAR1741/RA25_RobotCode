@@ -1,13 +1,13 @@
 package frc.robot.subsystems.drivetrain;
 
+import java.util.concurrent.locks.ReadWriteLock;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.studica.frc.AHRS;
 
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.littletonrobotics.junction.AutoLogOutput;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.MedianFilter;
@@ -29,9 +29,9 @@ public class OdometryThread implements Runnable {
 
   private final Thread m_thread;
   private volatile boolean m_running = false;
-  
+
   private final BaseStatusSignal[] m_allSignals;
-  
+
   private SwerveDrive m_swerve;
   private RAROdometry m_odometry;
 
@@ -39,11 +39,11 @@ public class OdometryThread implements Runnable {
   private AHRS m_gyro;
 
   /** Lock used for odometry thread. */
-  private final ReadWriteLock m_stateLock = new ReentrantReadWriteLock();
+  private final ReadWriteLock m_stateLock;
 
   private final MedianFilter m_peakRemover = new MedianFilter(3);
   private final LinearFilter m_lowPass = LinearFilter.movingAverage(50);
-  
+
   private SwerveModule[] m_modules;
 
   private volatile int m_threadPriorityToSet = START_THREAD_PRIORITY;
@@ -58,9 +58,11 @@ public class OdometryThread implements Runnable {
   private int m_successfulDaqs = 0;
   private int m_failedDaqs = 0;
 
-  public OdometryThread() {
+  public OdometryThread(ReadWriteLock stateLock) {
+    m_stateLock = stateLock;
+
     m_thread = new Thread(this);
-    
+
     m_swerve = SwerveDrive.getInstance();
     m_modules = m_swerve.getSwerveModules();
     /*
@@ -93,24 +95,17 @@ public class OdometryThread implements Runnable {
   }
 
   /**
-   * Stops the odometry thread.
+   * Stops the odometry thread
    */
   public void stop() {
-    stop(0);
-  }
-
-  /**
-   * Stops the odometry thread with a timeout.
-   *
-   * @param millis The time to wait in milliseconds
-   */
-  public void stop(long millis) {
-    m_running = false;
     try {
-      m_thread.join(millis);
+      m_thread.join(1);
     } catch (final InterruptedException ex) {
       Thread.currentThread().interrupt();
     }
+    m_successfulDaqs = 0;
+    m_failedDaqs = 0;
+    m_running = false;
   }
 
   @Override
@@ -146,14 +141,14 @@ public class OdometryThread implements Runnable {
 
         /* Keep track of previous and current pose to account for the carpet vector */
         m_poseEstimator.updateWithTime(
-          Timer.getFPGATimestamp(), //TODO: change?
-          m_gyro.getRotation2d(),
-          new SwerveModulePosition[] {
-              m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
-              m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
-              m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
-              m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
-          });
+            m_currentTime,
+            m_gyro.getRotation2d(),
+            new SwerveModulePosition[] {
+                m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
+                m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
+                m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
+                m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
+            });
       } finally {
         m_stateLock.writeLock().unlock();
       }
@@ -167,6 +162,10 @@ public class OdometryThread implements Runnable {
         m_lastThreadPriority = m_threadPriorityToSet;
       }
     }
+  }
+
+  public ReadWriteLock getStateLock() {
+    return m_stateLock;
   }
 
   /**
@@ -198,7 +197,7 @@ public class OdometryThread implements Runnable {
 
   @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
   public int getUpdatesPerSecond() {
-    return (int)(1.0 / getAverageOdometryLoopTime());
+    return (int) (1.0 / getAverageOdometryLoopTime());
   }
 
   @AutoLogOutput(key = "Odometry/Thread/Running")

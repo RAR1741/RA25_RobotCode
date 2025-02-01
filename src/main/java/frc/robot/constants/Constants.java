@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -12,22 +14,29 @@ public class Constants {
     public String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
                                     // Drivetrain CANivore
 
-    public double k_width = 27.0; // Inches
-    public double k_length = 30.0; // Inches
+    public double k_width = 28.0; // Inches
+    public double k_length = 32.0; // Inches
 
     public double k_bumperStart = 1.0; // Inches
     public double k_bumperHeight = 5.0; // Inches
   }
 
   public static class FieldConstants {
-    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0/8.0));
-    public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+    public double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+    public double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
+
+    public double k_reefFaceToFaceWidth = Units.inchesToMeters((5 * 12) + 5.5); // 5'5.5" ("REEF ZONE": section 5.3)
+
+    public double k_blueReefX = Units.inchesToMeters(144) + k_reefFaceToFaceWidth / 2; // 144 inches + half the
+                                                                                       // width
+    public double k_blueReefY = Units.inchesToMeters(((26 * 12) + 5) / 2); // 26'5" / 2
+
+    public Pose3d k_blueReefPose = new Pose3d(k_blueReefX, k_blueReefY, 2.0, new Rotation3d());
+    public Pose3d k_redReefPose = new Pose3d(k_length - k_blueReefX, k_blueReefY, 2.0, new Rotation3d());
   }
 
   public static class OdometryConstants {
-    public int k_threadUpdateFrequency = 250;
-    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0/8.0));
-    public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+    public int k_threadUpdateFrequency = 250; // Hz
   }
 
   public static class SwerveDriveConstants {
@@ -115,5 +124,31 @@ public class Constants {
       public double k_minOutput = -1.0;
       public double k_maxOutput = 1.0;
     }
+
+    public ChassisConstants Chassis = new ChassisConstants();
+
+    public class ChassisConstants {
+      public DriveConstants Drive = new DriveConstants();
+
+      public class DriveConstants {
+        public double k_P = 0.0;
+        public double k_I = 0.0;
+        public double k_D = 0.0;
+      }
+
+      public TurnConstants Turn = new TurnConstants();
+
+      public class TurnConstants {
+        public double k_P = 5.0;
+        public double k_I = 0.0;
+        public double k_D = 0.0;
+      }
+    }
+  }
+
+  public PoseAlignerConstants PoseAligner = new PoseAlignerConstants();
+
+  public class PoseAlignerConstants {
+
   }
 }

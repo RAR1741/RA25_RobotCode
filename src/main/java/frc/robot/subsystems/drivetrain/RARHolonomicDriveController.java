@@ -1,6 +1,9 @@
 package frc.robot.subsystems.drivetrain;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.config.PIDConstants;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,29 +25,26 @@ public class RARHolonomicDriveController {
    * Constructs a HolonomicDriveController
    *
    * @param translationConstants PID constants for the translation PID controllers
-   * @param rotationConstants PID constants for the rotation controller
-   * @param period Period of the control loop in seconds
+   * @param rotationConstants    PID constants for the rotation controller
+   * @param period               Period of the control loop in seconds
    */
   public RARHolonomicDriveController(
       PIDConstants translationConstants, ProfiledPIDConstants rotationConstants, double period) {
-    this.xController =
-        new PIDController(
-            translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
+    this.xController = new PIDController(
+        translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
     this.xController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
 
-    this.yController =
-        new PIDController(
-            translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
+    this.yController = new PIDController(
+        translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
     this.yController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
 
     // Temp rate limit of 0, will be changed in calculate
-    this.rotationController =
-        new ProfiledPIDController(
-          rotationConstants.kP,
-          rotationConstants.kI,
-          rotationConstants.kD,
-          new Constraints(rotationConstants.maxVel, rotationConstants.maxAcc),
-          period);
+    this.rotationController = new ProfiledPIDController(
+        rotationConstants.kP,
+        rotationConstants.kI,
+        rotationConstants.kD,
+        new Constraints(rotationConstants.maxVel, rotationConstants.maxAcc),
+        period);
     this.rotationController.setIntegratorRange(-rotationConstants.iZone, rotationConstants.iZone);
     this.rotationController.enableContinuousInput(-Math.PI, Math.PI);
   }
@@ -53,7 +53,7 @@ public class RARHolonomicDriveController {
    * Constructs a HolonomicDriveController
    *
    * @param translationConstants PID constants for the translation PID controllers
-   * @param rotationConstants PID constants for the rotation controller
+   * @param rotationConstants    PID constants for the rotation controller
    */
   public RARHolonomicDriveController(
       PIDConstants translationConstants, ProfiledPIDConstants rotationConstants) {
@@ -61,7 +61,8 @@ public class RARHolonomicDriveController {
   }
 
   /**
-   * Enables and disables the controller for troubleshooting. When calculate() is called on a
+   * Enables and disables the controller for troubleshooting. When calculate() is
+   * called on a
    * disabled controller, no values are returned.
    *
    * @param enabled If the controller is enabled or not
@@ -73,14 +74,14 @@ public class RARHolonomicDriveController {
   /**
    * Resets the controller based on the current state of the robot
    *
-   * @param currentPose Current robot pose
+   * @param currentPose   Current robot pose
    * @param currentSpeeds Current robot relative chassis speeds
    */
   public void reset(Pose2d currentPose, ChassisSpeeds currentSpeeds) {
     xController.reset();
     yController.reset();
     rotationController.reset(new State(currentPose.getRotation().getRadians(),
-                                       currentSpeeds.omegaRadiansPerSecond));
+        currentSpeeds.omegaRadiansPerSecond));
   }
 
   /**
@@ -88,11 +89,15 @@ public class RARHolonomicDriveController {
    *
    * @param currentPose The current robot pose
    * @param targetState The desired trajectory state
+   * @param goalPose The pose to end at
+   * @param maxApproachSpeed the speed in m/s to run at
    * @return The next robot relative output of the path following controller
    */
   public ChassisSpeeds calculateRobotRelativeSpeeds(
       Pose2d currentPose, Pose2d goalPose, double maxApproachSpeed) {
-    
+
+    Logger.recordOutput("Odometry/GoalPose", goalPose);
+
     if (!this.isEnabled) {
       return ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, 0, currentPose.getRotation());
     }
@@ -109,9 +114,8 @@ public class RARHolonomicDriveController {
     double xFeedback = this.xController.calculate(currentPose.getX(), goalPose.getX());
     double yFeedback = this.yController.calculate(currentPose.getY(), goalPose.getY());
 
-    double rotationFeedback =
-        rotationController.calculate(
-            currentPose.getRotation().getRadians(), goalPose.getRotation().getRadians());
+    double rotationFeedback = rotationController.calculate(
+        currentPose.getRotation().getRadians(), goalPose.getRotation().getRadians());
 
     return ChassisSpeeds.fromFieldRelativeSpeeds(
         xFF + xFeedback, yFF + yFeedback, rotationFeedback, currentPose.getRotation());

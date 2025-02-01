@@ -3,7 +3,10 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
@@ -21,7 +24,7 @@ public class Limelight {
    */
   public Limelight(String limelightName) {
     m_name = limelightName;
-    
+
     m_limelightTable = NetworkTableInstance.getDefault().getTable(m_name);
   }
 
@@ -72,9 +75,9 @@ public class Limelight {
         String type = m_limelightTable.getEntry(key).getType().name().substring(1);
 
         SmartDashboard.putString(
-          key, (type.equals("String") || type.equals("Double"))
-            ? m_limelightTable.getEntry(key).toString()
-            : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
+            key, (type.equals("String") || type.equals("Double"))
+                ? m_limelightTable.getEntry(key).toString()
+                : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
       }
     }
   }
@@ -94,7 +97,7 @@ public class Limelight {
         m_name,
         RAROdometry.getInstance().getRotation2d().getDegrees(),
         0, 0, 0, 0, 0);
-    
+
     PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_name);
 
     if (estimate != null) {
@@ -106,6 +109,17 @@ public class Limelight {
 
   public double getLatency() {
     return LimelightHelpers.getLatency_Capture(m_name) + LimelightHelpers.getLatency_Pipeline(m_name);
+  }
+
+  public Pose3d getTargetPose_RobotSpace(Pose2d botPose) {
+    Pose3d botSpaceTagPose = LimelightHelpers.getTargetPose3d_RobotSpace(m_name);
+
+    return new Pose3d(
+        new Translation3d(
+            botPose.getTranslation().getX() - botSpaceTagPose.getTranslation().getX(),
+            0.0 + botPose.getTranslation().getY() + botSpaceTagPose.getTranslation().getZ(),
+            0.5),
+        new Rotation3d(botPose.getRotation()));
   }
 
   public boolean getLightEnabled() {

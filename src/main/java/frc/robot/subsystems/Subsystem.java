@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class Subsystem extends SubsystemBase {
   private SignalManager m_signalManager = SignalManager.getInstance();
-    
-  public Subsystem(String baseSmartDashboardKey) {
-    this.baseSmartDashboardKey = baseSmartDashboardKey; 
+
+  public Subsystem(String loggingKey) {
+    this.loggingKey = loggingKey;
   }
 
   /**
@@ -67,33 +67,33 @@ public abstract class Subsystem extends SubsystemBase {
     m_signalManager.register(statuses);
   }
 
-  public String baseSmartDashboardKey = "UnknownSubsystem/";
+  public String loggingKey = "UnknownSubsystem/";
 
   public void putNumber(String key, double value) {
-    SmartDashboard.putNumber(baseSmartDashboardKey + "/" + key, value);
+    SmartDashboard.putNumber(loggingKey + "/" + key, value);
   }
 
   public void putBoolean(String key, boolean value) {
-    SmartDashboard.putBoolean(baseSmartDashboardKey + "/" + key, value);
+    SmartDashboard.putBoolean(loggingKey + "/" + key, value);
   }
 
   public void putString(String key, String value) {
-    SmartDashboard.putString(baseSmartDashboardKey + "/" + key, value);
+    SmartDashboard.putString(loggingKey + "/" + key, value);
   }
 
   public void putNumberArray(String key, double[] value) {
-    SmartDashboard.putNumberArray(baseSmartDashboardKey + "/" + key, value);
+    SmartDashboard.putNumberArray(loggingKey + "/" + key, value);
   }
 
   public void putBooleanArray(String key, boolean[] value) {
-    SmartDashboard.putBooleanArray(baseSmartDashboardKey + "/" + key, value);
+    SmartDashboard.putBooleanArray(loggingKey + "/" + key, value);
   }
 
   public void putStringArray(String key, String[] value) {
-    SmartDashboard.putStringArray(baseSmartDashboardKey + "/" + key, value);
+    SmartDashboard.putStringArray(loggingKey + "/" + key, value);
   }
 
   public void putData(String key, Sendable value) {
-    SmartDashboard.putData(baseSmartDashboardKey + "/" + key, value);
+    SmartDashboard.putData(loggingKey + "/" + key, value);
   }
 }

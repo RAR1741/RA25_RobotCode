@@ -1,6 +1,10 @@
 package frc.robot.subsystems.drivetrain;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXUpdateRate;
@@ -11,6 +15,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
@@ -30,16 +35,27 @@ public class RAROdometry extends Subsystem {
 
   private SwerveDrivePoseEstimator m_poseEstimator;
 
-  private OdometryThread m_odometryThread;
+  /** Lock used for odometry thread. */
+  private final ReadWriteLock m_stateLock = new ReentrantReadWriteLock();
 
-  private boolean m_hasSetPose;
+  private OdometryThread m_odometryThread;
 
   private RAROdometry() {
     super("Odometry");
 
     m_limelight = new Limelight("limelight");
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
-    m_odometryThread = new OdometryThread();
+
+    m_odometryThread = new OdometryThread(m_stateLock);
+
+    Thread.UncaughtExceptionHandler odometryThreadHandler = new Thread.UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(Thread thread, Throwable throwable) {
+        RobotTelemetry.print("Uncaught exception in odometry thread: " + throwable);
+      }
+    };
+
+    Thread.setDefaultUncaughtExceptionHandler(odometryThreadHandler);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(
         m_swerve.getKinematics(),
@@ -65,19 +81,19 @@ public class RAROdometry extends Subsystem {
 
   /**
    * Calls the NavX reset function, resetting the Z angle to 0
+   * ur gae mccabe
    */
   public void resetGyro() {
     m_gyro.reset();
-    m_gyro.setAngleAdjustment(0.0);
   }
 
   public AHRS getGyro() {
     return m_gyro;
   }
-  
+
   public SwerveDrivePoseEstimator getPoseEstimator() {
     return m_poseEstimator;
-  } 
+  }
 
   public Rotation2d getRotation2d() {
     return m_gyro.getRotation2d();
@@ -95,6 +111,14 @@ public class RAROdometry extends Subsystem {
         pose);
   }
 
+  public void setAllianceGyroAngleAdjustment() {
+    if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      m_gyro.setAngleAdjustment(180.0);
+    } else {
+      m_gyro.setAngleAdjustment(0.0);
+    }
+  }
+
   public void setGyroAngleAdjustment(double angle) {
     m_gyro.setAngleAdjustment(angle);
   }
@@ -104,9 +128,7 @@ public class RAROdometry extends Subsystem {
 
     // We're manually setting the drive encoder positions to 0, since we
     // just reset them, but the encoder isn't reporting 0 yet.
-    m_poseEstimator = new SwerveDrivePoseEstimator(
-        m_swerve.getKinematics(),
-        m_gyro.getRotation2d(),
+    m_poseEstimator.resetPosition(new Rotation2d(),
         new SwerveModulePosition[] {
             new SwerveModulePosition(0.0,
                 Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getTurnPosition())),
@@ -117,7 +139,7 @@ public class RAROdometry extends Subsystem {
             new SwerveModulePosition(0.0,
                 Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getTurnPosition())),
         },
-        new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+        new Pose2d());
 
     setPose(pose);
   }
@@ -137,11 +159,11 @@ public class RAROdometry extends Subsystem {
       return false;
     }
 
-    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConfig.Field.k_width) {
+    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConfig.Field.k_length) {
       return false;
     }
 
-    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConfig.Field.k_length) {
+    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConfig.Field.k_width) {
       return false;
     }
 
@@ -178,40 +200,53 @@ public class RAROdometry extends Subsystem {
             * (DriverStation.isAutonomous() ? m_visionConstants.autoStdDevScale : 1.0)
         : Double.POSITIVE_INFINITY;
 
-    m_poseEstimator.addVisionMeasurement(
-        estimate.pose,
-        estimate.timestampSeconds,
-        VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
+    try {
+      m_stateLock.writeLock().lock();
+
+      m_poseEstimator.addVisionMeasurement(
+          estimate.pose,
+          estimate.timestampSeconds,
+          VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
+    } finally {
+      m_stateLock.writeLock().unlock();
+    }
   }
 
   @Override
   public void reset() {
+    // m_odometryThread.stop();
+
+    // try {
+    // m_stateLock.writeLock().lockInterruptibly();
+    // } catch (InterruptedException exception) {
+    // exception.printStackTrace();
+    // }
+
+    m_stateLock.writeLock().lock();
+    // m_stateLock.readLock().lock();
+
     resetGyro();
-    resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+    resetOdometry(new Pose2d());
+
+    m_stateLock.writeLock().unlock();
+    // m_stateLock.readLock().unlock();
+
+    // m_odometryThread.start();
   }
 
   @Override
   public void periodic() {
-    if(!m_odometryThread.isRunning()) {
+    if (!m_odometryThread.isRunning()) {
       m_odometryThread.start();
     }
 
     PoseEstimate estimate = m_limelight.getPoseEstimation();
 
-    // TODO: I hate this. This needs to be a button in the future
-    // It's ok i hate it too
-    if (m_hasSetPose) {
-      if (checkPose(estimate)) {
-        updatePoseWithStdDev(estimate);
-      }
-    } else {
-      PoseEstimate megatag1estimate = m_limelight.getMegaTag1PoseEstimation();
-
-      if (megatag1estimate != null && !megatag1estimate.pose.equals(new Pose2d())) {
-        m_gyro.setAngleAdjustment(-megatag1estimate.pose.getRotation().getDegrees());
-        m_hasSetPose = true;
-      }
+    if (checkPose(estimate)) {
+      updatePoseWithStdDev(estimate);
     }
+
+    logAprilTagData();
   }
 
   @Override
@@ -221,6 +256,12 @@ public class RAROdometry extends Subsystem {
   @Override
   public void stop() {
     RobotTelemetry.print("Stopping Odometry!");
+  }
+
+  private void logAprilTagData() {
+    Logger.recordOutput(
+        "Odometry/Limelight/M2AprilTag",
+        m_limelight.getTargetPose_RobotSpace(getPose()));
   }
 
   @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
