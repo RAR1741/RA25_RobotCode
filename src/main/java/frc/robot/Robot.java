@@ -10,6 +10,9 @@ import org.littletonrobotics.junction.LoggedRobot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.VirtualRobotController;
@@ -18,6 +21,7 @@ import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.drivetrain.SwerveSysId;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -32,9 +36,13 @@ public class Robot extends LoggedRobot {
   private final SwerveDrive m_swerve;
   private final RAROdometry m_odometry;
   private final PoseAligner m_poseAligner;
+  private final SignalManager m_signalManager = SignalManager.getInstance();
+
   private final DriverController m_driverController;
   private final VirtualRobotController m_virtualRobotController;
-  private final SignalManager m_signalManager = SignalManager.getInstance();
+  private final GenericHID m_sysIdController;
+
+  private final SwerveSysId m_swerveSysId;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -50,6 +58,7 @@ public class Robot extends LoggedRobot {
 
     m_driverController = new DriverController(0, true, false, 0.5);
     m_virtualRobotController = new VirtualRobotController(2);
+    m_sysIdController = new GenericHID(3);
 
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
@@ -62,17 +71,24 @@ public class Robot extends LoggedRobot {
     RobotTelemetry.print("Logging Initialized. Fard.");
 
     m_signalManager.finalizeAll();
+
+    m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
 
   @Override
   public void robotPeriodic() {
-    m_virtualRobotController.updatePose();
+    if (this.isTestEnabled()) {
+      CommandScheduler.getInstance().run();
+    }
+    else {
+      m_virtualRobotController.updatePose();
 
-    m_subsystems.forEach(subsystem -> subsystem.periodic());
-    m_subsystems.forEach(subsystem -> subsystem.writePeriodicOutputs());
-    m_subsystems.forEach(subsystem -> subsystem.writeToLog());
+      m_subsystems.forEach(subsystem -> subsystem.periodic());
+      m_subsystems.forEach(subsystem -> subsystem.writePeriodicOutputs());
+      m_subsystems.forEach(subsystem -> subsystem.writeToLog());
 
-    m_signalManager.refresh();
+      m_signalManager.refresh();
+    }
   }
 
   @Override
@@ -138,10 +154,26 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testInit() {
+    CommandScheduler.getInstance().cancelAll();
   }
 
   @Override
   public void testPeriodic() {
+    if (m_sysIdController.getRawButtonPressed(1)) {
+      // A
+      m_swerveSysId.sysIdDriveQuasistatic(SysIdRoutine.Direction.kForward).schedule();
+    } else if (m_sysIdController.getRawButtonPressed(2)) {
+      // B
+      m_swerveSysId.sysIdDriveQuasistatic(SysIdRoutine.Direction.kReverse).schedule();
+    } else if (m_sysIdController.getRawButtonPressed(3)) {
+      // X
+      m_swerveSysId.sysIdDriveDynamic(SysIdRoutine.Direction.kForward).schedule();
+    } else if (m_sysIdController.getRawButtonPressed(4)) {
+      // Y
+      m_swerveSysId.sysIdDriveDynamic(SysIdRoutine.Direction.kReverse).schedule();
+    } else if (m_sysIdController.getRawButtonPressed(8)) {
+      CommandScheduler.getInstance().cancelAll();
+    }
   }
 
   @Override
