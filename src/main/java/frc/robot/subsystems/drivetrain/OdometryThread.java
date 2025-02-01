@@ -14,7 +14,6 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
 
 /**

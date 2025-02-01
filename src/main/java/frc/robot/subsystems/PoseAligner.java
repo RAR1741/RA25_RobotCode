@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -16,15 +14,10 @@ import frc.robot.subsystems.drivetrain.RAROdometry;
 public class PoseAligner extends Subsystem {
   private static PoseAligner m_poseAligner;
 
-  private final SwerveDrivePoseEstimator m_poseEstimator;
-
-  private PoseTarget m_target;
   private final PeriodicIO m_periodicIO = new PeriodicIO();
 
   private PoseAligner() {
     super("PoseAligner");
-
-    m_poseEstimator = RAROdometry.getInstance().getPoseEstimator();
   }
 
   public static PoseAligner getInstance() {
@@ -37,8 +30,6 @@ public class PoseAligner extends Subsystem {
 
   private static class PeriodicIO {
     Pose2d targetPose = new Pose2d();
-
-    PoseTarget target = PoseTarget.NONE;
   }
 
   @Override
@@ -93,10 +84,6 @@ public class PoseAligner extends Subsystem {
 
   @Override
   public void reset() {
-  }
-
-  public void setTarget(PoseTarget target) {
-    m_target = target;
   }
 
   /**

@@ -46,7 +46,17 @@ public class RAROdometry extends Subsystem {
 
     m_limelight = new Limelight("limelight");
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
+
     m_odometryThread = new OdometryThread(m_stateLock);
+
+    Thread.UncaughtExceptionHandler odometryThreadHandler = new Thread.UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(Thread thread, Throwable throwable) {
+        RobotTelemetry.print("Uncaught exception in odometry thread: " + throwable);
+      }
+    };
+
+    Thread.setDefaultUncaughtExceptionHandler(odometryThreadHandler);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(
         m_swerve.getKinematics(),
@@ -111,9 +121,22 @@ public class RAROdometry extends Subsystem {
 
     // We're manually setting the drive encoder positions to 0, since we
     // just reset them, but the encoder isn't reporting 0 yet.
-    m_poseEstimator = new SwerveDrivePoseEstimator(
-        m_swerve.getKinematics(),
-        m_gyro.getRotation2d(),
+    // m_poseEstimator = new SwerveDrivePoseEstimator(
+    //     m_swerve.getKinematics(),
+    //     m_gyro.getRotation2d(),
+    //     new SwerveModulePosition[] {
+    //         new SwerveModulePosition(0.0,
+    //             Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getTurnPosition())),
+    //         new SwerveModulePosition(0.0,
+    //             Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getTurnPosition())),
+    //         new SwerveModulePosition(0.0,
+    //             Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getTurnPosition())),
+    //         new SwerveModulePosition(0.0,
+    //             Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getTurnPosition())),
+    //     },
+    //     new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+
+    m_poseEstimator.resetPosition(new Rotation2d(),
         new SwerveModulePosition[] {
             new SwerveModulePosition(0.0,
                 Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getTurnPosition())),
@@ -124,7 +147,7 @@ public class RAROdometry extends Subsystem {
             new SwerveModulePosition(0.0,
                 Rotation2d.fromRotations(m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getTurnPosition())),
         },
-        new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+        new Pose2d());
 
     setPose(pose);
   }
@@ -199,14 +222,24 @@ public class RAROdometry extends Subsystem {
 
   @Override
   public void reset() {
-    //1. stop our thread
-    m_odometryThread.stop();
+    // m_odometryThread.stop();
 
-    //2. reset gyro values
+    // try {
+    // m_stateLock.writeLock().lockInterruptibly();
+    // } catch (InterruptedException exception) {
+    // exception.printStackTrace();
+    // }
+
+    m_stateLock.writeLock().lock();
+    // m_stateLock.readLock().lock();
+
     resetGyro();
     resetOdometry(new Pose2d());
 
-    m_odometryThread.start();
+    m_stateLock.writeLock().unlock();
+    // m_stateLock.readLock().unlock();
+
+    // m_odometryThread.start();
   }
 
   @Override
