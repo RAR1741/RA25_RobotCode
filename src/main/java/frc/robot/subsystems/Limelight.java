@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -15,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.LimelightHelpers;
+import frc.robot.RobotTelemetry;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.VisionConstants;
@@ -26,6 +29,8 @@ public class Limelight implements Runnable {
   private final LimelightType m_limelightType;
   private VisionConstants m_visionConstants;
   private final String m_name;
+  private final Thread m_thread;
+  private boolean m_isRunning;
 
   /**
    * Constructor
@@ -37,6 +42,17 @@ public class Limelight implements Runnable {
     m_visionConstants = new VisionConstants(1,100,0,100);
 
     m_limelightTable = NetworkTableInstance.getDefault().getTable(m_name);
+    m_thread = new Thread(this);
+    m_thread.setDaemon(true);
+  }
+
+  public void start() {
+    m_isRunning = true;
+    m_thread.start();
+  }
+
+  public void stop() {
+    m_isRunning = false;
   }
 
   /**
@@ -139,7 +155,7 @@ public class Limelight implements Runnable {
 
   Pose2d nullPose = new Pose2d();
 
-  private boolean isPoseZero(PoseEstimate estimate) {
+  private boolean isEstimateZero(PoseEstimate estimate) {
     return estimate.pose.equals(nullPose);
   }
 
@@ -148,7 +164,7 @@ public class Limelight implements Runnable {
       return false;
     }
 
-    if (isPoseZero(estimate)) {
+    if (isEstimateZero(estimate)) {
       return false;
     }
 
@@ -193,8 +209,6 @@ public class Limelight implements Runnable {
             * (DriverStation.isAutonomous() ? m_visionConstants.autoStdDevScale : 1.0)
         : Double.POSITIVE_INFINITY;
 
-        
-
     RAROdometry.getInstance().addLLPose(estimate, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
 
     // try {
@@ -211,11 +225,22 @@ public class Limelight implements Runnable {
 
   @Override
   public void run() {
-    PoseEstimate estimate = getPoseEstimation();
+    while(true) {
+      double startTime = Timer.getFPGATimestamp();
+      PoseEstimate estimate = getPoseEstimation();
 
-    if (checkPose(estimate)) {
-      updatePoseWithStdDev(estimate);
+      if (checkPose(estimate)) {
+        updatePoseWithStdDev(estimate);
+      }
+      double endTime = Timer.getFPGATimestamp();
+      Logger.recordOutput("Odometry/Limelight/ThreadTime", endTime - startTime);
+
+      RobotTelemetry.print("This is working");
     }
+  }
+
+  public boolean isRunning() {
+    return m_isRunning;
   }
 
   public enum LimelightType {

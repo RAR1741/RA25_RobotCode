@@ -20,8 +20,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
-import frc.robot.constants.RobotConstants;
-import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.Limelight.LimelightType;
@@ -33,6 +31,7 @@ public class RAROdometry extends Subsystem {
   private final Limelight m_limelight;
   private final SwerveDrive m_swerve = SwerveDrive.getInstance();
   private SwerveDrivePoseEstimator m_poseEstimator;
+
 
   /** Lock used for odometry thread. */
   private final ReadWriteLock m_stateLock = new ReentrantReadWriteLock();
@@ -167,6 +166,10 @@ public class RAROdometry extends Subsystem {
   public void periodic() {
     if (!m_odometryThread.isRunning()) {
       m_odometryThread.start();
+    }
+
+    if(!m_limelight.isRunning()) {
+      m_limelight.start();
     }
 
     logAprilTagData();
