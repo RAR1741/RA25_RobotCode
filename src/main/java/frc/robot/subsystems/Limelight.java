@@ -25,7 +25,6 @@ import frc.robot.subsystems.drivetrain.RAROdometry;
 
 public class Limelight implements Runnable {
   private final NetworkTable m_limelightTable;
-  private final ReadWriteLock m_stateLock;
   private final LimelightType m_limelightType;
   private VisionConstants m_visionConstants;
   private final String m_name;
@@ -37,7 +36,6 @@ public class Limelight implements Runnable {
    */
   public Limelight(String limelightName, ReadWriteLock lock, LimelightType llType) {
     m_name = limelightName;
-    m_stateLock = lock;
     m_limelightType = llType;
     m_visionConstants = new VisionConstants(1,100,0,100);
 
@@ -210,21 +208,22 @@ public class Limelight implements Runnable {
         : Double.POSITIVE_INFINITY;
 
     RAROdometry.getInstance().addLLPose(estimate, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
-
-    // try {
-    //   m_stateLock.writeLock().lock();
-
-    //   RAROdometry.getInstance().getPoseEstimator().addVisionMeasurement(
-    //       estimate.pose,
-    //       estimate.timestampSeconds,
-    //       VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
-    // } finally {
-    //   m_stateLock.writeLock().unlock();
-    // }
   }
 
   @Override
   public void run() {
+    double targetTime = 0.0;
+    switch(m_limelightType) {
+      case LL4 -> {
+        targetTime = 1.0 / 200.0;
+      }
+      case LL3 -> {
+        targetTime = 1.0 / 50.0;
+      }
+      case LL2P -> {
+        targetTime = 1.0 / 25.0;
+      }
+    }
     while(true) {
       double startTime = Timer.getFPGATimestamp();
       PoseEstimate estimate = getPoseEstimation();
@@ -232,10 +231,18 @@ public class Limelight implements Runnable {
       if (checkPose(estimate)) {
         updatePoseWithStdDev(estimate);
       }
-      double endTime = Timer.getFPGATimestamp();
-      Logger.recordOutput("Odometry/Limelight/ThreadTime", endTime - startTime);
+      
+      while(Timer.getFPGATimestamp() - startTime < targetTime) {
+        try {
+          Thread.sleep(0);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
 
-      RobotTelemetry.print("This is working");
+      double endTime = Timer.getFPGATimestamp();
+
+      Logger.recordOutput("Odometry/Limelight/ThreadTime", endTime - startTime);
     }
   }
 
