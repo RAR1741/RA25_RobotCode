@@ -3,12 +3,15 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.wrappers.PIDConstants;
+import frc.robot.wrappers.ProfiledPIDConstants;
 
 public class Constants {
   public RobotConstants Robot = new RobotConstants();
   public FieldConstants Field = new FieldConstants();
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
   public OdometryConstants Odometry = new OdometryConstants();
+  public AutoConstants Auto = new AutoConstants();
 
   public static class RobotConstants {
     public String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -19,6 +22,8 @@ public class Constants {
 
     public double k_bumperStart = 1.0; // Inches
     public double k_bumperHeight = 5.0; // Inches
+
+    public double k_period = 1.0 / 50.0; // the robot runs at 50Hz
   }
 
   public static class FieldConstants {
@@ -150,5 +155,19 @@ public class Constants {
 
   public class PoseAlignerConstants {
 
+  }
+
+  public static class AutoConstants {
+    // Needs to be more than the max robot speed, to allow for turning
+    public double k_maxVelocity = 0.0; // Meters per second
+    public double k_maxAcceleration = 0.0; // Meters per second
+    public PIDConstants k_translationConstants = new PIDConstants(0.0, 0.0, 0.0);
+    public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(0.0, 0.0, 0.0, k_maxVelocity, k_maxAcceleration);
+
+    public TimingConstants Timing = new TimingConstants();
+
+    public class TimingConstants {
+      
+    }
   }
 }
