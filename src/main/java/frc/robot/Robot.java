@@ -47,7 +47,7 @@ public class Robot extends LoggedRobot {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
     m_autoRunner = AutoRunner.getInstance();
-    m_autoChooser = new AutoChooser();
+    m_autoChooser = AutoChooser.getInstance();
 
     m_driverController = new DriverController(0, false, false, 0.5);
     m_subsystems.add(m_swerve);
@@ -78,7 +78,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autoRunner.setAutoMode(m_autoChooser.getSelectedAuto());
     m_currentTask = m_autoRunner.getNextTask();
 
     // Start the first task
