@@ -3,16 +3,17 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import frc.robot.Helpers;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.drivetrain.RAROdometry;
-// import frc.robot.subsystems.drivetrain.SwerveDrive;
 
 public class Limelight {
   private NetworkTable m_limelightTable;
@@ -23,6 +24,7 @@ public class Limelight {
    */
   public Limelight(String limelightName) {
     m_name = limelightName;
+
     m_limelightTable = NetworkTableInstance.getDefault().getTable(m_name);
   }
 
@@ -30,7 +32,9 @@ public class Limelight {
    * Enable the LEDs
    */
   public void setLightEnabled(boolean enabled) {
-    m_limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1);
+    if (m_limelightTable != null) {
+      m_limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1);
+    }
   }
 
   /**
@@ -48,11 +52,17 @@ public class Limelight {
    * @return If there is a visible AprilTag
    */
   public boolean seesAprilTag() {
-    return m_limelightTable.getEntry("tv").getInteger(0) == 1;
+    return m_limelightTable.getEntry("tv").getInteger(0) == 1; // i think this returns 0 if the value is null, but idk
   }
 
   public PoseEstimate getMegaTag1PoseEstimation() {
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(m_name);
+
+    if (estimate != null) {
+      return estimate;
+    }
+
+    return new PoseEstimate();
   }
 
   public double getTimeOffset() {
@@ -60,12 +70,15 @@ public class Limelight {
   }
 
   public void outputTelemetry() {
-    for (String key : m_limelightTable.getKeys()) {
-      String type = m_limelightTable.getEntry(key).getType().name().substring(1);
+    if (m_limelightTable != null) {
+      for (String key : m_limelightTable.getKeys()) {
+        String type = m_limelightTable.getEntry(key).getType().name().substring(1);
 
-      SmartDashboard.putString(
-          key, (type.equals("String") || type.equals("Double")) ? m_limelightTable.getEntry(key).toString()
-              : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
+        SmartDashboard.putString(
+            key, (type.equals("String") || type.equals("Double"))
+                ? m_limelightTable.getEntry(key).toString()
+                : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
+      }
     }
   }
 
@@ -80,20 +93,36 @@ public class Limelight {
   }
 
   public PoseEstimate getPoseEstimation() {
-    LimelightHelpers.SetRobotOrientation(m_name,
+    LimelightHelpers.SetRobotOrientation(
+        m_name,
         RAROdometry.getInstance().getRotation2d().getDegrees(),
-        // SwerveDrive.getInstance().getGyro().getAngle(),
-        // TODO: is this and/or getRate needed?
-        // SwerveDrive.getInstance().getGyro().getRate(),
         0, 0, 0, 0, 0);
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_name);
+
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_name);
+
+    if (estimate != null) {
+      return estimate;
+    }
+
+    return new PoseEstimate();
   }
 
   public double getLatency() {
     return LimelightHelpers.getLatency_Capture(m_name) + LimelightHelpers.getLatency_Pipeline(m_name);
   }
 
+  public Pose3d getTargetPose_RobotSpace(Pose2d botPose) {
+    Pose3d botSpaceTagPose = LimelightHelpers.getTargetPose3d_RobotSpace(m_name);
+
+    return new Pose3d(
+        new Translation3d(
+            botPose.getTranslation().getX() - botSpaceTagPose.getTranslation().getX(),
+            0.0 + botPose.getTranslation().getY() + botSpaceTagPose.getTranslation().getZ(),
+            0.5),
+        new Rotation3d(botPose.getRotation()));
+  }
+
   public boolean getLightEnabled() {
-    return m_limelightTable.getEntry("ledMode").getDouble(1) == 3;
+    return m_limelightTable.getEntry("ledMode").getDouble(1.0) == 3;
   }
 }

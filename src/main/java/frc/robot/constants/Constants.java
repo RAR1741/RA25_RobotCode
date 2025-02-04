@@ -1,33 +1,48 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
   public RobotConstants Robot = new RobotConstants();
   public FieldConstants Field = new FieldConstants();
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
+  public OdometryConstants Odometry = new OdometryConstants();
 
   public static class RobotConstants {
     public String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
                                     // Drivetrain CANivore
 
-    public double k_width = 27.0; // Inches
-    public double k_length = 30.0; // Inches
+    public double k_width = 28.0; // Inches
+    public double k_length = 32.0; // Inches
 
     public double k_bumperStart = 1.0; // Inches
     public double k_bumperHeight = 5.0; // Inches
   }
 
   public static class FieldConstants {
-    public double k_width = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0/8.0)); // TODO: Use the 2025 field perimeter
-    public double k_length = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+    public double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+    public double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
+
+    public double k_reefFaceToFaceWidth = Units.inchesToMeters((5 * 12) + 5.5); // 5'5.5" ("REEF ZONE": section 5.3)
+
+    public double k_blueReefX = Units.inchesToMeters(144) + k_reefFaceToFaceWidth / 2; // 144 inches + half the
+                                                                                       // width
+    public double k_blueReefY = Units.inchesToMeters(((26 * 12) + 5) / 2); // 26'5" / 2
+
+    public Pose3d k_blueReefPose = new Pose3d(k_blueReefX, k_blueReefY, 2.0, new Rotation3d());
+    public Pose3d k_redReefPose = new Pose3d(k_length - k_blueReefX, k_blueReefY, 2.0, new Rotation3d());
+  }
+
+  public static class OdometryConstants {
+    public int k_threadUpdateFrequency = 250; // Hz
   }
 
   public static class SwerveDriveConstants {
     public String k_canBus = "Drivetrain";
 
     // Drivetrain wheel offsets
-    // TODO: Make this match 2025 robot
     public double k_xDistance = Units.inchesToMeters(26.75); // 30 inches Forward/Backward
     public double k_yDistance = Units.inchesToMeters(22.75); // in meters! Side-to-Side
 
@@ -77,15 +92,15 @@ public class Constants {
     // Drivetrain (turn) constants
     public class TurnConstants {
       // Drivetrain turning offset constants
-      public double k_FLOffset;
-      public double k_FROffset;
-      public double k_BROffset;
-      public double k_BLOffset;
+      public double k_FLOffset = -0.1521;
+      public double k_FROffset = 0.02417;
+      public double k_BLOffset = 0.594889;
+      public double k_BROffset = 0.419678;
 
-      public int k_FLAbsId = 4;
-      public int k_FRAbsId = 5;
-      public int k_BRAbsId = 6;
-      public int k_BLAbsId = 7;
+      public int k_FLAbsId = 13;
+      public int k_FRAbsId = 14;
+      public int k_BLAbsId = 15;
+      public int k_BRAbsId = 16;
 
       public int k_currentLimit = 25;
 
@@ -94,7 +109,7 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public double k_P = 100.0;
+      public double k_P = 70.0;
       public double k_I = 0.0;
       public double k_D = 1.0;
       public double k_IZone = 0.0;
@@ -109,5 +124,31 @@ public class Constants {
       public double k_minOutput = -1.0;
       public double k_maxOutput = 1.0;
     }
+
+    public ChassisConstants Chassis = new ChassisConstants();
+
+    public class ChassisConstants {
+      public DriveConstants Drive = new DriveConstants();
+
+      public class DriveConstants {
+        public double k_P = 0.0;
+        public double k_I = 0.0;
+        public double k_D = 0.0;
+      }
+
+      public TurnConstants Turn = new TurnConstants();
+
+      public class TurnConstants {
+        public double k_P = 5.0;
+        public double k_I = 0.0;
+        public double k_D = 0.0;
+      }
+    }
+  }
+
+  public PoseAlignerConstants PoseAligner = new PoseAlignerConstants();
+
+  public class PoseAlignerConstants {
+
   }
 }

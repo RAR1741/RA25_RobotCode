@@ -84,23 +84,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    // If there is a current task, run it
-    if (m_currentTask != null) {
-      // Run the current task
-      m_currentTask.update();
-      m_currentTask.updateSim();
-
-      // If the current task is finished, get the next task
-      if (m_currentTask.isFinished()) {
-        m_currentTask.done();
-        m_currentTask = m_autoRunner.getNextTask();
-
-        // Start the next task
-        if (m_currentTask != null) {
-          m_currentTask.prepare();
-        }
-      }
-    }
   }
 
   @Override
