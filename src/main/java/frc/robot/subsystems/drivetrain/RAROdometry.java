@@ -9,7 +9,6 @@ import org.littletonrobotics.junction.Logger;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXUpdateRate;
 
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -31,7 +30,6 @@ public class RAROdometry extends Subsystem {
   private final Limelight m_limelight;
   private final SwerveDrive m_swerve = SwerveDrive.getInstance();
   private SwerveDrivePoseEstimator m_poseEstimator;
-
 
   /** Lock used for odometry thread. */
   private final ReadWriteLock m_stateLock = new ReentrantReadWriteLock();
