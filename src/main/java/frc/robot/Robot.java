@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.tasks.Task;
@@ -52,12 +54,6 @@ public class Robot extends LoggedRobot {
     m_driverController = new DriverController(0, false, false, 0.5);
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
-
-    RobotTelemetry.print("*weezer riff*");
-    RobotTelemetry.print("Ooo-wee-ooo, I look just like Buddy Holly");
-    RobotTelemetry.print("Oh-oh, and you're Mary Tyler Moore!");
-    RobotTelemetry.print("I don't care what they say about us anyways");
-    RobotTelemetry.print("I don't care about that!");
   }
 
   @Override
@@ -134,6 +130,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
+    if (DriverStation.getMatchType() == MatchType.None) {
+      m_autoRunner.initialize();
+    }
   }
 
   @Override

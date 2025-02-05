@@ -43,6 +43,10 @@ public class AutoRunner {
     return m_autoMode.getNextTask();
   }
 
+  public void initialize() {
+    onAutoChange(m_selectedAuto.toString());
+  }
+
   private void onAutoChange(String newAuto) {
     RobotTelemetry.print("AUTO CHANGED");
     m_selectedAuto = AutoMode.valueOf(newAuto);
