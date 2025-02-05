@@ -113,7 +113,7 @@
                 "bumpers": "auto",
                 "origin": "blue",
                 "orientation": 0,
-                "size": 30 
+                "size": 30
               },
               "controllerUUID": "ibs46t3mi554qmoz417wn12m75mkv5hz",
               "renderer": null,
@@ -374,7 +374,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot"
+                      "model": "2025 RA25"
                     }
                   },
                   {
@@ -383,7 +383,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#00ff00"
                     }
                   },
@@ -393,7 +393,7 @@
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#0000ff"
                     }
                   },
@@ -413,7 +413,7 @@
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#ff0000"
                     }
                   },
@@ -433,7 +433,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2024 KitBot",
+                      "model": "2025 RA25",
                       "color": "#ff00ff"
                     }
                   },
@@ -453,7 +453,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#00ffff"
                     }
                   }
@@ -466,17 +466,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  5.654317841916959,
-                  12.39917377359783,
-                  -0.25880800714849134
+                  9.587864897092448,
+                  6.949921518720398,
+                  -4.837332629037047
                 ],
                 "cameraTarget": [
-                  4.653047697826365,
-                  -1.4806262612039047,
-                  -0.26314867334619496
+                  5.672560591900944,
+                  0.16685215106691814,
+                  -0.9159138982531617
                 ]
               },
-              "controlsHeight": 157
+              "controlsHeight": 370
             }
           ]
         }
