@@ -274,7 +274,7 @@ public class RAROdometry extends Subsystem {
     return m_gyro.getActualUpdateRate();
   }
 
-  @AutoLogOutput
+  @AutoLogOutput(key = "Odometry/Gyro/UpdateCount")
   public double getGyroUpdateCount() {
     return m_gyro.getUpdateCount();
   }
