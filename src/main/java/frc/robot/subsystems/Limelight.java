@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
-import java.util.Arrays;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.VecBuilder;
@@ -15,9 +15,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.LimelightHelpers;
-import frc.robot.RobotTelemetry;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.VisionConstants;
@@ -27,7 +25,7 @@ public class Limelight implements Runnable {
   private final NetworkTable m_limelightTable;
   private final LimelightType m_limelightType;
   private VisionConstants m_visionConstants;
-  private final String m_name;
+  private final String m_limelightName;
   private final Thread m_thread;
   private boolean m_isRunning;
 
@@ -35,11 +33,11 @@ public class Limelight implements Runnable {
    * Constructor
    */
   public Limelight(String limelightName, ReadWriteLock lock, LimelightType llType) {
-    m_name = limelightName;
+    m_limelightName = limelightName;
     m_limelightType = llType;
     m_visionConstants = new VisionConstants(1,100,0,100);
 
-    m_limelightTable = NetworkTableInstance.getDefault().getTable(m_name);
+    m_limelightTable = NetworkTableInstance.getDefault().getTable(m_limelightName);
     m_thread = new Thread(this);
     m_thread.setDaemon(true);
   }
@@ -68,43 +66,17 @@ public class Limelight implements Runnable {
    * @return Current bot pose
    */
   public Pose2d getBotpose2D() {
-    return toFieldPose(LimelightHelpers.getBotPose2d(m_name));
-  }
-
-  /**
-   * Get whether there is a visible AprilTag
-   *
-   * @return If there is a visible AprilTag
-   */
-  public boolean seesAprilTag() {
-    return m_limelightTable.getEntry("tv").getInteger(0) == 1; // i think this returns 0 if the value is null, but idk
+    return toFieldPose(LimelightHelpers.getBotPose2d(m_limelightName));
   }
 
   public PoseEstimate getMegaTag1PoseEstimation() {
-    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(m_name);
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(m_limelightName);
 
     if (estimate != null) {
       return estimate;
     }
 
     return new PoseEstimate();
-  }
-
-  public double getTimeOffset() {
-    return Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline(m_name);
-  }
-
-  public void outputTelemetry() {
-    if (m_limelightTable != null) {
-      for (String key : m_limelightTable.getKeys()) {
-        String type = m_limelightTable.getEntry(key).getType().name().substring(1);
-
-        SmartDashboard.putString(
-            key, (type.equals("String") || type.equals("Double"))
-                ? m_limelightTable.getEntry(key).toString()
-                : Arrays.toString(m_limelightTable.getEntry(key).getDoubleArray(new double[6])));
-      }
-    }
   }
 
   /**
@@ -119,11 +91,11 @@ public class Limelight implements Runnable {
 
   public PoseEstimate getPoseEstimation() {
     LimelightHelpers.SetRobotOrientation(
-        m_name,
+        m_limelightName,
         RAROdometry.getInstance().getRotation2d().getDegrees(),
         0, 0, 0, 0, 0);
 
-    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_name);
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_limelightName);
 
     if (estimate != null) {
       return estimate;
@@ -133,11 +105,11 @@ public class Limelight implements Runnable {
   }
 
   public double getLatency() {
-    return LimelightHelpers.getLatency_Capture(m_name) + LimelightHelpers.getLatency_Pipeline(m_name);
+    return LimelightHelpers.getLatency_Capture(m_limelightName) + LimelightHelpers.getLatency_Pipeline(m_limelightName);
   }
 
   public Pose3d getTargetPose_RobotSpace(Pose2d botPose) {
-    Pose3d botSpaceTagPose = LimelightHelpers.getTargetPose3d_RobotSpace(m_name);
+    Pose3d botSpaceTagPose = LimelightHelpers.getTargetPose3d_RobotSpace(m_limelightName);
 
     return new Pose3d(
         new Translation3d(
@@ -210,6 +182,12 @@ public class Limelight implements Runnable {
     RAROdometry.getInstance().addLLPose(estimate, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
   }
 
+  private void log(double startTime, PoseEstimate estimate) {
+    Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/LimelightPoseEstimation", estimate.pose);
+    Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/AverageTagDistance", estimate.avgTagDist);
+    Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/ThreadTime", Timer.getFPGATimestamp() - startTime);
+  }
+
   @Override
   public void run() {
     double targetTime = 0.0;
@@ -240,10 +218,19 @@ public class Limelight implements Runnable {
         }
       }
 
-      double endTime = Timer.getFPGATimestamp();
-
-      Logger.recordOutput("Odometry/Limelight/ThreadTime", endTime - startTime);
+      log(startTime, estimate);
     }
+  }
+
+  @AutoLogOutput(key = "Odometry/Limelight/{m_limelightTable}/DistanceMetersFromNearestAprilTag")
+  public double getDistanceMetersFromNearestAprilTag() {
+    PoseEstimate estimate = getPoseEstimation();
+
+    if (estimate != null) {
+      return estimate.avgTagDist;
+    }
+
+    return 0.0;
   }
 
   public boolean isRunning() {
