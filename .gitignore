@@ -188,3 +188,6 @@ compile_commands.json
 
 # Generated file for build constants
 src/main/java/frc/robot/BuildConstants.java
+
+# Generated file for robot sim
+simgui-ds.json
