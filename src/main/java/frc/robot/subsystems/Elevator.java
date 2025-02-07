@@ -17,7 +17,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
-import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.simulation.SimulatableCANSparkMax;
 
@@ -25,7 +24,7 @@ public class Elevator extends Subsystem {
   private static Elevator m_instance;
   private PeriodicIO m_periodicIO;
 
-  private LaserCanHandler m_laserCan;
+  // private LaserCanHandler m_laserCan;
 
   // private static final double k_pivotCLRampRate = 0.5;
   // private static final double k_CLRampRate = 0.5;
@@ -54,36 +53,35 @@ public class Elevator extends Subsystem {
     super("Elevator");
 
     m_periodicIO = new PeriodicIO();
-    m_laserCan = LaserCanHandler.getInstance();
+    // m_laserCan = LaserCanHandler.getInstance();
 
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
     elevatorConfig.closedLoop
         .pid(RobotConstants.robotConfig.Elevator.k_P, RobotConstants.robotConfig.Elevator.k_I,
             RobotConstants.robotConfig.Elevator.k_D)
-        .iZone(RobotConstants.robotConfig.Elevator.k_IZone)
-        .minOutput(RobotConstants.robotConfig.Elevator.k_maxPowerDown)
-        .maxOutput(RobotConstants.robotConfig.Elevator.k_maxPowerUp);
+        .iZone(RobotConstants.robotConfig.Elevator.k_IZone);
 
     elevatorConfig.smartCurrentLimit(RobotConstants.robotConfig.Elevator.k_maxCurrent);
 
     elevatorConfig.idleMode(IdleMode.kBrake);
 
     // LEFT ELEVATOR MOTOR
-    m_leftMotor = new SimulatableCANSparkMax(RobotConstants.robotConfig.Elevator.k_elevatorLeftMotorId,
+    m_leftMotor = new SimulatableCANSparkMax(
+        RobotConstants.robotConfig.Elevator.k_elevatorLeftMotorId,
         MotorType.kBrushless);
     m_leftEncoder = m_leftMotor.getEncoder();
     m_leftPIDController = m_leftMotor.getClosedLoopController();
+
     m_leftMotor.configure(
         elevatorConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
     // RIGHT ELEVATOR MOTOR
-    m_rightMotor = new SimulatableCANSparkMax(RobotConstants.robotConfig.Elevator.k_elevatorRightMotorId,
+    m_rightMotor = new SimulatableCANSparkMax(
+        RobotConstants.robotConfig.Elevator.k_elevatorRightMotorId,
         MotorType.kBrushless);
-    // m_rightEncoder = m_rightMotor.getEncoder();
-    // m_rightPIDController = m_rightMotor.getClosedLoopController();
     m_rightMotor.configure(
         elevatorConfig.follow(m_leftMotor),
         ResetMode.kResetSafeParameters,
@@ -107,7 +105,6 @@ public class Elevator extends Subsystem {
 
   private static class PeriodicIO {
     double elevator_target = 0.0;
-    double elevator_power = 0.0;
 
     boolean is_elevator_pos_control = false;
 
@@ -128,7 +125,7 @@ public class Elevator extends Subsystem {
 
       double currentTime = Timer.getFPGATimestamp();
       double deltaTime = currentTime - m_previousUpdateTime;
-      
+
       m_previousUpdateTime = currentTime;
 
       // Update goal
@@ -144,23 +141,18 @@ public class Elevator extends Subsystem {
 
   @Override
   public void writePeriodicOutputs() {
-    if (m_periodicIO.is_elevator_pos_control) {
-      // Set PID controller to new state
-      m_leftPIDController.setReference(
-          m_currentState.position,
-          SparkBase.ControlType.kPosition,
-          ClosedLoopSlot.kSlot0,
-          RobotConstants.robotConfig.Elevator.k_FF,
-          ArbFFUnits.kVoltage);
-    } else {
-      m_leftMotor.set(m_periodicIO.elevator_power);
-    }
+    // Set PID controller to new state
+    m_leftPIDController.setReference(
+        m_currentState.position,
+        SparkBase.ControlType.kPosition,
+        ClosedLoopSlot.kSlot0,
+        RobotConstants.robotConfig.Elevator.k_FF,
+        ArbFFUnits.kVoltage);
   }
 
   @Override
   public void stop() {
     m_periodicIO.is_elevator_pos_control = false;
-    m_periodicIO.elevator_power = 0.0;
 
     m_leftMotor.set(0.0);
   }
@@ -174,35 +166,30 @@ public class Elevator extends Subsystem {
     return m_periodicIO.state;
   }
 
-  public void setElevatorPower(double power) {
-    putNumber("setElevatorPower", power);
-    m_periodicIO.is_elevator_pos_control = false;
-    m_periodicIO.elevator_power = power;
-  }
-
   public void goToElevatorPosition(ElevatorState position) {
-    // if the LaserCAN cannot see any coral, we can safely assume that the elevator is free to move
-    if (!m_laserCan.getEntranceSeesCoral()) {
-      switch (position) {
-        case STOW:
-          goToElevatorStow();
-          break;
-        case L1:
-          goToElevatorL1();
-          break;
-        case L2:
-          goToElevatorL2();
-          break;
-        case L3:
-          goToElevatorL3();
-          break;
-        case L4:
-          goToElevatorL4();
-          break;
-        default:
-          break;
-      }
-    }
+    // if the LaserCAN cannot see any coral, we can safely assume that the elevator
+    // is free to move
+    // if (!m_laserCan.getEntranceSeesCoral()) {
+    // switch (position) {
+    // case STOW:
+    // goToElevatorStow();
+    // break;
+    // case L1:
+    // goToElevatorL1();
+    // break;
+    // case L2:
+    // goToElevatorL2();
+    // break;
+    // case L3:
+    // goToElevatorL3();
+    // break;
+    // case L4:
+    // goToElevatorL4();
+    // break;
+    // default:
+    // break;
+    // }
+    // }
   }
 
   private void goToElevatorStow() {

@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.LoggedRobot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
@@ -60,6 +61,9 @@ public class Robot extends LoggedRobot {
     m_driverController = new DriverController(0, true, true, 0.5);
     m_operatorController = new OperatorController(1, true, true, 0.5);
     m_virtualRobotController = new VirtualRobotController(2);
+
+    // SCARY
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     m_subsystems.add(m_poseAligner);
     m_subsystems.add(m_swerve);

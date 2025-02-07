@@ -9,18 +9,16 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import edu.wpi.first.math.filter.SlewRateLimiter;
-
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.wrappers.RARSparkMax;
 
 public class EndEffector extends Subsystem {
     private static EndEffector m_instance;
-    
+
     private PeriodicIO m_periodicIO;
 
     RARSparkMax m_leftMotor;
@@ -49,7 +47,7 @@ public class EndEffector extends Subsystem {
         m_leftMotor = new RARSparkMax(RobotConstants.robotConfig.EndEffector.k_leftMotorId, MotorType.kBrushless);
         m_rightMotor = new RARSparkMax(RobotConstants.robotConfig.EndEffector.k_rightMotorId, MotorType.kBrushless);
 
-        m_laserCan = LaserCanHandler.getInstance();
+        // m_laserCan = LaserCanHandler.getInstance();
 
         SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kCoast);
 
@@ -67,7 +65,7 @@ public class EndEffector extends Subsystem {
 
         m_leftMotor.configure(leftShooterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_rightMotor.configure(endEffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
+
         m_leftEncoder = m_leftMotor.getEncoder();
         m_rightEncoder = m_rightMotor.getEncoder();
     }
@@ -134,7 +132,7 @@ public class EndEffector extends Subsystem {
     public void writePeriodicOutputs() {
         double limitedRightSpeed = m_rightSpeedLimiter.calculate(m_periodicIO.rightSpeed);
         double limitedLeftSpeed = m_leftSpeedLimiter.calculate(m_periodicIO.leftSpeed);
-        
+
         m_leftMotor.getClosedLoopController().setReference(limitedLeftSpeed, ControlType.kVelocity);
         m_rightMotor.getClosedLoopController().setReference(limitedRightSpeed, ControlType.kVelocity);
     }
@@ -161,14 +159,15 @@ public class EndEffector extends Subsystem {
     }
 
     private void checkAutoTasks() {
-        switch(m_periodicIO.state) {
+        switch (m_periodicIO.state) {
             case INDEX:
                 if (!m_laserCan.getEntranceSeesCoral()) {
                     off();
                 }
                 break;
             case OFF:
-                if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral()) && m_laserCan.getExitSeesCoral()) {
+                if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
+                        && m_laserCan.getExitSeesCoral()) {
                     reverse();
                 } else if (m_laserCan.getEntranceSeesCoral()) {
                     index();

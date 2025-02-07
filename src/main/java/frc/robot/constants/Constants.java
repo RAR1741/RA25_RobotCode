@@ -169,8 +169,6 @@ public class Constants {
     public final double k_maxAcceleration = 200;
 
     public final int k_maxCurrent = 40;
-    public final double k_maxPowerUp = -0.1;
-    public final double k_maxPowerDown = 0.1;
 
     public final double k_stowHeight = 0.0; // TODO Confirm units
     public final double k_L1Height = 0.0; // TODO Get height
