@@ -54,7 +54,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot"
+                      "model": "2025 RA25"
                     }
                   },
                   {
@@ -63,7 +63,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#00ff00"
                     }
                   },
@@ -73,7 +73,7 @@
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#0000ff"
                     }
                   },
@@ -93,7 +93,7 @@
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#ff0000"
                     }
                   },
@@ -113,7 +113,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#ff00ff"
                     }
                   },
@@ -133,7 +133,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 KitBot",
+                      "model": "2025 RA25",
                       "color": "#00ffff"
                     }
                   }
@@ -146,9 +146,9 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  13.402464789542815,
-                  7.34851350415531,
-                  -8.902512263367564
+                  11.390608612193338,
+                  9.232641931665587,
+                  -9.15767851557781
                 ],
                 "cameraTarget": [
                   1.9068259599916666,
