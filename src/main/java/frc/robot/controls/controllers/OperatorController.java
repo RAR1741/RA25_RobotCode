@@ -33,6 +33,14 @@ public class OperatorController extends FilteredController {
     return this.getRawButtonPressed(Button.BACK);
   }
 
+  public boolean getWantsArmScore() {
+    return this.getHatPressed(Direction.UP);
+  }
+
+  public boolean getWantsArmStow() {
+    return this.getHatPressed(Direction.DOWN);
+  }
+
   public int getWantsScore() {
     if (this.getRawAxis(Axis.RIGHT_TRIGGER) > this.getRawAxis(Axis.LEFT_TRIGGER)) {
       return 1;

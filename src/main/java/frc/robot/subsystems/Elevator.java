@@ -57,18 +57,18 @@ public class Elevator extends Subsystem {
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
     elevatorConfig.closedLoop
-        .pid(RobotConstants.robotConfig.Elevator.k_P,
-            RobotConstants.robotConfig.Elevator.k_I,
-            RobotConstants.robotConfig.Elevator.k_D)
-        .iZone(RobotConstants.robotConfig.Elevator.k_IZone);
+        .pid(RobotConstants.robotConstants.Elevator.k_P,
+            RobotConstants.robotConstants.Elevator.k_I,
+            RobotConstants.robotConstants.Elevator.k_D)
+        .iZone(RobotConstants.robotConstants.Elevator.k_IZone);
 
-    elevatorConfig.smartCurrentLimit(RobotConstants.robotConfig.Elevator.k_maxCurrent);
+    elevatorConfig.smartCurrentLimit(RobotConstants.robotConstants.Elevator.k_maxCurrent);
 
     elevatorConfig.idleMode(IdleMode.kBrake);
 
     // LEFT ELEVATOR MOTOR
     m_leftMotor = new SimulatableCANSparkMax(
-        RobotConstants.robotConfig.Elevator.k_elevatorLeftMotorId,
+        RobotConstants.robotConstants.Elevator.k_elevatorLeftMotorId,
         MotorType.kBrushless);
     m_leftEncoder = m_leftMotor.getEncoder();
     m_leftPIDController = m_leftMotor.getClosedLoopController();
@@ -80,7 +80,7 @@ public class Elevator extends Subsystem {
 
     // RIGHT ELEVATOR MOTOR
     m_rightMotor = new SimulatableCANSparkMax(
-        RobotConstants.robotConfig.Elevator.k_elevatorRightMotorId,
+        RobotConstants.robotConstants.Elevator.k_elevatorRightMotorId,
         MotorType.kBrushless);
     m_rightMotor.configure(
         elevatorConfig.follow(m_leftMotor, true),
@@ -89,8 +89,8 @@ public class Elevator extends Subsystem {
 
     m_profile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
-            RobotConstants.robotConfig.Elevator.k_maxVelocity,
-            RobotConstants.robotConfig.Elevator.k_maxAcceleration));
+            RobotConstants.robotConstants.Elevator.k_maxVelocity,
+            RobotConstants.robotConstants.Elevator.k_maxAcceleration));
   }
 
   public enum ElevatorState {
@@ -130,13 +130,13 @@ public class Elevator extends Subsystem {
         m_currentState.position,
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
-        RobotConstants.robotConfig.Elevator.k_FF,
+        RobotConstants.robotConstants.Elevator.k_FF,
         ArbFFUnits.kVoltage);
   }
 
   @Override
   public void stop() {
-    m_leftMotor.set(0.0); // TODO: This is also bad
+    m_leftPIDController.setReference(0.0, SparkBase.ControlType.kVoltage);
   }
 
   @Override
@@ -177,27 +177,27 @@ public class Elevator extends Subsystem {
   }
 
   private void goToElevatorStow() {
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_stowHeight;
+    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_stowHeight;
     m_periodicIO.target_state = ElevatorState.STOW;
   }
 
   private void goToElevatorL1() {
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L1Height;
+    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_L1Height;
     m_periodicIO.target_state = ElevatorState.L1;
   }
 
   private void goToElevatorL2() {
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L2Height;
+    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_L2Height;
     m_periodicIO.target_state = ElevatorState.L2;
   }
 
   private void goToElevatorL3() {
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L3Height;
+    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_L3Height;
     m_periodicIO.target_state = ElevatorState.L3;
   }
 
   private void goToElevatorL4() {
-    m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L4Height;
+    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_L4Height;
     m_periodicIO.target_state = ElevatorState.L4;
   }
 
@@ -228,17 +228,17 @@ public class Elevator extends Subsystem {
   private double getElevatorTargetFromState(ElevatorState state) {
     switch (state) {
       case STOW:
-        return RobotConstants.robotConfig.Elevator.k_stowHeight;
+        return RobotConstants.robotConstants.Elevator.k_stowHeight;
       case L1:
-        return RobotConstants.robotConfig.Elevator.k_L1Height;
+        return RobotConstants.robotConstants.Elevator.k_L1Height;
       case L2:
-        return RobotConstants.robotConfig.Elevator.k_L2Height;
+        return RobotConstants.robotConstants.Elevator.k_L2Height;
       case L3:
-        return RobotConstants.robotConfig.Elevator.k_L3Height;
+        return RobotConstants.robotConstants.Elevator.k_L3Height;
       case L4:
-        return RobotConstants.robotConfig.Elevator.k_L4Height;
+        return RobotConstants.robotConstants.Elevator.k_L4Height;
       default:
-        return RobotConstants.robotConfig.Elevator.k_stowHeight;
+        return RobotConstants.robotConstants.Elevator.k_stowHeight;
     }
   }
 

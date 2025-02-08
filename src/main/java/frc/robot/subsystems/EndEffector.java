@@ -44,20 +44,20 @@ public class EndEffector extends Subsystem {
 
     m_periodicIO = new PeriodicIO();
 
-    m_leftMotor = new RARSparkMax(RobotConstants.robotConfig.EndEffector.k_leftMotorId, MotorType.kBrushless);
-    m_rightMotor = new RARSparkMax(RobotConstants.robotConfig.EndEffector.k_rightMotorId, MotorType.kBrushless);
+    m_leftMotor = new RARSparkMax(RobotConstants.robotConstants.EndEffector.k_leftMotorId, MotorType.kBrushless);
+    m_rightMotor = new RARSparkMax(RobotConstants.robotConstants.EndEffector.k_rightMotorId, MotorType.kBrushless);
 
     // m_laserCan = LaserCanHandler.getInstance();
 
     SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kCoast);
 
     endEffectorConfig.closedLoop
-        .pidf(RobotConstants.robotConfig.EndEffector.k_P,
-            RobotConstants.robotConfig.EndEffector.k_I,
-            RobotConstants.robotConfig.EndEffector.k_D,
-            RobotConstants.robotConfig.EndEffector.k_FF)
-        .minOutput(RobotConstants.robotConfig.EndEffector.k_minOutput)
-        .maxOutput(RobotConstants.robotConfig.EndEffector.k_maxOutput);
+        .pidf(RobotConstants.robotConstants.EndEffector.k_P,
+            RobotConstants.robotConstants.EndEffector.k_I,
+            RobotConstants.robotConstants.EndEffector.k_D,
+            RobotConstants.robotConstants.EndEffector.k_FF)
+        .minOutput(RobotConstants.robotConstants.EndEffector.k_minOutput)
+        .maxOutput(RobotConstants.robotConstants.EndEffector.k_maxOutput);
 
     SparkBaseConfig leftShooterConfig = new SparkFlexConfig()
         .apply(endEffectorConfig)
@@ -97,24 +97,24 @@ public class EndEffector extends Subsystem {
 
   private void index() {
     setState(EndEffectorState.INDEX);
-    m_periodicIO.leftSpeed = RobotConstants.robotConfig.EndEffector.k_indexSpeed;
-    m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_indexSpeed;
+    m_periodicIO.leftSpeed = RobotConstants.robotConstants.EndEffector.k_indexSpeed;
+    m_periodicIO.rightSpeed = RobotConstants.robotConstants.EndEffector.k_indexSpeed;
   }
 
   private void reverse() {
     setState(EndEffectorState.REVERSE);
-    m_periodicIO.leftSpeed = -RobotConstants.robotConfig.EndEffector.k_indexSpeed;
-    m_periodicIO.rightSpeed = -RobotConstants.robotConfig.EndEffector.k_indexSpeed;
+    m_periodicIO.leftSpeed = -RobotConstants.robotConstants.EndEffector.k_indexSpeed;
+    m_periodicIO.rightSpeed = -RobotConstants.robotConstants.EndEffector.k_indexSpeed;
   }
 
   private void branches() {
-    m_periodicIO.leftSpeed = RobotConstants.robotConfig.EndEffector.k_branchesSpeed;
-    m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_branchesSpeed;
+    m_periodicIO.leftSpeed = RobotConstants.robotConstants.EndEffector.k_branchesSpeed;
+    m_periodicIO.rightSpeed = RobotConstants.robotConstants.EndEffector.k_branchesSpeed;
   }
 
   private void trough() {
-    m_periodicIO.leftSpeed = RobotConstants.robotConfig.EndEffector.k_branchesSpeed;
-    m_periodicIO.rightSpeed = RobotConstants.robotConfig.EndEffector.k_troughSpeed;
+    m_periodicIO.leftSpeed = RobotConstants.robotConstants.EndEffector.k_branchesSpeed;
+    m_periodicIO.rightSpeed = RobotConstants.robotConstants.EndEffector.k_troughSpeed;
   }
 
   @Override

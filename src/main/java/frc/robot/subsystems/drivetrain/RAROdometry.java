@@ -159,11 +159,11 @@ public class RAROdometry extends Subsystem {
       return false;
     }
 
-    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConfig.Field.k_length) {
+    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > RobotConstants.robotConstants.Field.k_length) {
       return false;
     }
 
-    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConfig.Field.k_width) {
+    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > RobotConstants.robotConstants.Field.k_width) {
       return false;
     }
 

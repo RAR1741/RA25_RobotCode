@@ -47,7 +47,7 @@ public class OdometryThread implements Runnable {
   private SwerveModule[] m_modules;
 
   private volatile int m_threadPriorityToSet = START_THREAD_PRIORITY;
-  private final int k_updateFrequency = RobotConstants.robotConfig.Odometry.k_threadUpdateFrequency;
+  private final int k_updateFrequency = RobotConstants.robotConstants.Odometry.k_threadUpdateFrequency;
   private int m_lastThreadPriority = START_THREAD_PRIORITY;
 
   private double m_lastTime = 0;

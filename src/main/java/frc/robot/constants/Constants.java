@@ -153,16 +153,16 @@ public class Constants {
   public static class ArmConstants {
     public int k_motorId = 30;
 
-    public double k_P = 1.0;
+    public double k_P = 0.01;
     public double k_I = 0.0;
     public double k_D = 0.0;
     public double k_IZone = 0.0;
-    public double k_FF = 1.0;
+    public double k_FF = 0.0;
 
-    public double k_minOutput = 0.0;
-    public double k_maxOutput = 1.0;
+    public int k_maxCurrent = 5;
 
-    public int k_maxCurrent = 40;
+    public final double k_stowAngle = 0.0;
+    public final double k_L4Angle = 30.0;
 
     public double k_maxAcceleration = 0;
     public double k_maxVelocity = 0;
