@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -110,22 +111,6 @@ public class Elevator extends Subsystem {
 
   @Override
   public void periodic() {
-    // TODO: Use this pattern to only drive slowly when we're really high up
-    // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
-    // mPeriodicIO.is_pivot_low = true;
-    // } else {
-    // mPeriodicIO.is_pivot_low = false;
-    // }
-
-    // double currentTime = Timer.getFPGATimestamp();
-    // double deltaTime = currentTime - m_previousUpdateTime;
-    // m_previousUpdateTime = currentTime;
-
-    // // Update goal
-    // m_goalState.position = m_periodicIO.elevator_target;
-
-    // // Calculate new state
-    // m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
   }
 
   @Override
