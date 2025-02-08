@@ -149,6 +149,8 @@ public class Robot extends LoggedRobot {
       m_elevator.goToElevatorPosition(ElevatorState.L3);
     } else if (m_operatorController.getWantsGoToL4()) {
       m_elevator.goToElevatorPosition(ElevatorState.L4);
+    } else if (m_operatorController.getWantsResetElevator()) {
+      m_elevator.reset();
     }
 
     // if (m_operatorController.getWantsScore() > 0) {
@@ -169,6 +171,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     m_odometry.setAllianceGyroAngleAdjustment();
+
+    if(m_operatorController.getWantsResetElevator()) {
+      m_elevator.reset();
+    }
   }
 
   @Override

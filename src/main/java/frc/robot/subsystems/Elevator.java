@@ -57,8 +57,8 @@ public class Elevator extends Subsystem {
 
     elevatorConfig.closedLoop
         .pid(RobotConstants.robotConfig.Elevator.k_P,
-             RobotConstants.robotConfig.Elevator.k_I,
-             RobotConstants.robotConfig.Elevator.k_D)
+            RobotConstants.robotConfig.Elevator.k_I,
+            RobotConstants.robotConfig.Elevator.k_D)
         .iZone(RobotConstants.robotConfig.Elevator.k_IZone);
 
     elevatorConfig.smartCurrentLimit(RobotConstants.robotConfig.Elevator.k_maxCurrent);
@@ -105,7 +105,7 @@ public class Elevator extends Subsystem {
 
     // boolean is_elevator_pos_control = false;
 
-    ElevatorState state = ElevatorState.STOW;
+    ElevatorState target_state = ElevatorState.STOW;
   }
 
   @Override
@@ -125,7 +125,7 @@ public class Elevator extends Subsystem {
     // m_goalState.position = m_periodicIO.elevator_target;
 
     // // Calculate new state
-    // m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);    
+    // m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
   }
 
   @Override
@@ -139,7 +139,7 @@ public class Elevator extends Subsystem {
 
     // Calculate new state
     m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
-    
+
     // Set PID controller to new state
     m_leftPIDController.setReference(
         m_currentState.position,
@@ -151,16 +151,16 @@ public class Elevator extends Subsystem {
 
   @Override
   public void stop() {
-    m_leftMotor.set(0.0); //TODO: This is also bad
+    m_leftMotor.set(0.0); // TODO: This is also bad
   }
 
   @Override
   public void reset() {
-    // m_leftEncoder.setPosition(0.0); //TODO: This is bad, use a setreference
+    m_leftEncoder.setPosition(0.0);
   }
 
   public ElevatorState getState() {
-    return m_periodicIO.state;
+    return m_periodicIO.target_state;
   }
 
   public void goToElevatorPosition(ElevatorState position) {
@@ -193,27 +193,27 @@ public class Elevator extends Subsystem {
 
   private void goToElevatorStow() {
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_stowHeight;
-    m_periodicIO.state = ElevatorState.STOW;
+    m_periodicIO.target_state = ElevatorState.STOW;
   }
 
   private void goToElevatorL1() {
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L1Height;
-    m_periodicIO.state = ElevatorState.L1;
+    m_periodicIO.target_state = ElevatorState.L1;
   }
 
   private void goToElevatorL2() {
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L2Height;
-    m_periodicIO.state = ElevatorState.L2;
+    m_periodicIO.target_state = ElevatorState.L2;
   }
 
   private void goToElevatorL3() {
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L3Height;
-    m_periodicIO.state = ElevatorState.L3;
+    m_periodicIO.target_state = ElevatorState.L3;
   }
 
   private void goToElevatorL4() {
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L4Height;
-    m_periodicIO.state = ElevatorState.L4;
+    m_periodicIO.target_state = ElevatorState.L4;
   }
 
   @AutoLogOutput(key = "Elevator/Position/Current")
@@ -223,12 +223,12 @@ public class Elevator extends Subsystem {
 
   @AutoLogOutput(key = "Elevator/ElevatorStateOrdinal")
   public int getElevatorStateOrdinal() {
-    return m_periodicIO.state.ordinal();
+    return m_periodicIO.target_state.ordinal();
   }
 
   @AutoLogOutput(key = "Elevator/ElevatorState")
   public ElevatorState getElevatorState() {
-    return m_periodicIO.state;
+    return m_periodicIO.target_state;
   }
 
   @AutoLogOutput
@@ -260,7 +260,7 @@ public class Elevator extends Subsystem {
   @AutoLogOutput(key = "Elevator/IsAtState")
   public boolean getIsAtState() {
     double angle = getElevatorPosition();
-    double target_angle = getElevatorTargetFromState(m_periodicIO.state);
+    double target_angle = getElevatorTargetFromState(m_periodicIO.target_state);
 
     return angle >= Math.abs(target_angle - 2); // TODO Find new threshold
   }

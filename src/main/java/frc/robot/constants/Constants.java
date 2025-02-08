@@ -159,16 +159,16 @@ public class Constants {
     public final int k_elevatorLeftMotorId = 20;
     public final int k_elevatorRightMotorId = 21;
 
-    public final double k_P = 0.10;
+    public final double k_P = 0.15;
     public final double k_I = 0;
     public final double k_D = 0.0;
-    public final double k_IZone = 5.0;
-    public final double k_FF = 0.1;
+    public final double k_IZone = 0.0;
+    public final double k_FF = 0.50;
 
     public final double k_maxVelocity = 65;
     public final double k_maxAcceleration = 200;
 
-    public final int k_maxCurrent = 20;
+    public final int k_maxCurrent = 30;
 
     public final double k_stowHeight = 0.0; // TODO Confirm units
     public final double k_L1Height = 0.0; // TODO Get height

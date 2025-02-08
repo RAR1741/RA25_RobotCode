@@ -29,6 +29,10 @@ public class OperatorController extends FilteredController {
     return this.getRawButtonPressed(Button.RIGHT_BUMPER);
   }
 
+  public boolean getWantsResetElevator() {
+    return this.getRawButtonPressed(Button.BACK);
+  }
+
   public int getWantsScore() {
     if (this.getRawAxis(Axis.RIGHT_TRIGGER) > this.getRawAxis(Axis.LEFT_TRIGGER)) {
       return 1;
