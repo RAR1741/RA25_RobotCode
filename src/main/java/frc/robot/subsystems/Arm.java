@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -36,6 +37,10 @@ public class Arm extends Subsystem {
 
     m_periodicIO = new PeriodicIO();
 
+    m_motor = new RARSparkMax(RobotConstants.robotConstants.Arm.k_motorId, MotorType.kBrushless);
+    m_encoder = m_motor.getAbsoluteEncoder();
+    m_pidController = m_motor.getClosedLoopController();
+
     SparkMaxConfig armConfig = new SparkMaxConfig();
 
     armConfig.closedLoop
@@ -50,7 +55,6 @@ public class Arm extends Subsystem {
 
     armConfig.smartCurrentLimit(RobotConstants.robotConstants.Arm.k_maxCurrent);
 
-    m_pidController = m_motor.getClosedLoopController();
     m_motor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_profile = new TrapezoidProfile(
@@ -129,7 +133,7 @@ public class Arm extends Subsystem {
 
   @AutoLogOutput(key = "Arm/Position/Current")
   public double getArmPosition() {
-    return m_encoder.getVelocity();
+    return m_encoder.getPosition();
   }
 
   @AutoLogOutput(key = "Arm/RelEncoder/Position")
