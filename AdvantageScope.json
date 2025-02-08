@@ -26,7 +26,6 @@
             "/RealOutputs/ASPoseHelper/VirtualRobotPose",
             "/RealOutputs/ASPoseHelper/LimelightCheckPose/translation",
             "/RealOutputs/ASPoseHelper/LimelightCheckPose/rotation",
-            "/RealOutputs/Elevator",
             "/RealOutputs/Elevator/Current",
             "/RealOutputs/Elevator/Position",
             "/RealOutputs/Elevator/Output",
@@ -34,7 +33,7 @@
           ]
         },
         "tabs": {
-          "selected": 7,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,
@@ -55,7 +54,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 RA25"
+                      "model": "2025 KitBot"
                     }
                   },
                   {
@@ -64,7 +63,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 RA25",
+                      "model": "2025 KitBot",
                       "color": "#00ff00"
                     }
                   },
@@ -74,7 +73,7 @@
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
-                      "model": "2025 RA25",
+                      "model": "2025 KitBot",
                       "color": "#0000ff"
                     }
                   },
@@ -94,7 +93,7 @@
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
-                      "model": "2025 RA25",
+                      "model": "2025 KitBot",
                       "color": "#ff0000"
                     }
                   },
@@ -114,7 +113,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 RA25",
+                      "model": "2025 KitBot",
                       "color": "#ff00ff"
                     }
                   },
@@ -134,7 +133,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2025 RA25",
+                      "model": "2025 KitBot",
                       "color": "#00ffff"
                     }
                   }
@@ -147,9 +146,9 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  8.526746504512941,
-                  11.284618901802535,
-                  -9.024754907765363
+                  13.402464789542815,
+                  7.34851350415531,
+                  -8.902512263367564
                 ],
                 "cameraTarget": [
                   1.9068259599916666,
@@ -157,7 +156,7 @@
                   0.5962583657360303
                 ]
               },
-              "controlsHeight": 168
+              "controlsHeight": 422
             },
             {
               "type": 2,
@@ -455,7 +454,7 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/Elevator/Voltage/Left",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#858584",
                       "size": "normal"
@@ -468,6 +467,16 @@
                     "visible": false,
                     "options": {
                       "color": "#3b875a",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/TEST-ENCODER",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#d993aa",
                       "size": "normal"
                     }
                   }
@@ -530,7 +539,7 @@
               },
               "controllerUUID": "bk1ydc86ort97d4pgo1lia9s8id3yo2o",
               "renderer": null,
-              "controlsHeight": 249
+              "controlsHeight": 412
             }
           ]
         }
