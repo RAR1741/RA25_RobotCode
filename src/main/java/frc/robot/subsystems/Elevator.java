@@ -41,8 +41,6 @@ public class Elevator extends Subsystem {
   private SparkClosedLoopController m_leftPIDController;
 
   private SimulatableCANSparkMax m_rightMotor;
-  // private RelativeEncoder m_rightEncoder;
-  // private SparkClosedLoopController m_rightPIDController;
 
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
@@ -58,8 +56,9 @@ public class Elevator extends Subsystem {
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
     elevatorConfig.closedLoop
-        .pid(RobotConstants.robotConfig.Elevator.k_P, RobotConstants.robotConfig.Elevator.k_I,
-            RobotConstants.robotConfig.Elevator.k_D)
+        .pid(RobotConstants.robotConfig.Elevator.k_P,
+             RobotConstants.robotConfig.Elevator.k_I,
+             RobotConstants.robotConfig.Elevator.k_D)
         .iZone(RobotConstants.robotConfig.Elevator.k_IZone);
 
     elevatorConfig.smartCurrentLimit(RobotConstants.robotConfig.Elevator.k_maxCurrent);
@@ -83,7 +82,7 @@ public class Elevator extends Subsystem {
         RobotConstants.robotConfig.Elevator.k_elevatorRightMotorId,
         MotorType.kBrushless);
     m_rightMotor.configure(
-        elevatorConfig.follow(m_leftMotor),
+        elevatorConfig.follow(m_leftMotor, true),
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
@@ -98,15 +97,13 @@ public class Elevator extends Subsystem {
     L1,
     L2,
     L3,
-    L4,
-    // A1, // Algae L2
-    // A2 // Algae L3
+    L4
   }
 
   private static class PeriodicIO {
     double elevator_target = 0.0;
 
-    boolean is_elevator_pos_control = false;
+    // boolean is_elevator_pos_control = false;
 
     ElevatorState state = ElevatorState.STOW;
   }
@@ -120,27 +117,29 @@ public class Elevator extends Subsystem {
     // mPeriodicIO.is_pivot_low = false;
     // }
 
-    if (m_periodicIO.is_elevator_pos_control) {
-      // m_previousUpdateTime = Timer.getFPGATimestamp();
+    // double currentTime = Timer.getFPGATimestamp();
+    // double deltaTime = currentTime - m_previousUpdateTime;
+    // m_previousUpdateTime = currentTime;
 
-      double currentTime = Timer.getFPGATimestamp();
-      double deltaTime = currentTime - m_previousUpdateTime;
+    // // Update goal
+    // m_goalState.position = m_periodicIO.elevator_target;
 
-      m_previousUpdateTime = currentTime;
-
-      // Update goal
-      m_goalState.position = m_periodicIO.elevator_target;
-
-      // Calculate new state
-      m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
-    } else {
-      m_currentState.position = m_leftEncoder.getPosition();
-      m_currentState.velocity = 0;
-    }
+    // // Calculate new state
+    // m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);    
   }
 
   @Override
   public void writePeriodicOutputs() {
+    double currentTime = Timer.getFPGATimestamp();
+    double deltaTime = currentTime - m_previousUpdateTime;
+    m_previousUpdateTime = currentTime;
+
+    // Update goal
+    m_goalState.position = m_periodicIO.elevator_target;
+
+    // Calculate new state
+    m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
+    
     // Set PID controller to new state
     m_leftPIDController.setReference(
         m_currentState.position,
@@ -152,14 +151,12 @@ public class Elevator extends Subsystem {
 
   @Override
   public void stop() {
-    m_periodicIO.is_elevator_pos_control = false;
-
-    m_leftMotor.set(0.0);
+    m_leftMotor.set(0.0); //TODO: This is also bad
   }
 
   @Override
   public void reset() {
-    m_leftEncoder.setPosition(0.0);
+    // m_leftEncoder.setPosition(0.0); //TODO: This is bad, use a setreference
   }
 
   public ElevatorState getState() {
@@ -170,71 +167,54 @@ public class Elevator extends Subsystem {
     // if the LaserCAN cannot see any coral, we can safely assume that the elevator
     // is free to move
     // if (!m_laserCan.getEntranceSeesCoral()) {
-    // switch (position) {
-    // case STOW:
-    // goToElevatorStow();
-    // break;
-    // case L1:
-    // goToElevatorL1();
-    // break;
-    // case L2:
-    // goToElevatorL2();
-    // break;
-    // case L3:
-    // goToElevatorL3();
-    // break;
-    // case L4:
-    // goToElevatorL4();
-    // break;
-    // default:
-    // break;
-    // }
-    // }
+    if (true) {
+      switch (position) {
+        case STOW -> {
+          goToElevatorStow();
+        }
+        case L1 -> {
+          goToElevatorL1();
+        }
+        case L2 -> {
+          goToElevatorL2();
+        }
+        case L3 -> {
+          goToElevatorL3();
+        }
+        case L4 -> {
+          goToElevatorL4();
+        }
+        default -> {
+          break;
+        }
+      }
+    }
   }
 
   private void goToElevatorStow() {
-    m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_stowHeight;
     m_periodicIO.state = ElevatorState.STOW;
   }
 
   private void goToElevatorL1() {
-    m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L1Height;
     m_periodicIO.state = ElevatorState.L1;
   }
 
   private void goToElevatorL2() {
-    m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L2Height;
     m_periodicIO.state = ElevatorState.L2;
   }
 
   private void goToElevatorL3() {
-    m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L3Height;
     m_periodicIO.state = ElevatorState.L3;
   }
 
   private void goToElevatorL4() {
-    m_periodicIO.is_elevator_pos_control = true;
     m_periodicIO.elevator_target = RobotConstants.robotConfig.Elevator.k_L4Height;
     m_periodicIO.state = ElevatorState.L4;
   }
-
-  // public void goToAlgaeLow() {
-  // m_periodicIO.is_elevator_pos_control = true;
-  // m_periodicIO.elevator_target =
-  // RobotConstants.robotConfig.Elevator.kLowAlgaeHeight;
-  // m_periodicIO.state = ElevatorState.A1;
-  // }
-
-  // public void goToAlgaeHigh() {
-  // m_periodicIO.is_elevator_pos_control = true;
-  // m_periodicIO.elevator_target =
-  // RobotConstants.robotConfig.Elevator.kHighAlgaeHeight;
-  // m_periodicIO.state = ElevatorState.A2;
-  // }
 
   @AutoLogOutput(key = "Elevator/Position/Current")
   private double getCurrentPosition() {
@@ -253,6 +233,7 @@ public class Elevator extends Subsystem {
 
   @AutoLogOutput
   public double getElevatorPosition() {
+    // TODO: THIS IS WRONG
     return Units.rotationsToDegrees(Helpers.modRotations(
         m_leftEncoder.getPosition()
     /*- Units.degreesToRotations(RobotConstants.config.Shooter.k_absPivotOffset)*/)); // TODO I have no clue what this
@@ -290,7 +271,7 @@ public class Elevator extends Subsystem {
   }
 
   @AutoLogOutput(key = "Elevator/Velocity/Current")
-  private double getElevatorvelocity() {
+  private double getElevatorVelocity() {
     return m_leftEncoder.getVelocity();
   }
 
@@ -324,4 +305,13 @@ public class Elevator extends Subsystem {
     return m_rightMotor.getAppliedOutput();
   }
 
+  @AutoLogOutput(key = "Elevator/Voltage/Left")
+  private double getLeftVoltage() {
+    return Helpers.getVoltage(m_leftMotor);
+  }
+
+  @AutoLogOutput(key = "Elevator/Voltage/Right")
+  private double getRightVoltage() {
+    return Helpers.getVoltage(m_rightMotor);
+  }
 }
