@@ -10,20 +10,20 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
-import frc.robot.wrappers.RARSparkMax;
 
 public class Arm extends Subsystem {
   private static Arm m_arm = null;
 
   private PeriodicIO m_periodicIO;
 
-  private RARSparkMax m_motor;
+  private SparkMax m_motor;
   private SparkAbsoluteEncoder m_encoder;
   private SparkClosedLoopController m_pidController;
 
@@ -37,7 +37,7 @@ public class Arm extends Subsystem {
 
     m_periodicIO = new PeriodicIO();
 
-    m_motor = new RARSparkMax(RobotConstants.robotConstants.Arm.k_motorId, MotorType.kBrushless);
+    m_motor = new SparkMax(RobotConstants.robotConstants.Arm.k_motorId, MotorType.kBrushless);
     m_encoder = m_motor.getAbsoluteEncoder();
     m_pidController = m_motor.getClosedLoopController();
 
@@ -64,7 +64,7 @@ public class Arm extends Subsystem {
   }
 
   private static class PeriodicIO {
-    double arm_target = 0.0;
+    ArmState arm_state = ArmState.STOW;
   }
 
   public static Arm getInstance() {
@@ -74,22 +74,8 @@ public class Arm extends Subsystem {
     return m_arm;
   }
 
-  public void setAngleTarget(double angle) {
-    m_periodicIO.arm_target = angle;
-  }
-
-  public void setAngleTarget(ArmTarget target) {
-    switch (target) {
-      case STOW -> {
-        setAngleTarget(RobotConstants.robotConstants.Arm.k_stowAngle);
-      }
-      case SCORE -> {
-        setAngleTarget(RobotConstants.robotConstants.Arm.k_L4Angle);
-      }
-      default -> {
-        setAngleTarget(RobotConstants.robotConstants.Arm.k_stowAngle);
-      }
-    }
+  public void setArmState(ArmState state) {
+    m_periodicIO.arm_state = state;
   }
 
   @Override
@@ -108,7 +94,7 @@ public class Arm extends Subsystem {
     m_previousUpdateTime = currentTime;
 
     // Update goal
-    m_goalState.position = m_periodicIO.arm_target;
+    m_goalState.position = getArmTarget();
 
     // Calculate new state
     m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
@@ -122,7 +108,7 @@ public class Arm extends Subsystem {
         ArbFFUnits.kVoltage);
   }
 
-  public enum ArmTarget {
+  public enum ArmState {
     STOW, SCORE
   }
 
@@ -142,8 +128,18 @@ public class Arm extends Subsystem {
   }
 
   @AutoLogOutput(key = "Arm/Position/Target")
-  public double getArmSetpoint() {
-    return m_periodicIO.arm_target;
+  public double getArmTarget() {
+    switch (m_periodicIO.arm_state) {
+      case STOW -> {
+        return RobotConstants.robotConstants.Arm.k_stowAngle;
+      }
+      case SCORE -> {
+        return RobotConstants.robotConstants.Arm.k_L4Angle;
+      }
+      default -> {
+        return RobotConstants.robotConstants.Arm.k_stowAngle;
+      }
+    }
   }
 
   @AutoLogOutput(key = "Arm/Position/Setpoint")

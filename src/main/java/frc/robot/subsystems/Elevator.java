@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -19,7 +20,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
-import frc.robot.simulation.SimulatableCANSparkMax;
 
 public class Elevator extends Subsystem {
   private static Elevator m_instance;
@@ -37,11 +37,11 @@ public class Elevator extends Subsystem {
     return m_instance;
   }
 
-  private SimulatableCANSparkMax m_leftMotor;
+  private SparkMax m_leftMotor;
   private RelativeEncoder m_leftEncoder;
   private SparkClosedLoopController m_leftPIDController;
 
-  private SimulatableCANSparkMax m_rightMotor;
+  private SparkMax m_rightMotor;
 
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
@@ -67,7 +67,7 @@ public class Elevator extends Subsystem {
     elevatorConfig.idleMode(IdleMode.kBrake);
 
     // LEFT ELEVATOR MOTOR
-    m_leftMotor = new SimulatableCANSparkMax(
+    m_leftMotor = new SparkMax(
         RobotConstants.robotConstants.Elevator.k_elevatorLeftMotorId,
         MotorType.kBrushless);
     m_leftEncoder = m_leftMotor.getEncoder();
@@ -79,7 +79,7 @@ public class Elevator extends Subsystem {
         PersistMode.kPersistParameters);
 
     // RIGHT ELEVATOR MOTOR
-    m_rightMotor = new SimulatableCANSparkMax(
+    m_rightMotor = new SparkMax(
         RobotConstants.robotConstants.Elevator.k_elevatorRightMotorId,
         MotorType.kBrushless);
     m_rightMotor.configure(
@@ -102,10 +102,6 @@ public class Elevator extends Subsystem {
   }
 
   private static class PeriodicIO {
-    double elevator_target = 0.0;
-
-    // boolean is_elevator_pos_control = false;
-
     ElevatorState target_state = ElevatorState.STOW;
   }
 
@@ -120,7 +116,7 @@ public class Elevator extends Subsystem {
     m_previousUpdateTime = currentTime;
 
     // Update goal
-    m_goalState.position = m_periodicIO.elevator_target;
+    m_goalState.position = getElevatorTarget();
 
     // Calculate new state
     m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
@@ -144,61 +140,17 @@ public class Elevator extends Subsystem {
     m_leftEncoder.setPosition(0.0);
   }
 
-  public ElevatorState getState() {
-    return m_periodicIO.target_state;
-  }
-
-  public void goToElevatorPosition(ElevatorState position) {
+  public void setState(ElevatorState state) {
     // if the LaserCAN cannot see any coral, we can safely assume that the elevator
     // is free to move
-    // if (!m_laserCan.getEntranceSeesCoral()) {
-    if (true) {
-      switch (position) {
-        case STOW -> {
-          goToElevatorStow();
-        }
-        case L1 -> {
-          goToElevatorL1();
-        }
-        case L2 -> {
-          goToElevatorL2();
-        }
-        case L3 -> {
-          goToElevatorL3();
-        }
-        case L4 -> {
-          goToElevatorL4();
-        }
-        default -> {
-          break;
-        }
-      }
-    }
+
+    // if (!m_laserCan.getEntranceSeesCoral()) { TODO: Add back
+    m_periodicIO.target_state = state;
+    // }
   }
 
-  private void goToElevatorStow() {
-    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_stowHeight;
-    m_periodicIO.target_state = ElevatorState.STOW;
-  }
-
-  private void goToElevatorL1() {
-    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_L1Height;
-    m_periodicIO.target_state = ElevatorState.L1;
-  }
-
-  private void goToElevatorL2() {
-    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_L2Height;
-    m_periodicIO.target_state = ElevatorState.L2;
-  }
-
-  private void goToElevatorL3() {
-    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_L3Height;
-    m_periodicIO.target_state = ElevatorState.L3;
-  }
-
-  private void goToElevatorL4() {
-    m_periodicIO.elevator_target = RobotConstants.robotConstants.Elevator.k_L4Height;
-    m_periodicIO.target_state = ElevatorState.L4;
+  public ElevatorState getState() {
+    return m_periodicIO.target_state;
   }
 
   @AutoLogOutput(key = "Elevator/Position/Current")
@@ -225,8 +177,9 @@ public class Elevator extends Subsystem {
                                                                                       // value should be replaced with
   }
 
-  private double getElevatorTargetFromState(ElevatorState state) {
-    switch (state) {
+  @AutoLogOutput(key = "Elevator/Position/Target")
+  private double getElevatorTarget() {
+    switch (m_periodicIO.target_state) {
       case STOW:
         return RobotConstants.robotConstants.Elevator.k_stowHeight;
       case L1:
@@ -245,14 +198,9 @@ public class Elevator extends Subsystem {
   @AutoLogOutput(key = "Elevator/IsAtState")
   public boolean getIsAtState() {
     double angle = getElevatorPosition();
-    double target_angle = getElevatorTargetFromState(m_periodicIO.target_state);
+    double target_angle = getElevatorTarget();
 
     return angle >= Math.abs(target_angle - 2); // TODO Find new threshold
-  }
-
-  @AutoLogOutput(key = "Elevator/Position/Target")
-  private double getElevatorTarget() {
-    return m_periodicIO.elevator_target;
   }
 
   @AutoLogOutput(key = "Elevator/Velocity/Current")

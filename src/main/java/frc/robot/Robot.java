@@ -15,7 +15,7 @@ import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Arm.ArmTarget;
+import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
 
@@ -164,9 +164,9 @@ public class Robot extends LoggedRobot {
     // }
 
     if (m_operatorController.getWantsArmScore()) {
-      m_arm.setAngleTarget(ArmTarget.SCORE);
+      m_arm.setArmState(ArmState.SCORE);
     } else if (m_operatorController.getWantsArmStow()) {
-      m_arm.setAngleTarget(ArmTarget.STOW);
+      m_arm.setArmState(ArmState.STOW);
     }
   }
 
@@ -183,9 +183,9 @@ public class Robot extends LoggedRobot {
     // }
 
     if (m_operatorController.getWantsArmScore()) {
-      m_arm.setAngleTarget(ArmTarget.SCORE);
+      m_arm.setArmState(ArmState.SCORE);
     } else if (m_operatorController.getWantsArmStow()) {
-      m_arm.setAngleTarget(ArmTarget.STOW);
+      m_arm.setArmState(ArmState.STOW);
     }
   }
 

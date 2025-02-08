@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -14,15 +15,14 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
-import frc.robot.wrappers.RARSparkMax;
 
 public class EndEffector extends Subsystem {
   private static EndEffector m_instance;
 
   private PeriodicIO m_periodicIO;
 
-  RARSparkMax m_leftMotor;
-  RARSparkMax m_rightMotor;
+  SparkMax m_leftMotor;
+  SparkMax m_rightMotor;
 
   private RelativeEncoder m_leftEncoder;
   private RelativeEncoder m_rightEncoder;
@@ -40,12 +40,12 @@ public class EndEffector extends Subsystem {
   }
 
   private EndEffector() {
-    super("EndAffector");
+    super("EndEffector");
 
     m_periodicIO = new PeriodicIO();
 
-    m_leftMotor = new RARSparkMax(RobotConstants.robotConstants.EndEffector.k_leftMotorId, MotorType.kBrushless);
-    m_rightMotor = new RARSparkMax(RobotConstants.robotConstants.EndEffector.k_rightMotorId, MotorType.kBrushless);
+    m_leftMotor = new SparkMax(RobotConstants.robotConstants.EndEffector.k_leftMotorId, MotorType.kBrushless);
+    m_rightMotor = new SparkMax(RobotConstants.robotConstants.EndEffector.k_rightMotorId, MotorType.kBrushless);
 
     // m_laserCan = LaserCanHandler.getInstance();
 
@@ -59,12 +59,9 @@ public class EndEffector extends Subsystem {
         .minOutput(RobotConstants.robotConstants.EndEffector.k_minOutput)
         .maxOutput(RobotConstants.robotConstants.EndEffector.k_maxOutput);
 
-    SparkBaseConfig leftShooterConfig = new SparkFlexConfig()
-        .apply(endEffectorConfig)
-        .inverted(true);
-
-    m_leftMotor.configure(leftShooterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_rightMotor.configure(endEffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_leftMotor.configure(endEffectorConfig.inverted(true), ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
 
     m_leftEncoder = m_leftMotor.getEncoder();
     m_rightEncoder = m_rightMotor.getEncoder();
