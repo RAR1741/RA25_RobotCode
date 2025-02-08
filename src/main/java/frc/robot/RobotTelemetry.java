@@ -40,8 +40,6 @@ public class RobotTelemetry {
     new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
 
     Logger.start();
-
-    print("Logging initialized. Fard.");
   }
 
   public static void print(String output) {

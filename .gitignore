@@ -190,3 +190,6 @@ compile_commands.json
 src/main/java/frc/robot/BuildConstants.java
 
 gradle.properties
+
+# Generated file for robot sim
+simgui-ds.json
