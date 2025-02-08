@@ -10,9 +10,13 @@ import org.littletonrobotics.junction.LoggedRobot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
+import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
@@ -30,9 +34,13 @@ public class Robot extends LoggedRobot {
   private final ArrayList<Subsystem> m_subsystems;
 
   private final SwerveDrive m_swerve;
+  private final Elevator m_elevator;
+  // private final EndEffector m_endAffector;
   private final RAROdometry m_odometry;
   private final PoseAligner m_poseAligner;
   private final DriverController m_driverController;
+  private final OperatorController m_operatorController;
+
   private final VirtualRobotController m_virtualRobotController;
   private final SignalManager m_signalManager = SignalManager.getInstance();
 
@@ -46,14 +54,23 @@ public class Robot extends LoggedRobot {
     m_subsystems = new ArrayList<>();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
+    m_elevator = Elevator.getInstance();
+    // m_endAffector = EndEffector.getInstance();
     m_poseAligner = PoseAligner.getInstance();
 
-    m_driverController = new DriverController(0, true, false, 0.5);
+    m_driverController = new DriverController(0, true, true, 0.5);
+    m_operatorController = new OperatorController(1, true, true, 0.5);
     m_virtualRobotController = new VirtualRobotController(2);
 
+    // SCARY
+    DriverStation.silenceJoystickConnectionWarning(true);
+
+    m_subsystems.add(m_poseAligner);
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
-    m_subsystems.add(m_poseAligner);
+    m_subsystems.add(m_elevator);
+
+    // m_subsystems.add(m_endAffector);
 
     new RobotTelemetry();
 
@@ -104,10 +121,6 @@ public class Robot extends LoggedRobot {
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
 
-    if (m_driverController.getWantsAutoPositionPressed()) {
-      m_swerve.resetDriveController();
-    }
-
     // Pose2d targetPose =
     // m_poseAligner.getAndCalculateTargetPose(m_virtualRobotController.getCurrentPose());
     // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
@@ -122,9 +135,33 @@ public class Robot extends LoggedRobot {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }
 
-    if(m_driverController.getWantsResetOdometry()) {
+    if (m_driverController.getWantsResetOdometry()) {
       m_odometry.reset();
     }
+
+    if (m_operatorController.getWantsGoToStow()) {
+      m_elevator.goToElevatorPosition(ElevatorState.STOW);
+    } else if (m_operatorController.getWantsGoToL1()) {
+      m_elevator.goToElevatorPosition(ElevatorState.L1);
+    } else if (m_operatorController.getWantsGoToL2()) {
+      m_elevator.goToElevatorPosition(ElevatorState.L2);
+    } else if (m_operatorController.getWantsGoToL3()) {
+      m_elevator.goToElevatorPosition(ElevatorState.L3);
+    } else if (m_operatorController.getWantsGoToL4()) {
+      m_elevator.goToElevatorPosition(ElevatorState.L4);
+    } else if (m_operatorController.getWantsResetElevator()) {
+      m_elevator.reset();
+    }
+
+    // if (m_operatorController.getWantsScore() > 0) {
+    // m_endAffector.setState(EndEffectorState.SCORE_BRANCHES);
+    // } else if (m_operatorController.getWantsScore() < 0) {
+    // m_endAffector.setState(EndEffectorState.SCORE_TROUGH);
+    // } else {
+    // m_endAffector.setState(EndEffectorState.OFF);
+    // if (m_driverController.getWantsAutoPositionPressed()) {
+    // m_swerve.resetDriveController();
+    // }
   }
 
   @Override
@@ -134,6 +171,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     m_odometry.setAllianceGyroAngleAdjustment();
+
+    if(m_operatorController.getWantsResetElevator()) {
+      m_elevator.reset();
+    }
   }
 
   @Override
