@@ -193,12 +193,12 @@ public class RAROdometry extends Subsystem {
     return m_gyro.getAngle();
   }
 
-  @AutoLogOutput(key = "Odometry/Gyro/UpdateRate")
-  public double getGyroUpdateRate() {
-    return m_gyro.getActualUpdateRate();
-  }
+  // @AutoLogOutput(key = "Odometry/Gyro/UpdateRate")
+  // public double getGyroUpdateRate() {
+  //   return m_gyro.getActualUpdateRate();
+  // }
 
-  @AutoLogOutput
+  @AutoLogOutput(key = "Odometry/Gyro/UpdateCount")
   public double getGyroUpdateCount() {
     return m_gyro.getUpdateCount();
   }
