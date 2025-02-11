@@ -197,6 +197,25 @@ public class SwerveModule {
     return m_periodicIO.desiredState;
   }
 
+    // Pass voltage into drive motor and set turn motor to 0 deg
+  public void sysidDrive(double volts) {
+    // hold the turn motor in place
+    MotionMagicVoltage turnRequest = new MotionMagicVoltage(0).withSlot(0);
+    turnRequest.EnableFOC = true;
+    m_turnMotor.setControl(turnRequest);
+
+    m_driveMotor.setVoltage(volts);
+  }
+
+    // Pass voltage into turn motor and set drive motor to 0 volts⚡
+  public void sysidTurn(double volts) {
+    // hold the drive motor
+    VelocityVoltage driveRequest = new VelocityVoltage(0).withSlot(0);
+    m_driveMotor.setControl(driveRequest);
+
+    m_turnMotor.setVoltage(volts);
+  }
+
   public void periodic() {
     double driveVelocity = Helpers.MPSToRPS(getDriveTargetVelocity(),
         RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
