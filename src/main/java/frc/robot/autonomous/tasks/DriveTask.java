@@ -72,6 +72,7 @@ public class DriveTask extends Task {
   @Override
   public void done() {
     log(false);
+    m_runningTimer.stop();
 
     RobotTelemetry.print("Auto driving done");
     m_swerve.drive(0, 0, 0, true);

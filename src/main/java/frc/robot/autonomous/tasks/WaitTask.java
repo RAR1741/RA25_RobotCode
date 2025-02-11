@@ -34,6 +34,7 @@ public class WaitTask extends Task {
   @Override
   public void done() {
     log(false);
+    m_runningTimer.stop();
 
     RobotTelemetry.print("Auto wait done");
   }
