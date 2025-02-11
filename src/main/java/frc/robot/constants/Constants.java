@@ -168,7 +168,7 @@ public class Constants {
     public final double k_maxAcceleration = 0.0;
     public final double k_maxVelocity = 0.0;
 
-    public final double k_armOffset = 0.0;
+    public final double k_armOffset = 253.9 / 360.0;
   }
 
   public static class ElevatorConstants {

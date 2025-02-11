@@ -51,7 +51,7 @@ public class Arm extends Subsystem {
 
     armConfig.absoluteEncoder
         .positionConversionFactor(360.0) // [0, 1) to [0, 360)
-        .zeroOffset(0.0)
+        .zeroOffset(RobotConstants.robotConstants.Arm.k_armOffset)
         .inverted(true);
 
     armConfig
