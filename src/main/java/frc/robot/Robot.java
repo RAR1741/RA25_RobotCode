@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
+import frc.robot.controls.controllers.FilteredController;
 import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
@@ -159,19 +160,15 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testPeriodic() {
-    if (m_sysIdController.getRawButtonPressed(1)) {
-      // A
+    if (m_sysIdController.getRawButtonPressed(FilteredController.Button.A)) {
       m_swerveSysId.sysIdDriveQuasistatic(SysIdRoutine.Direction.kForward).schedule();
-    } else if (m_sysIdController.getRawButtonPressed(2)) {
-      // B
+    } else if (m_sysIdController.getRawButtonPressed(FilteredController.Button.B)) {
       m_swerveSysId.sysIdDriveQuasistatic(SysIdRoutine.Direction.kReverse).schedule();
-    } else if (m_sysIdController.getRawButtonPressed(3)) {
-      // X
+    } else if (m_sysIdController.getRawButtonPressed(FilteredController.Button.X)) {
       m_swerveSysId.sysIdDriveDynamic(SysIdRoutine.Direction.kForward).schedule();
-    } else if (m_sysIdController.getRawButtonPressed(4)) {
-      // Y
+    } else if (m_sysIdController.getRawButtonPressed(FilteredController.Button.Y)) {
       m_swerveSysId.sysIdDriveDynamic(SysIdRoutine.Direction.kReverse).schedule();
-    } else if (m_sysIdController.getRawButtonPressed(8)) {
+    } else if (m_sysIdController.getRawButtonPressed(FilteredController.Button.START)) {
       CommandScheduler.getInstance().cancelAll();
     }
   }
