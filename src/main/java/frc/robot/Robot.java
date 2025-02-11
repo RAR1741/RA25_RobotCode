@@ -19,6 +19,8 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
@@ -38,7 +40,7 @@ public class Robot extends LoggedRobot {
   private final SwerveDrive m_swerve;
   private final Elevator m_elevator;
   private final Arm m_arm;
-  // private final EndEffector m_endEffector;
+  private final EndEffector m_endEffector;
   private final RAROdometry m_odometry;
   private final PoseAligner m_poseAligner;
 
@@ -60,7 +62,7 @@ public class Robot extends LoggedRobot {
     m_odometry = RAROdometry.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
-    // m_endEffector = EndEffector.getInstance();
+    m_endEffector = EndEffector.getInstance();
     m_poseAligner = PoseAligner.getInstance();
 
     m_driverController = new DriverController(0, true, true, 0.5);
@@ -71,8 +73,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
     m_subsystems.add(m_arm);
-
-    // m_subsystems.add(m_endEffector);
+    m_subsystems.add(m_endEffector);
 
     new RobotTelemetry();
 
@@ -155,15 +156,17 @@ public class Robot extends LoggedRobot {
       m_elevator.reset();
     }
 
-    // if (m_operatorController.getWantsScore() > 0) {
-    // m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
-    // } else if (m_operatorController.getWantsScore() < 0) {
-    // m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
-    // } else {
-    // m_endEffector.setState(EndEffectorState.OFF);
-    // if (m_driverController.getWantsAutoPositionPressed()) {
-    // m_swerve.resetDriveController();
-    // }
+    if (m_operatorController.getWantsScore() > 0) {
+      m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
+    } else if (m_operatorController.getWantsScore() < 0) {
+      m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
+    } else {
+      m_endEffector.setState(EndEffectorState.OFF);
+    }
+
+    if (m_driverController.getWantsAutoPositionPressed()) {
+      m_swerve.resetDriveController();
+    }
 
     if (m_operatorController.getWantsArmScore()) {
       m_arm.setArmState(ArmState.SCORE);

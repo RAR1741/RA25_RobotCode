@@ -165,8 +165,10 @@ public class Constants {
     public final double k_stowAngle = 0.0;
     public final double k_L4Angle = 30.0;
 
-    public final double k_maxAcceleration = 0;
-    public final double k_maxVelocity = 0;
+    public final double k_maxAcceleration = 0.0;
+    public final double k_maxVelocity = 0.0;
+
+    public final double k_armOffset = 0.0;
   }
 
   public static class ElevatorConstants {
@@ -196,25 +198,20 @@ public class Constants {
   }
 
   public static class LaserCanConstants {
-    public final int k_indexId = 32;
-    public final int k_entranceId = 33;
-    public final int k_exitId = 34;
+    public final int k_indexId = 33;
+    public final int k_entranceId = 34;
+    public final int k_exitId = 35;
   }
 
   public static class EndEffectorConstants {
     public final int k_leftMotorId = 31;
     public final int k_rightMotorId = 32;
 
-    public final double k_P = 1.0;
-    public final double k_I = 0.0;
-    public final double k_D = 0.0;
-    public final double k_FF = 0.0;
-
-    public final double k_minOutput = 0.0;
-    public final double k_maxOutput = 0.0;
-    public final double k_indexSpeed = 0.0;
-    public final double k_branchesSpeed = 0.0;
-    public final double k_troughSpeed = 0.0;
+    public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
+    public final double[] k_indexSpeeds = new double[] { 0.3, 0.3 };
+    public final double[] k_reverseSpeeds = new double[] { -0.3, -0.3 };
+    public final double[] k_branchSpeeds = new double[] { 0.1, 0.1 };
+    public final double[] k_troughSpeeds = new double[] { 0.5, 0.5 };
   }
 
   // TODO: add Gamepiece class for Coral- and Algae-related constants

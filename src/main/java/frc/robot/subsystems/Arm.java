@@ -51,9 +51,12 @@ public class Arm extends Subsystem {
 
     armConfig.absoluteEncoder
         .positionConversionFactor(360.0) // [0, 1) to [0, 360)
-        .zeroOffset(0.0);
+        .zeroOffset(0.0)
+        .inverted(true);
 
-    armConfig.smartCurrentLimit(RobotConstants.robotConstants.Arm.k_maxCurrent);
+    armConfig
+        .smartCurrentLimit(RobotConstants.robotConstants.Arm.k_maxCurrent)
+        .inverted(true);
 
     m_motor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

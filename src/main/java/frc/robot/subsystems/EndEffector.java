@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -12,7 +11,6 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 
@@ -23,12 +21,6 @@ public class EndEffector extends Subsystem {
 
   SparkMax m_leftMotor;
   SparkMax m_rightMotor;
-
-  private RelativeEncoder m_leftEncoder;
-  private RelativeEncoder m_rightEncoder;
-
-  private SlewRateLimiter m_leftSpeedLimiter = new SlewRateLimiter(1000);
-  private SlewRateLimiter m_rightSpeedLimiter = new SlewRateLimiter(1000);
 
   private LaserCanHandler m_laserCan;
 
@@ -51,26 +43,17 @@ public class EndEffector extends Subsystem {
 
     SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kCoast);
 
-    endEffectorConfig.closedLoop
-        .pidf(RobotConstants.robotConstants.EndEffector.k_P,
-            RobotConstants.robotConstants.EndEffector.k_I,
-            RobotConstants.robotConstants.EndEffector.k_D,
-            RobotConstants.robotConstants.EndEffector.k_FF)
-        .minOutput(RobotConstants.robotConstants.EndEffector.k_minOutput)
-        .maxOutput(RobotConstants.robotConstants.EndEffector.k_maxOutput);
-
-    m_rightMotor.configure(endEffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_leftMotor.configure(endEffectorConfig.inverted(true), ResetMode.kResetSafeParameters,
+    m_rightMotor.configure(
+        endEffectorConfig,
+        ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
-
-    m_leftEncoder = m_leftMotor.getEncoder();
-    m_rightEncoder = m_rightMotor.getEncoder();
+    m_leftMotor.configure(
+        endEffectorConfig.inverted(true),
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
   }
 
   private static class PeriodicIO {
-    double leftSpeed = 0.0;
-    double rightSpeed = 0.0;
-
     EndEffectorState state = EndEffectorState.OFF;
   }
 
@@ -88,30 +71,22 @@ public class EndEffector extends Subsystem {
 
   private void off() {
     setState(EndEffectorState.OFF);
-    m_periodicIO.leftSpeed = 0.0;
-    m_periodicIO.rightSpeed = 0.0;
   }
 
   private void index() {
     setState(EndEffectorState.INDEX);
-    m_periodicIO.leftSpeed = RobotConstants.robotConstants.EndEffector.k_indexSpeed;
-    m_periodicIO.rightSpeed = RobotConstants.robotConstants.EndEffector.k_indexSpeed;
   }
 
   private void reverse() {
     setState(EndEffectorState.REVERSE);
-    m_periodicIO.leftSpeed = -RobotConstants.robotConstants.EndEffector.k_indexSpeed;
-    m_periodicIO.rightSpeed = -RobotConstants.robotConstants.EndEffector.k_indexSpeed;
   }
 
   private void branches() {
-    m_periodicIO.leftSpeed = RobotConstants.robotConstants.EndEffector.k_branchesSpeed;
-    m_periodicIO.rightSpeed = RobotConstants.robotConstants.EndEffector.k_branchesSpeed;
+    setState(EndEffectorState.SCORE_BRANCHES);
   }
 
   private void trough() {
-    m_periodicIO.leftSpeed = RobotConstants.robotConstants.EndEffector.k_branchesSpeed;
-    m_periodicIO.rightSpeed = RobotConstants.robotConstants.EndEffector.k_troughSpeed;
+    setState(EndEffectorState.SCORE_TROUGH);
   }
 
   @Override
@@ -122,16 +97,14 @@ public class EndEffector extends Subsystem {
 
   @Override
   public void periodic() {
-    checkAutoTasks();
+    // checkAutoTasks();
   }
 
   @Override
   public void writePeriodicOutputs() {
-    double limitedRightSpeed = m_rightSpeedLimiter.calculate(m_periodicIO.rightSpeed);
-    double limitedLeftSpeed = m_leftSpeedLimiter.calculate(m_periodicIO.leftSpeed);
-
-    m_leftMotor.getClosedLoopController().setReference(limitedLeftSpeed, ControlType.kVelocity);
-    m_rightMotor.getClosedLoopController().setReference(limitedRightSpeed, ControlType.kVelocity);
+    double[] speeds = getIntakeSpeeds();
+    m_leftMotor.getClosedLoopController().setReference(speeds[0], ControlType.kVelocity);
+    m_rightMotor.getClosedLoopController().setReference(speeds[1], ControlType.kVelocity);
   }
 
   @AutoLogOutput(key = "EndEffector/State")
@@ -139,14 +112,22 @@ public class EndEffector extends Subsystem {
     return m_periodicIO.state;
   }
 
-  @AutoLogOutput(key = "EndEffector/LeftMotorSpeed")
-  public double getEndEffectorLeftMotorSpeed() {
-    return m_leftEncoder.getVelocity();
-  }
-
-  @AutoLogOutput(key = "EndEffector/RightMotorSpeed")
-  public double getEndEffectorRightMotorSpeed() {
-    return m_rightEncoder.getVelocity();
+  @AutoLogOutput(key = "EndEffector/Position/Target")
+  private double[] getIntakeSpeeds() {
+    switch (m_periodicIO.state) {
+      case OFF:
+        return RobotConstants.robotConstants.EndEffector.k_stopSpeeds;
+      case INDEX:
+        return RobotConstants.robotConstants.EndEffector.k_indexSpeeds;
+      case REVERSE:
+        return RobotConstants.robotConstants.EndEffector.k_reverseSpeeds;
+      case SCORE_BRANCHES:
+        return RobotConstants.robotConstants.EndEffector.k_branchSpeeds;
+      case SCORE_TROUGH:
+        return RobotConstants.robotConstants.EndEffector.k_troughSpeeds;
+      default:
+        return RobotConstants.robotConstants.EndEffector.k_stopSpeeds;
+    }
   }
 
   @Override
@@ -158,36 +139,36 @@ public class EndEffector extends Subsystem {
   private void checkAutoTasks() {
     switch (m_periodicIO.state) {
       case INDEX:
-        if (!m_laserCan.getEntranceSeesCoral()) {
-          off();
-        }
+        // if (!m_laserCan.getEntranceSeesCoral()) {
+        off();
+        // }
         break;
       case OFF:
-        if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
-            && m_laserCan.getExitSeesCoral()) {
-          reverse();
-        } else if (m_laserCan.getEntranceSeesCoral()) {
-          index();
-        }
+        // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
+        // && m_laserCan.getExitSeesCoral()) {
+        // reverse();
+        // } else if (m_laserCan.getEntranceSeesCoral()) {
+        // index();
+        // }
         break;
       case REVERSE:
-        if (m_laserCan.getIndexSeesCoral()) {
-          off();
-        }
+        // if (m_laserCan.getIndexSeesCoral()) {
+        off();
+        // }
         break;
       case SCORE_BRANCHES:
-        if (!m_laserCan.getExitSeesCoral()) {
-          off();
-        } else {
-          branches();
-        }
+        // if (!m_laserCan.getExitSeesCoral()) {
+        // off();
+        // } else {
+        branches();
+        // }
         break;
       case SCORE_TROUGH:
-        if (!m_laserCan.getExitSeesCoral()) {
-          off();
-        } else {
-          trough();
-        }
+        // if (!m_laserCan.getExitSeesCoral()) {
+        // off();
+        // } else {
+        trough();
+        // }
         break;
       default:
         break;
