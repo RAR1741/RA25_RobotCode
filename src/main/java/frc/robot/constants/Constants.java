@@ -8,6 +8,9 @@ public class Constants {
   public RobotConstants Robot = new RobotConstants();
   public FieldConstants Field = new FieldConstants();
   public SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
+  public ElevatorConstants Elevator = new ElevatorConstants();
+  public LaserCanConstants LaserCan = new LaserCanConstants();
+  public EndEffectorConstants EndEffector = new EndEffectorConstants();
   public OdometryConstants Odometry = new OdometryConstants();
 
   public static class RobotConstants {
@@ -151,4 +154,52 @@ public class Constants {
   public class PoseAlignerConstants {
 
   }
+
+  public static class ElevatorConstants {
+    public final int k_elevatorLeftMotorId = 20;
+    public final int k_elevatorRightMotorId = 21;
+
+    public final double k_P = 0.15;
+    public final double k_I = 0;
+    public final double k_D = 0.0;
+    public final double k_IZone = 0.0;
+    public final double k_FF = 0.50;
+
+    public final double k_maxVelocity = 65;
+    public final double k_maxAcceleration = 200;
+
+    public final int k_maxCurrent = 30;
+
+    public final double k_stowHeight = 0.0; // TODO Confirm units
+    public final double k_L1Height = 0.0; // TODO Get height
+    public final double k_L2Height = 9.0;
+    public final double k_L3Height = 25.14;
+    public final double k_L4Height = 52.0;
+    public final double k_maxHeight = 60.5;
+    public final double k_groundAlgaeHeight = 0.0;
+    // public final double k_lowAlgaeHeight = 24.8;
+    // public final double k_highAlgaeHeight = 42.5;
+  }
+
+  public static class LaserCanConstants {
+    public final int k_indexId = 32;
+    public final int k_entranceId = 33;
+    public final int k_exitId = 34;
+  }
+
+  public static class EndEffectorConstants {
+    public final int k_leftMotorId = 30;
+    public final int k_rightMotorId = 31;
+    public final double k_P = 1.0;
+    public final double k_I = 0.0;
+    public final double k_D = 0.0;
+    public final double k_FF = 0.0;
+    public final double k_minOutput = 0.0;
+    public final double k_maxOutput = 0.0;
+    public final double k_indexSpeed = 0.0;
+    public final double k_branchesSpeed = 0.0;
+    public final double k_troughSpeed = 0.0;
+  }
+
+  // TODO: add Gamepiece class for Coral- and Algae-related constants
 }
