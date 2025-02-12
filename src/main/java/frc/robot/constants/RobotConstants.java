@@ -11,7 +11,7 @@ public final class RobotConstants {
   public static String m_rioSerial = "empty";
   private static final double k_robotInitDelay = 2.0; // Seconds to wait before starting robot code
 
-  public static Constants robotConstants;
+  public static Constants robotConfig;
 
   public final String k_compSerial = "00000000";
   public final String k_pracSerial = "00000000";
@@ -42,7 +42,7 @@ public final class RobotConstants {
         // Set (riiiiiiiiiiiiiiiight the constants) all the constants (designed)
         // specifically for the simulation
       default:
-        robotConstants = new Constants(); // TODO: change this once we have an actual robot
+        robotConfig = new Constants(); // TODO: change this once we have an actual robot
         break;
     }
 

@@ -21,9 +21,9 @@ public class LaserCanHandler {
   }
 
   private LaserCanHandler() {
-    m_indexLaser = new LaserCan(RobotConstants.robotConstants.LaserCan.k_indexId);
-    m_entranceLaser = new LaserCan(RobotConstants.robotConstants.LaserCan.k_entranceId);
-    m_exitLaser = new LaserCan(RobotConstants.robotConstants.LaserCan.k_exitId);
+    m_indexLaser = new LaserCan(RobotConstants.robotConfig.LaserCan.k_indexId);
+    m_entranceLaser = new LaserCan(RobotConstants.robotConfig.LaserCan.k_entranceId);
+    m_exitLaser = new LaserCan(RobotConstants.robotConfig.LaserCan.k_exitId);
 
     try {
       m_indexLaser.setRangingMode(LaserCan.RangingMode.SHORT);

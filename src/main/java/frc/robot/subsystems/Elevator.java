@@ -57,18 +57,18 @@ public class Elevator extends Subsystem {
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
     elevatorConfig.closedLoop
-        .pid(RobotConstants.robotConstants.Elevator.k_P,
-            RobotConstants.robotConstants.Elevator.k_I,
-            RobotConstants.robotConstants.Elevator.k_D)
-        .iZone(RobotConstants.robotConstants.Elevator.k_IZone);
+        .pid(RobotConstants.robotConfig.Elevator.k_P,
+            RobotConstants.robotConfig.Elevator.k_I,
+            RobotConstants.robotConfig.Elevator.k_D)
+        .iZone(RobotConstants.robotConfig.Elevator.k_IZone);
 
-    elevatorConfig.smartCurrentLimit(RobotConstants.robotConstants.Elevator.k_maxCurrent);
+    elevatorConfig.smartCurrentLimit(RobotConstants.robotConfig.Elevator.k_maxCurrent);
 
     elevatorConfig.idleMode(IdleMode.kBrake);
 
     // LEFT ELEVATOR MOTOR
     m_leftMotor = new SparkMax(
-        RobotConstants.robotConstants.Elevator.k_elevatorLeftMotorId,
+        RobotConstants.robotConfig.Elevator.k_elevatorLeftMotorId,
         MotorType.kBrushless);
     m_leftEncoder = m_leftMotor.getEncoder();
     m_leftPIDController = m_leftMotor.getClosedLoopController();
@@ -80,7 +80,7 @@ public class Elevator extends Subsystem {
 
     // RIGHT ELEVATOR MOTOR
     m_rightMotor = new SparkMax(
-        RobotConstants.robotConstants.Elevator.k_elevatorRightMotorId,
+        RobotConstants.robotConfig.Elevator.k_elevatorRightMotorId,
         MotorType.kBrushless);
     m_rightMotor.configure(
         elevatorConfig.follow(m_leftMotor, true),
@@ -89,8 +89,8 @@ public class Elevator extends Subsystem {
 
     m_profile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
-            RobotConstants.robotConstants.Elevator.k_maxVelocity,
-            RobotConstants.robotConstants.Elevator.k_maxAcceleration));
+            RobotConstants.robotConfig.Elevator.k_maxVelocity,
+            RobotConstants.robotConfig.Elevator.k_maxAcceleration));
   }
 
   public enum ElevatorState {
@@ -126,7 +126,7 @@ public class Elevator extends Subsystem {
         m_currentState.position,
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
-        RobotConstants.robotConstants.Elevator.k_FF,
+        RobotConstants.robotConfig.Elevator.k_FF,
         ArbFFUnits.kVoltage);
   }
 
@@ -181,17 +181,17 @@ public class Elevator extends Subsystem {
   private double getElevatorTarget() {
     switch (m_periodicIO.target_state) {
       case STOW:
-        return RobotConstants.robotConstants.Elevator.k_stowHeight;
+        return RobotConstants.robotConfig.Elevator.k_stowHeight;
       case L1:
-        return RobotConstants.robotConstants.Elevator.k_L1Height;
+        return RobotConstants.robotConfig.Elevator.k_L1Height;
       case L2:
-        return RobotConstants.robotConstants.Elevator.k_L2Height;
+        return RobotConstants.robotConfig.Elevator.k_L2Height;
       case L3:
-        return RobotConstants.robotConstants.Elevator.k_L3Height;
+        return RobotConstants.robotConfig.Elevator.k_L3Height;
       case L4:
-        return RobotConstants.robotConstants.Elevator.k_L4Height;
+        return RobotConstants.robotConfig.Elevator.k_L4Height;
       default:
-        return RobotConstants.robotConstants.Elevator.k_stowHeight;
+        return RobotConstants.robotConfig.Elevator.k_stowHeight;
     }
   }
 

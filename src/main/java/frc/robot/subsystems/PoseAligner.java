@@ -41,11 +41,11 @@ public class PoseAligner extends Subsystem {
             ? Alliance.Red
             : Alliance.Blue;
 
-    ASPoseHelper.addPose("Red/Reef/pose", RobotConstants.robotConstants.Field.k_redReefPose);
-    ASPoseHelper.addPose("Blue/Reef/pose", RobotConstants.robotConstants.Field.k_blueReefPose);
+    ASPoseHelper.addPose("Red/Reef/pose", RobotConstants.robotConfig.Field.k_redReefPose);
+    ASPoseHelper.addPose("Blue/Reef/pose", RobotConstants.robotConfig.Field.k_blueReefPose);
 
-    Pose3d allianceReef = alliance == Alliance.Red ? RobotConstants.robotConstants.Field.k_redReefPose
-        : RobotConstants.robotConstants.Field.k_blueReefPose;
+    Pose3d allianceReef = alliance == Alliance.Red ? RobotConstants.robotConfig.Field.k_redReefPose
+        : RobotConstants.robotConfig.Field.k_blueReefPose;
 
     ASPoseHelper.addPose("TargetAngle", new Pose2d[] { currentPose, allianceReef.toPose2d() });
 

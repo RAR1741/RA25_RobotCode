@@ -38,34 +38,34 @@ public class Arm extends Subsystem {
 
     m_periodicIO = new PeriodicIO();
 
-    m_motor = new SparkMax(RobotConstants.robotConstants.Arm.k_motorId, MotorType.kBrushless);
+    m_motor = new SparkMax(RobotConstants.robotConfig.Arm.k_motorId, MotorType.kBrushless);
     m_encoder = m_motor.getAbsoluteEncoder();
     m_pidController = m_motor.getClosedLoopController();
 
     SparkMaxConfig armConfig = new SparkMaxConfig();
 
     armConfig.closedLoop
-        .pid(RobotConstants.robotConstants.Arm.k_P,
-            RobotConstants.robotConstants.Arm.k_I,
-            RobotConstants.robotConstants.Arm.k_D)
-        .iZone(RobotConstants.robotConstants.Arm.k_IZone)
+        .pid(RobotConstants.robotConfig.Arm.k_P,
+            RobotConstants.robotConfig.Arm.k_I,
+            RobotConstants.robotConfig.Arm.k_D)
+        .iZone(RobotConstants.robotConfig.Arm.k_IZone)
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
     armConfig.absoluteEncoder
         .positionConversionFactor(360.0) // [0, 1) to [0, 360)
-        .zeroOffset(RobotConstants.robotConstants.Arm.k_armOffset)
+        .zeroOffset(RobotConstants.robotConfig.Arm.k_armOffset)
         .inverted(true);
 
     armConfig
-        .smartCurrentLimit(RobotConstants.robotConstants.Arm.k_maxCurrent)
+        .smartCurrentLimit(RobotConstants.robotConfig.Arm.k_maxCurrent)
         .inverted(true);
 
     m_motor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_profile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
-            RobotConstants.robotConstants.Arm.k_maxVelocity,
-            RobotConstants.robotConstants.Arm.k_maxAcceleration));
+            RobotConstants.robotConfig.Arm.k_maxVelocity,
+            RobotConstants.robotConfig.Arm.k_maxAcceleration));
   }
 
   private static class PeriodicIO {
@@ -109,7 +109,7 @@ public class Arm extends Subsystem {
         m_currentState.position,
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
-        RobotConstants.robotConstants.Arm.k_FF,
+        RobotConstants.robotConfig.Arm.k_FF,
         ArbFFUnits.kVoltage);
   }
 
@@ -136,13 +136,13 @@ public class Arm extends Subsystem {
   public double getArmTarget() {
     switch (m_periodicIO.arm_state) {
       case STOW -> {
-        return RobotConstants.robotConstants.Arm.k_stowAngle;
+        return RobotConstants.robotConfig.Arm.k_stowAngle;
       }
       case EXTEND -> {
-        return RobotConstants.robotConstants.Arm.k_L4Angle;
+        return RobotConstants.robotConfig.Arm.k_L4Angle;
       }
       default -> {
-        return RobotConstants.robotConstants.Arm.k_stowAngle;
+        return RobotConstants.robotConfig.Arm.k_stowAngle;
       }
     }
   }

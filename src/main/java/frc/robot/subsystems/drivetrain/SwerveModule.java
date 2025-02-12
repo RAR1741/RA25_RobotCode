@@ -53,25 +53,25 @@ public class SwerveModule {
     m_turningOffset = turningOffset;
 
     // START DRIVE MOTOR INIT
-    m_driveMotor = new TalonFX(driveMotorID, RobotConstants.robotConstants.SwerveDrive.k_canBus);
+    m_driveMotor = new TalonFX(driveMotorID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
 
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
 
-    driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConstants.SwerveDrive.k_driveGearRatio;
+    driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
 
     // the sound of silence
     driveConfig.Audio.BeepOnBoot = false;
     driveConfig.Audio.BeepOnConfig = false;
 
-    driveConfig.Slot0.kP = RobotConstants.robotConstants.SwerveDrive.Drive.k_P;
-    driveConfig.Slot0.kI = RobotConstants.robotConstants.SwerveDrive.Drive.k_I;
-    driveConfig.Slot0.kD = RobotConstants.robotConstants.SwerveDrive.Drive.k_D;
+    driveConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Drive.k_P;
+    driveConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Drive.k_I;
+    driveConfig.Slot0.kD = RobotConstants.robotConfig.SwerveDrive.Drive.k_D;
 
-    driveConfig.Slot0.kS = RobotConstants.robotConstants.SwerveDrive.Drive.k_FFS;
-    driveConfig.Slot0.kV = RobotConstants.robotConstants.SwerveDrive.Drive.k_FFV;
-    driveConfig.Slot0.kA = RobotConstants.robotConstants.SwerveDrive.Drive.k_FFA;
+    driveConfig.Slot0.kS = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFS;
+    driveConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
+    driveConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
 
     // driveConfig.CurrentLimits.StatorCurrentLimit = 15.0;
     // driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -80,7 +80,7 @@ public class SwerveModule {
     // END DRIVE MOTOR INIT
 
     // START TURN MOTOR INIT
-    m_turnMotor = new TalonFX(turningMotorID, RobotConstants.robotConstants.SwerveDrive.k_canBus);
+    m_turnMotor = new TalonFX(turningMotorID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
 
     TalonFXConfiguration turnConfig = new TalonFXConfiguration();
 
@@ -90,15 +90,15 @@ public class SwerveModule {
     turnConfig.Audio.BeepOnConfig = false;
 
     turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    turnConfig.Feedback.RotorToSensorRatio = RobotConstants.robotConstants.SwerveDrive.k_turnGearRatio;
+    turnConfig.Feedback.RotorToSensorRatio = RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio;
 
-    turnConfig.Slot0.kP = RobotConstants.robotConstants.SwerveDrive.Turn.k_P;
-    turnConfig.Slot0.kI = RobotConstants.robotConstants.SwerveDrive.Turn.k_I;
-    turnConfig.Slot0.kD = RobotConstants.robotConstants.SwerveDrive.Turn.k_D;
+    turnConfig.Slot0.kP = RobotConstants.robotConfig.SwerveDrive.Turn.k_P;
+    turnConfig.Slot0.kI = RobotConstants.robotConfig.SwerveDrive.Turn.k_I;
+    turnConfig.Slot0.kD = RobotConstants.robotConfig.SwerveDrive.Turn.k_D;
 
-    turnConfig.Slot0.kS = RobotConstants.robotConstants.SwerveDrive.Turn.k_S;
-    turnConfig.Slot0.kV = RobotConstants.robotConstants.SwerveDrive.Turn.k_V;
-    turnConfig.Slot0.kA = RobotConstants.robotConstants.SwerveDrive.Turn.k_A;
+    turnConfig.Slot0.kS = RobotConstants.robotConfig.SwerveDrive.Turn.k_S;
+    turnConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Turn.k_V;
+    turnConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Turn.k_A;
 
     turnConfig.MotionMagic.MotionMagicAcceleration = 1000;
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
@@ -109,7 +109,7 @@ public class SwerveModule {
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
     m_turningOffset = turningOffset;
 
-    m_turningCANcoder = new CANcoder(turningCANcoderID, RobotConstants.robotConstants.SwerveDrive.k_canBus);
+    m_turningCANcoder = new CANcoder(turningCANcoderID, RobotConstants.robotConfig.SwerveDrive.k_canBus);
     CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
 
     canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
@@ -123,7 +123,7 @@ public class SwerveModule {
     // END TURN MOTOR INIT
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        RobotConstants.robotConstants.Odometry.k_threadUpdateFrequency,
+        RobotConstants.robotConfig.Odometry.k_threadUpdateFrequency,
         m_driveMotor.getPosition(),
         m_driveMotor.getVelocity(),
         m_driveMotor.getAcceleration(),
@@ -197,9 +197,28 @@ public class SwerveModule {
     return m_periodicIO.desiredState;
   }
 
+    // Pass voltage into drive motor and set turn motor to 0 deg
+  public void sysidDrive(double volts) {
+    // hold the turn motor in place
+    MotionMagicVoltage turnRequest = new MotionMagicVoltage(0).withSlot(0);
+    turnRequest.EnableFOC = true;
+    m_turnMotor.setControl(turnRequest);
+
+    m_driveMotor.setVoltage(volts);
+  }
+
+    // Pass voltage into turn motor and set drive motor to 0 volts⚡
+  public void sysidTurn(double volts) {
+    // hold the drive motor
+    VelocityVoltage driveRequest = new VelocityVoltage(0).withSlot(0);
+    m_driveMotor.setControl(driveRequest);
+
+    m_turnMotor.setVoltage(volts);
+  }
+
   public void periodic() {
     double driveVelocity = Helpers.MPSToRPS(getDriveTargetVelocity(),
-        RobotConstants.robotConstants.SwerveDrive.k_wheelCircumference);
+        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
     double turnPosition = Units.radiansToRotations(getTurnTargetAngleRadians());
 
     VelocityVoltage driveRequest = new VelocityVoltage(driveVelocity).withSlot(0);
@@ -260,7 +279,7 @@ public class SwerveModule {
   public double getDriveVelocity() {
     return Helpers.RPSToMPS(
         m_driveMotor.getVelocity().getValueAsDouble(),
-        RobotConstants.robotConstants.SwerveDrive.k_wheelCircumference);
+        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Drive/PositionRot")
@@ -272,7 +291,7 @@ public class SwerveModule {
   public double getDrivePositionMet() {
     return Helpers.RPSToMPS(
         getDrivePositionRot(),
-        RobotConstants.robotConstants.SwerveDrive.k_wheelCircumference);
+        RobotConstants.robotConfig.SwerveDrive.k_wheelCircumference);
   }
 
   @AutoLogOutput(key = "SwerveDrive/Modules/{m_moduleName}/Turn/PositionRads")

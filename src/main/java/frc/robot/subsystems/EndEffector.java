@@ -36,8 +36,8 @@ public class EndEffector extends Subsystem {
 
     m_periodicIO = new PeriodicIO();
 
-    m_leftMotor = new SparkMax(RobotConstants.robotConstants.EndEffector.k_leftMotorId, MotorType.kBrushless);
-    m_rightMotor = new SparkMax(RobotConstants.robotConstants.EndEffector.k_rightMotorId, MotorType.kBrushless);
+    m_leftMotor = new SparkMax(RobotConstants.robotConfig.EndEffector.k_leftMotorId, MotorType.kBrushless);
+    m_rightMotor = new SparkMax(RobotConstants.robotConfig.EndEffector.k_rightMotorId, MotorType.kBrushless);
 
     // m_laserCan = LaserCanHandler.getInstance();
 
@@ -122,17 +122,17 @@ public class EndEffector extends Subsystem {
   private double[] getIntakeSpeeds() {
     switch (m_periodicIO.state) {
       case OFF:
-        return RobotConstants.robotConstants.EndEffector.k_stopSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
       case INDEX:
-        return RobotConstants.robotConstants.EndEffector.k_indexSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_indexSpeeds;
       case REVERSE:
-        return RobotConstants.robotConstants.EndEffector.k_reverseSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_reverseSpeeds;
       case SCORE_BRANCHES:
-        return RobotConstants.robotConstants.EndEffector.k_branchSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_branchSpeeds;
       case SCORE_TROUGH:
-        return RobotConstants.robotConstants.EndEffector.k_troughSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_troughSpeeds;
       default:
-        return RobotConstants.robotConstants.EndEffector.k_stopSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
     }
   }
 
