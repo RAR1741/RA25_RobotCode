@@ -73,6 +73,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
     m_subsystems.add(m_arm);
+    m_subsystems.add(m_elevator);
     m_subsystems.add(m_endEffector);
 
     new RobotTelemetry();
