@@ -6,6 +6,8 @@ import org.littletonrobotics.junction.AutoLogOutputManager;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -15,16 +17,14 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.RobotConstants;
-import frc.robot.wrappers.RARSparkFlex;
-import frc.robot.wrappers.RARSparkMax;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 
 public class Intake {
   @SuppressWarnings("unused")
   private final String m_intakeName;
   
-  private final RARSparkMax m_pivotMotor;
-  private final RARSparkFlex m_intakeMotor;
+  private final SparkMax m_pivotMotor;
+  private final SparkFlex m_intakeMotor;
   private final REVThroughBoreEncoder m_pivotAbsEncoder;
   private final PeriodicIO m_periodicIO;
 
@@ -43,8 +43,8 @@ public class Intake {
     m_intakeName = intakeName;
     AutoLogOutputManager.addObject(this);
 
-    m_pivotMotor = new RARSparkMax(pivotMotorID, MotorType.kBrushless);
-    m_intakeMotor = new RARSparkFlex(intakeMotorID, MotorType.kBrushless);
+    m_pivotMotor = new SparkMax(pivotMotorID, MotorType.kBrushless);
+    m_intakeMotor = new SparkFlex(intakeMotorID, MotorType.kBrushless);
 
     m_pivotAbsEncoder = new REVThroughBoreEncoder(absoluteEncoderID);
 
