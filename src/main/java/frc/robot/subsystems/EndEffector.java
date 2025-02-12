@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -13,6 +12,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.Arm.ArmState;
 
 public class EndEffector extends Subsystem {
   private static EndEffector m_instance;
@@ -103,8 +103,14 @@ public class EndEffector extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     double[] speeds = getIntakeSpeeds();
-    m_leftMotor.getClosedLoopController().setReference(speeds[0], ControlType.kVelocity);
-    m_rightMotor.getClosedLoopController().setReference(speeds[1], ControlType.kVelocity);
+
+    if (Arm.getInstance().getArmState() == ArmState.EXTEND) {
+      speeds[0] *= -1;
+      speeds[1] *= -1;
+    }
+
+    m_leftMotor.set(speeds[0]);
+    m_rightMotor.set(speeds[1]);
   }
 
   @AutoLogOutput(key = "EndEffector/State")

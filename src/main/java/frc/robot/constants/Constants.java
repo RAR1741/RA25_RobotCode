@@ -154,21 +154,21 @@ public class Constants {
   public static class ArmConstants {
     public final int k_motorId = 30;
 
-    public final double k_P = 0.01;
+    public final double k_P = 0.03;
     public final double k_I = 0.0;
     public final double k_D = 0.0;
     public final double k_IZone = 0.0;
-    public final double k_FF = 0.0;
+    public final double k_FF = 0.25;
 
     public final int k_maxCurrent = 5;
 
     public final double k_stowAngle = 0.0;
-    public final double k_L4Angle = 30.0;
+    public final double k_L4Angle = 120.0;
 
     public final double k_maxAcceleration = 0.0;
     public final double k_maxVelocity = 0.0;
 
-    public final double k_armOffset = 253.9 / 360.0;
+    public final double k_armOffset = (360.0 - 101.8) / 360.0;
   }
 
   public static class ElevatorConstants {
@@ -210,8 +210,8 @@ public class Constants {
     public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
     public final double[] k_indexSpeeds = new double[] { 0.3, 0.3 };
     public final double[] k_reverseSpeeds = new double[] { -0.3, -0.3 };
-    public final double[] k_branchSpeeds = new double[] { 0.1, 0.1 };
-    public final double[] k_troughSpeeds = new double[] { 0.5, 0.5 };
+    public final double[] k_branchSpeeds = new double[] { 0.5, 0.5 };
+    public final double[] k_troughSpeeds = new double[] { 0.1, 0.1 };
   }
 
   // TODO: add Gamepiece class for Coral- and Algae-related constants

@@ -170,7 +170,7 @@ public class Robot extends LoggedRobot {
     }
 
     if (m_operatorController.getWantsArmScore()) {
-      m_arm.setArmState(ArmState.SCORE);
+      m_arm.setArmState(ArmState.EXTEND);
     } else if (m_operatorController.getWantsArmStow()) {
       m_arm.setArmState(ArmState.STOW);
     }

@@ -42,9 +42,9 @@ public class OperatorController extends FilteredController {
   }
 
   public int getWantsScore() {
-    if (this.getRawAxis(Axis.RIGHT_TRIGGER) > this.getRawAxis(Axis.LEFT_TRIGGER)) {
+    if (this.getFilteredAxis(Axis.RIGHT_TRIGGER) > this.getFilteredAxis(Axis.LEFT_TRIGGER)) {
       return 1;
-    } else if (this.getRawAxis(Axis.RIGHT_TRIGGER) < this.getRawAxis(Axis.LEFT_TRIGGER)) {
+    } else if (this.getFilteredAxis(Axis.RIGHT_TRIGGER) < this.getFilteredAxis(Axis.LEFT_TRIGGER)) {
       return -1;
     } else {
       return 0;

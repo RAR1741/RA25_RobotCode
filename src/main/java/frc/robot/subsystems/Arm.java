@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
@@ -47,7 +48,8 @@ public class Arm extends Subsystem {
         .pid(RobotConstants.robotConstants.Arm.k_P,
             RobotConstants.robotConstants.Arm.k_I,
             RobotConstants.robotConstants.Arm.k_D)
-        .iZone(RobotConstants.robotConstants.Arm.k_IZone);
+        .iZone(RobotConstants.robotConstants.Arm.k_IZone)
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
     armConfig.absoluteEncoder
         .positionConversionFactor(360.0) // [0, 1) to [0, 360)
@@ -112,7 +114,7 @@ public class Arm extends Subsystem {
   }
 
   public enum ArmState {
-    STOW, SCORE
+    STOW, EXTEND
   }
 
   @Override
@@ -136,13 +138,18 @@ public class Arm extends Subsystem {
       case STOW -> {
         return RobotConstants.robotConstants.Arm.k_stowAngle;
       }
-      case SCORE -> {
+      case EXTEND -> {
         return RobotConstants.robotConstants.Arm.k_L4Angle;
       }
       default -> {
         return RobotConstants.robotConstants.Arm.k_stowAngle;
       }
     }
+  }
+
+  @AutoLogOutput(key = "Arm/State")
+  public ArmState getArmState() {
+    return m_periodicIO.arm_state;
   }
 
   @AutoLogOutput(key = "Arm/Position/Setpoint")
