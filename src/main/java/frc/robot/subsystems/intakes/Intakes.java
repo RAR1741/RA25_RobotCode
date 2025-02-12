@@ -16,13 +16,13 @@ public class Intakes extends Subsystem {
 
     m_intakes = new ArrayList<>();
 
-    m_intakes.add(new Intake("Left",RobotConstants.robotConfig.Intake.k_intakeMotorIdLeft,
+    m_intakes.add(new Intake("Left", 
         RobotConstants.robotConfig.Intake.k_pivotMotorIdLeft, 
-        RobotConstants.robotConfig.Intake.k_pivotEncoderIdLeft));
+        RobotConstants.robotConfig.Intake.k_intakeMotorIdRight, false));
     
-    m_intakes.add(new Intake("Right", RobotConstants.robotConfig.Intake.k_intakeMotorIdRight,
-        RobotConstants.robotConfig.Intake.k_pivotMotorIdRight,
-        RobotConstants.robotConfig.Intake.k_pivotEncoderIdRight));
+    m_intakes.add(new Intake("Right", 
+        RobotConstants.robotConfig.Intake.k_pivotMotorIdRight, 
+        RobotConstants.robotConfig.Intake.k_intakeMotorIdRight, true));
   }
 
   public static Intakes getInstance() {

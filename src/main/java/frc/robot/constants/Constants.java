@@ -46,32 +46,25 @@ public class Constants {
   }
 
   public static class IntakeConstants {
-    public int k_pivotEncoderIdLeft = 0; //^ LEFT
-    public int k_pivotEncoderIdRight = 1; //^ RIGHT (pibot)
+    public int k_pivotMotorIdLeft = 40;
+    public int k_pivotMotorIdRight = 41;
 
-    public int k_pivotMotorIdLeft = 20;
-    public int k_pivotMotorIdRight = 21;
-
-    public int k_intakeMotorIdLeft = 22;
-    public int k_intakeMotorIdRight = 23;
+    public int k_intakeMotorIdLeft = 42;
+    public int k_intakeMotorIdRight = 43;
 
     public double k_pivotMotorP = 0.0;
     public double k_pivotMotorI = 0.0;
     public double k_pivotMotorD = 0.0;
+    public double k_pivotMotorFF = 0.0;
 
     public double k_maxVelocity = 0.0;
     public double k_maxAcceleration = 0.0;
 
-    public double k_pivotMotorKS = 0.0;
-    public double k_pivotMotorKG = 0.0;
-    public double k_pivotMotorKV = 0.0;
-    public double k_pivotMotorKA = 0.0;
-
-    public double k_pivotOffset = 0.0;
-
     public double k_groundAngle = 0.0;
     public double k_ejectAngle = 0.0;
     public double k_stowAngle = 0.0;
+
+    public double k_pivotOffset = 0.0;
     
   }
 
