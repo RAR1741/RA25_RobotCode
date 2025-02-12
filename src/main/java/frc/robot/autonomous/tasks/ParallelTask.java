@@ -8,7 +8,7 @@ public class ParallelTask extends Task {
   private boolean m_allFinished = false;
 
   public ParallelTask(Task... tasks) {
-    this.m_tasks = tasks;
+    m_tasks = tasks;
     m_finished = new boolean[tasks.length];
   }
 
