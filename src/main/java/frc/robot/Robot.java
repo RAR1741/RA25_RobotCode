@@ -25,7 +25,6 @@ import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 import frc.robot.controls.controllers.FilteredController;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
@@ -35,9 +34,6 @@ import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
-import frc.robot.subsystems.Subsystem;
-import frc.robot.subsystems.drivetrain.RAROdometry;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.SwerveSysId;
 
 /**
