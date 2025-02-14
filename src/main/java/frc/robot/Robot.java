@@ -178,6 +178,11 @@ public class Robot extends LoggedRobot {
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
     }
 
+    if(m_operatorController.getWantsIntakeIntake()) {
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
+    }
+
     if (m_driverController.getWantsResetOdometry()) {
       m_odometry.reset();
     }
