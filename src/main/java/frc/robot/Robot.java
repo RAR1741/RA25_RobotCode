@@ -17,17 +17,24 @@ import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
-import frc.robot.constants.RobotConstants;
-import frc.robot.controls.controllers.DriverController;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.controls.controllers.FilteredController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.drivetrain.SwerveSysId;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -41,18 +48,22 @@ public class Robot extends LoggedRobot {
 
   private final SwerveDrive m_swerve;
   private final Elevator m_elevator;
-  // private final EndEffector m_endAffector;
+  private final Arm m_arm;
+  private final EndEffector m_endEffector;
   private final RAROdometry m_odometry;
   private final PoseAligner m_poseAligner;
+  private final SignalManager m_signalManager = SignalManager.getInstance();
+
   private final DriverController m_driverController;
 
   private final AutoRunner m_autoRunner;
   private final AutoChooser m_autoChooser;
   private Task m_currentTask;
   private final OperatorController m_operatorController;
-
   private final VirtualRobotController m_virtualRobotController;
-  private final SignalManager m_signalManager = SignalManager.getInstance();
+  private final GenericHID m_sysIdController;
+
+  private final SwerveSysId m_swerveSysId;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -66,23 +77,24 @@ public class Robot extends LoggedRobot {
     m_odometry = RAROdometry.getInstance();
     m_autoRunner = AutoRunner.getInstance();
     m_autoChooser = AutoChooser.getInstance();
+    m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
-    // m_endAffector = EndEffector.getInstance();
+    m_endEffector = EndEffector.getInstance();
     m_poseAligner = PoseAligner.getInstance();
   
     m_driverController = new DriverController(0, true, true, 0.5);
     m_operatorController = new OperatorController(1, true, true, 0.5);
     m_virtualRobotController = new VirtualRobotController(2);
-
-    // SCARY
-    DriverStation.silenceJoystickConnectionWarning(true);
+    m_sysIdController = new GenericHID(3);
 
     m_subsystems.add(m_poseAligner);
     m_subsystems.add(m_swerve);
     m_subsystems.add(m_odometry);
+    m_subsystems.add(m_arm);
     m_subsystems.add(m_elevator);
-
-    // m_subsystems.add(m_endAffector);
+    m_subsystems.add(m_endEffector);
+    
+    m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
 
   @Override
@@ -92,13 +104,24 @@ public class Robot extends LoggedRobot {
     // Initialize on-board logging
     DataLogManager.start();
     RobotTelemetry.print("Logging Initialized. Fard.");
+
+    m_signalManager.finalizeAll();
   }
 
   @Override
   public void robotPeriodic() {
-    m_subsystems.forEach(subsystem -> subsystem.periodic());
-    m_subsystems.forEach(subsystem -> subsystem.writePeriodicOutputs());
-    m_subsystems.forEach(subsystem -> subsystem.writeToLog());
+    if (this.isTestEnabled()) {
+      CommandScheduler.getInstance().run();
+    }
+    else {
+      m_virtualRobotController.updatePose();
+
+      m_subsystems.forEach(subsystem -> subsystem.periodic());
+      m_subsystems.forEach(subsystem -> subsystem.writePeriodicOutputs());
+      m_subsystems.forEach(subsystem -> subsystem.writeToLog());
+
+      m_signalManager.refresh();
+    }
   }
 
   @Override
@@ -153,11 +176,9 @@ public class Robot extends LoggedRobot {
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
 
-    m_swerve.drive(xSpeed, ySpeed, rot, true);
-    // m_swerve.drive(1, 0, 0, false);
-    // Pose2d targetPose =
-    // m_poseAligner.getAndCalculateTargetPose(m_virtualRobotController.getCurrentPose());
-    // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
+    Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(m_virtualRobotController.getCurrentPose());
+    ASPoseHelper.addPose("VirtualRobot/target", targetPose);
+
     Pose2d currentPose = m_odometry.getPose();
 
     Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(currentPose);
@@ -173,28 +194,36 @@ public class Robot extends LoggedRobot {
     }
 
     if (m_operatorController.getWantsGoToStow()) {
-      m_elevator.goToElevatorPosition(ElevatorState.STOW);
+      m_elevator.setState(ElevatorState.STOW);
     } else if (m_operatorController.getWantsGoToL1()) {
-      m_elevator.goToElevatorPosition(ElevatorState.L1);
+      m_elevator.setState(ElevatorState.L1);
     } else if (m_operatorController.getWantsGoToL2()) {
-      m_elevator.goToElevatorPosition(ElevatorState.L2);
+      m_elevator.setState(ElevatorState.L2);
     } else if (m_operatorController.getWantsGoToL3()) {
-      m_elevator.goToElevatorPosition(ElevatorState.L3);
+      m_elevator.setState(ElevatorState.L3);
     } else if (m_operatorController.getWantsGoToL4()) {
-      m_elevator.goToElevatorPosition(ElevatorState.L4);
+      m_elevator.setState(ElevatorState.L4);
     } else if (m_operatorController.getWantsResetElevator()) {
       m_elevator.reset();
     }
 
-    // if (m_operatorController.getWantsScore() > 0) {
-    // m_endAffector.setState(EndEffectorState.SCORE_BRANCHES);
-    // } else if (m_operatorController.getWantsScore() < 0) {
-    // m_endAffector.setState(EndEffectorState.SCORE_TROUGH);
-    // } else {
-    // m_endAffector.setState(EndEffectorState.OFF);
-    // if (m_driverController.getWantsAutoPositionPressed()) {
-    // m_swerve.resetDriveController();
-    // }
+    if (m_operatorController.getWantsScore() > 0) {
+      m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
+    } else if (m_operatorController.getWantsScore() < 0) {
+      m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
+    } else {
+      m_endEffector.setState(EndEffectorState.OFF);
+    }
+
+    if (m_driverController.getWantsAutoPositionPressed()) {
+      m_swerve.resetDriveController();
+    }
+
+    if (m_operatorController.getWantsArmScore()) {
+      m_arm.setArmState(ArmState.EXTEND);
+    } else if (m_operatorController.getWantsArmStow()) {
+      m_arm.setArmState(ArmState.STOW);
+    }
   }
 
   @Override
@@ -208,17 +237,32 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     m_odometry.setAllianceGyroAngleAdjustment();
 
-    if(m_operatorController.getWantsResetElevator()) {
+    if (m_operatorController.getWantsResetElevator()) {
       m_elevator.reset();
     }
+
+    // SCARY
+    DriverStation.silenceJoystickConnectionWarning(DriverStation.getMatchType() == DriverStation.MatchType.None);
   }
 
   @Override
   public void testInit() {
+    CommandScheduler.getInstance().cancelAll();
   }
 
   @Override
   public void testPeriodic() {
+    if (m_sysIdController.getRawButtonPressed(FilteredController.Button.A)) {
+      m_swerveSysId.sysIdDriveQuasistatic(SysIdRoutine.Direction.kForward).schedule();
+    } else if (m_sysIdController.getRawButtonPressed(FilteredController.Button.B)) {
+      m_swerveSysId.sysIdDriveQuasistatic(SysIdRoutine.Direction.kReverse).schedule();
+    } else if (m_sysIdController.getRawButtonPressed(FilteredController.Button.X)) {
+      m_swerveSysId.sysIdDriveDynamic(SysIdRoutine.Direction.kForward).schedule();
+    } else if (m_sysIdController.getRawButtonPressed(FilteredController.Button.Y)) {
+      m_swerveSysId.sysIdDriveDynamic(SysIdRoutine.Direction.kReverse).schedule();
+    } else if (m_sysIdController.getRawButtonPressed(FilteredController.Button.START)) {
+      CommandScheduler.getInstance().cancelAll();
+    }
   }
 
   @Override

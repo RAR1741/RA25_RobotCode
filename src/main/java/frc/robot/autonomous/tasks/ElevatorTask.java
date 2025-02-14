@@ -14,7 +14,7 @@ public class ElevatorTask extends Task {
 
   @Override
   public void prepare() {
-    m_elevator.goToElevatorPosition(m_targetState);
+    m_elevator.setState(m_targetState);
   }
 
   @Override

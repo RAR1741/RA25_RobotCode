@@ -42,7 +42,7 @@ public final class RobotConstants {
         // Set (riiiiiiiiiiiiiiiight the constants) all the constants (designed)
         // specifically for the simulation
       default:
-        robotConfig = new Constants();  // TODO: change this once we have an actual robot
+        robotConfig = new Constants(); // TODO: change this once we have an actual robot
         break;
     }
 
@@ -67,7 +67,7 @@ public final class RobotConstants {
   }
 
   public RobotType getRobotType() {
-    if(m_robotType != null) {
+    if (m_robotType != null) {
       return m_robotType;
     } else {
       return RobotType.MAIN;
