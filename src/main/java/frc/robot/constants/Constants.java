@@ -16,6 +16,7 @@ public class Constants {
   public final LaserCanConstants LaserCan = new LaserCanConstants();
   public final EndEffectorConstants EndEffector = new EndEffectorConstants();
   public final OdometryConstants Odometry = new OdometryConstants();
+  public final HopperConstants Hopper = new HopperConstants();
 
   public static class RobotConstants {
     public final String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -213,6 +214,17 @@ public class Constants {
     public final double k_groundAlgaeHeight = 0.0;
     // public final double k_lowAlgaeHeight = 24.8;
     // public final double k_highAlgaeHeight = 42.5;
+  }
+
+  public static class HopperConstants {
+    public final int k_hopperMotorId = 50;
+    public final double k_P = 0.0;
+    public final double k_I = 0;
+    public final double k_D = 0.0;
+    public final double k_IZone = 0.0;
+    public final double k_FF = 0.0;
+    public final double k_maxHopperSpeedRPM = 1.0;
+    public final double k_setVelocity = 50.0;
   }
 
   public static class LaserCanConstants {
