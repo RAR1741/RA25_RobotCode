@@ -163,6 +163,7 @@ public class Robot extends LoggedRobot {
       m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.GROUND);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
     }
+
     if(m_operatorController.getWantsLeftIntakeStow()) {
       m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.STOW);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
@@ -178,28 +179,23 @@ public class Robot extends LoggedRobot {
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
     }
 
-    if(m_operatorController.getWantsIntakeIntake()) {
-      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-    }
-
     if (m_driverController.getWantsResetOdometry()) {
       m_odometry.reset();
     }
 
-    if (m_operatorController.getWantsGoToStow()) {
-      m_elevator.setState(ElevatorState.STOW);
-    } else if (m_operatorController.getWantsGoToL1()) {
-      m_elevator.setState(ElevatorState.L1);
-    } else if (m_operatorController.getWantsGoToL2()) {
-      m_elevator.setState(ElevatorState.L2);
-    } else if (m_operatorController.getWantsGoToL3()) {
-      m_elevator.setState(ElevatorState.L3);
-    } else if (m_operatorController.getWantsGoToL4()) {
-      m_elevator.setState(ElevatorState.L4);
-    } else if (m_operatorController.getWantsResetElevator()) {
-      m_elevator.reset();
-    }
+    // if (m_operatorController.getWantsGoToStow()) {
+    //   m_elevator.setState(ElevatorState.STOW);
+    // } else if (m_operatorController.getWantsGoToL1()) {
+    //   m_elevator.setState(ElevatorState.L1);
+    // } else if (m_operatorController.getWantsGoToL2()) {
+    //   m_elevator.setState(ElevatorState.L2);
+    // } else if (m_operatorController.getWantsGoToL3()) {
+    //   m_elevator.setState(ElevatorState.L3);
+    // } else if (m_operatorController.getWantsGoToL4()) {
+    //   m_elevator.setState(ElevatorState.L4);
+    // } else if (m_operatorController.getWantsResetElevator()) {
+    //   m_elevator.reset();
+    // }
 
     if (m_operatorController.getWantsScore() > 0) {
       m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);

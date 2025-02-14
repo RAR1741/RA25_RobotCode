@@ -65,6 +65,8 @@ public class Constants {
     public double k_stowAngle = 0.0;
 
     public double k_pivotOffset = 0.0;
+
+    public double k_maxIntakeSpeed = 0.5;
     
   }
 

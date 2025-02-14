@@ -18,7 +18,7 @@ public class Intakes extends Subsystem {
 
     m_intakes.add(new Intake("Left", 
         RobotConstants.robotConfig.Intake.k_pivotMotorIdLeft, 
-        RobotConstants.robotConfig.Intake.k_intakeMotorIdRight, false));
+        RobotConstants.robotConfig.Intake.k_intakeMotorIdLeft, false));
     
     m_intakes.add(new Intake("Right", 
         RobotConstants.robotConfig.Intake.k_pivotMotorIdRight, 

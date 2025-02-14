@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
@@ -58,7 +59,8 @@ public class Arm extends Subsystem {
 
     armConfig
         .smartCurrentLimit(RobotConstants.robotConfig.Arm.k_maxCurrent)
-        .inverted(true);
+        .inverted(true)
+        .idleMode(IdleMode.kCoast);
 
     m_motor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

@@ -43,7 +43,7 @@ public class Intake {
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
     SparkFlexConfig intakeConfig = new SparkFlexConfig();
 
-    pivotConfig.idleMode(IdleMode.kCoast);
+    pivotConfig.idleMode(IdleMode.kBrake);
     pivotConfig.inverted(true);
 
     pivotConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
@@ -117,10 +117,10 @@ public class Intake {
         return 0.0;
       }
       case INTAKE -> {
-        return 0.8;
+        return RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
       }
       case EJECT -> {
-        return -0.8;
+        return -RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
       }
       default -> {
         return 0.0;
