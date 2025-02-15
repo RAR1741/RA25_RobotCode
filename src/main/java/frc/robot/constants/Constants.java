@@ -46,37 +46,6 @@ public class Constants {
     public final int k_threadUpdateFrequency = 250; // Hz
   }
 
-  public static class HopperConstants {
-    public final int k_hopperMotorId = 50;
-    public final double k_hopperSpeed = 0.1;
-  }
-
-  public static class IntakeConstants {
-    public final int k_pivotMotorIdLeft = 40;
-    public final int k_pivotMotorIdRight = 41;
-
-    public final int k_intakeMotorIdLeft = 42;
-    public final int k_intakeMotorIdRight = 43;
-
-    public final double k_pivotMotorP = 0.0;
-    public final double k_pivotMotorI = 0.0;
-    public final double k_pivotMotorD = 0.0;
-    public final double k_pivotMotorFF = 0.0;
-
-    public final double k_maxVelocity = 0.0;
-    public final double k_maxAcceleration = 0.0;
-
-    public final double k_groundAngle = 0.0;
-    public final double k_ejectAngle = 0.0;
-    public final double k_stowAngle = 0.0;
-
-    public final double k_leftPivotOffset = (360.0 - 330.529052734375) / 360.0;
-    public final double k_rightPivotOffset = (360.0 - 178.09091186523438) / 360.0;
-
-    public final double k_maxIntakeSpeed = 0.45;
-    
-  }
-
   public static class SwerveDriveConstants {
     public final String k_canBus = "Drivetrain";
 
@@ -115,14 +84,14 @@ public class Constants {
 
       public final int k_currentLimit = 40;
 
-      public final double k_P = 0.84992; // setCory("goated");
-      public final double k_I = 0.0;
-      public final double k_D = 0.0;
-      public final double k_IZone = 0.0;
+      public double k_P;
+      public double k_I;
+      public double k_D;
+      public double k_IZone;
 
-      public final double k_FFS = 0.2368;
-      public final double k_FFV = 0.67229;
-      public final double k_FFA = 0.080151;
+      public double k_FFS;
+      public double k_FFV;
+      public double k_FFA;
     }
 
     public final TurnConstants Turn = new TurnConstants();
@@ -130,10 +99,10 @@ public class Constants {
     // Drivetrain (turn) constants
     public class TurnConstants {
       // Drivetrain turning offset constants
-      public final double k_FLOffset = -0.1521;
-      public final double k_FROffset = 0.02417;
-      public final double k_BLOffset = 0.594889;
-      public final double k_BROffset = 0.419678;
+      public double k_FLOffset;
+      public double k_FROffset;
+      public double k_BLOffset;
+      public double k_BROffset;
 
       public final int k_FLAbsId = 13;
       public final int k_FRAbsId = 14;
@@ -147,10 +116,10 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public final double k_P = 70.0;
-      public final double k_I = 0.0;
-      public final double k_D = 1.0;
-      public final double k_IZone = 0.0;
+      public double k_P;
+      public double k_I;
+      public double k_D;
+      public double k_IZone;
 
       // We only use FF and are too scared to delete the others
       public final double k_FF = 0.0;
@@ -184,35 +153,15 @@ public class Constants {
     }
   }
 
-  public static class ArmConstants {
-    public final int k_motorId = 30;
-
-    public final double k_P = 0.03;
-    public final double k_I = 0.0;
-    public final double k_D = 0.0;
-    public final double k_IZone = 0.0;
-    public final double k_FF = 0.25;
-
-    public final int k_maxCurrent = 5;
-
-    public final double k_stowAngle = 0.0;
-    public final double k_L4Angle = 120.0;
-
-    public final double k_maxAcceleration = 0.0;
-    public final double k_maxVelocity = 0.0;
-
-    public final double k_armOffset = (360.0 - 101.8) / 360.0;
-  }
-
   public static class ElevatorConstants {
     public final int k_elevatorLeftMotorId = 20;
     public final int k_elevatorRightMotorId = 21;
 
-    public final double k_P = 0.15;
-    public final double k_I = 0;
-    public final double k_D = 0.0;
-    public final double k_IZone = 0.0;
-    public final double k_FF = 0.50;
+    public double k_P;
+    public double k_I;
+    public double k_D;
+    public double k_IZone;
+    public double k_FF;
 
     public final double k_maxVelocity = 65;
     public final double k_maxAcceleration = 200;
@@ -230,10 +179,24 @@ public class Constants {
     // public final double k_highAlgaeHeight = 42.5;
   }
 
-  public static class LaserCanConstants {
-    public final int k_indexId = 33;
-    public final int k_entranceId = 34;
-    public final int k_exitId = 35;
+  public static class ArmConstants {
+    public final int k_motorId = 30;
+
+    public double k_P;
+    public double k_I;
+    public double k_D;
+    public double k_IZone;
+    public double k_FF;
+
+    public final int k_maxCurrent = 5;
+
+    public final double k_stowAngle = 0.0;
+    public final double k_L4Angle = 120.0;
+
+    public final double k_maxAcceleration = 0.0;
+    public final double k_maxVelocity = 0.0;
+
+    public double k_armOffset;
   }
 
   public static class EndEffectorConstants {
@@ -245,6 +208,42 @@ public class Constants {
     public final double[] k_reverseSpeeds = new double[] { -0.3, -0.3 };
     public final double[] k_branchSpeeds = new double[] { 0.5, 0.5 };
     public final double[] k_troughSpeeds = new double[] { 0.1, 0.1 };
+  }
+
+  public static class LaserCanConstants {
+    public final int k_indexId = 33;
+    public final int k_entranceId = 34;
+    public final int k_exitId = 35;
+  }
+
+  public static class IntakeConstants { // TODO I think we may need different constants for each intake for some of these values
+    public final int k_pivotMotorIdLeft = 40;
+    public final int k_pivotMotorIdRight = 41;
+
+    public final int k_intakeMotorIdLeft = 42;
+    public final int k_intakeMotorIdRight = 43;
+
+    public double k_pivotMotorP;
+    public double k_pivotMotorI;
+    public double k_pivotMotorD;
+    public double k_pivotMotorFF;
+
+    public final double k_maxVelocity = 0.0;
+    public final double k_maxAcceleration = 0.0;
+
+    public final double k_groundAngle = 0.0;
+    public final double k_ejectAngle = 0.0;
+    public final double k_stowAngle = 0.0;
+
+    public double k_leftPivotOffset;
+    public double k_rightPivotOffset;
+
+    public final double k_maxIntakeSpeed = 0.45;
+  }
+
+  public static class HopperConstants {
+    public final int k_hopperMotorId = 50;
+    public final double k_hopperSpeed = 0.1;
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants
