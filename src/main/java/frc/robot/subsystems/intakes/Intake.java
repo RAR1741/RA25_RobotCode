@@ -14,11 +14,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import edu.wpi.first.math.util.Units;
 import frc.robot.constants.RobotConstants;
 
 public class Intake {
-  @SuppressWarnings("unused")
   private final String m_intakeName;
   
   private final SparkMax m_pivotMotor;
@@ -32,12 +30,12 @@ public class Intake {
     double intakeSpeed = 0.0;
   }
 
-  public Intake(String intakeName, int pivotMotorID, int intakeMotorID, boolean isInverted) {
-    m_intakeName = intakeName;
+  Intake(String intakeName, int pivotMotorId, int intakeMotorId, boolean isInverted) {
     AutoLogOutputManager.addObject(this);
+    m_intakeName = intakeName;
 
-    m_pivotMotor = new SparkMax(pivotMotorID, MotorType.kBrushless);
-    m_intakeMotor = new SparkFlex(intakeMotorID, MotorType.kBrushless);
+    m_pivotMotor = new SparkMax(pivotMotorId, MotorType.kBrushless);
+    m_intakeMotor = new SparkFlex(intakeMotorId, MotorType.kBrushless);
     m_pivotPIDController = m_pivotMotor.getClosedLoopController();
 
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
@@ -46,11 +44,20 @@ public class Intake {
     pivotConfig.idleMode(IdleMode.kBrake);
     pivotConfig.inverted(true);
 
+
+    pivotConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
+    pivotConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
+
+    
     pivotConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
     pivotConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
 
     pivotConfig.absoluteEncoder.positionConversionFactor(360.0);
-    pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_pivotOffset);
+    if (pivotMotorId == 40) {
+      pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_leftPivotOffset);
+    } else if (pivotMotorId == 41) {
+      pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
+    }
 
     if(isInverted) {
       pivotConfig.inverted(true);
@@ -69,8 +76,6 @@ public class Intake {
 
     intakeConfig.idleMode(IdleMode.kCoast);
     intakeConfig.inverted(true);
-    intakeConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
-    intakeConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
     m_intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_periodicIO = new PeriodicIO();
@@ -151,17 +156,22 @@ public class Intake {
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotAngle")
   public double getPivotAngle() {
-    return m_intakeMotor.getAbsoluteEncoder().getPosition();
+    return m_pivotMotor.getAbsoluteEncoder().getPosition();
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/IntakeSpeed")
   public double getIntakeSpeed() {
-    return m_intakeMotor.getEncoder().getVelocity(); //TODO: was getAbsolutePosition() so make sure this works
+    return m_intakeMotor.getEncoder().getVelocity();
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotReferenceToHorizontal")
   public double getPivotReferenceToHorizontal() {
-    return getPivotAngle() - RobotConstants.robotConfig.Intake.k_pivotOffset;
+    if (m_intakeName.equalsIgnoreCase("Left")) {
+      return getPivotAngle() - RobotConstants.robotConfig.Intake.k_leftPivotOffset;
+    } else if (m_intakeName.equalsIgnoreCase("Right")) {
+      return getPivotAngle() - RobotConstants.robotConfig.Intake.k_rightPivotOffset;
+    }
+    return 0.0;
   }
 
   public enum IntakePivotTarget {

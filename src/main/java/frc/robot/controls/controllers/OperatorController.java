@@ -23,10 +23,10 @@ public class OperatorController extends FilteredController {
 
   public boolean getWantsRightIntakeGround() {
     return getRawButtonPressed(Button.RIGHT_BUMPER);
-  } 
+  }
 
-  public boolean getWantsIntakeIntake() {
-    return getRawButton(Button.START);
+  public boolean getWantsIntakeEject() {
+    return getRawButton(Button.B);
   }
   
   public boolean getWantsGoToStow() {

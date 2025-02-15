@@ -98,6 +98,9 @@ public class Robot extends LoggedRobot {
 
     // Initialize on-board logging
     DataLogManager.start();
+    RobotTelemetry.print(String.format("Deployed version: GIT_COMMIT=%s, BUILD_DATE=%s, DIRTY=%d", BuildConstants.GIT_SHA,
+        BuildConstants.BUILD_DATE, BuildConstants.DIRTY));
+    RobotTelemetry.print(String.format("Branch: %s", BuildConstants.GIT_BRANCH));
     RobotTelemetry.print("Logging Initialized. Fard.");
 
     m_signalManager.finalizeAll();
@@ -163,6 +166,14 @@ public class Robot extends LoggedRobot {
     } else {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }
+
+    // if (m_operatorController.getWantsIntakeEject()) {
+    //   m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
+    //   m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
+    // } else {
+    //   m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
+    //   m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
+    // }
 
     if(m_operatorController.getWantsLeftIntakeGround()) {
       m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.GROUND);

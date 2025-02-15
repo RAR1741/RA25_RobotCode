@@ -178,28 +178,28 @@ public class OdometryThread implements Runnable {
     m_threadPriorityToSet = priority;
   }
 
-  // TODO: Log these outside of the odometry thread
-  // @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
-  public int getSuccessfulDaqs() {
-    return m_successfulDaqs;
-  }
+  // // TODO: Log these outside of the odometry thread
+  // // @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
+  // public int getSuccessfulDaqs() {
+  //   return m_successfulDaqs;
+  // }
 
-  // @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
-  public int getFailedDaqs() {
-    return m_failedDaqs;
-  }
+  // // @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
+  // public int getFailedDaqs() {
+  //   return m_failedDaqs;
+  // }
 
-  // @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
-  public double getAverageOdometryLoopTime() {
-    return m_averageOdometryLoopTime;
-  }
+  // // @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
+  // public double getAverageOdometryLoopTime() {
+  //   return m_averageOdometryLoopTime;
+  // }
 
-  // @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
-  public int getUpdatesPerSecond() {
-    return (int) (1.0 / getAverageOdometryLoopTime());
-  }
+  // // @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
+  // public int getUpdatesPerSecond() {
+  //   return (int) (1.0 / getAverageOdometryLoopTime());
+  // }
 
-  // @AutoLogOutput(key = "Odometry/Thread/Running")
+  // // @AutoLogOutput(key = "Odometry/Thread/Running")
   public boolean isRunning() {
     return m_running;
   }
