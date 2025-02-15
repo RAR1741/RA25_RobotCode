@@ -20,26 +20,26 @@ public class Intake {
   private final String m_intakeName;
   
   private final SparkMax m_pivotMotor;
-  private final SparkFlex m_intakeMotor;
+  private final SparkFlex m_rollerMotor;
   private final PeriodicIO m_periodicIO;
   private final SparkClosedLoopController m_pivotPIDController;
+  private final SparkClosedLoopController m_rollerPIDController;
 
   private static class PeriodicIO {
     IntakeState desiredIntakeState = IntakeState.NONE;
-    IntakePivotTarget desiredPivotTarget = IntakePivotTarget.NONE;
-    double intakeSpeed = 0.0;
   }
 
-  Intake(String intakeName, int pivotMotorId, int intakeMotorId, boolean isInverted) {
+  Intake(String intakeName, int pivotMotorId, int rollerMotorId, boolean isInverted) {
     m_intakeName = intakeName;
     AutoLogOutputManager.addObject(this);
 
     m_pivotMotor = new SparkMax(pivotMotorId, MotorType.kBrushless);
-    m_intakeMotor = new SparkFlex(intakeMotorId, MotorType.kBrushless);
+    m_rollerMotor = new SparkFlex(rollerMotorId, MotorType.kBrushless);
     m_pivotPIDController = m_pivotMotor.getClosedLoopController();
+    m_rollerPIDController = m_rollerMotor.getClosedLoopController();
 
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
-    SparkFlexConfig intakeConfig = new SparkFlexConfig();
+    SparkFlexConfig rollerConfig = new SparkFlexConfig();
 
     pivotConfig.idleMode(IdleMode.kBrake);
     pivotConfig.inverted(true);
@@ -54,7 +54,7 @@ public class Intake {
 
     pivotConfig.inverted(isInverted);
     pivotConfig.absoluteEncoder.inverted(isInverted);
-    intakeConfig.inverted(isInverted);
+    rollerConfig.inverted(isInverted);
 
     pivotConfig.closedLoop.pidf(
       RobotConstants.robotConfig.Intake.k_pivotMotorP,
@@ -66,14 +66,19 @@ public class Intake {
 
     m_pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    intakeConfig.idleMode(IdleMode.kCoast);
-    m_intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rollerConfig.idleMode(IdleMode.kCoast);
+
+    rollerConfig.closedLoop
+      .pidf(
+        RobotConstants.robotConfig.Intake.k_rollerMotorP,
+        RobotConstants.robotConfig.Intake.k_rollerMotorI,
+        RobotConstants.robotConfig.Intake.k_rollerMotorD,
+        RobotConstants.robotConfig.Intake.k_rollerMotorFF
+      );
+
+    m_rollerMotor.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_periodicIO = new PeriodicIO();
-  }
-
-  public void setPivotTarget(IntakePivotTarget target) {
-    m_periodicIO.desiredPivotTarget = target;
   }
 
   public void setIntakeState(IntakeState target) {
@@ -81,18 +86,16 @@ public class Intake {
   }
 
   public void periodic() {
-    m_periodicIO.intakeSpeed = getDesiredIntakeSpeed();
   }
 
   public void writePeriodicOutputs() {
     m_pivotPIDController.setReference(getTargetPivotAngle(), ControlType.kPosition);
-    m_intakeMotor.set(m_periodicIO.intakeSpeed);
+    m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
+    // m_rollerMotor.set(m_periodicIO.rollerSpeed);
   }
 
   public void stop() {
-    m_periodicIO.intakeSpeed = 0.0;
     m_periodicIO.desiredIntakeState = IntakeState.NONE;
-    m_periodicIO.desiredPivotTarget = IntakePivotTarget.NONE;
     m_pivotPIDController.setReference(0.0, ControlType.kVoltage);
   }
 
@@ -101,13 +104,8 @@ public class Intake {
     return m_periodicIO.desiredIntakeState.toString();
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotTarget")
-  public String getDesiredPivotTarget() {
-    return m_periodicIO.desiredPivotTarget.toString();
-  }
-
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/IntakeSpeed")
-  public double getDesiredIntakeSpeed() {
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/RollerSpeed")
+  public double getDesiredRollerSpeed() {
     switch(m_periodicIO.desiredIntakeState) {
       case NONE -> {
         return 0.0;
@@ -126,21 +124,18 @@ public class Intake {
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotAngleFromTarget")
   public double getTargetPivotAngle() {
-    switch(m_periodicIO.desiredPivotTarget) {
+    switch(m_periodicIO.desiredIntakeState) {
       case NONE -> {
-        return 0.0;
+        return RobotConstants.robotConfig.Intake.k_stowAngle;
       }
-      case GROUND -> {
+      case INTAKE -> {
         return RobotConstants.robotConfig.Intake.k_groundAngle;
       }
       case EJECT -> {
         return RobotConstants.robotConfig.Intake.k_ejectAngle;
       }
-      case STOW -> {
-        return RobotConstants.robotConfig.Intake.k_stowAngle;
-      }
       default -> {
-        return 0.0;
+        return RobotConstants.robotConfig.Intake.k_stowAngle;
       }
     }
   }
@@ -150,9 +145,9 @@ public class Intake {
     return m_pivotMotor.getAbsoluteEncoder().getPosition();
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/IntakeSpeed")
-  public double getIntakeSpeed() {
-    return m_intakeMotor.getEncoder().getVelocity();
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/RollerSpeed")
+  public double getRollerSpeed() {
+    return m_rollerMotor.getEncoder().getVelocity();
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotReferenceToHorizontal")
@@ -164,13 +159,6 @@ public class Intake {
     }
 
     return 0.0;
-  }
-
-  public enum IntakePivotTarget {
-    NONE,
-    GROUND,
-    EJECT,
-    STOW
   }
 
   public enum IntakeState {

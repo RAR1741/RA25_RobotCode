@@ -20,7 +20,6 @@ import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.intakes.Intakes;
-import frc.robot.subsystems.intakes.Intake.IntakePivotTarget;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 import frc.robot.controls.controllers.FilteredController;
@@ -172,36 +171,28 @@ public class Robot extends LoggedRobot {
     }
 
     if (m_operatorController.getWantsLeftIntakeGround()) {
-      m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.GROUND);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
     }
 
     if (m_operatorController.getWantsLeftIntakeStow()) {
-      m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.STOW);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
     }
 
     if (m_operatorController.getWantsRightIntakeGround()) {
-      m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.GROUND);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
     }
 
     if (m_operatorController.getWantsRightIntakeStow()) {
-      m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.STOW);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
     }
 
     if (m_operatorController.getWantsIntakeEject()) {
-      m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.EJECT);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
-      m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.EJECT);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
     } 
     
     if (m_operatorController.getWantsIntakeStopEjecting()) {
-      m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.STOW);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
-      m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.STOW);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
     }
 

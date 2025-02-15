@@ -223,16 +223,21 @@ public class Constants {
     public final int k_pivotMotorIdLeft = 40;
     public final int k_pivotMotorIdRight = 41;
 
-    public final int k_intakeMotorIdLeft = 42;
-    public final int k_intakeMotorIdRight = 43;
+    public final int k_rollerMotorIdLeft = 42;
+    public final int k_rollerMotorIdRight = 43;
 
-    public final int k_pivotCurrent = 10;
-    public final int k_intakeCurrent = 20;
+    public final int k_pivotCurrentLimit = 10;
+    public final int k_rollerCurrentLimit = 20;
 
-    public double k_pivotMotorP;
-    public double k_pivotMotorI;
-    public double k_pivotMotorD;
-    public double k_pivotMotorFF;
+    public final double k_pivotMotorP = 0.0;
+    public final double k_pivotMotorI = 0.0;
+    public final double k_pivotMotorD = 0.0;
+    public final double k_pivotMotorFF = 0.0;
+
+    public final double k_rollerMotorP = 0.0;
+    public final double k_rollerMotorI = 0.0;
+    public final double k_rollerMotorD = 0.0;
+    public final double k_rollerMotorFF = 0.25;
 
     public final double k_maxVelocity = 0.0;
     public final double k_maxAcceleration = 0.0;

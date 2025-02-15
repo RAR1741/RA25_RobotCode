@@ -40,11 +40,6 @@ public class JormungandrConstants extends Constants {
     Arm.k_stowAngle = 0.29270070791244507;
     Arm.k_L4Angle = 0.5404757261276245;
     Arm.k_horizontalAngle = 0.5404757261276245;
-    
-    Intake.k_pivotMotorP = 0.0;
-    Intake.k_pivotMotorI = 0.0;
-    Intake.k_pivotMotorD = 0.0;
-    Intake.k_pivotMotorFF = 0.0;
 
     Intake.Left.k_stowPosition = 0.8342224359512329;
     Intake.Left.k_groundPosition = 0.20293329656124115;

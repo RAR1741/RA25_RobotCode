@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Subsystem;
-import frc.robot.subsystems.intakes.Intake.IntakePivotTarget;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 
 public class Intakes extends Subsystem {
@@ -18,11 +17,11 @@ public class Intakes extends Subsystem {
 
     m_intakes.add(new Intake("Left", 
         RobotConstants.robotConfig.Intake.k_pivotMotorIdLeft, 
-        RobotConstants.robotConfig.Intake.k_intakeMotorIdLeft, false));
+        RobotConstants.robotConfig.Intake.k_rollerMotorIdLeft, false));
     
     m_intakes.add(new Intake("Right", 
         RobotConstants.robotConfig.Intake.k_pivotMotorIdRight, 
-        RobotConstants.robotConfig.Intake.k_intakeMotorIdRight, true));
+        RobotConstants.robotConfig.Intake.k_rollerMotorIdRight, true));
   }
 
   public static Intakes getInstance() {
@@ -38,10 +37,6 @@ public class Intakes extends Subsystem {
 
   public void setIntakeState(IntakeVariant intakeVariant, IntakeState intakeState) {
     m_intakes.get(intakeVariant.ordinal()).setIntakeState(intakeState);
-  }
-
-  public void setPivotTarget(IntakeVariant intakeVariant,  IntakePivotTarget pivotTarget) {
-    m_intakes.get(intakeVariant.ordinal()).setPivotTarget(pivotTarget);
   }
 
   @Override
