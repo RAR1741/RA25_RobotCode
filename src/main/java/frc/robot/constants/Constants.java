@@ -190,13 +190,11 @@ public class Constants {
 
     public final int k_maxCurrent = 5;
 
-    public final double k_stowAngle = 0.0;
-    public final double k_L4Angle = 120.0;
+    public final double k_stowAngle = 0.4; //0.29176223278045654;
+    public final double k_L4Angle = 0.6810551881790161;
 
-    public final double k_maxAcceleration = 0.0;
-    public final double k_maxVelocity = 0.0;
-
-    public double k_armOffset;
+    public final double k_maxAcceleration = 0.2;
+    public final double k_maxVelocity = 0.1;
   }
 
   public static class EndEffectorConstants {
@@ -238,12 +236,12 @@ public class Constants {
     public double k_leftPivotOffset;
     public double k_rightPivotOffset;
 
-    public final double k_maxIntakeSpeed = 0.45;
+    public final double k_maxIntakeSpeed = 0.6;
   }
 
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
-    public final double k_hopperSpeed = 0.1;
+    public final double k_hopperSpeed = 0.2;
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants

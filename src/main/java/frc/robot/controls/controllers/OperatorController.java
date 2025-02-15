@@ -57,14 +57,6 @@ public class OperatorController extends FilteredController {
     return this.getRawButtonPressed(Button.START);
   }
 
-  public boolean getWantsArmScore() {
-    return this.getHatPressed(Direction.UP);
-  }
-
-  public boolean getWantsArmStow() {
-    return this.getHatPressed(Direction.DOWN);
-  }
-
   public boolean getWantsScore() {
     return this.getRawButton(Button.X);
   }

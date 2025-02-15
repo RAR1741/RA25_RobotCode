@@ -55,7 +55,7 @@ public final class RobotConstants {
   public RobotType checkRobotType() {
     if (Robot.isSimulation()) {
       m_robotType = RobotType.SIM;
-      // config = new ApolloConstants();
+      robotConfig = new JormungandrConstants();
       RobotTelemetry.print("Robot Type: Simulation");
     } else if (m_rioSerial.equals(k_compSerial)) {
       m_robotType = RobotType.MONARCH;

@@ -29,6 +29,7 @@ public class Arm extends Subsystem {
   private SparkAbsoluteEncoder m_encoder;
   private SparkClosedLoopController m_pidController;
 
+  //TODO: Use SmartMotion or MAXMotion
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
@@ -53,9 +54,10 @@ public class Arm extends Subsystem {
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
     armConfig.absoluteEncoder
-        .positionConversionFactor(360.0) // [0, 1) to [0, 360)
-        .zeroOffset(RobotConstants.robotConfig.Arm.k_armOffset)
-        .inverted(true);
+        .inverted(true)
+        .zeroOffset(0.0)
+        .positionConversionFactor(1.0)        
+        .velocityConversionFactor(1.0);
 
     armConfig
         .smartCurrentLimit(RobotConstants.robotConfig.Arm.k_maxCurrent)

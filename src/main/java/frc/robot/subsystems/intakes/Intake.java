@@ -44,13 +44,6 @@ public class Intake {
     pivotConfig.idleMode(IdleMode.kBrake);
     pivotConfig.inverted(true);
 
-    pivotConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
-    pivotConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
-
-    
-    pivotConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
-    pivotConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
-
     pivotConfig.absoluteEncoder.positionConversionFactor(360.0);
     if (pivotMotorId == 40) {
       pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_leftPivotOffset);

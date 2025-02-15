@@ -77,7 +77,6 @@ public class RAROdometry extends Subsystem {
 
   /**
    * Calls the NavX reset function, resetting the Z angle to 0
-   * ur gae mccabe
    */
   public void resetGyro() {
     m_gyro.reset();

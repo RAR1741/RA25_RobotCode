@@ -27,14 +27,12 @@ public class JormungandrConstants extends Constants {
     Elevator.k_IZone = 0.0;
     Elevator.k_FF = 0.50;
 
-    Arm.k_P = 0.03;
+    Arm.k_P = 0.0; //0.03
     Arm.k_I = 0.0;
     Arm.k_D = 0.0;
     Arm.k_IZone = 0.0;
-    Arm.k_FF = 0.25;
+    Arm.k_FF = 0.025; //0.25
     
-    Arm.k_armOffset = (360.0 - 101.8) / 360.0;
-
     Intake.k_pivotMotorP = 0.0;
     Intake.k_pivotMotorI = 0.0;
     Intake.k_pivotMotorD = 0.0;
