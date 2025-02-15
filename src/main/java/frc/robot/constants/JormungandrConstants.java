@@ -27,7 +27,7 @@ public class JormungandrConstants extends Constants {
     Elevator.k_IZone = 0.0;
     Elevator.k_FF = 0.50;
 
-    Arm.k_P = 0.0; //10.8
+    Arm.k_P = 10.8;
     Arm.k_I = 0.0;
     Arm.k_D = 0.0;
     Arm.k_IZone = 0.0;

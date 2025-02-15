@@ -168,13 +168,13 @@ public class Constants {
 
     public final int k_maxCurrent = 30;
 
-    public final double k_stowHeight = 0.0; // TODO Confirm units
-    public final double k_L1Height = 0.0; // TODO Get height
-    public final double k_L2Height = 9.0;
-    public final double k_L3Height = 25.14;
-    public final double k_L4Height = 52.0;
+    public final double k_stowHeight = 0.0;
+    public final double k_L1Height = 16.0;
+    public final double k_L2Height = 25.64;
+    public final double k_L3Height = 42.0;
+    public final double k_L4Height = 59.6;
     public final double k_maxHeight = 60.5;
-    public final double k_groundAlgaeHeight = 0.0;
+    // public final double k_groundAlgaeHeight = 0.0;
     // public final double k_lowAlgaeHeight = 24.8;
     // public final double k_highAlgaeHeight = 42.5;
   }
@@ -192,14 +192,14 @@ public class Constants {
     public double k_FFA;
     public double k_FFG;
 
-    public final int k_maxCurrent = 5;
+    public final int k_maxCurrent = 10;
 
-    public final double k_stowAngle = 0.4; //0.29176223278045654;
-    public final double k_L4Angle = 0.6810551881790161;
+    public final double k_stowAngle = 0.29270070791244507;
+    public final double k_L4Angle = 0.5404757261276245;
     public final double k_horzAngle = 0.5404757261276245;
 
-    public final double k_maxAcceleration = 0.2;
-    public final double k_maxVelocity = 0.1;
+    public final double k_maxAcceleration = 0.8;
+    public final double k_maxVelocity = 0.4;
   }
 
   public static class EndEffectorConstants {
@@ -207,10 +207,10 @@ public class Constants {
     public final int k_rightMotorId = 32;
 
     public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
-    public final double[] k_indexSpeeds = new double[] { 0.3, 0.3 };
-    public final double[] k_reverseSpeeds = new double[] { -0.3, -0.3 };
+    public final double[] k_indexSpeeds = new double[] { 0.1, 0.1 };
+    public final double[] k_reverseSpeeds = new double[] { -0.1, -0.1 };
     public final double[] k_branchSpeeds = new double[] { 0.5, 0.5 };
-    public final double[] k_troughSpeeds = new double[] { 0.1, 0.1 };
+    public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
   }
 
   public static class LaserCanConstants {

@@ -31,8 +31,8 @@ public class Intake {
   }
 
   Intake(String intakeName, int pivotMotorId, int intakeMotorId, boolean isInverted) {
-    AutoLogOutputManager.addObject(this);
     m_intakeName = intakeName;
+    AutoLogOutputManager.addObject(this);
 
     m_pivotMotor = new SparkMax(pivotMotorId, MotorType.kBrushless);
     m_intakeMotor = new SparkFlex(intakeMotorId, MotorType.kBrushless);

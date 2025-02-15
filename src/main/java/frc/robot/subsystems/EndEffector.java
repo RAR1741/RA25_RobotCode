@@ -42,11 +42,11 @@ public class EndEffector extends Subsystem {
     m_leftMotor = new SparkMax(RobotConstants.robotConfig.EndEffector.k_leftMotorId, MotorType.kBrushless);
     m_rightMotor = new SparkMax(RobotConstants.robotConfig.EndEffector.k_rightMotorId, MotorType.kBrushless);
 
-    // m_laserCan = LaserCanHandler.getInstance();
+    m_laserCan = LaserCanHandler.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
 
-    SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kCoast);
+    SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kBrake);
 
     m_rightMotor.configure(
         endEffectorConfig,
@@ -102,7 +102,7 @@ public class EndEffector extends Subsystem {
 
   @Override
   public void periodic() {
-    // checkAutoTasks();
+    checkAutoTasks();
   }
 
   @Override
@@ -155,42 +155,38 @@ public class EndEffector extends Subsystem {
   private void checkAutoTasks() {
     switch (m_periodicIO.state) {
       case INDEX -> {
-        // if (!m_laserCan.getEntranceSeesCoral()) {
-        off();
-        // }
-        break;
+        if (!m_laserCan.getEntranceSeesCoral()) {
+          off();
+        }
       }
       case OFF -> {
         // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
         // && m_laserCan.getExitSeesCoral()) {
         // reverse();
-        // } else if (m_laserCan.getEntranceSeesCoral()) {
-        // index();
-        // }
-        break;
+        // } else 
+        if (m_laserCan.getEntranceSeesCoral()) {
+          index();
+        }
       }
       case REVERSE -> {
         // if (m_laserCan.getIndexSeesCoral()) {
         off();
         // }
-        break;
       }
-      case SCORE_BRANCHES -> {
-        // if (!m_laserCan.getExitSeesCoral()) {
-        // off();
-        // } else {
-        branches();
-        // }
-        break;
-      }
-      case SCORE_TROUGH -> {
-        // if (!m_laserCan.getExitSeesCoral()) {
-        // off();
-        // } else {
-        trough();
-        // }
-        break;
-      }
+      // case SCORE_BRANCHES -> {
+      //   // if (!m_laserCan.getExitSeesCoral()) {
+      //   // off();
+      //   // } else {
+      //   branches();
+      //   // }
+      // }
+      // case SCORE_TROUGH -> {
+      //   // if (!m_laserCan.getExitSeesCoral()) {
+      //   // off();
+      //   // } else {
+      //   trough();
+      //   // }
+      // }
       default -> {}
     }
   }

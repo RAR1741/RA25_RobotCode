@@ -37,6 +37,8 @@ import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.drivetrain.SwerveSysId;
 
+import au.grapplerobotics.CanBridge;
+
 /**
  * The methods in this class are called automatically corresponding to each
  * mode, as described in
@@ -79,6 +81,8 @@ public class Robot extends LoggedRobot {
     m_poseAligner = PoseAligner.getInstance();
     m_intakes = Intakes.getInstance();
     m_hopper = Hopper.getInstance();
+
+    CanBridge.runTCP();
 
     m_driverController = new DriverController(0, true, true, 0.5);
     m_operatorController = new OperatorController(1, true, true, 0.5);

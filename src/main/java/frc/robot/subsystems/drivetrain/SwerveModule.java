@@ -44,7 +44,7 @@ public class SwerveModule {
 
   private boolean m_moduleDisabled = false;
 
-  public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID,
+  SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID,
       double turningOffset) {
     m_periodicIO = new PeriodicIO();
     m_signalManager = SignalManager.getInstance();

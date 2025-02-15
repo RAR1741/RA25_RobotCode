@@ -69,7 +69,7 @@ public class Arm extends Subsystem {
     armConfig
         .smartCurrentLimit(RobotConstants.robotConfig.Arm.k_maxCurrent)
         .inverted(true)
-        .idleMode(IdleMode.kCoast);
+        .idleMode(IdleMode.kBrake);
 
     m_motor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -115,12 +115,14 @@ public class Arm extends Subsystem {
     // Calculate new state
     m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
 
+    double ff = m_feedForward.calculate(absolutePositionToHorizontalRads(), m_currentState.velocity);
+
     // Set PID controller to new state
     m_pidController.setReference(
         m_currentState.position,
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
-        RobotConstants.robotConfig.Arm.k_FFG,
+        ff,
         ArbFFUnits.kVoltage);
   }
 
@@ -133,8 +135,9 @@ public class Arm extends Subsystem {
     m_pidController.setReference(0.0, SparkBase.ControlType.kVoltage);
   }
 
-  public double absolutePositionToHorizontalDEgrees(double position) {
-    return 0.0;
+  @AutoLogOutput(key = "Arm/Position/HorizontalPositionRads")
+  public double absolutePositionToHorizontalRads() {
+    return (getArmPosition() - RobotConstants.robotConfig.Arm.k_horzAngle) * (2 * Math.PI); // rotations to radians
   }
 
   @AutoLogOutput(key = "Arm/Position/Current")
@@ -168,7 +171,7 @@ public class Arm extends Subsystem {
   }
 
   @AutoLogOutput(key = "Arm/Position/Setpoint")
-  private double getElevatorPosSetpoint() {
+  private double getArmSetpoint() {
     return m_currentState.position;
   }
 
