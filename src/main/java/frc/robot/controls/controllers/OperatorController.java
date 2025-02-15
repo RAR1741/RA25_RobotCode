@@ -30,7 +30,7 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean getWantsIntakeStopEjecting() {
-    return getRawButtonPressed(Button.B);
+    return getRawButtonReleased(Button.B);
   }
   
   public boolean getWantsGoToStow() {

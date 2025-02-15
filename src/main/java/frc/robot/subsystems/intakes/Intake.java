@@ -44,7 +44,6 @@ public class Intake {
     pivotConfig.idleMode(IdleMode.kBrake);
     pivotConfig.inverted(true);
 
-
     pivotConfig.encoder.positionConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI);
     pivotConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.SwerveDrive.k_turnGearRatio * 2.0 * Math.PI / 60.0);
 
@@ -59,10 +58,9 @@ public class Intake {
       pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
     }
 
-    if(isInverted) {
-      pivotConfig.inverted(true);
-      pivotConfig.absoluteEncoder.inverted(true);
-    }
+    pivotConfig.inverted(isInverted);
+    pivotConfig.absoluteEncoder.inverted(isInverted);
+    intakeConfig.inverted(isInverted);
 
     intakeConfig.closedLoop.pidf(
       RobotConstants.robotConfig.Intake.k_pivotMotorP,
@@ -75,7 +73,6 @@ public class Intake {
     m_pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     intakeConfig.idleMode(IdleMode.kCoast);
-    intakeConfig.inverted(true);
     m_intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_periodicIO = new PeriodicIO();
