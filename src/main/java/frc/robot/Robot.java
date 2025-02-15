@@ -98,8 +98,9 @@ public class Robot extends LoggedRobot {
 
     // Initialize on-board logging
     DataLogManager.start();
-    RobotTelemetry.print(String.format("Deployed version: GIT_COMMIT=%s, BUILD_DATE=%s, DIRTY=%d", BuildConstants.GIT_SHA,
-        BuildConstants.BUILD_DATE, BuildConstants.DIRTY));
+    RobotTelemetry
+        .print(String.format("Deployed version: GIT_COMMIT=%s, BUILD_DATE=%s, DIRTY=%d", BuildConstants.GIT_SHA,
+            BuildConstants.BUILD_DATE, BuildConstants.DIRTY));
     RobotTelemetry.print(String.format("Branch: %s", BuildConstants.GIT_BRANCH));
     RobotTelemetry.print("Logging Initialized. Fard.");
 
@@ -112,8 +113,7 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     if (this.isTestEnabled()) {
       CommandScheduler.getInstance().run();
-    }
-    else {
+    } else {
       m_virtualRobotController.updatePose();
 
       m_subsystems.forEach(subsystem -> subsystem.periodic());
@@ -167,30 +167,36 @@ public class Robot extends LoggedRobot {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }
 
-    // if (m_operatorController.getWantsIntakeEject()) {
-    //   m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
-    //   m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
-    // } else {
-    //   m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
-    //   m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
-    // }
-
-    if(m_operatorController.getWantsLeftIntakeGround()) {
+    if (m_operatorController.getWantsLeftIntakeGround()) {
       m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.GROUND);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
     }
 
-    if(m_operatorController.getWantsLeftIntakeStow()) {
+    if (m_operatorController.getWantsLeftIntakeStow()) {
       m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.STOW);
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
     }
 
-    if(m_operatorController.getWantsRightIntakeGround()) {
+    if (m_operatorController.getWantsRightIntakeGround()) {
       m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.GROUND);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
     }
 
-    if(m_operatorController.getWantsRightIntakeStow()) {
+    if (m_operatorController.getWantsRightIntakeStow()) {
+      m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.STOW);
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
+    }
+
+    if (m_operatorController.getWantsIntakeEject()) {
+      m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.EJECT);
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
+      m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.EJECT);
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
+    } 
+    
+    if (m_operatorController.getWantsIntakeStopEjecting()) {
+      m_intakes.setPivotTarget(IntakeVariant.LEFT, IntakePivotTarget.STOW);
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
       m_intakes.setPivotTarget(IntakeVariant.RIGHT, IntakePivotTarget.STOW);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
     }

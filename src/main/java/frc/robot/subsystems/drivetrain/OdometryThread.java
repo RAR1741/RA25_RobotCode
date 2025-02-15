@@ -178,7 +178,7 @@ public class OdometryThread implements Runnable {
     m_threadPriorityToSet = priority;
   }
 
-  // // TODO: Log these outside of the odometry thread
+  // // TODO Log these outside of the odometry thread
   // // @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
   // public int getSuccessfulDaqs() {
   //   return m_successfulDaqs;

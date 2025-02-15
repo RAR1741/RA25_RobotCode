@@ -38,15 +38,15 @@ public final class RobotConstants {
 
     checkRobotType();
     switch (getRobotType()) {
-      case SIM:
+      case SIM -> {}
         // Set (riiiiiiiiiiiiiiiight the constants) all the constants (designed)
         // specifically for the simulation
-      case JORMUNGANDR:
+      case JORMUNGANDR -> {
         robotConfig = new JormungandrConstants();
-        break;
-      default:
-        robotConfig = new JormungandrConstants(); // TODO: change this once we have an actual robot
-        break;
+      }
+      default -> {
+        robotConfig = new JormungandrConstants(); // TODO change this once we have Monarch
+      }
     }
 
     RobotTelemetry.print("ROBOT: " + getRobotType());

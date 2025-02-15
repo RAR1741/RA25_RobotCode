@@ -10,23 +10,27 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean getWantsLeftIntakeGround() {
-    return getRawButtonPressed(Button.LEFT_BUMPER);
+    return getRawButton(Button.LEFT_BUMPER);
   }
 
   public boolean getWantsLeftIntakeStow() {
     return getRawButtonReleased(Button.LEFT_BUMPER);
   }
 
+  public boolean getWantsRightIntakeGround() {
+    return getRawButton(Button.RIGHT_BUMPER);
+  }
+
   public boolean getWantsRightIntakeStow() {
     return getRawButtonReleased(Button.RIGHT_BUMPER);
   }
 
-  public boolean getWantsRightIntakeGround() {
-    return getRawButtonPressed(Button.RIGHT_BUMPER);
-  }
-
   public boolean getWantsIntakeEject() {
     return getRawButton(Button.B);
+  }
+
+  public boolean getWantsIntakeStopEjecting() {
+    return getRawButtonPressed(Button.B);
   }
   
   public boolean getWantsGoToStow() {

@@ -73,7 +73,6 @@ public class Constants {
     public final double k_leftPivotOffset = (360.0 - 330.529052734375) / 360.0;
     public final double k_rightPivotOffset = (360.0 - 178.09091186523438) / 360.0;
 
-
     public final double k_maxIntakeSpeed = 0.45;
     
   }
@@ -248,5 +247,5 @@ public class Constants {
     public final double[] k_troughSpeeds = new double[] { 0.1, 0.1 };
   }
 
-  // TODO: add Gamepiece class for Coral- and Algae-related constants
+  // TODO add Gamepiece class for Coral- and Algae-related constants
 }

@@ -32,7 +32,7 @@ public class Hopper extends Subsystem {
     SparkMaxConfig config = new SparkMaxConfig();
 
     // add config
-    config.inverted(false); // TODO: check this
+    config.inverted(false); // TODO check this
     m_hopperMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // //set PID values

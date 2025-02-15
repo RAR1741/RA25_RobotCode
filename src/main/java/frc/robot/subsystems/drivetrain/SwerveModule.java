@@ -39,7 +39,7 @@ public class SwerveModule {
 
   private static class PeriodicIO {
     SwerveModuleState desiredState = new SwerveModuleState();
-    // boolean shouldChangeState = false; // TODO: maybe add this back?
+    // boolean shouldChangeState = false; // TODO maybe add this back?
   }
 
   private boolean m_moduleDisabled = false;

@@ -19,18 +19,18 @@ public class RobotTelemetry {
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
     switch (BuildConstants.DIRTY) {
-      case 0:
+      case 0 -> {
         Logger.recordMetadata("GitDirty", "All changes committed");
-        break;
-      case 1:
+      }
+      case 1 -> {
         Logger.recordMetadata("GitDirty", "Uncomitted changes");
-        break;
-      default:
+      }
+      default -> {
         Logger.recordMetadata("GitDirty", "Unknown");
-        break;
+      }
     }
 
-    // TODO: this
+    // TODO this
     // Logger.recordMetadata("RobotType", RobotConstants.getRobotType().name());
     Logger.recordMetadata("ProjectName", "2025 REEFSCAPE");
 

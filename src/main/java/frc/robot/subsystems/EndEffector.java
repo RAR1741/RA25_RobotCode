@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Arm.ArmState;
+import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class EndEffector extends Subsystem {
   private static EndEffector m_instance;
@@ -23,6 +24,8 @@ public class EndEffector extends Subsystem {
   SparkMax m_rightMotor;
 
   private LaserCanHandler m_laserCan;
+  private Arm m_arm;
+  private Elevator m_elevator;
 
   public static EndEffector getInstance() {
     if (m_instance == null) {
@@ -40,6 +43,8 @@ public class EndEffector extends Subsystem {
     m_rightMotor = new SparkMax(RobotConstants.robotConfig.EndEffector.k_rightMotorId, MotorType.kBrushless);
 
     // m_laserCan = LaserCanHandler.getInstance();
+    m_arm = Arm.getInstance();
+    m_elevator = Elevator.getInstance();
 
     SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kCoast);
 
@@ -104,11 +109,6 @@ public class EndEffector extends Subsystem {
   public void writePeriodicOutputs() {
     double[] speeds = getIntakeSpeeds();
 
-    if (Arm.getInstance().getArmState() == ArmState.EXTEND) {
-      speeds[0] *= -1;
-      speeds[1] *= -1;
-    }
-
     m_leftMotor.set(speeds[0]);
     m_rightMotor.set(speeds[1]);
   }
@@ -121,18 +121,28 @@ public class EndEffector extends Subsystem {
   @AutoLogOutput(key = "EndEffector/Position/Target")
   private double[] getIntakeSpeeds() {
     switch (m_periodicIO.state) {
-      case OFF:
+      case OFF -> {
         return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
-      case INDEX:
+      }
+      case INDEX -> {
         return RobotConstants.robotConfig.EndEffector.k_indexSpeeds;
-      case REVERSE:
+      }
+      case REVERSE -> {
         return RobotConstants.robotConfig.EndEffector.k_reverseSpeeds;
-      case SCORE_BRANCHES:
+      }
+      case SCORE_BRANCHES -> {
+        if (m_arm.getArmState() == ArmState.EXTEND || m_elevator.getElevatorState() == ElevatorState.L4) {
+          return new double[] { -RobotConstants.robotConfig.EndEffector.k_branchSpeeds[0],
+              -RobotConstants.robotConfig.EndEffector.k_branchSpeeds[1] };
+        }
         return RobotConstants.robotConfig.EndEffector.k_branchSpeeds;
-      case SCORE_TROUGH:
+      }
+      case SCORE_TROUGH -> {
         return RobotConstants.robotConfig.EndEffector.k_troughSpeeds;
-      default:
+      }
+      default -> {
         return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
+      }
     }
   }
 
@@ -144,12 +154,13 @@ public class EndEffector extends Subsystem {
 
   private void checkAutoTasks() {
     switch (m_periodicIO.state) {
-      case INDEX:
+      case INDEX -> {
         // if (!m_laserCan.getEntranceSeesCoral()) {
         off();
         // }
         break;
-      case OFF:
+      }
+      case OFF -> {
         // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
         // && m_laserCan.getExitSeesCoral()) {
         // reverse();
@@ -157,27 +168,30 @@ public class EndEffector extends Subsystem {
         // index();
         // }
         break;
-      case REVERSE:
+      }
+      case REVERSE -> {
         // if (m_laserCan.getIndexSeesCoral()) {
         off();
         // }
         break;
-      case SCORE_BRANCHES:
+      }
+      case SCORE_BRANCHES -> {
         // if (!m_laserCan.getExitSeesCoral()) {
         // off();
         // } else {
         branches();
         // }
         break;
-      case SCORE_TROUGH:
+      }
+      case SCORE_TROUGH -> {
         // if (!m_laserCan.getExitSeesCoral()) {
         // off();
         // } else {
         trough();
         // }
         break;
-      default:
-        break;
+      }
+      default -> {}
     }
   }
 }
