@@ -34,23 +34,23 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean getWantsGoToL1() {
-    return this.getRawButtonPressed(Button.X);
+    return this.getHatPressed(Direction.DOWN);
   }
 
   public boolean getWantsGoToL2() {
-    return this.getRawButtonPressed(Button.B);
+    return this.getHatPressed(Direction.RIGHT);
   }
 
   public boolean getWantsGoToL3() {
-    return this.getRawButtonPressed(Button.Y);
+    return this.getHatPressed(Direction.LEFT);
   }
 
   public boolean getWantsGoToL4() {
-    return this.getRawButtonPressed(Button.RIGHT_BUMPER);
+    return this.getHatPressed(Direction.UP);
   }
 
   public boolean getWantsResetElevator() {
-    return this.getRawButtonPressed(Button.BACK);
+    return this.getRawButtonPressed(Button.START);
   }
 
   public boolean getWantsArmScore() {
@@ -61,13 +61,7 @@ public class OperatorController extends FilteredController {
     return this.getHatPressed(Direction.DOWN);
   }
 
-  public int getWantsScore() {
-    if (this.getFilteredAxis(Axis.RIGHT_TRIGGER) > this.getFilteredAxis(Axis.LEFT_TRIGGER)) {
-      return 1;
-    } else if (this.getFilteredAxis(Axis.RIGHT_TRIGGER) < this.getFilteredAxis(Axis.LEFT_TRIGGER)) {
-      return -1;
-    } else {
-      return 0;
-    }
+  public boolean getWantsScore() {
+    return this.getRawButton(Button.X);
   }
 }

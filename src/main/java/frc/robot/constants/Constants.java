@@ -14,6 +14,7 @@ public class Constants {
   public final LaserCanConstants LaserCan = new LaserCanConstants();
   public final EndEffectorConstants EndEffector = new EndEffectorConstants();
   public final OdometryConstants Odometry = new OdometryConstants();
+  public final HopperConstants Hopper = new HopperConstants();
 
   public static class RobotConstants {
     public final String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -45,28 +46,33 @@ public class Constants {
     public final int k_threadUpdateFrequency = 250; // Hz
   }
 
+  public static class HopperConstants {
+    public final int k_hopperMotorId = 50;
+    public final double k_hopperSpeed = 0.1;
+  }
+
   public static class IntakeConstants {
-    public int k_pivotMotorIdLeft = 40;
-    public int k_pivotMotorIdRight = 41;
+    public final int k_pivotMotorIdLeft = 40;
+    public final int k_pivotMotorIdRight = 41;
 
-    public int k_intakeMotorIdLeft = 42;
-    public int k_intakeMotorIdRight = 43;
+    public final int k_intakeMotorIdLeft = 42;
+    public final int k_intakeMotorIdRight = 43;
 
-    public double k_pivotMotorP = 0.0;
-    public double k_pivotMotorI = 0.0;
-    public double k_pivotMotorD = 0.0;
-    public double k_pivotMotorFF = 0.0;
+    public final double k_pivotMotorP = 0.0;
+    public final double k_pivotMotorI = 0.0;
+    public final double k_pivotMotorD = 0.0;
+    public final double k_pivotMotorFF = 0.0;
 
-    public double k_maxVelocity = 0.0;
-    public double k_maxAcceleration = 0.0;
+    public final double k_maxVelocity = 0.0;
+    public final double k_maxAcceleration = 0.0;
 
-    public double k_groundAngle = 0.0;
-    public double k_ejectAngle = 0.0;
-    public double k_stowAngle = 0.0;
+    public final double k_groundAngle = 0.0;
+    public final double k_ejectAngle = 0.0;
+    public final double k_stowAngle = 0.0;
 
-    public double k_pivotOffset = 0.0;
+    public final double k_pivotOffset = 0.0;
 
-    public double k_maxIntakeSpeed = 0.5;
+    public final double k_maxIntakeSpeed = 0.45;
     
   }
 

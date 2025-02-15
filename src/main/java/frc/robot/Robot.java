@@ -32,6 +32,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.drivetrain.SwerveSysId;
@@ -52,6 +53,7 @@ public class Robot extends LoggedRobot {
   private final EndEffector m_endEffector;
   private final RAROdometry m_odometry;
   private final Intakes m_intakes;
+  private final Hopper m_hopper;
   private final DriverController m_driverController;
   private final OperatorController m_operatorController;
   private final PoseAligner m_poseAligner;
@@ -76,6 +78,7 @@ public class Robot extends LoggedRobot {
     m_endEffector = EndEffector.getInstance();
     m_poseAligner = PoseAligner.getInstance();
     m_intakes = Intakes.getInstance();
+    m_hopper = Hopper.getInstance();
 
     m_driverController = new DriverController(0, true, true, 0.5);
     m_operatorController = new OperatorController(1, true, true, 0.5);
@@ -89,6 +92,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_elevator);
     m_subsystems.add(m_endEffector);
     m_subsystems.add(m_intakes);
+    m_subsystems.add(m_hopper);
 
     new RobotTelemetry();
 
@@ -127,6 +131,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    m_hopper.start();
   }
 
   @Override
@@ -183,24 +188,31 @@ public class Robot extends LoggedRobot {
       m_odometry.reset();
     }
 
-    // if (m_operatorController.getWantsGoToStow()) {
-    //   m_elevator.setState(ElevatorState.STOW);
-    // } else if (m_operatorController.getWantsGoToL1()) {
-    //   m_elevator.setState(ElevatorState.L1);
-    // } else if (m_operatorController.getWantsGoToL2()) {
-    //   m_elevator.setState(ElevatorState.L2);
-    // } else if (m_operatorController.getWantsGoToL3()) {
-    //   m_elevator.setState(ElevatorState.L3);
-    // } else if (m_operatorController.getWantsGoToL4()) {
-    //   m_elevator.setState(ElevatorState.L4);
-    // } else if (m_operatorController.getWantsResetElevator()) {
-    //   m_elevator.reset();
-    // }
+    if (m_operatorController.getWantsGoToStow()) {
+      m_elevator.setState(ElevatorState.STOW);
+      m_arm.setArmState(ArmState.STOW);
+    } else if (m_operatorController.getWantsGoToL1()) {
+      m_elevator.setState(ElevatorState.L1);
+      m_arm.setArmState(ArmState.STOW);
+    } else if (m_operatorController.getWantsGoToL2()) {
+      m_elevator.setState(ElevatorState.L2);
+      m_arm.setArmState(ArmState.STOW);
+    } else if (m_operatorController.getWantsGoToL3()) {
+      m_elevator.setState(ElevatorState.L3);
+      m_arm.setArmState(ArmState.STOW);
+    } else if (m_operatorController.getWantsGoToL4()) {
+      m_elevator.setState(ElevatorState.L4);
+      m_arm.setArmState(ArmState.EXTEND);
+    } else if (m_operatorController.getWantsResetElevator()) {
+      m_elevator.reset();
+    }
 
-    if (m_operatorController.getWantsScore() > 0) {
-      m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
-    } else if (m_operatorController.getWantsScore() < 0) {
-      m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
+    if (m_operatorController.getWantsScore()) {
+      if (m_elevator.getState() == ElevatorState.L1) {
+        m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
+      } else {
+        m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
+      }
     } else {
       m_endEffector.setState(EndEffectorState.OFF);
     }
@@ -208,16 +220,11 @@ public class Robot extends LoggedRobot {
     if (m_driverController.getWantsAutoPositionPressed()) {
       m_swerve.resetDriveController();
     }
-
-    if (m_operatorController.getWantsArmScore()) {
-      m_arm.setArmState(ArmState.EXTEND);
-    } else if (m_operatorController.getWantsArmStow()) {
-      m_arm.setArmState(ArmState.STOW);
-    }
   }
 
   @Override
   public void disabledInit() {
+    m_hopper.stop();
   }
 
   @Override

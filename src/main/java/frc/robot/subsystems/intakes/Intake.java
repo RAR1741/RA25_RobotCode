@@ -151,7 +151,12 @@ public class Intake {
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotAngle")
   public double getPivotAngle() {
-    return Units.rotationsToDegrees(m_intakeMotor.getAbsoluteEncoder().getPosition()); //TODO: was getAbsolutePosition() so make sure this works
+    return m_intakeMotor.getAbsoluteEncoder().getPosition();
+  }
+
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/IntakeSpeed")
+  public double getIntakeSpeed() {
+    return m_intakeMotor.getEncoder().getVelocity(); //TODO: was getAbsolutePosition() so make sure this works
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotReferenceToHorizontal")
