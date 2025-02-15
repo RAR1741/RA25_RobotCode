@@ -186,12 +186,17 @@ public class Constants {
     public double k_I;
     public double k_D;
     public double k_IZone;
-    public double k_FF;
+
+    public double k_FFS;
+    public double k_FFV;
+    public double k_FFA;
+    public double k_FFG;
 
     public final int k_maxCurrent = 5;
 
     public final double k_stowAngle = 0.4; //0.29176223278045654;
     public final double k_L4Angle = 0.6810551881790161;
+    public final double k_horzAngle = 0.5404757261276245;
 
     public final double k_maxAcceleration = 0.2;
     public final double k_maxVelocity = 0.1;

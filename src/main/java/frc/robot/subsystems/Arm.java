@@ -15,6 +15,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
@@ -25,9 +26,10 @@ public class Arm extends Subsystem {
 
   private PeriodicIO m_periodicIO;
 
-  private SparkMax m_motor;
-  private SparkAbsoluteEncoder m_encoder;
-  private SparkClosedLoopController m_pidController;
+  private final SparkMax m_motor;
+  private final SparkAbsoluteEncoder m_encoder;
+  private final SparkClosedLoopController m_pidController;
+  private final ArmFeedforward m_feedForward;
 
   //TODO: Use SmartMotion or MAXMotion
   private TrapezoidProfile m_profile;
@@ -43,6 +45,11 @@ public class Arm extends Subsystem {
     m_motor = new SparkMax(RobotConstants.robotConfig.Arm.k_motorId, MotorType.kBrushless);
     m_encoder = m_motor.getAbsoluteEncoder();
     m_pidController = m_motor.getClosedLoopController();
+    m_feedForward = new ArmFeedforward(
+        RobotConstants.robotConfig.Arm.k_FFS,
+        RobotConstants.robotConfig.Arm.k_FFG,
+        RobotConstants.robotConfig.Arm.k_FFV,
+        RobotConstants.robotConfig.Arm.k_FFA);
 
     SparkMaxConfig armConfig = new SparkMaxConfig();
 
@@ -113,7 +120,7 @@ public class Arm extends Subsystem {
         m_currentState.position,
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
-        RobotConstants.robotConfig.Arm.k_FF,
+        RobotConstants.robotConfig.Arm.k_FFG,
         ArbFFUnits.kVoltage);
   }
 
@@ -124,6 +131,10 @@ public class Arm extends Subsystem {
   @Override
   public void stop() {
     m_pidController.setReference(0.0, SparkBase.ControlType.kVoltage);
+  }
+
+  public double absolutePositionToHorizontalDEgrees(double position) {
+    return 0.0;
   }
 
   @AutoLogOutput(key = "Arm/Position/Current")
