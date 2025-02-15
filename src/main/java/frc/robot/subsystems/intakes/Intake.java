@@ -44,24 +44,25 @@ public class Intake {
     pivotConfig.idleMode(IdleMode.kBrake);
     pivotConfig.inverted(true);
 
-    pivotConfig.absoluteEncoder.positionConversionFactor(360.0);
-    if (pivotMotorId == 40) {
-      pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_leftPivotOffset);
-    } else if (pivotMotorId == 41) {
-      pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
-    }
+    //TODO: Due to how REV handles their rollovers, we can't do this anymore. Figure out a solution?
+    pivotConfig.absoluteEncoder.positionConversionFactor(1.0); //360.0 // stinky
+    // if (pivotMotorId == RobotConstants.robotConfig.Intake.k_pivotMotorIdLeft) {
+    //   pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_leftPivotOffset);
+    // } else if (pivotMotorId == RobotConstants.robotConfig.Intake.k_pivotMotorIdRight) {
+    //   pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
+    // }
 
     pivotConfig.inverted(isInverted);
     pivotConfig.absoluteEncoder.inverted(isInverted);
     intakeConfig.inverted(isInverted);
 
-    intakeConfig.closedLoop.pidf(
+    pivotConfig.closedLoop.pidf(
       RobotConstants.robotConfig.Intake.k_pivotMotorP,
       RobotConstants.robotConfig.Intake.k_pivotMotorI,
       RobotConstants.robotConfig.Intake.k_pivotMotorD,
       RobotConstants.robotConfig.Intake.k_pivotMotorFF);
 
-    intakeConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+    pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
     m_pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -157,10 +158,11 @@ public class Intake {
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotReferenceToHorizontal")
   public double getPivotReferenceToHorizontal() {
     if (m_intakeName.equalsIgnoreCase("Left")) {
-      return getPivotAngle() - RobotConstants.robotConfig.Intake.k_leftPivotOffset;
+      return (getPivotAngle() - RobotConstants.robotConfig.Intake.k_ejectAngle) * (2.0 * Math.PI);
     } else if (m_intakeName.equalsIgnoreCase("Right")) {
-      return getPivotAngle() - RobotConstants.robotConfig.Intake.k_rightPivotOffset;
+      return (getPivotAngle() - RobotConstants.robotConfig.Intake.k_ejectAngle) * (2.0 * Math.PI);
     }
+
     return 0.0;
   }
 

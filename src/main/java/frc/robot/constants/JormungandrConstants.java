@@ -35,14 +35,25 @@ public class JormungandrConstants extends Constants {
     Arm.k_FFS = 0.0;
     Arm.k_FFV = 0.0;
     Arm.k_FFA = 0.0;
-    Arm.k_FFG = 0.35; //0.25
+    Arm.k_FFG = 0.35;
+
+    Arm.k_stowAngle = 0.29270070791244507;
+    Arm.k_L4Angle = 0.5404757261276245;
+    Arm.k_horizontalAngle = 0.5404757261276245;
     
     Intake.k_pivotMotorP = 0.0;
     Intake.k_pivotMotorI = 0.0;
     Intake.k_pivotMotorD = 0.0;
     Intake.k_pivotMotorFF = 0.0;
 
-    Intake.k_leftPivotOffset = (360.0 - 330.529052734375) / 360.0;
-    Intake.k_rightPivotOffset = (360.0 - 178.09091186523438) / 360.0;
+    Intake.Left.k_stowPosition = 0.8342224359512329;
+    Intake.Left.k_groundPosition = 0.20293329656124115;
+    Intake.Left.k_ejectPosition = 0.050809308886528015;
+    Intake.Left.k_horizontalPosition = 0.050809308886528015;
+
+    Intake.Right.k_stowPosition = 0.9970211386680603;
+    Intake.Right.k_groundPosition = 0.3804924488067627;
+    Intake.Right.k_ejectPosition = 0.21850648522377014;
+    Intake.Right.k_horizontalPosition = 0.21850648522377014;
   }
 }

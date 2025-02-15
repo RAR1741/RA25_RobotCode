@@ -137,7 +137,7 @@ public class Arm extends Subsystem {
 
   @AutoLogOutput(key = "Arm/Position/HorizontalPositionRads")
   public double absolutePositionToHorizontalRads() {
-    return (getArmPosition() - RobotConstants.robotConfig.Arm.k_horzAngle) * (2 * Math.PI); // rotations to radians
+    return (getArmPosition() - RobotConstants.robotConfig.Arm.k_horizontalAngle) * (2 * Math.PI); // rotations to radians
   }
 
   @AutoLogOutput(key = "Arm/Position/Current")

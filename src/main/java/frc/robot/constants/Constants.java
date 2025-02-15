@@ -194,9 +194,9 @@ public class Constants {
 
     public final int k_maxCurrent = 10;
 
-    public final double k_stowAngle = 0.29270070791244507;
-    public final double k_L4Angle = 0.5404757261276245;
-    public final double k_horzAngle = 0.5404757261276245;
+    public double k_stowAngle;
+    public double k_L4Angle;
+    public double k_horizontalAngle;
 
     public final double k_maxAcceleration = 0.8;
     public final double k_maxVelocity = 0.4;
@@ -226,6 +226,9 @@ public class Constants {
     public final int k_intakeMotorIdLeft = 42;
     public final int k_intakeMotorIdRight = 43;
 
+    public final int k_pivotCurrent = 10;
+    public final int k_intakeCurrent = 20;
+
     public double k_pivotMotorP;
     public double k_pivotMotorI;
     public double k_pivotMotorD;
@@ -238,8 +241,22 @@ public class Constants {
     public final double k_ejectAngle = 0.0;
     public final double k_stowAngle = 0.0;
 
-    public double k_leftPivotOffset;
-    public double k_rightPivotOffset;
+    public final LeftConstants Left = new LeftConstants();
+    public final RightConstants Right = new RightConstants();
+
+    public class LeftConstants {
+      public double k_stowPosition;
+      public double k_groundPosition;
+      public double k_ejectPosition;
+      public double k_horizontalPosition;
+    }
+
+    public class RightConstants {
+      public double k_stowPosition;
+      public double k_groundPosition;
+      public double k_ejectPosition;
+      public double k_horizontalPosition;
+    }
 
     public final double k_maxIntakeSpeed = 0.6;
   }
