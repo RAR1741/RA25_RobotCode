@@ -125,6 +125,10 @@ public class Robot extends LoggedRobot {
 
       m_signalManager.refresh();
     }
+
+    if (m_operatorController.getWantsResetElevator()) {
+      m_elevator.reset();
+    }
   }
 
   @Override
@@ -215,12 +219,10 @@ public class Robot extends LoggedRobot {
     } else if (m_operatorController.getWantsGoToL4()) {
       m_elevator.setState(ElevatorState.L4);
       m_arm.setArmState(ArmState.EXTEND);
-    } else if (m_operatorController.getWantsResetElevator()) {
-      m_elevator.reset();
     }
 
     if (m_operatorController.getWantsScore()) {
-      if (m_elevator.getState() == ElevatorState.L1) {
+      if (m_elevator.getTargetState() == ElevatorState.L1) {
         m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
       } else {
         m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);

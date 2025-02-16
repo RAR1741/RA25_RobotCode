@@ -21,22 +21,6 @@ public class JormungandrConstants extends Constants {
     SwerveDrive.Turn.k_D = 1.0;
     SwerveDrive.Turn.k_IZone = 0.0;
 
-    Elevator.k_P = 0.15;
-    Elevator.k_I = 0.0;
-    Elevator.k_D = 0.0;
-    Elevator.k_IZone = 0.0;
-    Elevator.k_FF = 0.50;
-
-    Arm.k_P = 10.8;
-    Arm.k_I = 0.0;
-    Arm.k_D = 0.0;
-    Arm.k_IZone = 0.0;
-
-    Arm.k_FFS = 0.0;
-    Arm.k_FFV = 0.0;
-    Arm.k_FFA = 0.0;
-    Arm.k_FFG = 0.35;
-
     Arm.k_stowAngle = 0.29270070791244507;
     Arm.k_L4Angle = 0.5404757261276245;
     Arm.k_horizontalAngle = 0.5404757261276245;

@@ -3,16 +3,23 @@ package frc.robot.subsystems.intakes;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.AutoLogOutputManager;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
+
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import frc.robot.constants.RobotConstants;
 
@@ -24,6 +31,13 @@ public class Intake {
   private final PeriodicIO m_periodicIO;
   private final SparkClosedLoopController m_pivotPIDController;
   private final SparkClosedLoopController m_rollerPIDController;
+  private final ArmFeedforward m_pivotFeedforward;
+
+  //TODO Use SmartMotion or MAXMotion
+  private TrapezoidProfile m_profile;
+  private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
+  private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
+  private double m_previousUpdateTime = Timer.getFPGATimestamp();
 
   private static class PeriodicIO {
     IntakeState desiredIntakeState = IntakeState.NONE;
@@ -32,6 +46,17 @@ public class Intake {
   Intake(String intakeName, int pivotMotorId, int rollerMotorId, boolean isInverted) {
     m_intakeName = intakeName;
     AutoLogOutputManager.addObject(this);
+
+    m_pivotFeedforward = new ArmFeedforward(
+        RobotConstants.robotConfig.Arm.k_FFS,
+        RobotConstants.robotConfig.Arm.k_FFG,
+        RobotConstants.robotConfig.Arm.k_FFV,
+        RobotConstants.robotConfig.Arm.k_FFA);
+
+    m_profile = new TrapezoidProfile(
+        new TrapezoidProfile.Constraints(
+            RobotConstants.robotConfig.Intake.k_maxVelocity,
+            RobotConstants.robotConfig.Intake.k_maxAcceleration));
 
     m_pivotMotor = new SparkMax(pivotMotorId, MotorType.kBrushless);
     m_rollerMotor = new SparkFlex(rollerMotorId, MotorType.kBrushless);
@@ -44,7 +69,7 @@ public class Intake {
     pivotConfig.idleMode(IdleMode.kBrake);
     pivotConfig.inverted(true);
 
-    //TODO: Due to how REV handles their rollovers, we can't do this anymore. Figure out a solution?
+    //TODO Due to how REV handles their rollovers, we can't do this anymore. Figure out a solution?
     pivotConfig.absoluteEncoder.positionConversionFactor(1.0); //360.0 // stinky
     // if (pivotMotorId == RobotConstants.robotConfig.Intake.k_pivotMotorIdLeft) {
     //   pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_leftPivotOffset);
@@ -56,11 +81,10 @@ public class Intake {
     pivotConfig.absoluteEncoder.inverted(isInverted);
     rollerConfig.inverted(isInverted);
 
-    pivotConfig.closedLoop.pidf(
+    pivotConfig.closedLoop.pid(
       RobotConstants.robotConfig.Intake.k_pivotMotorP,
       RobotConstants.robotConfig.Intake.k_pivotMotorI,
-      RobotConstants.robotConfig.Intake.k_pivotMotorD,
-      RobotConstants.robotConfig.Intake.k_pivotMotorFF);
+      RobotConstants.robotConfig.Intake.k_pivotMotorD);
 
     pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
@@ -89,9 +113,28 @@ public class Intake {
   }
 
   public void writePeriodicOutputs() {
-    m_pivotPIDController.setReference(getTargetPivotAngle(), ControlType.kPosition);
+    double currentTime = Timer.getFPGATimestamp();
+    double deltaTime = currentTime - m_previousUpdateTime;
+
+    m_previousUpdateTime = currentTime;
+
+    // Update goal
+    m_goalState.position = getTargetPivotAngle();
+
+    // Calculate new state
+    m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
+
+    double ff = m_pivotFeedforward.calculate(getPivotReferenceToHorizontal(), m_currentState.velocity);
+
+    // Set PID controller to new state
+    m_pivotPIDController.setReference(
+        m_currentState.position,
+        ControlType.kPosition,
+        ClosedLoopSlot.kSlot0,
+        ff,
+        ArbFFUnits.kVoltage);
+        
     m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
-    // m_rollerMotor.set(m_periodicIO.rollerSpeed);
   }
 
   public void stop() {

@@ -131,7 +131,7 @@ public class EndEffector extends Subsystem {
         return RobotConstants.robotConfig.EndEffector.k_reverseSpeeds;
       }
       case SCORE_BRANCHES -> {
-        if (m_arm.getArmState() == ArmState.EXTEND || m_elevator.getElevatorState() == ElevatorState.L4) {
+        if (m_arm.getArmState() == ArmState.EXTEND || m_elevator.getTargetState() == ElevatorState.L4) {
           return new double[] { -RobotConstants.robotConfig.EndEffector.k_branchSpeeds[0],
               -RobotConstants.robotConfig.EndEffector.k_branchSpeeds[1] };
         }

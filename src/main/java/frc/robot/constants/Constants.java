@@ -157,11 +157,11 @@ public class Constants {
     public final int k_elevatorLeftMotorId = 20;
     public final int k_elevatorRightMotorId = 21;
 
-    public double k_P;
-    public double k_I;
-    public double k_D;
-    public double k_IZone;
-    public double k_FF;
+    public final double k_P = 0.15;
+    public final double k_I = 0.0;
+    public final double k_D = 0.0;
+    public final double k_IZone = 0.0;
+    public final double k_FF = 0.50;
 
     public final double k_maxVelocity = 65;
     public final double k_maxAcceleration = 200;
@@ -182,15 +182,15 @@ public class Constants {
   public static class ArmConstants {
     public final int k_motorId = 30;
 
-    public double k_P;
-    public double k_I;
-    public double k_D;
-    public double k_IZone;
+    public final double k_P = 10.8;
+    public final double k_I= 0.0;
+    public final double k_D = 0.0;
+    public final double k_IZone = 0.0;
 
-    public double k_FFS;
-    public double k_FFV;
-    public double k_FFA;
-    public double k_FFG;
+    public final double k_FFS = 0.0;
+    public final double k_FFV = 0.0;
+    public final double k_FFA = 0.0;
+    public final double k_FFG = 0.35;
 
     public final int k_maxCurrent = 10;
 
@@ -229,18 +229,24 @@ public class Constants {
     public final int k_pivotCurrentLimit = 10;
     public final int k_rollerCurrentLimit = 20;
 
-    public final double k_pivotMotorP = 0.0;
+    public final double k_pivotMotorP = 0.045; //Taken from Apollo intake pivot
     public final double k_pivotMotorI = 0.0;
     public final double k_pivotMotorD = 0.0;
-    public final double k_pivotMotorFF = 0.0;
 
-    public final double k_rollerMotorP = 0.0;
-    public final double k_rollerMotorI = 0.0;
-    public final double k_rollerMotorD = 0.0;
-    public final double k_rollerMotorFF = 0.25;
+    public final double k_pivotMotorKS = 0.0;
+    public final double k_pivotMotorKG = 0.0;
+    public final double k_pivotMotorKV = 0.0;
+    public final double k_pivotMotorKA = 0.0;
 
-    public final double k_maxVelocity = 0.0;
-    public final double k_maxAcceleration = 0.0;
+    public final double k_rollerMotorP = 0.0007000; //Taken from Apollo shooter, maybe it'll work?
+    public final double k_rollerMotorI = 0.00000008;
+    public final double k_rollerMotorD = 0.0000500;
+    public final double k_rollerMotorFF = 0.000150;
+
+    public final double k_maxVelocity = 6000;
+    public final double k_maxAcceleration = 15000;
+
+    public final double k_maxIntakeSpeed = 4000.0;
 
     public final double k_groundAngle = 0.0;
     public final double k_ejectAngle = 0.0;
@@ -262,8 +268,6 @@ public class Constants {
       public double k_ejectPosition;
       public double k_horizontalPosition;
     }
-
-    public final double k_maxIntakeSpeed = 0.6;
   }
 
   public static class HopperConstants {
