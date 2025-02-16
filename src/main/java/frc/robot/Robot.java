@@ -141,7 +141,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    m_hopper.start();
+    m_hopper.on();
   }
 
   @Override

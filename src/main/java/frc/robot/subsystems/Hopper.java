@@ -9,11 +9,13 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class Hopper extends Subsystem {
   private static Hopper m_instance = null;
   private final SparkMax m_hopperMotor;
   private static PeriodicIO m_periodicIO;
+  private Elevator m_elevator;
 
   public static class PeriodicIO {
     boolean is_hopper_on = false;
@@ -32,6 +34,8 @@ public class Hopper extends Subsystem {
     config.inverted(false);
     m_hopperMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+    m_elevator = Elevator.getInstance();
+
     m_periodicIO = new PeriodicIO();
   }
 
@@ -42,17 +46,26 @@ public class Hopper extends Subsystem {
     return m_instance;
   }
 
-  public void start() {
+  public void on() {
     m_periodicIO.is_hopper_on = true;
   }
 
-  @Override
-  public void reset() {
+  public void off() {
     m_periodicIO.is_hopper_on = false;
   }
 
   @Override
+  public void reset() {
+    off();
+  }
+
+  @Override
   public void periodic() {
+    if (m_elevator.getTargetState() == ElevatorState.STOW) {
+      on();
+    } else {
+      off();
+    }
   }
 
   @Override
@@ -66,7 +79,7 @@ public class Hopper extends Subsystem {
 
   @Override
   public void stop() {
-    m_periodicIO.is_hopper_on = false;
+    off();
   }
 
   @AutoLogOutput(key = "Hopper/Velocity")
