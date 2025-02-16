@@ -171,7 +171,7 @@ public class Constants {
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
     public final double k_L2Height = 25.64;
-    public final double k_L3Height = 42.0;
+    public final double k_L3Height = 43.5;
     public final double k_L4Height = 59.6;
     public final double k_maxHeight = 60.5;
     // public final double k_groundAlgaeHeight = 0.0;
@@ -192,7 +192,7 @@ public class Constants {
     public final double k_FFA = 0.0;
     public final double k_FFG = 0.35;
 
-    public final int k_maxCurrent = 10;
+    public final int k_maxCurrent = 20;
 
     public double k_stowAngle;
     public double k_L4Angle;
