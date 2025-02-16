@@ -48,6 +48,6 @@ public class DriverController extends FilteredController {
   }
 
   public boolean getWantsResetOdometry() {
-    return this.getRawButtonPressed(Button.BACK);
+    return this.getRawButtonPressed(Button.START);
   }
 }

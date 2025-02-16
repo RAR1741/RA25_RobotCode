@@ -231,6 +231,7 @@ public class Constants {
 
     public final double k_rollerGearRatio = (1.0 / 4.0);
 
+    // TODO: maybe tune more for higher speed, needs to match with drive train speed
     public final double k_pivotMotorP = 15.0;
     public final double k_pivotMotorI = 0.0;
     public final double k_pivotMotorD = 0.0;
@@ -248,7 +249,7 @@ public class Constants {
     public final double k_maxAcceleration = 1.6;
     public final double k_maxVelocity = 0.8;
 
-    public final double k_maxIntakeSpeed = 1000.0;
+    public final double k_maxIntakeSpeed = 825.0;
 
     public final LeftConstants Left = new LeftConstants();
     public final RightConstants Right = new RightConstants();
@@ -270,7 +271,7 @@ public class Constants {
 
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
-    public final double k_hopperSpeed = 0.2;
+    public final double k_hopperSpeed = 0.5;
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants

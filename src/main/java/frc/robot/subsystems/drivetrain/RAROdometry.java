@@ -108,9 +108,9 @@ public class RAROdometry extends Subsystem {
 
   public void setAllianceGyroAngleAdjustment() {
     if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      m_gyro.setAngleAdjustment(180.0);
-    } else {
       m_gyro.setAngleAdjustment(0.0);
+    } else {
+      m_gyro.setAngleAdjustment(180.0); // 🤞
     }
   }
 
