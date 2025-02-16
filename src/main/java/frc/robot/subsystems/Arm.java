@@ -31,12 +31,6 @@ public class Arm extends Subsystem {
   private final SparkClosedLoopController m_pidController;
   private final ArmFeedforward m_feedForward;
 
-  //TODO: Use SmartMotion or MAXMotion
-  private TrapezoidProfile m_profile;
-  private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
-  private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
-  private double m_previousUpdateTime = Timer.getFPGATimestamp();
-
   private Arm() {
     super("Arm");
 
@@ -59,6 +53,10 @@ public class Arm extends Subsystem {
             RobotConstants.robotConfig.Arm.k_D)
         .iZone(RobotConstants.robotConfig.Arm.k_IZone)
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+    
+    armConfig.closedLoop.maxMotion
+      .maxAcceleration(RobotConstants.robotConfig.Arm.k_maxAcceleration)
+      .maxVelocity(RobotConstants.robotConfig.Arm.k_maxVelocity);
 
     armConfig.absoluteEncoder
         .inverted(true)
@@ -72,11 +70,6 @@ public class Arm extends Subsystem {
         .idleMode(IdleMode.kBrake);
 
     m_motor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    m_profile = new TrapezoidProfile(
-        new TrapezoidProfile.Constraints(
-            RobotConstants.robotConfig.Arm.k_maxVelocity,
-            RobotConstants.robotConfig.Arm.k_maxAcceleration));
   }
 
   private static class PeriodicIO {
@@ -104,23 +97,13 @@ public class Arm extends Subsystem {
 
   @Override
   public void writePeriodicOutputs() {
-    double currentTime = Timer.getFPGATimestamp();
-    double deltaTime = currentTime - m_previousUpdateTime;
 
-    m_previousUpdateTime = currentTime;
-
-    // Update goal
-    m_goalState.position = getArmTarget();
-
-    // Calculate new state
-    m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
-
-    double ff = m_feedForward.calculate(absolutePositionToHorizontalRads(), m_currentState.velocity);
+    double ff = m_feedForward.calculate(absolutePositionToHorizontalRads(), getArmVelocity());
 
     // Set PID controller to new state
     m_pidController.setReference(
-        m_currentState.position,
-        SparkBase.ControlType.kPosition,
+        getArmTarget(),
+        SparkBase.ControlType.kMAXMotionPositionControl,
         ClosedLoopSlot.kSlot0,
         ff,
         ArbFFUnits.kVoltage);
@@ -170,9 +153,9 @@ public class Arm extends Subsystem {
     return m_periodicIO.arm_state;
   }
 
-  @AutoLogOutput(key = "Arm/Position/Setpoint")
-  private double getArmSetpoint() {
-    return m_currentState.position;
+  @AutoLogOutput(key = "Arm/Velocity")
+  public double getArmVelocity() {
+    return m_encoder.getVelocity();
   }
 
   @AutoLogOutput(key = "Arm/Voltage")

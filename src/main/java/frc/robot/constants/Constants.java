@@ -182,7 +182,7 @@ public class Constants {
   public static class ArmConstants {
     public final int k_motorId = 30;
 
-    public final double k_P = 10.8;
+    public final double k_P = 0.5; //10
     public final double k_I= 0.0;
     public final double k_D = 0.0;
     public final double k_IZone = 0.0;
@@ -198,8 +198,8 @@ public class Constants {
     public double k_L4Angle;
     public double k_horizontalAngle;
 
-    public final double k_maxAcceleration = 0.8;
-    public final double k_maxVelocity = 0.4;
+    public final double k_maxAcceleration = 0; //50
+    public final double k_maxVelocity = 0; //30
   }
 
   public static class EndEffectorConstants {
