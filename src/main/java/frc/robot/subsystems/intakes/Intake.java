@@ -175,16 +175,32 @@ public class Intake {
   public double getTargetPivotAngle() {
     switch(m_periodicIO.desiredIntakeState) {
       case NONE -> {
-        return RobotConstants.robotConfig.Intake.k_stowAngle;
+        if(m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_stowPosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_stowPosition;
+        }
       }
       case INTAKE -> {
-        return RobotConstants.robotConfig.Intake.k_groundAngle;
+        if(m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_groundPosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_groundPosition;
+        }
       }
       case EJECT -> {
-        return RobotConstants.robotConfig.Intake.k_ejectAngle;
+        if(m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_horizontalPosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_horizontalPosition;
+        }
       }
       default -> {
-        return RobotConstants.robotConfig.Intake.k_stowAngle;
+        if(m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_stowPosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_stowPosition;
+        }
       }
     }
   }
@@ -202,9 +218,9 @@ public class Intake {
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotReferenceToHorizontal")
   public double getPivotReferenceToHorizontal() {
     if (m_intakeName.equalsIgnoreCase("Left")) {
-      return (getPivotAngle() - RobotConstants.robotConfig.Intake.k_ejectAngle) * (2.0 * Math.PI);
+      return (getPivotAngle() - RobotConstants.robotConfig.Intake.Left.k_horizontalPosition) * (2.0 * Math.PI);
     } else if (m_intakeName.equalsIgnoreCase("Right")) {
-      return (getPivotAngle() - RobotConstants.robotConfig.Intake.k_ejectAngle) * (2.0 * Math.PI);
+      return (getPivotAngle() - RobotConstants.robotConfig.Intake.Right.k_horizontalPosition) * (2.0 * Math.PI);
     }
 
     return 0.0;

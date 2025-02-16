@@ -240,19 +240,15 @@ public class Constants {
     public final double k_pivotMotorKV = 0.0;
     public final double k_pivotMotorKA = 0.0;
 
-    public final double k_rollerMotorP = 0.0; //Taken from Apollo shooter, maybe it'll work?
+    public final double k_rollerMotorP = 0.0017;
     public final double k_rollerMotorI = 0.0;
-    public final double k_rollerMotorD = 0.0;
-    public final double k_rollerMotorFF = 0.25;
+    public final double k_rollerMotorD = 0.1;
+    public final double k_rollerMotorFF = 0.0006; //0.25
 
     public final double k_maxVelocity = 6000;
     public final double k_maxAcceleration = 15000;
 
-    public final double k_maxIntakeSpeed = 4000.0;
-
-    public final double k_groundAngle = 0.0;
-    public final double k_ejectAngle = 0.0;
-    public final double k_stowAngle = 0.0;
+    public final double k_maxIntakeSpeed = 1000.0;
 
     public final LeftConstants Left = new LeftConstants();
     public final RightConstants Right = new RightConstants();
