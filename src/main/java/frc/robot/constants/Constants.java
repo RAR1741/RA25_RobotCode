@@ -229,6 +229,8 @@ public class Constants {
     public final int k_pivotCurrentLimit = 10;
     public final int k_rollerCurrentLimit = 20;
 
+    public final double k_rollerGearRatio = (1.0 / 4.0);
+
     public final double k_pivotMotorP = 0.045; //Taken from Apollo intake pivot
     public final double k_pivotMotorI = 0.0;
     public final double k_pivotMotorD = 0.0;
@@ -238,10 +240,10 @@ public class Constants {
     public final double k_pivotMotorKV = 0.0;
     public final double k_pivotMotorKA = 0.0;
 
-    public final double k_rollerMotorP = 0.0007000; //Taken from Apollo shooter, maybe it'll work?
-    public final double k_rollerMotorI = 0.00000008;
-    public final double k_rollerMotorD = 0.0000500;
-    public final double k_rollerMotorFF = 0.000150;
+    public final double k_rollerMotorP = 0.0; //Taken from Apollo shooter, maybe it'll work?
+    public final double k_rollerMotorI = 0.0;
+    public final double k_rollerMotorD = 0.0;
+    public final double k_rollerMotorFF = 0.25;
 
     public final double k_maxVelocity = 6000;
     public final double k_maxAcceleration = 15000;

@@ -92,6 +92,8 @@ public class Intake {
 
     rollerConfig.idleMode(IdleMode.kCoast);
 
+    rollerConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.Intake.k_rollerGearRatio);
+
     rollerConfig.closedLoop
       .pidf(
         RobotConstants.robotConfig.Intake.k_rollerMotorP,
@@ -134,7 +136,11 @@ public class Intake {
         ff,
         ArbFFUnits.kVoltage);
         
-    m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
+    if(getDesiredRollerSpeed() != 0.0) {
+      m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
+    } else {
+      m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
+    }
   }
 
   public void stop() {
