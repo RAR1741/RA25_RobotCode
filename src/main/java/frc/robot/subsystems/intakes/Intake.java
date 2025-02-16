@@ -21,6 +21,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+
+import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
 
 public class Intake {
@@ -71,14 +73,18 @@ public class Intake {
 
     //TODO Due to how REV handles their rollovers, we can't do this anymore. Figure out a solution?
     pivotConfig.absoluteEncoder.positionConversionFactor(1.0); //360.0 // stinky
+    pivotConfig.encoder.positionConversionFactor(1.0);
     // if (pivotMotorId == RobotConstants.robotConfig.Intake.k_pivotMotorIdLeft) {
     //   pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_leftPivotOffset);
     // } else if (pivotMotorId == RobotConstants.robotConfig.Intake.k_pivotMotorIdRight) {
     //   pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
     // }
 
-    pivotConfig.inverted(isInverted);
-    pivotConfig.absoluteEncoder.inverted(isInverted);
+    // rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
+    pivotConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_pivotCurrentLimit);
+
+    pivotConfig.inverted(true);
+    pivotConfig.absoluteEncoder.inverted(true);
     rollerConfig.inverted(isInverted);
 
     pivotConfig.closedLoop.pid(
@@ -224,6 +230,16 @@ public class Intake {
     }
 
     return 0.0;
+  }
+
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotSetpoint")
+  private double getArmSetpoint() {
+    return m_currentState.position;
+  }
+
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/PivotVoltage")
+  public double getPivotVoltage() {
+    return Helpers.getVoltage(m_pivotMotor);
   }
 
   public enum IntakeState {
