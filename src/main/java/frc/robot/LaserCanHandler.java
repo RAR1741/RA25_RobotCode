@@ -31,7 +31,7 @@ public class LaserCanHandler {
       // m_indexLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
 
       m_entranceLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-      m_entranceLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      m_entranceLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
       m_entranceLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
 
       // m_exitLaser.setRangingMode(LaserCan.RangingMode.SHORT);

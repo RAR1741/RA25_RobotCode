@@ -192,7 +192,7 @@ public class Constants {
     public final double k_FFA = 0.0;
     public final double k_FFG = 0.35;
 
-    public final int k_maxCurrent = 20;
+    public final int k_maxCurrent = 10; // TODO: maybe change this?
 
     public double k_stowAngle;
     public double k_L4Angle;

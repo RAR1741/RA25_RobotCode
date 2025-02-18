@@ -15,13 +15,13 @@ public class JormungandrConstants extends Constants {
     SwerveDrive.Turn.k_FROffset = 0.02417;
     SwerveDrive.Turn.k_BLOffset = 0.594889;
     SwerveDrive.Turn.k_BROffset = 0.419678;
-    
+
     SwerveDrive.Turn.k_P = 70.0;
     SwerveDrive.Turn.k_I = 0.0;
     SwerveDrive.Turn.k_D = 1.0;
     SwerveDrive.Turn.k_IZone = 0.0;
 
-    Arm.k_stowAngle = 0.29270070791244507;
+    Arm.k_stowAngle = 0.29270070791244507 - 0.005;
     Arm.k_L4Angle = 0.5404757261276245;
     Arm.k_horizontalAngle = 0.5404757261276245;
 
