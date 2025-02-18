@@ -241,9 +241,10 @@ public class Constants {
     public final double k_pivotMotorKV = 0.0;
     public final double k_pivotMotorKA = 0.0;
 
-    public final double k_rollerMotorP = 0.0017;
+    // TODO: maybe tune P and FF further
+    public final double k_rollerMotorP = 0.000425; // 0.0017;
     public final double k_rollerMotorI = 0.0;
-    public final double k_rollerMotorD = 0.1;
+    public final double k_rollerMotorD = 0.0; // 0.1;
     public final double k_rollerMotorFF = 0.0006; //0.25
 
     public final double k_maxAcceleration = 1.6;
