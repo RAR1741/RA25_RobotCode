@@ -64,7 +64,8 @@ public class EndEffector extends Subsystem {
 
   public enum EndEffectorState {
     OFF,
-    INDEX,
+    FORWARD_INDEX,
+    REVERSE_INDEX,
     REVERSE,
     SCORE_BRANCHES,
     SCORE_TROUGH
@@ -79,7 +80,7 @@ public class EndEffector extends Subsystem {
   }
 
   private void index() {
-    setState(EndEffectorState.INDEX);
+    setState(EndEffectorState.FORWARD_INDEX);
   }
 
   private void reverse() {
@@ -124,12 +125,19 @@ public class EndEffector extends Subsystem {
       case OFF -> {
         return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
       }
-      case INDEX -> {
-        return RobotConstants.robotConfig.EndEffector.k_indexSpeeds;
+
+      case FORWARD_INDEX -> {
+        return RobotConstants.robotConfig.EndEffector.k_forwardIndexSpeeds;
       }
+
+      case REVERSE_INDEX -> {
+        return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeeds;
+      }
+
       case REVERSE -> {
         return RobotConstants.robotConfig.EndEffector.k_reverseSpeeds;
       }
+
       case SCORE_BRANCHES -> {
         if (m_arm.getArmState() == ArmState.EXTEND || m_elevator.getTargetState() == ElevatorState.L4) {
           return new double[] { -RobotConstants.robotConfig.EndEffector.k_branchSpeeds[0],
@@ -137,9 +145,11 @@ public class EndEffector extends Subsystem {
         }
         return RobotConstants.robotConfig.EndEffector.k_branchSpeeds;
       }
+
       case SCORE_TROUGH -> {
         return RobotConstants.robotConfig.EndEffector.k_troughSpeeds;
       }
+
       default -> {
         return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
       }
@@ -154,40 +164,45 @@ public class EndEffector extends Subsystem {
 
   private void checkAutoTasks() {
     switch (m_periodicIO.state) {
-      case INDEX -> {
+      case FORWARD_INDEX: {
         if (!m_laserCan.getEntranceSeesCoral()) {
-          off();
+          setState(EndEffectorState.REVERSE_INDEX);
         }
       }
-      case OFF -> {
+      case REVERSE_INDEX: {
+        if (m_laserCan.getEntranceSeesCoral()) {
+          off(); // hope and pray
+        }
+      }
+      case OFF: {
         // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
         // && m_laserCan.getExitSeesCoral()) {
         // reverse();
-        // } else 
+        // } else
         if (m_laserCan.getEntranceSeesCoral()) {
           index();
         }
       }
-      case REVERSE -> {
+      case REVERSE: {
         // if (m_laserCan.getIndexSeesCoral()) {
         off();
         // }
       }
-      // case SCORE_BRANCHES -> {
+      // case SCORE_BRANCHES: {
       //   // if (!m_laserCan.getExitSeesCoral()) {
       //   // off();
       //   // } else {
       //   branches();
       //   // }
       // }
-      // case SCORE_TROUGH -> {
+      // case SCORE_TROUGH: {
       //   // if (!m_laserCan.getExitSeesCoral()) {
       //   // off();
       //   // } else {
       //   trough();
       //   // }
       // }
-      default -> {}
+      default: {}
     }
   }
 }
