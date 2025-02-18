@@ -63,8 +63,9 @@ public class Arm extends Subsystem {
     armConfig.absoluteEncoder
         .inverted(true)
         .zeroOffset(0.0)
-        .positionConversionFactor(1.0)        
+        .positionConversionFactor(1.0)
         .velocityConversionFactor(1.0);
+        //.zeroCentered(true); // TODO: verify this works
 
     armConfig
         .smartCurrentLimit(RobotConstants.robotConfig.Arm.k_maxCurrent)
