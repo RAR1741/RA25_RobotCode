@@ -14,7 +14,7 @@ public final class RobotConstants {
   public static Constants robotConfig;
 
   public final String k_compSerial = "00000000";
-  public final String k_pracSerial = "00000000";
+  public final String k_pracSerial = "023AC973";
 
   private RobotType m_robotType = null;
 
@@ -38,12 +38,15 @@ public final class RobotConstants {
 
     checkRobotType();
     switch (getRobotType()) {
-      case SIM:
+      case SIM -> {}
         // Set (riiiiiiiiiiiiiiiight the constants) all the constants (designed)
         // specifically for the simulation
-      default:
-        robotConfig = new Constants(); // TODO: change this once we have an actual robot
-        break;
+      case JORMUNGANDR -> {
+        robotConfig = new JormungandrConstants();
+      }
+      default -> {
+        robotConfig = new JormungandrConstants(); // TODO change this once we have Monarch
+      }
     }
 
     RobotTelemetry.print("ROBOT: " + getRobotType());
@@ -52,29 +55,36 @@ public final class RobotConstants {
   public RobotType checkRobotType() {
     if (Robot.isSimulation()) {
       m_robotType = RobotType.SIM;
-      // config = new ApolloConstants();
+      robotConfig = new JormungandrConstants();
       RobotTelemetry.print("Robot Type: Simulation");
+    } else if (m_rioSerial.equals(k_compSerial)) {
+      m_robotType = RobotType.MONARCH;
+      // config = new MonarchConstants();
+      RobotTelemetry.print("Robot Type: Monarch");
+    } else if (m_rioSerial.equals(k_pracSerial)) {
+      m_robotType = RobotType.JORMUNGANDR;
+      robotConfig = new JormungandrConstants();
+      RobotTelemetry.print("Robot Type: Jormungandr");
     } else {
       // m_robotType = RobotType.APOLLO;
       // config = new ApolloConstants();
       RobotTelemetry.print(System.getenv("serialnum"));
       DriverStation.reportError(
-          "Could not match rio to robot config; defaulting to INSERT_ROBOT_NAME_HERE robot config",
+          "Could not match rio to robot config; defaulting to JORMUNGANDR robot config",
           false);
-      RobotTelemetry.print("Robot Type: Squeaky");
+      RobotTelemetry.print("Robot Type: JORMUNGANDR");
     }
     return m_robotType;
   }
 
   public RobotType getRobotType() {
-    if (m_robotType != null) {
-      return m_robotType;
-    } else {
-      return RobotType.MAIN;
+    if (m_robotType == null) {
+      m_robotType = RobotType.JORMUNGANDR;
     }
+    return m_robotType;
   }
 
   public enum RobotType {
-    SIM, MAIN
+    SIM, MONARCH, JORMUNGANDR
   }
 }

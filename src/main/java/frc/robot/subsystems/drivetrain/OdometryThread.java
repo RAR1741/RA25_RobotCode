@@ -2,8 +2,6 @@ package frc.robot.subsystems.drivetrain;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.littletonrobotics.junction.AutoLogOutput;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.studica.frc.AHRS;
@@ -180,27 +178,28 @@ public class OdometryThread implements Runnable {
     m_threadPriorityToSet = priority;
   }
 
-  @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
-  public int getSuccessfulDaqs() {
-    return m_successfulDaqs;
-  }
+  // // TODO Log these outside of the odometry thread
+  // // @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
+  // public int getSuccessfulDaqs() {
+  //   return m_successfulDaqs;
+  // }
 
-  @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
-  public int getFailedDaqs() {
-    return m_failedDaqs;
-  }
+  // // @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
+  // public int getFailedDaqs() {
+  //   return m_failedDaqs;
+  // }
 
-  @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
-  public double getAverageOdometryLoopTime() {
-    return m_averageOdometryLoopTime;
-  }
+  // // @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
+  // public double getAverageOdometryLoopTime() {
+  //   return m_averageOdometryLoopTime;
+  // }
 
-  @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
-  public int getUpdatesPerSecond() {
-    return (int) (1.0 / getAverageOdometryLoopTime());
-  }
+  // // @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
+  // public int getUpdatesPerSecond() {
+  //   return (int) (1.0 / getAverageOdometryLoopTime());
+  // }
 
-  @AutoLogOutput(key = "Odometry/Thread/Running")
+  // // @AutoLogOutput(key = "Odometry/Thread/Running")
   public boolean isRunning() {
     return m_running;
   }

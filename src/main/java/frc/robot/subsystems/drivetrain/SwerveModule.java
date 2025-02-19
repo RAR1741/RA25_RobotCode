@@ -39,12 +39,12 @@ public class SwerveModule {
 
   private static class PeriodicIO {
     SwerveModuleState desiredState = new SwerveModuleState();
-    // boolean shouldChangeState = false; // TODO: maybe add this back?
+    // boolean shouldChangeState = false; // TODO maybe add this back?
   }
 
   private boolean m_moduleDisabled = false;
 
-  public SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID,
+  SwerveModule(String moduleName, int driveMotorID, int turningMotorID, int turningCANcoderID,
       double turningOffset) {
     m_periodicIO = new PeriodicIO();
     m_signalManager = SignalManager.getInstance();
@@ -73,6 +73,8 @@ public class SwerveModule {
     driveConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
     driveConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
 
+    driveConfig.CurrentLimits.SupplyCurrentLimit = RobotConstants.robotConfig.SwerveDrive.Drive.k_currentLimit;
+
     // driveConfig.CurrentLimits.StatorCurrentLimit = 15.0;
     // driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
@@ -100,11 +102,10 @@ public class SwerveModule {
     turnConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Turn.k_V;
     turnConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Turn.k_A;
 
+    turnConfig.CurrentLimits.SupplyCurrentLimit = RobotConstants.robotConfig.SwerveDrive.Turn.k_currentLimit;
+
     turnConfig.MotionMagic.MotionMagicAcceleration = 1000;
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
-
-    // turnConfig.CurrentLimits.StatorCurrentLimit = 10.0;
-    // turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
     m_turningOffset = turningOffset;

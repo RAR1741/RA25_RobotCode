@@ -8,11 +8,13 @@ public class Constants {
   public final RobotConstants Robot = new RobotConstants();
   public final FieldConstants Field = new FieldConstants();
   public final SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
+  public final IntakeConstants Intake = new IntakeConstants();
   public final ArmConstants Arm = new ArmConstants();
   public final ElevatorConstants Elevator = new ElevatorConstants();
   public final LaserCanConstants LaserCan = new LaserCanConstants();
   public final EndEffectorConstants EndEffector = new EndEffectorConstants();
   public final OdometryConstants Odometry = new OdometryConstants();
+  public final HopperConstants Hopper = new HopperConstants();
 
   public static class RobotConstants {
     public final String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -82,14 +84,14 @@ public class Constants {
 
       public final int k_currentLimit = 40;
 
-      public final double k_P = 0.84992; // setCory("goated");
-      public final double k_I = 0.0;
-      public final double k_D = 0.0;
-      public final double k_IZone = 0.0;
+      public double k_P;
+      public double k_I;
+      public double k_D;
+      public double k_IZone;
 
-      public final double k_FFS = 0.2368;
-      public final double k_FFV = 0.67229;
-      public final double k_FFA = 0.080151;
+      public double k_FFS;
+      public double k_FFV;
+      public double k_FFA;
     }
 
     public final TurnConstants Turn = new TurnConstants();
@@ -97,10 +99,10 @@ public class Constants {
     // Drivetrain (turn) constants
     public class TurnConstants {
       // Drivetrain turning offset constants
-      public final double k_FLOffset = -0.1521;
-      public final double k_FROffset = 0.02417;
-      public final double k_BLOffset = 0.594889;
-      public final double k_BROffset = 0.419678;
+      public double k_FLOffset;
+      public double k_FROffset;
+      public double k_BLOffset;
+      public double k_BROffset;
 
       public final int k_FLAbsId = 13;
       public final int k_FRAbsId = 14;
@@ -114,10 +116,10 @@ public class Constants {
       public final int k_BLMotorId = 11;
       public final int k_BRMotorId = 12;
 
-      public final double k_P = 70.0;
-      public final double k_I = 0.0;
-      public final double k_D = 1.0;
-      public final double k_IZone = 0.0;
+      public double k_P;
+      public double k_I;
+      public double k_D;
+      public double k_IZone;
 
       // We only use FF and are too scared to delete the others
       public final double k_FF = 0.0;
@@ -151,32 +153,12 @@ public class Constants {
     }
   }
 
-  public static class ArmConstants {
-    public final int k_motorId = 30;
-
-    public final double k_P = 0.03;
-    public final double k_I = 0.0;
-    public final double k_D = 0.0;
-    public final double k_IZone = 0.0;
-    public final double k_FF = 0.25;
-
-    public final int k_maxCurrent = 5;
-
-    public final double k_stowAngle = 0.0;
-    public final double k_L4Angle = 120.0;
-
-    public final double k_maxAcceleration = 0.0;
-    public final double k_maxVelocity = 0.0;
-
-    public final double k_armOffset = (360.0 - 101.8) / 360.0;
-  }
-
   public static class ElevatorConstants {
     public final int k_elevatorLeftMotorId = 20;
     public final int k_elevatorRightMotorId = 21;
 
     public final double k_P = 0.15;
-    public final double k_I = 0;
+    public final double k_I = 0.0;
     public final double k_D = 0.0;
     public final double k_IZone = 0.0;
     public final double k_FF = 0.50;
@@ -186,15 +168,49 @@ public class Constants {
 
     public final int k_maxCurrent = 30;
 
-    public final double k_stowHeight = 0.0; // TODO Confirm units
-    public final double k_L1Height = 0.0; // TODO Get height
-    public final double k_L2Height = 9.0;
-    public final double k_L3Height = 25.14;
-    public final double k_L4Height = 52.0;
+    public final double k_stowHeight = 0.0;
+    public final double k_L1Height = 16.0;
+    public final double k_L2Height = 25.64;
+    public final double k_L3Height = 43.5;
+    public final double k_L4Height = 59.6;
     public final double k_maxHeight = 60.5;
-    public final double k_groundAlgaeHeight = 0.0;
+    // public final double k_groundAlgaeHeight = 0.0;
     // public final double k_lowAlgaeHeight = 24.8;
     // public final double k_highAlgaeHeight = 42.5;
+  }
+
+  public static class ArmConstants {
+    public final int k_motorId = 30;
+
+    public final double k_P = 10.8;
+    public final double k_I = 0.0;
+    public final double k_D = 0.0;
+    public final double k_IZone = 0.0;
+
+    public final double k_FFS = 0.0;
+    public final double k_FFV = 0.0;
+    public final double k_FFA = 0.0;
+    public final double k_FFG = 0.35;
+
+    public final int k_maxCurrent = 10; // TODO: maybe change this?
+
+    public double k_stowAngle;
+    public double k_L4Angle;
+    public double k_horizontalAngle;
+
+    public final double k_maxAcceleration = 0.8;
+    public final double k_maxVelocity = 0.4;
+  }
+
+  public static class EndEffectorConstants {
+    public final int k_leftMotorId = 31;
+    public final int k_rightMotorId = 32;
+
+    public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
+    public final double[] k_indexSpeeds = new double[] { 0.1, 0.1 };
+    public final double[] k_reverseSpeeds = new double[] { -0.1, -0.1 };
+    public final double[] k_branchSpeeds = new double[] { 0.5, 0.5 };
+    public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
   }
 
   public static class LaserCanConstants {
@@ -203,16 +219,61 @@ public class Constants {
     public final int k_exitId = 35;
   }
 
-  public static class EndEffectorConstants {
-    public final int k_leftMotorId = 31;
-    public final int k_rightMotorId = 32;
+  public static class IntakeConstants {
+    public final int k_pivotMotorIdLeft = 40;
+    public final int k_pivotMotorIdRight = 41;
 
-    public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
-    public final double[] k_indexSpeeds = new double[] { 0.3, 0.3 };
-    public final double[] k_reverseSpeeds = new double[] { -0.3, -0.3 };
-    public final double[] k_branchSpeeds = new double[] { 0.5, 0.5 };
-    public final double[] k_troughSpeeds = new double[] { 0.1, 0.1 };
+    public final int k_rollerMotorIdLeft = 42;
+    public final int k_rollerMotorIdRight = 43;
+
+    public final int k_pivotCurrentLimit = 10;
+    public final int k_rollerCurrentLimit = 40;
+
+    public final double k_rollerGearRatio = (1.0 / 4.0);
+
+    // TODO: maybe tune more for higher speed, needs to match with drive train speed
+    public final double k_pivotMotorP = 15.0;
+    public final double k_pivotMotorI = 0.0;
+    public final double k_pivotMotorD = 0.0;
+
+    public final double k_pivotMotorKS = 0.0;
+    public final double k_pivotMotorKG = 0.0;
+    public final double k_pivotMotorKV = 0.0;
+    public final double k_pivotMotorKA = 0.0;
+
+    // TODO: maybe tune P and FF further
+    public final double k_rollerMotorP = 0.000425; // 0.0017;
+    public final double k_rollerMotorI = 0.0;
+    public final double k_rollerMotorD = 0.0; // 0.1;
+    public final double k_rollerMotorFF = 0.0006; //0.25
+
+    public final double k_maxAcceleration = 1.6;
+    public final double k_maxVelocity = 0.8;
+
+    public final double k_maxIntakeSpeed = 825.0;
+
+    public final LeftConstants Left = new LeftConstants();
+    public final RightConstants Right = new RightConstants();
+
+    public class LeftConstants {
+      public double k_stowPosition;
+      public double k_groundPosition;
+      public double k_ejectPosition;
+      public double k_horizontalPosition;
+    }
+
+    public class RightConstants {
+      public double k_stowPosition;
+      public double k_groundPosition;
+      public double k_ejectPosition;
+      public double k_horizontalPosition;
+    }
   }
 
-  // TODO: add Gamepiece class for Coral- and Algae-related constants
+  public static class HopperConstants {
+    public final int k_hopperMotorId = 50;
+    public final double k_hopperSpeed = 0.5;
+  }
+
+  // TODO add Gamepiece class for Coral- and Algae-related constants
 }

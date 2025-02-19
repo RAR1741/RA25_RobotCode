@@ -55,7 +55,7 @@ public class PoseAligner extends Subsystem {
     // 180 to face the red wall, 30 to account for the reef's orientation
     int correctedAngle = (int) Helpers.modDegrees(baseAngle + 180.0 + 30.0);
 
-    // TODO: we only need to do this once/when the alliance changes
+    // TODO we only need to do this once/when the alliance changes
     Pose2d[] poses = getAllianceReefScoringPoses(allianceReef);
     String loggingKey = (alliance == Alliance.Red ? "Red/Reef/targets" : "Blue/Reef/targets");
     ASPoseHelper.addPose(loggingKey, poses);
@@ -102,7 +102,7 @@ public class PoseAligner extends Subsystem {
     double reefX = allianceReefPose.getX();
     double reefY = allianceReefPose.getY();
 
-    double offset = 1.5; // TODO: Offset from the reef center, adjust as needed (we might want to change
+    double offset = 1.5; // TODO Offset from the reef center, adjust as needed (we might want to change
                          // this)
 
     poses[ReefStartingPoses.RIGHT_SIDE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
@@ -133,6 +133,6 @@ public class PoseAligner extends Subsystem {
     int BOTTOM_RIGHT_SIDE = 5;
   }
 
-  // TODO: maybe change the starting pose labels to tag-specific for easier
+  // TODO maybe change the starting pose labels to tag-specific for easier
   // labeling
 }

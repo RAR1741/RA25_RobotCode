@@ -15,9 +15,15 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
+import frc.robot.controls.controllers.OperatorController;
+import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.drivetrain.RAROdometry;
+import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.intakes.Intakes;
+import frc.robot.subsystems.intakes.Intake.IntakeState;
+import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 import frc.robot.controls.controllers.FilteredController;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
@@ -25,12 +31,12 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
-import frc.robot.subsystems.Subsystem;
-import frc.robot.subsystems.drivetrain.RAROdometry;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.SwerveSysId;
+
+import au.grapplerobotics.CanBridge;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -47,11 +53,12 @@ public class Robot extends LoggedRobot {
   private final Arm m_arm;
   private final EndEffector m_endEffector;
   private final RAROdometry m_odometry;
-  private final PoseAligner m_poseAligner;
-  private final SignalManager m_signalManager = SignalManager.getInstance();
-
+  private final Intakes m_intakes;
+  private final Hopper m_hopper;
   private final DriverController m_driverController;
   private final OperatorController m_operatorController;
+  private final PoseAligner m_poseAligner;
+  private final SignalManager m_signalManager = SignalManager.getInstance();
   private final VirtualRobotController m_virtualRobotController;
   private final GenericHID m_sysIdController;
 
@@ -71,6 +78,10 @@ public class Robot extends LoggedRobot {
     m_elevator = Elevator.getInstance();
     m_endEffector = EndEffector.getInstance();
     m_poseAligner = PoseAligner.getInstance();
+    m_intakes = Intakes.getInstance();
+    m_hopper = Hopper.getInstance();
+
+    CanBridge.runTCP();
 
     m_driverController = new DriverController(0, true, true, 0.5);
     m_operatorController = new OperatorController(1, true, true, 0.5);
@@ -83,11 +94,17 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_arm);
     m_subsystems.add(m_elevator);
     m_subsystems.add(m_endEffector);
+    m_subsystems.add(m_intakes);
+    m_subsystems.add(m_hopper);
 
     new RobotTelemetry();
 
     // Initialize on-board logging
     DataLogManager.start();
+    RobotTelemetry
+        .print(String.format("Deployed version: GIT_COMMIT=%s, BUILD_DATE=%s, DIRTY=%d", BuildConstants.GIT_SHA,
+            BuildConstants.BUILD_DATE, BuildConstants.DIRTY));
+    RobotTelemetry.print(String.format("Branch: %s", BuildConstants.GIT_BRANCH));
     RobotTelemetry.print("Logging Initialized. Fard.");
 
     m_signalManager.finalizeAll();
@@ -99,8 +116,7 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     if (this.isTestEnabled()) {
       CommandScheduler.getInstance().run();
-    }
-    else {
+    } else {
       m_virtualRobotController.updatePose();
 
       m_subsystems.forEach(subsystem -> subsystem.periodic());
@@ -108,6 +124,10 @@ public class Robot extends LoggedRobot {
       m_subsystems.forEach(subsystem -> subsystem.writeToLog());
 
       m_signalManager.refresh();
+    }
+
+    if (m_operatorController.getWantsResetElevator()) {
+      m_elevator.reset();
     }
   }
 
@@ -121,6 +141,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    m_hopper.on();
   }
 
   @Override
@@ -153,28 +174,59 @@ public class Robot extends LoggedRobot {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }
 
+    if (m_operatorController.getWantsLeftIntakeGround()) {
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
+    }
+
+    if (m_operatorController.getWantsLeftIntakeStow()) {
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
+    }
+
+    if (m_operatorController.getWantsRightIntakeGround()) {
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
+    }
+
+    if (m_operatorController.getWantsRightIntakeStow()) {
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
+    }
+
+    if (m_operatorController.getWantsIntakeEject()) {
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
+    } 
+    
+    if (m_operatorController.getWantsIntakeStopEjecting()) {
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
+    }
+
     if (m_driverController.getWantsResetOdometry()) {
       m_odometry.reset();
     }
 
     if (m_operatorController.getWantsGoToStow()) {
       m_elevator.setState(ElevatorState.STOW);
+      m_arm.setArmState(ArmState.STOW);
     } else if (m_operatorController.getWantsGoToL1()) {
       m_elevator.setState(ElevatorState.L1);
+      m_arm.setArmState(ArmState.STOW);
     } else if (m_operatorController.getWantsGoToL2()) {
       m_elevator.setState(ElevatorState.L2);
+      m_arm.setArmState(ArmState.STOW);
     } else if (m_operatorController.getWantsGoToL3()) {
       m_elevator.setState(ElevatorState.L3);
+      m_arm.setArmState(ArmState.STOW);
     } else if (m_operatorController.getWantsGoToL4()) {
       m_elevator.setState(ElevatorState.L4);
-    } else if (m_operatorController.getWantsResetElevator()) {
-      m_elevator.reset();
+      m_arm.setArmState(ArmState.EXTEND);
     }
 
-    if (m_operatorController.getWantsScore() > 0) {
-      m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
-    } else if (m_operatorController.getWantsScore() < 0) {
-      m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
+    if (m_operatorController.getWantsScore()) {
+      if (m_elevator.getTargetState() == ElevatorState.L1) {
+        m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
+      } else {
+        m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
+      }
     } else {
       m_endEffector.setState(EndEffectorState.OFF);
     }
@@ -182,16 +234,11 @@ public class Robot extends LoggedRobot {
     if (m_driverController.getWantsAutoPositionPressed()) {
       m_swerve.resetDriveController();
     }
-
-    if (m_operatorController.getWantsArmScore()) {
-      m_arm.setArmState(ArmState.EXTEND);
-    } else if (m_operatorController.getWantsArmStow()) {
-      m_arm.setArmState(ArmState.STOW);
-    }
   }
 
   @Override
   public void disabledInit() {
+    m_hopper.stop();
   }
 
   @Override
