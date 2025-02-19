@@ -220,7 +220,7 @@ public class Constants {
     public final int k_exitId = 35;
   }
 
-  public static class IntakeConstants { // TODO I think we may need different constants for each intake for some of these values
+  public static class IntakeConstants {
     public final int k_pivotMotorIdLeft = 40;
     public final int k_pivotMotorIdRight = 41;
 

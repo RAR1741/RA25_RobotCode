@@ -164,17 +164,17 @@ public class EndEffector extends Subsystem {
 
   private void checkAutoTasks() {
     switch (m_periodicIO.state) {
-      case FORWARD_INDEX: {
+      case FORWARD_INDEX -> {
         if (!m_laserCan.getEntranceSeesCoral()) {
           setState(EndEffectorState.REVERSE_INDEX);
         }
       }
-      case REVERSE_INDEX: {
+      case REVERSE_INDEX -> {
         if (m_laserCan.getEntranceSeesCoral()) {
           off(); // hope and pray
         }
       }
-      case OFF: {
+      case OFF -> {
         // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
         // && m_laserCan.getExitSeesCoral()) {
         // reverse();
@@ -183,26 +183,26 @@ public class EndEffector extends Subsystem {
           index();
         }
       }
-      case REVERSE: {
+      case REVERSE -> {
         // if (m_laserCan.getIndexSeesCoral()) {
         off();
         // }
       }
-      // case SCORE_BRANCHES: {
+      // case SCORE_BRANCHES -> {
       //   // if (!m_laserCan.getExitSeesCoral()) {
       //   // off();
       //   // } else {
       //   branches();
       //   // }
       // }
-      // case SCORE_TROUGH: {
+      // case SCORE_TROUGH -> {
       //   // if (!m_laserCan.getExitSeesCoral()) {
       //   // off();
       //   // } else {
       //   trough();
       //   // }
       // }
-      default: {}
+      default -> {}
     }
   }
 }
