@@ -219,6 +219,14 @@ public class Robot extends LoggedRobot {
     } else if (m_operatorController.getWantsGoToL4()) {
       m_elevator.setState(ElevatorState.L4);
       m_arm.setArmState(ArmState.EXTEND);
+    } else if (m_operatorController.getWantsAlgaeL2()) {
+      m_elevator.setState(ElevatorState.ALGAE_L2);
+      m_arm.setArmState(ArmState.EXTEND);
+    } else if (m_operatorController.getWantsAlgaeL3()) {
+      m_elevator.setState(ElevatorState.ALGAE_L3);
+      m_arm.setArmState(ArmState.EXTEND);
+    } else {
+      m_elevator.changeOffset(m_operatorController.getRequestedOffsetChange());
     }
 
     if (m_operatorController.getWantsScore()) {

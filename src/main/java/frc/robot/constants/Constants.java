@@ -175,8 +175,8 @@ public class Constants {
     public final double k_L4Height = 59.6;
     public final double k_maxHeight = 60.5;
     // public final double k_groundAlgaeHeight = 0.0;
-    // public final double k_lowAlgaeHeight = 24.8;
-    // public final double k_highAlgaeHeight = 42.5;
+    public final double k_algaeL2Height = 23.0;
+    public final double k_algaeL3Height = 41.5;
   }
 
   public static class ArmConstants {

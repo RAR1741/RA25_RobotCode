@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -97,11 +96,15 @@ public class Elevator extends Subsystem {
     L1,
     L2,
     L3,
-    L4
+    L4,
+    ALGAE_L2,
+    ALGAE_L3
   }
 
   private static class PeriodicIO {
     ElevatorState target_state = ElevatorState.STOW;
+
+    double target_offset = 0.0;
   }
 
   @Override
@@ -115,7 +118,7 @@ public class Elevator extends Subsystem {
     m_previousUpdateTime = currentTime;
 
     // Update goal
-    m_goalState.position = getElevatorTarget();
+    m_goalState.position = getElevatorTarget() + m_periodicIO.target_offset;
 
     // Calculate new state
     m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
@@ -136,9 +139,13 @@ public class Elevator extends Subsystem {
 
   @Override
   public void reset() {
-    if (getTargetState() == ElevatorState.STOW) {
+    if (getTargetState() == ElevatorState.STOW && m_periodicIO.target_offset != 0.0) {
       m_leftEncoder.setPosition(0.0);
     }
+  }
+
+  public void changeOffset(double change) {
+    m_periodicIO.target_offset += change;
   }
 
   public void setState(ElevatorState state) {
@@ -182,6 +189,12 @@ public class Elevator extends Subsystem {
       }
       case L4 -> {
         return RobotConstants.robotConfig.Elevator.k_L4Height;
+      }
+      case ALGAE_L3 -> {
+        return RobotConstants.robotConfig.Elevator.k_algaeL3Height;
+      }
+      case ALGAE_L2 -> {
+        return RobotConstants.robotConfig.Elevator.k_algaeL2Height;
       }
       default -> {
         return RobotConstants.robotConfig.Elevator.k_stowHeight;

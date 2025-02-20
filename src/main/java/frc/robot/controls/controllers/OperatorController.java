@@ -60,4 +60,16 @@ public class OperatorController extends FilteredController {
   public boolean getWantsScore() {
     return this.getRawButton(Button.X);
   }
+
+  public boolean getWantsAlgaeL2() {
+    return this.getRawButtonPressed(Button.LEFT_JOYSTICK);
+  }
+
+  public boolean getWantsAlgaeL3() {
+    return this.getRawButtonPressed(Button.RIGHT_JOYSTICK);
+  }
+
+  public double getRequestedOffsetChange() {
+    return this.getFilteredAxis(Axis.RIGHT_TRIGGER) - this.getFilteredAxis(Axis.LEFT_TRIGGER); 
+  }
 }
