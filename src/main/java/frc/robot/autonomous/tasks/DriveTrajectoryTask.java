@@ -58,6 +58,7 @@ public class DriveTrajectoryTask extends Task {
 
   @Override
   public void update() {
+    log(true);
     Optional<SwerveSample> sample = m_trajectory.get().sampleAt(m_timer.get(), !Helpers.isBlueAlliance());
 
     if (sample.isPresent()) {
@@ -74,6 +75,7 @@ public class DriveTrajectoryTask extends Task {
 
   @Override
   public boolean isFinished() {
+    log(false);
     if (m_isFinished) {
       RobotTelemetry.print("Drive Trajectory task... complete!");
       return true;

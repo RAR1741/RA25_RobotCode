@@ -154,7 +154,7 @@ public class Elevator extends Subsystem {
   public boolean getIsAtState() {
     double currentPos = getCurrentPosition();
     double targetPos = getElevatorTarget();
-    double allowedError = 2; //TODO: Change this please 🥺
+    double allowedError = RobotConstants.robotConfig.Elevator.k_allowedError;
 
     return Math.abs(currentPos - targetPos) < allowedError;
   }

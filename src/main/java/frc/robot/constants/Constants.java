@@ -195,6 +195,8 @@ public class Constants {
     // public final double k_groundAlgaeHeight = 0.0;
     // public final double k_lowAlgaeHeight = 24.8;
     // public final double k_highAlgaeHeight = 42.5;
+
+    public final double k_allowedError = 2.0; //TODO: Change this please 👁️👄👁️
   }
 
   public static class ArmConstants {
@@ -218,6 +220,8 @@ public class Constants {
 
     public final double k_maxAcceleration = 0.8;
     public final double k_maxVelocity = 0.4;
+
+    public final double k_allowedError = 0.1; //TODO: Change this please 🥺
   }
 
   public static class EndEffectorConstants {

@@ -24,6 +24,7 @@ public class EndEffectorTask extends Task {
 
   @Override
   public boolean isFinished() {
+    log(false);
     return true;
   }
 
