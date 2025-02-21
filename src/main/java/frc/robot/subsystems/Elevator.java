@@ -16,7 +16,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
@@ -137,20 +136,18 @@ public class Elevator extends Subsystem {
 
   @Override
   public void reset() {
-    m_leftEncoder.setPosition(0.0);
+    if (getTargetState() == ElevatorState.STOW) {
+      m_leftEncoder.setPosition(0.0);
+    }
   }
 
   public void setState(ElevatorState state) {
     // if the LaserCAN cannot see any coral, we can safely assume that the elevator
     // is free to move
 
-    // if (!m_laserCan.getEntranceSeesCoral()) { TODO: Add back
+    // if (!m_laserCan.getEntranceSeesCoral()) { TODO Add LaserCan to end effector and replace this line with that call
     m_periodicIO.target_state = state;
     // }
-  }
-
-  public ElevatorState getState() {
-    return m_periodicIO.target_state;
   }
 
   @AutoLogOutput(key = "Elevator/Position/Current")
@@ -164,43 +161,32 @@ public class Elevator extends Subsystem {
   }
 
   @AutoLogOutput(key = "Elevator/ElevatorState")
-  public ElevatorState getElevatorState() {
+  public ElevatorState getTargetState() {
     return m_periodicIO.target_state;
-  }
-
-  @AutoLogOutput
-  public double getElevatorPosition() {
-    // TODO: THIS IS WRONG
-    return Units.rotationsToDegrees(Helpers.modRotations(
-        m_leftEncoder.getPosition()
-    /*- Units.degreesToRotations(RobotConstants.config.Shooter.k_absPivotOffset)*/)); // TODO I have no clue what this
-                                                                                      // value should be replaced with
   }
 
   @AutoLogOutput(key = "Elevator/Position/Target")
   private double getElevatorTarget() {
     switch (m_periodicIO.target_state) {
-      case STOW:
+      case STOW -> {
         return RobotConstants.robotConfig.Elevator.k_stowHeight;
-      case L1:
+      }
+      case L1 -> {
         return RobotConstants.robotConfig.Elevator.k_L1Height;
-      case L2:
+      }
+      case L2 -> {
         return RobotConstants.robotConfig.Elevator.k_L2Height;
-      case L3:
+      }
+      case L3 -> {
         return RobotConstants.robotConfig.Elevator.k_L3Height;
-      case L4:
+      }
+      case L4 -> {
         return RobotConstants.robotConfig.Elevator.k_L4Height;
-      default:
+      }
+      default -> {
         return RobotConstants.robotConfig.Elevator.k_stowHeight;
+      }
     }
-  }
-
-  @AutoLogOutput(key = "Elevator/IsAtState")
-  public boolean getIsAtState() {
-    double angle = getElevatorPosition();
-    double target_angle = getElevatorTarget();
-
-    return angle >= Math.abs(target_angle - 2); // TODO Find new threshold
   }
 
   @AutoLogOutput(key = "Elevator/Velocity/Current")

@@ -143,7 +143,7 @@ public class SwerveDrive extends Subsystem {
         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
             RAROdometry.getInstance().getGyro().getRotation2d())
         : new ChassisSpeeds(xSpeed, ySpeed, rot);
-    // TODO: be able to call RAROdometry from Swerve Drive (maybe pass modules as
+    // TODO be able to call RAROdometry from Swerve Drive (maybe pass modules as
     // parameters)
 
     ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(

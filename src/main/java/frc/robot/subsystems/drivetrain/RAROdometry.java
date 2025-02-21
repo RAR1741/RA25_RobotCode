@@ -46,7 +46,10 @@ public class RAROdometry extends Subsystem {
     Thread.UncaughtExceptionHandler odometryThreadHandler = new Thread.UncaughtExceptionHandler() {
       @Override
       public void uncaughtException(Thread thread, Throwable throwable) {
-        RobotTelemetry.print("Uncaught exception in odometry thread: " + throwable);
+        System.err.println("Exception in odemetry thread: " + throwable.getMessage());
+        System.err.println("Stack trace:");
+        throwable.printStackTrace();
+        // RobotTelemetry.print("Uncaught exception in odometry thread: " + throwable);
       }
     };
 
@@ -74,7 +77,6 @@ public class RAROdometry extends Subsystem {
 
   /**
    * Calls the NavX reset function, resetting the Z angle to 0
-   * ur gae mccabe
    */
   public void resetGyro() {
     m_gyro.reset();

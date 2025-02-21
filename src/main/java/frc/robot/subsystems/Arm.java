@@ -13,7 +13,9 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
@@ -24,10 +26,12 @@ public class Arm extends Subsystem {
 
   private PeriodicIO m_periodicIO;
 
-  private SparkMax m_motor;
-  private SparkAbsoluteEncoder m_encoder;
-  private SparkClosedLoopController m_pidController;
+  private final SparkMax m_motor;
+  private final SparkAbsoluteEncoder m_encoder;
+  private final SparkClosedLoopController m_pidController;
+  private final ArmFeedforward m_feedForward;
 
+  //TODO: Use SmartMotion or MAXMotion
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
@@ -41,6 +45,11 @@ public class Arm extends Subsystem {
     m_motor = new SparkMax(RobotConstants.robotConfig.Arm.k_motorId, MotorType.kBrushless);
     m_encoder = m_motor.getAbsoluteEncoder();
     m_pidController = m_motor.getClosedLoopController();
+    m_feedForward = new ArmFeedforward(
+        RobotConstants.robotConfig.Arm.k_FFS,
+        RobotConstants.robotConfig.Arm.k_FFG,
+        RobotConstants.robotConfig.Arm.k_FFV,
+        RobotConstants.robotConfig.Arm.k_FFA);
 
     SparkMaxConfig armConfig = new SparkMaxConfig();
 
@@ -52,13 +61,16 @@ public class Arm extends Subsystem {
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
     armConfig.absoluteEncoder
-        .positionConversionFactor(360.0) // [0, 1) to [0, 360)
-        .zeroOffset(RobotConstants.robotConfig.Arm.k_armOffset)
-        .inverted(true);
+        .inverted(true)
+        .zeroOffset(0.0)
+        .positionConversionFactor(1.0)
+        .velocityConversionFactor(1.0);
+        //.zeroCentered(true); // TODO: verify this works
 
     armConfig
         .smartCurrentLimit(RobotConstants.robotConfig.Arm.k_maxCurrent)
-        .inverted(true);
+        .inverted(true)
+        .idleMode(IdleMode.kBrake);
 
     m_motor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -104,12 +116,14 @@ public class Arm extends Subsystem {
     // Calculate new state
     m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
 
+    double ff = m_feedForward.calculate(absolutePositionToHorizontalRads(), m_currentState.velocity);
+
     // Set PID controller to new state
     m_pidController.setReference(
         m_currentState.position,
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
-        RobotConstants.robotConfig.Arm.k_FF,
+        ff,
         ArbFFUnits.kVoltage);
   }
 
@@ -120,6 +134,11 @@ public class Arm extends Subsystem {
   @Override
   public void stop() {
     m_pidController.setReference(0.0, SparkBase.ControlType.kVoltage);
+  }
+
+  @AutoLogOutput(key = "Arm/Position/HorizontalPositionRads")
+  public double absolutePositionToHorizontalRads() {
+    return (getArmPosition() - RobotConstants.robotConfig.Arm.k_horizontalAngle) * (2 * Math.PI); // rotations to radians
   }
 
   @AutoLogOutput(key = "Arm/Position/Current")
@@ -153,7 +172,7 @@ public class Arm extends Subsystem {
   }
 
   @AutoLogOutput(key = "Arm/Position/Setpoint")
-  private double getElevatorPosSetpoint() {
+  private double getArmSetpoint() {
     return m_currentState.position;
   }
 

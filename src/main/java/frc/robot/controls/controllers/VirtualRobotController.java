@@ -44,7 +44,7 @@ public class VirtualRobotController extends FilteredController {
         currentPose.getY() + forward,
         currentPose.getRotation().plus(new Rotation2d(rotation)));
 
-    // ASPoseHelper.addPose("VirtualRobot/pose", currentPose); //TODO: this causes a BufferOverflowException
+    ASPoseHelper.addPose("VirtualRobot/pose", currentPose);
 
     return currentPose;
   }

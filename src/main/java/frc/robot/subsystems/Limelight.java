@@ -2,9 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -157,10 +154,10 @@ public class Limelight implements Runnable {
     return true;
   }
 
-  // TODO: Add these to Constants when we're done testing them
+  // TODO Add these to Constants when we're done testing them
   private double xyStdDevCoefficient = 0.005;
   private double thetaStdDevCoefficient = 0.01;
-  private double stdDevFactor = 0.5; // TODO: Add more!
+  private double stdDevFactor = 0.5; // TODO Add more!
   private boolean useVisionRotation = true;
 
   private void updatePoseWithStdDev(PoseEstimate estimate) {
@@ -182,11 +179,11 @@ public class Limelight implements Runnable {
     RAROdometry.getInstance().addLLPose(estimate, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
   }
 
-  private void log(double startTime, PoseEstimate estimate) {
-    Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/LimelightPoseEstimation", estimate.pose);
-    Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/AverageTagDistance", estimate.avgTagDist);
-    Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/ThreadTime", Timer.getFPGATimestamp() - startTime);
-  }
+  // private void log(double startTime, PoseEstimate estimate) {
+  //   Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/LimelightPoseEstimation", estimate.pose);
+  //   Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/AverageTagDistance", estimate.avgTagDist);
+  //   Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/ThreadTime", Timer.getFPGATimestamp() - startTime);
+  // }
 
   @Override
   public void run() {
@@ -218,20 +215,20 @@ public class Limelight implements Runnable {
         }
       }
 
-      log(startTime, estimate);
+      // log(startTime, estimate);
     }
   }
 
-  @AutoLogOutput(key = "Odometry/Limelight/{m_limelightTable}/DistanceMetersFromNearestAprilTag")
-  public double getDistanceMetersFromNearestAprilTag() {
-    PoseEstimate estimate = getPoseEstimation();
+  // @AutoLogOutput(key = "Odometry/Limelight/{m_limelightTable}/DistanceMetersFromNearestAprilTag")
+  // public double getDistanceMetersFromNearestAprilTag() {
+  //   PoseEstimate estimate = getPoseEstimation();
 
-    if (estimate != null) {
-      return estimate.avgTagDist;
-    }
+  //   if (estimate != null) {
+  //     return estimate.avgTagDist;
+  //   }
 
-    return 0.0;
-  }
+  //   return 0.0;
+  // }
 
   public boolean isRunning() {
     return m_isRunning;
