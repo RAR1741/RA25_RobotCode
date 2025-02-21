@@ -1,8 +1,22 @@
 package frc.robot;
 
+import java.util.Optional;
+
 import com.revrobotics.spark.SparkBase;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 public class Helpers {
+  public static boolean isBlueAlliance() {
+    Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+
+    if (DriverStation.getAlliance().isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Blue;
+    }
+    
+    return true; // default to blue
+  }
+
   public static double modRotations(double input) {
     input %= 1.0;
     if (input < 0.0) {

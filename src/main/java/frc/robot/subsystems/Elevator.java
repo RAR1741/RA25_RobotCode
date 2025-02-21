@@ -150,6 +150,15 @@ public class Elevator extends Subsystem {
     // }
   }
 
+  @AutoLogOutput(key = "Elevator/IsAtState") 
+  public boolean getIsAtState() {
+    double currentPos = getCurrentPosition();
+    double targetPos = getElevatorTarget();
+    double allowedError = RobotConstants.robotConfig.Elevator.k_allowedError;
+
+    return Math.abs(currentPos - targetPos) < allowedError;
+  }
+
   @AutoLogOutput(key = "Elevator/Position/Current")
   private double getCurrentPosition() {
     return m_leftEncoder.getPosition();

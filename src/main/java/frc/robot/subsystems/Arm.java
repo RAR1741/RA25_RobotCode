@@ -166,6 +166,15 @@ public class Arm extends Subsystem {
     }
   }
 
+  @AutoLogOutput(key = "Arm/isAtState")
+  public boolean getIsAtState() {
+    double currentPos = getArmPosition();
+    double targetPos = getArmTarget();
+    double allowedError = RobotConstants.robotConfig.Arm.k_allowedError;
+
+    return Math.abs(currentPos - targetPos) < allowedError; //Super Funky (kong)
+  }
+
   @AutoLogOutput(key = "Arm/State")
   public ArmState getArmState() {
     return m_periodicIO.arm_state;

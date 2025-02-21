@@ -3,7 +3,6 @@ package frc.robot.subsystems.drivetrain;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.wrappers.PIDConstants;
 import frc.robot.wrappers.ProfiledPIDConstants;
 
 public class SwerveDrive extends Subsystem {
