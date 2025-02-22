@@ -15,7 +15,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.LimelightHelpers;
-import frc.robot.RobotTelemetry;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.VisionConstants;
@@ -28,6 +27,7 @@ public class Limelight implements Runnable {
   private final String m_limelightName;
   private final Thread m_thread;
   private boolean m_isRunning;
+  private int m_internalIMUMode = 0;
 
   /**
    * Constructor
@@ -58,6 +58,10 @@ public class Limelight implements Runnable {
     if (m_limelightTable != null) {
       m_limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1);
     }
+  }
+
+  public void setIMUMode(int mode) {
+    m_internalIMUMode = mode;
   }
 
   /**
@@ -197,12 +201,13 @@ public class Limelight implements Runnable {
         targetTime = 1.0 / 25.0;
       }
     }
+
     while(true) {
       if(DriverStation.isDisabled()) {
-        LimelightHelpers.SetIMUMode(m_limelightName, 1);
-      } else {
-        LimelightHelpers.SetIMUMode(m_limelightName, 2);
+        setIMUMode(IMUMode.INTERNAL_OFF);
       }
+      
+      LimelightHelpers.SetIMUMode(m_limelightName, m_internalIMUMode);
 
       LimelightHelpers.SetRobotOrientation(
         m_limelightName,
@@ -224,6 +229,9 @@ public class Limelight implements Runnable {
         }
       }
 
+      if(DriverStation.isEnabled()) {
+        setIMUMode(IMUMode.INTERNAL_ON);
+      }
       // log(startTime, estimate);
     }
   }
@@ -250,5 +258,10 @@ public class Limelight implements Runnable {
 
   public enum LimelightType {
     LL2P, LL3, LL4
+  }
+
+  public interface IMUMode {
+    int INTERNAL_OFF = 1;
+    int INTERNAL_ON = 2;
   }
 }

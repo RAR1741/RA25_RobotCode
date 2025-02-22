@@ -20,8 +20,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.Limelight.IMUMode;
 import frc.robot.subsystems.Limelight.LimelightType;
+import frc.robot.subsystems.Subsystem;
 
 public class RAROdometry extends Subsystem {
   private static RAROdometry m_instance;
@@ -84,6 +85,12 @@ public class RAROdometry extends Subsystem {
 
   public void resetRotation() {
     m_poseEstimator.resetRotation(new Rotation2d());
+    m_limelight.setIMUMode(IMUMode.INTERNAL_OFF);
+  }
+
+  public void resetRotation(Rotation2d rotation) {
+    m_poseEstimator.resetRotation(rotation);
+    m_limelight.setIMUMode(IMUMode.INTERNAL_OFF);
   }
 
   public AHRS getGyro() {
@@ -116,6 +123,7 @@ public class RAROdometry extends Subsystem {
     } else {
       m_gyro.setAngleAdjustment(0.0);
     }
+    resetRotation(Rotation2d.fromDegrees(getGyroYawDeg()));
   }
 
   public void setGyroAngleAdjustment(double angle) {
