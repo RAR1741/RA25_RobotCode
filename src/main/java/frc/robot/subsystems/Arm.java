@@ -118,18 +118,17 @@ public class Arm extends Subsystem {
 
     double ff = m_feedForward.calculate(absolutePositionToHorizontalRads(), m_currentState.velocity);
 
-    // if (m_periodicIO.arm_state == ArmState.STOW) {
-    // ff -= 0.5;
-    // }
-    // System.out.println("HALP: " + ff);
-
-    // Set PID controller to new state
-    m_pidController.setReference(
+    if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold) {
+      m_motor.setVoltage(RobotConstants.robotConfig.Arm.k_constantVoltage);
+    } else {
+      // Set PID controller to new state
+      m_pidController.setReference(
         m_currentState.position,
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
         ff,
         ArbFFUnits.kVoltage);
+    }
   }
 
   public enum ArmState {
