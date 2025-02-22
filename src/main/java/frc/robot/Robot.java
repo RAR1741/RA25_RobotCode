@@ -234,6 +234,10 @@ public class Robot extends LoggedRobot {
     if (m_driverController.getWantsAutoPositionPressed()) {
       m_swerve.resetDriveController();
     }
+
+    if(m_driverController.getWantsGyroPoseReset()) {
+      m_odometry.resetRotation();
+    }
   }
 
   @Override

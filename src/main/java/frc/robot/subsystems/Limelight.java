@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -13,6 +15,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.LimelightHelpers;
+import frc.robot.RobotTelemetry;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.VisionConstants;
@@ -87,11 +90,6 @@ public class Limelight implements Runnable {
   }
 
   public PoseEstimate getPoseEstimation() {
-    LimelightHelpers.SetRobotOrientation(
-        m_limelightName,
-        RAROdometry.getInstance().getRotation2d().getDegrees(),
-        0, 0, 0, 0, 0);
-
     PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_limelightName);
 
     if (estimate != null) {
@@ -200,6 +198,17 @@ public class Limelight implements Runnable {
       }
     }
     while(true) {
+      if(DriverStation.isDisabled()) {
+        LimelightHelpers.SetIMUMode(m_limelightName, 1);
+      } else {
+        LimelightHelpers.SetIMUMode(m_limelightName, 2);
+      }
+
+      LimelightHelpers.SetRobotOrientation(
+        m_limelightName,
+        RAROdometry.getInstance().getPose().getRotation().getDegrees(),
+        0, 0, 0, 0, 0);
+
       double startTime = Timer.getFPGATimestamp();
       PoseEstimate estimate = getPoseEstimation();
 
@@ -229,6 +238,11 @@ public class Limelight implements Runnable {
 
   //   return 0.0;
   // }
+
+  @AutoLogOutput(key = "Odometry/Limelight/Pose") 
+  public Pose2d getLLPose() {
+    return getPoseEstimation().pose;
+  }
 
   public boolean isRunning() {
     return m_isRunning;

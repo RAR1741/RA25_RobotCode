@@ -38,7 +38,7 @@ public class RAROdometry extends Subsystem {
   private RAROdometry() {
     super("Odometry");
 
-    m_limelight = new Limelight("limelight", m_stateLock, LimelightType.LL4);
+    m_limelight = new Limelight("limelight-front", m_stateLock, LimelightType.LL4);
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
 
     m_odometryThread = new OdometryThread(m_stateLock);
@@ -80,6 +80,10 @@ public class RAROdometry extends Subsystem {
    */
   public void resetGyro() {
     m_gyro.reset();
+  }
+
+  public void resetRotation() {
+    m_poseEstimator.resetRotation(new Rotation2d());
   }
 
   public AHRS getGyro() {
