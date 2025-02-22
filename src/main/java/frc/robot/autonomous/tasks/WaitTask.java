@@ -17,6 +17,7 @@ public class WaitTask extends Task {
   @Override
   public void prepare() {
     m_runningTimer.start();
+    m_prepared = true;
   }
 
   @Override

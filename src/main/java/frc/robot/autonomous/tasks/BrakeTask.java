@@ -14,6 +14,8 @@ public class BrakeTask extends Task {
   @Override
   public void prepare() {
     m_swerve.setBrake(m_brake);
+
+    m_prepared = true;
   }
 
   @Override

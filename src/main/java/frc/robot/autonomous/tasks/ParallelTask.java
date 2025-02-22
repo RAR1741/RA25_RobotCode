@@ -17,6 +17,7 @@ public class ParallelTask extends Task {
     for (Task task : m_tasks) {
       task.prepare();
     }
+    m_prepared = true;
   }
 
   @Override

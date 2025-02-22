@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
+import frc.robot.autonomous.tasks.DriveTrajectoryTask;
+import frc.robot.autonomous.tasks.PrintTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.controls.controllers.FilteredController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.TaskScheduler;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.intakes.Intakes;
@@ -59,6 +62,7 @@ public class Robot extends LoggedRobot {
   private final RAROdometry m_odometry;
   private final Intakes m_intakes;
   private final Hopper m_hopper;
+  private final TaskScheduler m_taskScheduler;
   private final DriverController m_driverController;
 
   private final AutoRunner m_autoRunner;
@@ -90,6 +94,7 @@ public class Robot extends LoggedRobot {
     m_poseAligner = PoseAligner.getInstance();
     m_intakes = Intakes.getInstance();
     m_hopper = Hopper.getInstance();
+    m_taskScheduler = TaskScheduler.getInstance();
 
     CanBridge.runTCP();
 
@@ -106,6 +111,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_endEffector);
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
+    m_subsystems.add(m_taskScheduler);
     
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
@@ -255,7 +261,7 @@ public class Robot extends LoggedRobot {
     } else if (m_operatorController.getWantsGoToL4()) {
       m_elevator.setState(ElevatorState.L4);
       m_arm.setArmState(ArmState.EXTEND);
-    }
+    } 
 
     if (m_operatorController.getWantsScore()) {
       if (m_elevator.getTargetState() == ElevatorState.L1) {
@@ -268,7 +274,10 @@ public class Robot extends LoggedRobot {
     }
 
     if (m_driverController.getWantsAutoPositionPressed()) {
-      m_swerve.resetDriveController();
+      // m_swerve.resetDriveController();
+      // m_taskScheduler.scheduleTask(new PrintTask("The Task Scheduler is working!"));
+      m_taskScheduler.clearAllTasks();
+      m_taskScheduler.scheduleTask(new DriveTrajectoryTask("please lord i hope"));
     }
   }
 

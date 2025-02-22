@@ -32,6 +32,7 @@ public class DriveTask extends Task {
     m_runningTimer.start();
 
     m_startPose = m_odometry.getPose();
+    m_prepared = true;
   }
 
   @Override

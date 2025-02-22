@@ -24,7 +24,7 @@ public class GyroTask extends Task {
 
   @Override
   public void prepare() {
-
+    m_prepared = true;
   }
 
   @Override

@@ -15,6 +15,8 @@ public class ArmTask extends Task {
   @Override
   public void prepare() {
     m_arm.setArmState(m_targetState);//Go Go Gadget Better Jacob
+
+    m_prepared = true;
   }
 
   @Override

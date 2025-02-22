@@ -45,6 +45,7 @@ public class DriveTrajectoryTask extends Task {
     if (!m_trajectory.isPresent()) {
       m_isFinished = true;
       RobotTelemetry.print("Unable to load Choreo trajectory, was NULL");
+      m_prepared = true;
       return;
     }
 
@@ -54,6 +55,7 @@ public class DriveTrajectoryTask extends Task {
     }
 
     m_timer.restart();
+    m_prepared = true;
   }
 
   @Override

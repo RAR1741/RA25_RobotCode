@@ -15,6 +15,7 @@ public class EndEffectorTask extends Task {
   @Override
   public void prepare() {
     m_endEffector.setState(m_targetState);
+    m_prepared = true;
   }
 
   @Override
