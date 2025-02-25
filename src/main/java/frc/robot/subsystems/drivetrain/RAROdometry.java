@@ -119,13 +119,12 @@ public class RAROdometry extends Subsystem {
 
   public void setAllianceGyroAngleAdjustment() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      m_gyro.setAngleAdjustment(180.0);
+      setGyroAngleAdjustment(180.0);
     } else {
-      m_gyro.setAngleAdjustment(0.0);
+      setGyroAngleAdjustment(0.0);
     }
 
-    // resetRotation(Rotation2d.fromDegrees(getGyroYawDeg())); //TODO: IS
-    // BROKE??????
+    resetRotation(Rotation2d.fromDegrees(getGyroYawDeg()));
   }
 
   public void setGyroAngleAdjustment(double angle) {

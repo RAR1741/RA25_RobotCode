@@ -8,22 +8,18 @@ import java.util.ArrayList;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
+import au.grapplerobotics.CanBridge;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
-import frc.robot.controls.controllers.OperatorController;
-import frc.robot.subsystems.Subsystem;
-import frc.robot.subsystems.drivetrain.RAROdometry;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
-import frc.robot.subsystems.intakes.Intakes;
-import frc.robot.subsystems.intakes.Intake.IntakeState;
-import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 import frc.robot.controls.controllers.FilteredController;
-import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
@@ -34,9 +30,13 @@ import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
+import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.drivetrain.RAROdometry;
+import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.SwerveSysId;
-
-import au.grapplerobotics.CanBridge;
+import frc.robot.subsystems.intakes.Intake.IntakeState;
+import frc.robot.subsystems.intakes.Intakes;
+import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -63,6 +63,7 @@ public class Robot extends LoggedRobot {
   private final GenericHID m_sysIdController;
 
   private final SwerveSysId m_swerveSysId;
+  private Alliance m_alliance;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -110,6 +111,13 @@ public class Robot extends LoggedRobot {
     m_signalManager.finalizeAll();
 
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
+  }
+
+  @Override
+  public void driverStationConnected() {
+    m_alliance = DriverStation.getAlliance().get();
+
+    m_odometry.setAllianceGyroAngleAdjustment();
   }
 
   @Override
@@ -193,8 +201,8 @@ public class Robot extends LoggedRobot {
     if (m_operatorController.getWantsIntakeEject()) {
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
-    } 
-    
+    }
+
     if (m_operatorController.getWantsIntakeStopEjecting()) {
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
@@ -235,7 +243,7 @@ public class Robot extends LoggedRobot {
       m_swerve.resetDriveController();
     }
 
-    if(m_driverController.getWantsGyroPoseReset()) {
+    if (m_driverController.getWantsGyroPoseReset()) {
       m_odometry.resetRotation();
     }
   }
@@ -247,7 +255,12 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    m_odometry.setAllianceGyroAngleAdjustment();
+    Alliance oldAlliance = m_alliance;
+    m_alliance = DriverStation.getAlliance().get();
+
+    if (oldAlliance != m_alliance) { // workin' 9 to 5
+      m_odometry.setAllianceGyroAngleAdjustment();
+    }
 
     if (m_operatorController.getWantsResetElevator()) {
       m_elevator.reset();
