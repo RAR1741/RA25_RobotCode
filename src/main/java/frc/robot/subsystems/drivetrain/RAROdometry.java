@@ -118,12 +118,14 @@ public class RAROdometry extends Subsystem {
   }
 
   public void setAllianceGyroAngleAdjustment() {
-    if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       m_gyro.setAngleAdjustment(180.0);
     } else {
       m_gyro.setAngleAdjustment(0.0);
     }
-    resetRotation(Rotation2d.fromDegrees(getGyroYawDeg()));
+
+    // resetRotation(Rotation2d.fromDegrees(getGyroYawDeg())); //TODO: IS
+    // BROKE??????
   }
 
   public void setGyroAngleAdjustment(double angle) {
@@ -180,7 +182,7 @@ public class RAROdometry extends Subsystem {
       m_odometryThread.start();
     }
 
-    if(!m_limelight.isRunning()) {
+    if (!m_limelight.isRunning()) {
       m_limelight.start();
     }
 
@@ -209,7 +211,7 @@ public class RAROdometry extends Subsystem {
 
   // @AutoLogOutput(key = "Odometry/Gyro/UpdateRate")
   // public double getGyroUpdateRate() {
-  //   return m_gyro.getActualUpdateRate();
+  // return m_gyro.getActualUpdateRate();
   // }
 
   @AutoLogOutput(key = "Odometry/Gyro/UpdateCount")
