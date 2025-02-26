@@ -14,7 +14,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
+import frc.robot.autonomous.tasks.ArmTask;
 import frc.robot.autonomous.tasks.DriveTrajectoryTask;
+import frc.robot.autonomous.tasks.ElevatorTask;
+import frc.robot.autonomous.tasks.EndEffectorTask;
+import frc.robot.autonomous.tasks.ParallelTask;
+import frc.robot.autonomous.tasks.PrintTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
@@ -272,11 +277,12 @@ public class Robot extends LoggedRobot {
       m_endEffector.setState(EndEffectorState.OFF);
     }
 
-    if (m_driverController.getWantsAutoPositionPressed()) {
-      // m_swerve.resetDriveController();
-      // m_taskScheduler.scheduleTask(new PrintTask("The Task Scheduler is working!"));
-      m_taskScheduler.clearAllTasks();
-      m_taskScheduler.scheduleTask(new DriveTrajectoryTask("please lord i hope"));
+    if (m_driverController.getWantsTest()) {
+      m_taskScheduler.scheduleTask(new ParallelTask(
+        new ElevatorTask(ElevatorState.L4),
+        new ArmTask(ArmState.EXTEND)
+      ));
+      m_taskScheduler.scheduleTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
     }
   }
 

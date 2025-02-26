@@ -17,6 +17,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
@@ -168,6 +169,9 @@ public class Arm extends Subsystem {
 
   @AutoLogOutput(key = "Arm/isAtState")
   public boolean getIsAtState() {
+    if(RobotBase.isSimulation()) {
+      return true;
+    }
     double currentPos = getArmPosition();
     double targetPos = getArmTarget();
     double allowedError = RobotConstants.robotConfig.Arm.k_allowedError;

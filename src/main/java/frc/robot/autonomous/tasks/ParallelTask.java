@@ -22,6 +22,7 @@ public class ParallelTask extends Task {
 
   @Override
   public void update() {
+    logIsRunning(true);
     for (int i = 0; i < m_tasks.length; i++) {
       if (!m_finished[i]) {
         m_tasks[i].update();
@@ -50,11 +51,18 @@ public class ParallelTask extends Task {
 
   @Override
   public boolean isFinished() {
-    return m_allFinished;
+    for(Task task : m_tasks) {
+      if(!task.isFinished()) {
+        return false;
+      }
+    }
+    return true;
+    // return m_allFinished;
   }
 
   @Override
   public void done() {
+    logIsRunning(false);
     for (Task task : m_tasks) {
       task.done();
     }
