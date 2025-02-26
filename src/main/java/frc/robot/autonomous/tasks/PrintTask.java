@@ -16,13 +16,13 @@ public class PrintTask extends Task {
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
     RobotTelemetry.print(m_message);
   }
 
   @Override
   public boolean isFinished() {
-    log(false);
+    logIsRunning(false);
     return true;
   }
 

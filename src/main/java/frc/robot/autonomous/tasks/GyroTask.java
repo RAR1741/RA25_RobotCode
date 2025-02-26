@@ -29,12 +29,12 @@ public class GyroTask extends Task {
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
   }
 
   @Override
   public void done() {
-    log(false);
+    logIsRunning(false);
 
     RobotTelemetry.print("Gyro task finished");
   }

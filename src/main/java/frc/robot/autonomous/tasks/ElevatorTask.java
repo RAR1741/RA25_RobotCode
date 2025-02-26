@@ -20,12 +20,12 @@ public class ElevatorTask extends Task {
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
   }
 
   @Override
   public boolean isFinished() {
-    log(false);
+    logIsRunning(false);
     return m_elevator.getIsAtState();
   }
 }

@@ -11,7 +11,7 @@ public class DoNothingTask extends Task {
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
 
     RobotTelemetry.print("Do nothing auto complete");
   }
@@ -23,6 +23,6 @@ public class DoNothingTask extends Task {
 
   @Override
   public void done() {
-    log(false);
+    logIsRunning(false);
   }
 }

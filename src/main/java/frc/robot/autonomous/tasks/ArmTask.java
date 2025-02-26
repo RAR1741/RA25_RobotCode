@@ -22,12 +22,12 @@ public class ArmTask extends Task {
   @Override
   public void update() {
     //Go Go Gadget Update
-    log(true);
+    logIsRunning(true);
   }
 
   @Override
   public boolean isFinished() {
-    log(false);
+    logIsRunning(false);
     return m_arm.getIsAtState();
   }
 

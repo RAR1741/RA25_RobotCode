@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
-import frc.robot.RobotTelemetry;
 import frc.robot.autonomous.tasks.Task;
 
 public class TaskScheduler extends Subsystem {
@@ -75,8 +74,6 @@ public class TaskScheduler extends Subsystem {
 
   @Override
   public void stop() {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'stop'");
   }
-
 }

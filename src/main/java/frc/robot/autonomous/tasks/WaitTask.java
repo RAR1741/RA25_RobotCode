@@ -22,7 +22,7 @@ public class WaitTask extends Task {
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
 
     m_swerve.drive(0, 0, 0, false);
   }
@@ -34,7 +34,7 @@ public class WaitTask extends Task {
 
   @Override
   public void done() {
-    log(false);
+    logIsRunning(false);
     m_runningTimer.stop();
 
     RobotTelemetry.print("Auto wait done");

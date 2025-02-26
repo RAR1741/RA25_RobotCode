@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.tasks.DriveTrajectoryTask;
-import frc.robot.autonomous.tasks.PrintTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;

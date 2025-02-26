@@ -33,7 +33,7 @@ public class DriveForwardTask extends Task {
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
 
     Pose2d currentPose = m_odometry.getPose();
 
@@ -55,7 +55,7 @@ public class DriveForwardTask extends Task {
 
   @Override
   public void done() {
-    log(false);
+    logIsRunning(false);
 
     RobotTelemetry.print("Auto driving done");
     m_swerve.drive(0, 0, 0, true);
