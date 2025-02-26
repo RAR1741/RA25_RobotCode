@@ -42,20 +42,6 @@ public class RAROdometry extends Subsystem {
     m_limelight = new Limelight("limelight-front", m_stateLock, LimelightType.LL4);
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
 
-    m_odometryThread = new OdometryThread(m_stateLock);
-
-    Thread.UncaughtExceptionHandler odometryThreadHandler = new Thread.UncaughtExceptionHandler() {
-      @Override
-      public void uncaughtException(Thread thread, Throwable throwable) {
-        System.err.println("Exception in odemetry thread: " + throwable.getMessage());
-        System.err.println("Stack trace:");
-        throwable.printStackTrace();
-        // RobotTelemetry.print("Uncaught exception in odometry thread: " + throwable);
-      }
-    };
-
-    Thread.setDefaultUncaughtExceptionHandler(odometryThreadHandler);
-
     m_poseEstimator = new SwerveDrivePoseEstimator(
         m_swerve.getKinematics(),
         m_gyro.getRotation2d(),
@@ -67,6 +53,21 @@ public class RAROdometry extends Subsystem {
         },
         new Pose2d(0, 0, Rotation2d.fromDegrees(0)) // we clarified this works
     );
+
+    // starting the thread should be the last thing in this constructor
+    m_odometryThread = new OdometryThread(
+        m_stateLock, m_swerve.getSwerveModules(), m_poseEstimator, m_gyro);
+
+    Thread.UncaughtExceptionHandler odometryThreadHandler = new Thread.UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(Thread thread, Throwable throwable) {
+        System.err.println("Exception in odemetry thread: " + throwable.getMessage());
+        System.err.println("Stack trace:");
+        throwable.printStackTrace();
+        // RobotTelemetry.print("Uncaught exception in odometry thread: " + throwable);
+      }
+    };
+    Thread.setDefaultUncaughtExceptionHandler(odometryThreadHandler);
   }
 
   public static RAROdometry getInstance() {

@@ -255,15 +255,18 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    if (m_operatorController.getWantsResetElevator()) {
+      m_elevator.reset();
+    }
+
     Alliance oldAlliance = m_alliance;
+    if(!DriverStation.getAlliance().isPresent()) {
+      return;
+    }
     m_alliance = DriverStation.getAlliance().get();
 
     if (oldAlliance != m_alliance) { // workin' 9 to 5
       m_odometry.setAllianceGyroAngleAdjustment();
-    }
-
-    if (m_operatorController.getWantsResetElevator()) {
-      m_elevator.reset();
     }
 
     // SCARY

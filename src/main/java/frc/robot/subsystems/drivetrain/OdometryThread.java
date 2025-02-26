@@ -12,7 +12,9 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.drivetrain.SwerveDrive.Module;
 
 /**
  * Thread enabling 250Hz odometry. Optimized from CTRE's internal swerve code.
@@ -30,9 +32,6 @@ public class OdometryThread implements Runnable {
 
   private final BaseStatusSignal[] m_allSignals;
 
-  private SwerveDrive m_swerve;
-  private RAROdometry m_odometry;
-
   private SwerveDrivePoseEstimator m_poseEstimator;
   private AHRS m_gyro;
 
@@ -45,8 +44,8 @@ public class OdometryThread implements Runnable {
   private SwerveModule[] m_modules;
 
   private volatile int m_threadPriorityToSet = START_THREAD_PRIORITY;
-  private final int k_updateFrequency = RobotConstants.robotConfig.Odometry.k_threadUpdateFrequency;
   private int m_lastThreadPriority = START_THREAD_PRIORITY;
+  private final int k_updateFrequency = RobotConstants.robotConfig.Odometry.k_threadUpdateFrequency;
 
   private double m_lastTime = 0;
   private double m_currentTime = 0;
@@ -56,22 +55,25 @@ public class OdometryThread implements Runnable {
   private int m_successfulDaqs = 0;
   private int m_failedDaqs = 0;
 
-  public OdometryThread(ReadWriteLock stateLock) {
+  public OdometryThread(ReadWriteLock stateLock, SwerveModule[] modules, SwerveDrivePoseEstimator poseEsimator, AHRS gyro) {
     m_stateLock = stateLock;
 
     m_thread = new Thread(this);
 
-    m_swerve = SwerveDrive.getInstance();
-    m_modules = m_swerve.getSwerveModules();
+    // m_swerve = SwerveDrive.getInstance();
+    m_modules = modules;
+    m_poseEstimator = poseEsimator;
+    m_gyro = gyro;
+
     /*
      * Mark this thread as a "daemon" (background) thread
      * so it doesn't hold up program shutdown
      */
     m_thread.setDaemon(true);
 
-    /* 4 signals for each module + 2 for Pigeon2 */
+    /* 4 signals for each module */
     m_allSignals = new BaseStatusSignal[4 * 4];
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; i++) {
       BaseStatusSignal[] signals = m_modules[i].getSignals();
       m_allSignals[(i * 4) + 0] = signals[0];
       m_allSignals[(i * 4) + 1] = signals[1];
@@ -84,10 +86,6 @@ public class OdometryThread implements Runnable {
    * Starts the odometry thread.
    */
   public void start() {
-    m_odometry = RAROdometry.getInstance();
-    m_poseEstimator = m_odometry.getPoseEstimator();
-    m_gyro = m_odometry.getGyro();
-
     m_running = true;
     m_thread.start();
   }
@@ -138,15 +136,19 @@ public class OdometryThread implements Runnable {
         }
 
         /* Keep track of previous and current pose to account for the carpet vector */
-        m_poseEstimator.updateWithTime(
-            m_currentTime,
-            m_gyro.getRotation2d(),
-            new SwerveModulePosition[] {
-                m_swerve.getModule(SwerveDrive.Module.FRONT_LEFT).getPosition(),
-                m_swerve.getModule(SwerveDrive.Module.FRONT_RIGHT).getPosition(),
-                m_swerve.getModule(SwerveDrive.Module.BACK_RIGHT).getPosition(),
-                m_swerve.getModule(SwerveDrive.Module.BACK_LEFT).getPosition()
-            });
+        if(m_poseEstimator != null) {
+          m_poseEstimator.updateWithTime(
+              m_currentTime,
+              m_gyro.getRotation2d(),
+              new SwerveModulePosition[] {
+                  m_modules[Module.FRONT_LEFT].getPosition(),
+                  m_modules[Module.FRONT_RIGHT].getPosition(),
+                  m_modules[Module.BACK_RIGHT].getPosition(),
+                  m_modules[Module.BACK_LEFT].getPosition()
+              });
+        } else {
+          RobotTelemetry.print("m_poseEstimator is null!");
+        }
       } finally {
         m_stateLock.writeLock().unlock();
       }
@@ -179,27 +181,27 @@ public class OdometryThread implements Runnable {
   }
 
   // // TODO Log these outside of the odometry thread
-  // // @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
+  // @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
   // public int getSuccessfulDaqs() {
   //   return m_successfulDaqs;
   // }
 
-  // // @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
+  // @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
   // public int getFailedDaqs() {
   //   return m_failedDaqs;
   // }
 
-  // // @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
+  // @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
   // public double getAverageOdometryLoopTime() {
   //   return m_averageOdometryLoopTime;
   // }
 
-  // // @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
+  // @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
   // public int getUpdatesPerSecond() {
   //   return (int) (1.0 / getAverageOdometryLoopTime());
   // }
 
-  // // @AutoLogOutput(key = "Odometry/Thread/Running")
+  // @AutoLogOutput(key = "Odometry/Thread/Running")
   public boolean isRunning() {
     return m_running;
   }

@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.constants.RobotConstants;
 
 public class LaserCanHandler {
@@ -49,6 +50,10 @@ public class LaserCanHandler {
 
   @AutoLogOutput(key = "LaserCans/Entrance/seesCoral")
   public boolean getEntranceSeesCoral() { // LaserCAN before elevator
+    if(RobotBase.isSimulation()) {
+      return false;
+    }
+    
     return m_entranceLaser.getMeasurement().distance_mm < 100.0;
   }
 
