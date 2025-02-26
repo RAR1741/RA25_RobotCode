@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -21,23 +22,32 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 
 public class Limelight implements Runnable {
+  private final String m_limelightName;
+
   private final NetworkTable m_limelightTable;
   private final LimelightType m_limelightType;
+
   private VisionConstants m_visionConstants;
-  private final String m_limelightName;
+
   private final Thread m_thread;
   private boolean m_isRunning;
-  private int m_internalIMUMode = 0;
+
+  // making this atomic because it should help with concurrency issues
+  private final AtomicInteger m_internalIMUMode;
 
   /**
    * Constructor
    */
   public Limelight(String limelightName, ReadWriteLock lock, LimelightType llType) {
+    m_internalIMUMode = new AtomicInteger(IMUMode.INTERNAL_OFF);
+
     m_limelightName = limelightName;
     m_limelightType = llType;
+
     m_visionConstants = new VisionConstants(1, 100, 0, 100);
 
     m_limelightTable = NetworkTableInstance.getDefault().getTable(m_limelightName);
+
     m_thread = new Thread(this);
     m_thread.setDaemon(true);
   }
@@ -61,7 +71,7 @@ public class Limelight implements Runnable {
   }
 
   public void setIMUMode(int mode) {
-    m_internalIMUMode = mode;
+    m_internalIMUMode.set(mode);
   }
 
   /**
@@ -210,7 +220,7 @@ public class Limelight implements Runnable {
         setIMUMode(IMUMode.INTERNAL_OFF);
       }
 
-      LimelightHelpers.SetIMUMode(m_limelightName, m_internalIMUMode);
+      LimelightHelpers.SetIMUMode(m_limelightName, m_internalIMUMode.get());
 
       // double yaw = LimelightHelpers.getIMUData(m_limelightName).Yaw;
 

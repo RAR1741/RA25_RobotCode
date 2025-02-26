@@ -245,6 +245,33 @@ public class RAROdometry extends Subsystem {
     return new Pose2d();
   }
 
+
+  /////////////////////////////////THREAD/////////////////////////////////
+  @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
+  public int getSuccessfulDaqs() {
+    return m_odometryThread.getSuccessfulDaqs();
+  }
+
+  @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
+  public int getFailedDaqs() {
+    return m_odometryThread.getFailedDaqs();
+  }
+
+  @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
+  public double getAverageOdometryLoopTime() {
+    return m_odometryThread.getAverageOdometryLoopTime();
+  }
+
+  @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
+  public int getUpdatesPerSecond() {
+    return (int) (1.0 / getAverageOdometryLoopTime());
+  }
+
+  @AutoLogOutput(key = "Odometry/Thread/Running")
+  public boolean isRunning() {
+    return m_odometryThread.isRunning();
+  }
+
   // private enum LimelightInstance {
   // LEFT, RIGHT, CENTER
   // }

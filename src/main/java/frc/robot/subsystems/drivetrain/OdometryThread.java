@@ -75,6 +75,7 @@ public class OdometryThread implements Runnable {
     m_allSignals = new BaseStatusSignal[4 * 4];
     for (int i = 0; i < 4; i++) {
       BaseStatusSignal[] signals = m_modules[i].getSignals();
+      
       m_allSignals[(i * 4) + 0] = signals[0];
       m_allSignals[(i * 4) + 1] = signals[1];
       m_allSignals[(i * 4) + 2] = signals[2];
@@ -180,26 +181,26 @@ public class OdometryThread implements Runnable {
     m_threadPriorityToSet = priority;
   }
 
-  // // TODO Log these outside of the odometry thread
+  // TODO Log these outside of the odometry thread
   // @AutoLogOutput(key = "Odometry/Thread/SuccessfulDataAquisitions")
-  // public int getSuccessfulDaqs() {
-  //   return m_successfulDaqs;
-  // }
+  public int getSuccessfulDaqs() {
+    return m_successfulDaqs;
+  }
 
   // @AutoLogOutput(key = "Odometry/Thread/FailedDataAquisitions")
-  // public int getFailedDaqs() {
-  //   return m_failedDaqs;
-  // }
+  public int getFailedDaqs() {
+    return m_failedDaqs;
+  }
 
   // @AutoLogOutput(key = "Odometry/Thread/AverageLoopTime")
-  // public double getAverageOdometryLoopTime() {
-  //   return m_averageOdometryLoopTime;
-  // }
+  public double getAverageOdometryLoopTime() {
+    return m_averageOdometryLoopTime;
+  }
 
   // @AutoLogOutput(key = "Odometry/Thread/UpdatesPerSecond")
-  // public int getUpdatesPerSecond() {
-  //   return (int) (1.0 / getAverageOdometryLoopTime());
-  // }
+  public int getUpdatesPerSecond() {
+    return (int) (1.0 / getAverageOdometryLoopTime());
+  }
 
   // @AutoLogOutput(key = "Odometry/Thread/Running")
   public boolean isRunning() {
