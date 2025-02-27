@@ -23,13 +23,13 @@ public class SwerveSysId extends Subsystem {
     m_modules = modules;
   }
 
-  public Command sysIdTurnQuasistatic(SysIdRoutine.Direction direction) {
-    return m_sysIdTurnRoutine.quasistatic(direction);
-  }
+//   public Command sysIdTurnQuasistatic(SysIdRoutine.Direction direction) {
+//     return m_sysIdTurnRoutine.quasistatic(direction);
+//   }
 
-  public Command sysIdTurnDynamic(SysIdRoutine.Direction direction) {
-    return m_sysIdTurnRoutine.dynamic(direction);
-  }
+//   public Command sysIdTurnDynamic(SysIdRoutine.Direction direction) {
+//     return m_sysIdTurnRoutine.dynamic(direction);
+//   }
 
   public Command sysIdDriveQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdDriveRoutine.quasistatic(direction);
@@ -103,64 +103,64 @@ public class SwerveSysId extends Subsystem {
           },
           this));
 
-  private final SysIdRoutine m_sysIdTurnRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(),
-      new SysIdRoutine.Mechanism(
-          (Voltage volts) -> {
-            for (SwerveModule module : m_modules) {
-              module.sysidTurn(volts.in(Volts));
-            }
-          },
-          log -> {
-            log.motor("turn-frontleft").voltage(
-                m_appliedVoltage.mut_replace(
-                    m_modules[SwerveDrive.Module.FRONT_LEFT].getTurnMotorVoltage()
-                        * RobotController.getBatteryVoltage(),
-                    Volts))
-                .linearPosition(
-                    m_distance.mut_replace(
-                        m_modules[SwerveDrive.Module.FRONT_LEFT].getTurnPosition(), Meters))
-                .linearVelocity(
-                    m_velocity.mut_replace(
-                        m_modules[SwerveDrive.Module.FRONT_LEFT].getTurnVelocity(), MetersPerSecond));
+//   private final SysIdRoutine m_sysIdTurnRoutine = new SysIdRoutine(
+//       new SysIdRoutine.Config(),
+//       new SysIdRoutine.Mechanism(
+//           (Voltage volts) -> {
+//             for (SwerveModule module : m_modules) {
+//               module.sysidTurn(volts.in(Volts));
+//             }
+//           },
+//           log -> {
+//             log.motor("turn-frontleft").voltage(
+//                 m_appliedVoltage.mut_replace(
+//                     m_modules[SwerveDrive.Module.FRONT_LEFT].getTurnMotorVoltage()
+//                         * RobotController.getBatteryVoltage(),
+//                     Volts))
+//                 .linearPosition(
+//                     m_distance.mut_replace(
+//                         m_modules[SwerveDrive.Module.FRONT_LEFT].getTurnPosition(), Meters))
+//                 .linearVelocity(
+//                     m_velocity.mut_replace(
+//                         m_modules[SwerveDrive.Module.FRONT_LEFT].getTurnVelocity(), MetersPerSecond));
 
-            log.motor("turn-frontright").voltage(
-                m_appliedVoltage.mut_replace(
-                    m_modules[SwerveDrive.Module.FRONT_RIGHT].getTurnMotorVoltage()
-                        * RobotController.getBatteryVoltage(),
-                    Volts))
-                .linearPosition(
-                    m_distance.mut_replace(
-                        m_modules[SwerveDrive.Module.FRONT_RIGHT].getTurnPosition(), Meters))
-                .linearVelocity(
-                    m_velocity.mut_replace(
-                        m_modules[SwerveDrive.Module.FRONT_RIGHT].getTurnVelocity(), MetersPerSecond));
+//             log.motor("turn-frontright").voltage(
+//                 m_appliedVoltage.mut_replace(
+//                     m_modules[SwerveDrive.Module.FRONT_RIGHT].getTurnMotorVoltage()
+//                         * RobotController.getBatteryVoltage(),
+//                     Volts))
+//                 .linearPosition(
+//                     m_distance.mut_replace(
+//                         m_modules[SwerveDrive.Module.FRONT_RIGHT].getTurnPosition(), Meters))
+//                 .linearVelocity(
+//                     m_velocity.mut_replace(
+//                         m_modules[SwerveDrive.Module.FRONT_RIGHT].getTurnVelocity(), MetersPerSecond));
 
-            log.motor("turn-backright").voltage(
-                m_appliedVoltage.mut_replace(
-                    m_modules[SwerveDrive.Module.BACK_RIGHT].getTurnMotorVoltage()
-                        * RobotController.getBatteryVoltage(),
-                    Volts))
-                .linearPosition(
-                    m_distance.mut_replace(
-                        m_modules[SwerveDrive.Module.BACK_RIGHT].getTurnPosition(), Meters))
-                .linearVelocity(
-                    m_velocity.mut_replace(
-                        m_modules[SwerveDrive.Module.BACK_RIGHT].getTurnVelocity(), MetersPerSecond));
+//             log.motor("turn-backright").voltage(
+//                 m_appliedVoltage.mut_replace(
+//                     m_modules[SwerveDrive.Module.BACK_RIGHT].getTurnMotorVoltage()
+//                         * RobotController.getBatteryVoltage(),
+//                     Volts))
+//                 .linearPosition(
+//                     m_distance.mut_replace(
+//                         m_modules[SwerveDrive.Module.BACK_RIGHT].getTurnPosition(), Meters))
+//                 .linearVelocity(
+//                     m_velocity.mut_replace(
+//                         m_modules[SwerveDrive.Module.BACK_RIGHT].getTurnVelocity(), MetersPerSecond));
 
-            log.motor("turn-backleft").voltage(
-                m_appliedVoltage.mut_replace(
-                    m_modules[SwerveDrive.Module.BACK_LEFT].getTurnMotorVoltage()
-                        * RobotController.getBatteryVoltage(),
-                    Volts))
-                .linearPosition(
-                    m_distance.mut_replace(
-                        m_modules[SwerveDrive.Module.BACK_LEFT].getTurnPosition(), Meters))
-                .linearVelocity(
-                    m_velocity.mut_replace(
-                        m_modules[SwerveDrive.Module.BACK_LEFT].getTurnVelocity(), MetersPerSecond));
-          },
-          this));
+//             log.motor("turn-backleft").voltage(
+//                 m_appliedVoltage.mut_replace(
+//                     m_modules[SwerveDrive.Module.BACK_LEFT].getTurnMotorVoltage()
+//                         * RobotController.getBatteryVoltage(),
+//                     Volts))
+//                 .linearPosition(
+//                     m_distance.mut_replace(
+//                         m_modules[SwerveDrive.Module.BACK_LEFT].getTurnPosition(), Meters))
+//                 .linearVelocity(
+//                     m_velocity.mut_replace(
+//                         m_modules[SwerveDrive.Module.BACK_LEFT].getTurnVelocity(), MetersPerSecond));
+//           },
+//           this));
 
   @Override
   public void reset() {
