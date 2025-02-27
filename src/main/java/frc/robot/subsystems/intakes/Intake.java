@@ -242,6 +242,11 @@ public class Intake {
     return Helpers.getVoltage(m_pivotMotor);
   }
 
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/PivotAmps")
+  public double getPivotCurrentAmps() {
+    return m_pivotMotor.getOutputCurrent();
+  }
+
   public enum IntakeState {
     NONE,
     INTAKE,

@@ -26,12 +26,12 @@ public class JormungandrConstants extends Constants {
     Arm.k_horizontalAngle = 0.5404757261276245;
 
     Intake.Left.k_stowPosition = 0.585437536239624;
-    Intake.Left.k_groundPosition = 0.2204921841621399;
+    Intake.Left.k_groundPosition = 0.22542721033096313;
     Intake.Left.k_ejectPosition = 0.36690253019332886;
     Intake.Left.k_horizontalPosition = 0.36690253019332886;
 
     Intake.Right.k_stowPosition = 0.48890572786331177;
-    Intake.Right.k_groundPosition = 0.8790994882583618;
+    Intake.Right.k_groundPosition = 0.855; //0.8605759143829346;
     Intake.Right.k_ejectPosition = 0.710295557975769;
     Intake.Right.k_horizontalPosition = 0.710295557975769;
   }

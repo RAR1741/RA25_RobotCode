@@ -230,7 +230,7 @@ public class Constants {
     public final int k_rollerMotorIdLeft = 42;
     public final int k_rollerMotorIdRight = 43;
 
-    public final int k_pivotCurrentLimit = 10;
+    public final int k_pivotCurrentLimit = 30;
     public final int k_rollerCurrentLimit = 40;
 
     public final double k_rollerGearRatio = (1.0 / 4.0);
@@ -238,7 +238,7 @@ public class Constants {
     // TODO: maybe tune more for higher speed, needs to match with drive train speed
     public final double k_pivotMotorP = 15.0;
     public final double k_pivotMotorI = 0.0;
-    public final double k_pivotMotorD = 0.0;
+    public final double k_pivotMotorD = 0.0007;
 
     public final double k_pivotMotorKS = 0.0;
     public final double k_pivotMotorKG = 0.0;
@@ -251,8 +251,8 @@ public class Constants {
     public final double k_rollerMotorD = 0.0; // 0.1;
     public final double k_rollerMotorFF = 0.0006; // 0.25
 
-    public final double k_maxAcceleration = 1.6;
-    public final double k_maxVelocity = 0.8;
+    public final double k_maxAcceleration = 3.0;
+    public final double k_maxVelocity = 1.0;
 
     public final double k_maxIntakeSpeed = 825.0;
 
