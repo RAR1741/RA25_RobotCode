@@ -238,7 +238,7 @@ public class Constants {
     // TODO: maybe tune more for higher speed, needs to match with drive train speed
     public final double k_pivotMotorP = 15.0;
     public final double k_pivotMotorI = 0.0;
-    public final double k_pivotMotorD = 0.0007;
+    public final double k_pivotMotorD = 0.0007; //TODO: Please don't do this
 
     public final double k_pivotMotorKS = 0.0;
     public final double k_pivotMotorKG = 0.0;
