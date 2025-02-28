@@ -41,8 +41,7 @@ public class Intakes extends Subsystem {
 
   @Override
   public void reset() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'reset'");
+    m_intakes.forEach(intake -> intake.reset());
   }
 
   @Override

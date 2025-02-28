@@ -114,7 +114,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     if (this.isTestEnabled()) {
-      CommandScheduler.getInstance().run();
+      CommandScheduler.getInstance().run(); // for sysid
     } else {
       m_virtualRobotController.updatePose();
 
@@ -247,6 +247,8 @@ public class Robot extends LoggedRobot {
     if (m_operatorController.getWantsResetElevator()) {
       m_elevator.reset();
     }
+
+    m_intakes.reset();
 
     // SCARY
     DriverStation.silenceJoystickConnectionWarning(DriverStation.getMatchType() == DriverStation.MatchType.None);
