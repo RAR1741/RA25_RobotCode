@@ -11,9 +11,9 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -31,7 +31,7 @@ public class Arm extends Subsystem {
   private final SparkClosedLoopController m_pidController;
   private final ArmFeedforward m_feedForward;
 
-  //TODO: Use SmartMotion or MAXMotion
+  // TODO: Use SmartMotion or MAXMotion
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
@@ -65,7 +65,7 @@ public class Arm extends Subsystem {
         .zeroOffset(0.0)
         .positionConversionFactor(1.0)
         .velocityConversionFactor(1.0);
-        //.zeroCentered(true); // TODO: verify this works
+    // .zeroCentered(true); // TODO: verify this works
 
     armConfig
         .smartCurrentLimit(RobotConstants.robotConfig.Arm.k_maxCurrent)
@@ -118,13 +118,17 @@ public class Arm extends Subsystem {
 
     double ff = m_feedForward.calculate(absolutePositionToHorizontalRads(), m_currentState.velocity);
 
-    // Set PID controller to new state
-    m_pidController.setReference(
+    if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold) {
+      m_motor.setVoltage(RobotConstants.robotConfig.Arm.k_constantVoltage);
+    } else {
+      // Set PID controller to new state
+      m_pidController.setReference(
         m_currentState.position,
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
         ff,
         ArbFFUnits.kVoltage);
+    }
   }
 
   public enum ArmState {
@@ -138,7 +142,8 @@ public class Arm extends Subsystem {
 
   @AutoLogOutput(key = "Arm/Position/HorizontalPositionRads")
   public double absolutePositionToHorizontalRads() {
-    return (getArmPosition() - RobotConstants.robotConfig.Arm.k_horizontalAngle) * (2 * Math.PI); // rotations to radians
+    return (getArmPosition() - RobotConstants.robotConfig.Arm.k_horizontalAngle) * (2 * Math.PI); // rotations to
+                                                                                                  // radians
   }
 
   @AutoLogOutput(key = "Arm/Position/Current")
