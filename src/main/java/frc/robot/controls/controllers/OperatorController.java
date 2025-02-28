@@ -9,28 +9,34 @@ public class OperatorController extends FilteredController {
     super(port, useDeadband, useSquaredInput, triggerActivationThreshold);
   }
 
+  int m_leftIntakeButton = Button.LEFT_BUMPER;
+
   public boolean getWantsLeftIntakeGround() {
-    return getRawButton(Button.LEFT_BUMPER);
+    return getRawButton(m_leftIntakeButton);
   }
 
   public boolean getWantsLeftIntakeStow() {
-    return getRawButtonReleased(Button.LEFT_BUMPER);
+    return getRawButtonReleased(m_leftIntakeButton);
   }
 
+  int m_rightIntakeButton = Button.RIGHT_BUMPER;
+
   public boolean getWantsRightIntakeGround() {
-    return getRawButton(Button.RIGHT_BUMPER);
+    return getRawButton(m_rightIntakeButton);
   }
 
   public boolean getWantsRightIntakeStow() {
-    return getRawButtonReleased(Button.RIGHT_BUMPER);
+    return getRawButtonReleased(m_rightIntakeButton);
   }
 
+  int m_IntakeEjectButton = Button.B;
+
   public boolean getWantsIntakeEject() {
-    return getRawButton(Button.B);
+    return getRawButton(m_IntakeEjectButton);
   }
 
   public boolean getWantsIntakeStopEjecting() {
-    return getRawButtonReleased(Button.B);
+    return getRawButtonReleased(m_IntakeEjectButton);
   }
 
   public boolean getWantsGoToStow() {
@@ -57,7 +63,13 @@ public class OperatorController extends FilteredController {
     return this.getRawButtonPressed(Button.START);
   }
 
+  int m_scoreButton = Button.X;
+
   public boolean getWantsScore() {
-    return this.getRawButton(Button.X);
+    return this.getRawButton(m_scoreButton);
+  }
+
+  public boolean getWantsEndEffectorOff() {
+    return this.getRawButtonReleased(m_scoreButton);
   }
 }
