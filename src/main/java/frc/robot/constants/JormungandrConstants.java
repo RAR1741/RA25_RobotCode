@@ -7,9 +7,9 @@ public class JormungandrConstants extends Constants {
     SwerveDrive.Drive.k_D = 0.0;
     SwerveDrive.Drive.k_IZone = 0.0;
 
-    SwerveDrive.Drive.k_FFS = 0.0; //0.2368;
-    SwerveDrive.Drive.k_FFV = 0.0; //0.67229;
-    SwerveDrive.Drive.k_FFA = 0.0; //0.080151;
+    SwerveDrive.Drive.k_FFS = 0.2368;
+    SwerveDrive.Drive.k_FFV = 0.67229;
+    SwerveDrive.Drive.k_FFA = 0.080151;
 
     SwerveDrive.Turn.k_FLOffset = -0.1521;
     SwerveDrive.Turn.k_FROffset = 0.02417;
