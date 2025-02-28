@@ -15,6 +15,7 @@ public class Constants {
   public final EndEffectorConstants EndEffector = new EndEffectorConstants();
   public final OdometryConstants Odometry = new OdometryConstants();
   public final HopperConstants Hopper = new HopperConstants();
+  public final AutoAlignConstants AutoAlign = new AutoAlignConstants();
 
   public static class RobotConstants {
     public final String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -277,6 +278,15 @@ public class Constants {
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
     public final double k_hopperSpeed = 0.5;
+  }
+
+  public static class AutoAlignConstants {
+    public final double k_minSafeDistance = 1.6;
+    public final double k_scoringDistance = 0.3;
+    public final double k_scoringHorizontalOffset = 0.18;
+
+    public final double k_maxApproachSpeed = 5.0;
+    public final double k_fallOffDistance = 1.5;
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants
