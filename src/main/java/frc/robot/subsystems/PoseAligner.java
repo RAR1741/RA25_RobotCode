@@ -68,7 +68,8 @@ public class PoseAligner extends Subsystem {
     ASPoseHelper.addRecord("CorrectedAngle", correctedAngle);
 
     Pose2d safePose = poses[reefSide];
-    Pose2d scoringPose = getScoringPose(safePose, reefSide, Branch.RIGHT);
+    // Pose2d scoringPose = getScoringPose(safePose, reefSide, Branch.RIGHT);
+    Pose2d scoringPose = getScoringPose(safePose, reefSide, Branch.LEFT);
     ASPoseHelper.addPose("ScoringPose", scoringPose);
 
     m_periodicIO.targetPose = scoringPose;

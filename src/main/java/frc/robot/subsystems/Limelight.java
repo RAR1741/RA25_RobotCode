@@ -207,7 +207,7 @@ public class Limelight implements Runnable {
 
     while (true) {
       if (DriverStation.isDisabled()) {
-        setIMUMode(IMUMode.INTERNAL_OFF);
+        // setIMUMode(IMUMode.INTERNAL_OFF);
       }
 
       LimelightHelpers.SetIMUMode(m_limelightName, m_internalIMUMode);
@@ -239,7 +239,8 @@ public class Limelight implements Runnable {
       }
 
       if (DriverStation.isEnabled()) {
-        setIMUMode(IMUMode.INTERNAL_ON);
+        // setIMUMode(IMUMode.INTERNAL_ON);
+        setIMUMode(IMUMode.INTERNAL_OFF);
       }
       // log(startTime, estimate);
     }

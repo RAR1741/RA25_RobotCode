@@ -71,7 +71,7 @@ public class Hopper extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     if (isHopperOn()) {
-      m_hopperMotor.set(0.1);
+      m_hopperMotor.set(RobotConstants.robotConfig.Hopper.k_hopperSpeed);
     } else {
       m_hopperMotor.set(0.0);
     }
