@@ -14,11 +14,13 @@ public class BrakeTask extends Task {
   @Override
   public void prepare() {
     m_swerve.setBrake(m_brake);
+
+    m_prepared = true;
   }
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
   }
 
   @Override
@@ -28,7 +30,7 @@ public class BrakeTask extends Task {
 
   @Override
   public void done() {
-    log(false);
+    logIsRunning(false);
 
     m_swerve.drive(0, 0, 0, false);
   }

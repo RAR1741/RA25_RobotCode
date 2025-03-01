@@ -32,11 +32,12 @@ public class DriveTask extends Task {
     m_runningTimer.start();
 
     m_startPose = m_odometry.getPose();
+    m_prepared = true;
   }
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
 
     m_swerve.drive(m_xSpeed, m_ySpeed, 0, false);
   }
@@ -71,7 +72,7 @@ public class DriveTask extends Task {
 
   @Override
   public void done() {
-    log(false);
+    logIsRunning(false);
     m_runningTimer.stop();
 
     RobotTelemetry.print("Auto driving done");

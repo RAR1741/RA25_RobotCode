@@ -46,6 +46,7 @@ public class DriveTrajectoryTask extends Task {
     if (!m_trajectory.isPresent()) {
       m_isFinished = true;
       RobotTelemetry.print("Unable to load Choreo trajectory, was NULL");
+      m_prepared = true;
       return;
     }
 
@@ -56,12 +57,12 @@ public class DriveTrajectoryTask extends Task {
     // }
 
     m_timer.restart();
+    m_prepared = true;
   }
 
   @Override
   public void update() {
-    log(true);
-    
+    logIsRunning(true);
     Optional<SwerveSample> sample = m_trajectory.get().sampleAt(m_timer.get(), !Helpers.isBlueAlliance());
 
     if (sample.isPresent()) {
@@ -80,7 +81,7 @@ public class DriveTrajectoryTask extends Task {
 
   @Override
   public boolean isFinished() {
-    log(false);
+    logIsRunning(false);
     if (m_isFinished) {
       RobotTelemetry.print("Drive Trajectory task... complete!");
       return true;

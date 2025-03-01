@@ -21,6 +21,7 @@ public class SkippableTask extends Task {
   @Override
   public void prepare() {
     m_startTime = Timer.getFPGATimestamp();
+    m_prepared = true;
     
     m_initialTask.prepare();
   }

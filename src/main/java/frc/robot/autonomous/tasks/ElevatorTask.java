@@ -15,16 +15,17 @@ public class ElevatorTask extends Task {
   @Override
   public void prepare() {
     m_elevator.setState(m_targetState);
+    m_prepared = true;
   }
 
   @Override
   public void update() {
-    log(true);
+    logIsRunning(true);
   }
 
   @Override
   public boolean isFinished() {
-    log(false);
+    logIsRunning(false);
     return m_elevator.getIsAtState();
   }
 }

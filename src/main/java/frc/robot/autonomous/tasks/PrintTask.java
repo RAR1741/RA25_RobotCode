@@ -2,27 +2,28 @@ package frc.robot.autonomous.tasks;
 
 import frc.robot.RobotTelemetry;
 
-public class DoNothingTask extends Task {
+public class PrintTask extends Task {
+  private final String m_message;
+
+  public PrintTask(String message) {
+    m_message = message;
+  }
+
   @Override
   public void prepare() {
-    RobotTelemetry.print("Starting do nothing auto...");
     m_prepared = true;
   }
 
   @Override
   public void update() {
     logIsRunning(true);
-
-    RobotTelemetry.print("Do nothing auto complete");
+    RobotTelemetry.print(m_message);
   }
 
   @Override
   public boolean isFinished() {
+    logIsRunning(false);
     return true;
   }
 
-  @Override
-  public void done() {
-    logIsRunning(false);
-  }
 }

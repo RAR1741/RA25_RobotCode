@@ -20,11 +20,22 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
+import frc.robot.autonomous.tasks.ArmTask;
+import frc.robot.autonomous.tasks.ElevatorTask;
+import frc.robot.autonomous.tasks.EndEffectorTask;
+import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
 import frc.robot.controls.controllers.OperatorController;
+import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.TaskScheduler;
+import frc.robot.subsystems.drivetrain.RAROdometry;
+import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.intakes.Intakes;
+import frc.robot.subsystems.intakes.Intake.IntakeState;
+import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
@@ -35,13 +46,7 @@ import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
-import frc.robot.subsystems.Subsystem;
-import frc.robot.subsystems.drivetrain.RAROdometry;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.SwerveSysId;
-import frc.robot.subsystems.intakes.Intake.IntakeState;
-import frc.robot.subsystems.intakes.Intakes;
-import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -60,6 +65,7 @@ public class Robot extends LoggedRobot {
   private final RAROdometry m_odometry;
   private final Intakes m_intakes;
   private final Hopper m_hopper;
+  private final TaskScheduler m_taskScheduler;
   private final DriverController m_driverController;
 
   private final AutoRunner m_autoRunner;
@@ -93,6 +99,7 @@ public class Robot extends LoggedRobot {
     m_poseAligner = PoseAligner.getInstance();
     m_intakes = Intakes.getInstance();
     m_hopper = Hopper.getInstance();
+    m_taskScheduler = TaskScheduler.getInstance();
 
     CanBridge.runTCP();
 
@@ -109,6 +116,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_endEffector);
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
+    m_subsystems.add(m_taskScheduler);
     
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
@@ -287,8 +295,12 @@ public class Robot extends LoggedRobot {
       m_endEffector.setState(EndEffectorState.OFF);
     }
 
-    if (m_driverController.getWantsAutoPositionPressed()) {
-      m_swerve.resetDriveController();
+    if (m_driverController.getWantsTest()) {
+      m_taskScheduler.scheduleTask(new ParallelTask(
+        new ElevatorTask(ElevatorState.L4),
+        new ArmTask(ArmState.EXTEND)
+      ));
+      m_taskScheduler.scheduleTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
     }
 
     if (m_driverController.getWantsGyroPoseReset()) {

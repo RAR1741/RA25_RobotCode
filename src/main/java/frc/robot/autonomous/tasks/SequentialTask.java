@@ -22,6 +22,7 @@ public class SequentialTask extends Task {
     m_currentTask = m_tasks[m_index];
 
     m_currentTask.prepare();
+    m_prepared = true;
   }
 
   @Override
