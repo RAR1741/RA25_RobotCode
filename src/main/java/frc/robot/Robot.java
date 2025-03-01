@@ -191,6 +191,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    m_swerve.setBrake(false);
   }
 
   @Override
@@ -349,11 +350,16 @@ public class Robot extends LoggedRobot {
     if (DriverStation.getMatchType() == MatchType.None) {
       m_autoRunner.initialize();
     }
+
+    m_swerve.setBrake(true);
   }
 
   @Override
   public void disabledPeriodic() {
     Alliance oldAlliance = m_alliance;
+    if(!DriverStation.getAlliance().isPresent()) {
+      return;
+    }
     m_alliance = DriverStation.getAlliance().get();
 
     if (oldAlliance != m_alliance) { // workin' 9 to 5

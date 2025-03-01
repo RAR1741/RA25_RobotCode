@@ -2,10 +2,11 @@ package frc.robot.autonomous.tasks;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -48,10 +49,11 @@ public class DriveTrajectoryTask extends Task {
       return;
     }
 
-    Optional<Pose2d> initialPose = m_trajectory.get().getInitialPose(!Helpers.isBlueAlliance());
-    if(initialPose.isPresent()) {
-      m_odometry.reset();
-    }
+    // Optional<Pose2d> initialPose = m_trajectory.get().getInitialPose(!Helpers.isBlueAlliance());
+    // if(initialPose.isPresent()) {
+    //   m_odometry.reset();
+    //   m_odometry.setPose(initialPose.get());
+    // }
 
     m_timer.restart();
   }
@@ -59,11 +61,14 @@ public class DriveTrajectoryTask extends Task {
   @Override
   public void update() {
     log(true);
+    
     Optional<SwerveSample> sample = m_trajectory.get().sampleAt(m_timer.get(), !Helpers.isBlueAlliance());
 
     if (sample.isPresent()) {
       ChassisSpeeds m_speeds = m_driveController.calculateRobotRelativeSpeeds(
         m_odometry.getPose(), sample.get().getPose(), RobotConstants.robotConfig.SwerveDrive.k_maxBoostSpeed);
+
+      Logger.recordOutput("Auto/DriveTrajectory/Pose", sample.get().getPose());
       
       if (RobotBase.isSimulation()) {
         m_odometry.setPose(sample.get().getPose());
