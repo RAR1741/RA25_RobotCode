@@ -159,6 +159,16 @@ public class Elevator extends Subsystem {
     return Math.abs(currentPos - targetPos) < allowedError;
   }
 
+  @AutoLogOutput(key = "Elevator/IsSafeToIndex")
+  public boolean isSafeToIndex() {
+    return m_periodicIO.target_state == ElevatorState.STOW && getIsAtState();
+  }
+
+  @AutoLogOutput(key = "Elevator/isSafeToScore")
+  public boolean isSafeToScore() {
+    return getIsAtState();
+  }
+
   @AutoLogOutput(key = "Elevator/Position/Current")
   private double getCurrentPosition() {
     return m_leftEncoder.getPosition();

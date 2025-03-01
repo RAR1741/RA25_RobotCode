@@ -40,7 +40,7 @@ public class Intake {
   private double m_previousUpdateTime = Timer.getFPGATimestamp();
 
   private static class PeriodicIO {
-    IntakeState desiredIntakeState = IntakeState.NONE;
+    IntakeState desiredIntakeState = IntakeState.STOW;
   }
 
   Intake(String intakeName, int pivotMotorId, int rollerMotorId, boolean isInverted) {
@@ -153,7 +153,7 @@ public class Intake {
   }
 
   public void stop() {
-    m_periodicIO.desiredIntakeState = IntakeState.NONE;
+    m_periodicIO.desiredIntakeState = IntakeState.STOW;
     m_pivotPIDController.setReference(0.0, ControlType.kVoltage);
   }
 
@@ -165,7 +165,7 @@ public class Intake {
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/RollerSpeed")
   public double getDesiredRollerSpeed() {
     switch(m_periodicIO.desiredIntakeState) {
-      case NONE -> {
+      case STOW -> {
         return 0.0;
       }
       case INTAKE -> {
@@ -183,7 +183,7 @@ public class Intake {
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotAngleFromTarget")
   public double getTargetPivotAngle() {
     switch(m_periodicIO.desiredIntakeState) {
-      case NONE -> {
+      case STOW -> {
         if(m_intakeName.equalsIgnoreCase("Left")) {
           return RobotConstants.robotConfig.Intake.Left.k_stowPosition;
         } else {
@@ -251,7 +251,7 @@ public class Intake {
   }
 
   public enum IntakeState {
-    NONE,
+    STOW,
     INTAKE,
     EJECT
   }

@@ -141,7 +141,7 @@ public class PoseAligner extends Subsystem {
     double reefX = allianceReefPose.getX();
     double reefY = allianceReefPose.getY();
 
-    double offset = RobotConstants.robotConfig.AutoAlign.k_minSafeDistance;
+    double offset = RobotConstants.robotConfig.AutoAlign.k_minSafeTargetDistance;
 
     poses[ReefStartingPoses.RIGHT_SIDE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
 

@@ -171,6 +171,16 @@ public class Arm extends Subsystem {
     }
   }
 
+  @AutoLogOutput(key = "Arm/IsSafeToScore")
+  public boolean isSafeToScore() {
+    return getIsAtState();
+  }
+
+  @AutoLogOutput(key = "Arm/isSafeToIndex")
+  public boolean isSafeToIndex() {
+    return getArmState() == ArmState.STOW && getIsAtState();
+  }
+
   @AutoLogOutput(key = "Arm/isAtState")
   public boolean getIsAtState() {
     double currentPos = getArmPosition();

@@ -197,7 +197,7 @@ public class Constants {
     // public final double k_lowAlgaeHeight = 24.8;
     // public final double k_highAlgaeHeight = 42.5;
 
-    public final double k_allowedError = 2.0; //TODO: Change this please 👁️👄👁️
+    public final double k_allowedError = 0.2; //TODO: Change this please 👁️👄👁️
   }
 
   public static class ArmConstants {
@@ -225,7 +225,7 @@ public class Constants {
     public final double k_maxAcceleration = 0.8;
     public final double k_maxVelocity = 0.4;
 
-    public final double k_allowedError = 0.1; //TODO: Change this please 🥺
+    public final double k_allowedError = 0.02; //TODO: Change this please 🥺
   }
 
   public static class EndEffectorConstants {
@@ -233,10 +233,10 @@ public class Constants {
     public final int k_rightMotorId = 32;
 
     public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
-    public final double[] k_forwardIndexSpeeds = new double[] { 0.2, 0.2 };
+    public final double[] k_forwardIndexSpeeds = new double[] { 0.15, 0.15 };
     public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
     public final double[] k_reverseSpeeds = new double[] { -0.1, -0.1 };
-    public final double[] k_branchSpeeds = new double[] { 0.5, 0.5 };
+    public final double[] k_branchSpeeds = new double[] { 0.5, 0.4 };
     public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
   }
 
@@ -303,7 +303,13 @@ public class Constants {
   }
 
   public static class AutoAlignConstants {
-    public final double k_minSafeDistance = 1.6;
+    // Distances to the reef
+    public final double k_minSafeArmDistance = 1.5;
+    public final double k_minSafeTargetDistance = 1.6;
+    public final double k_minSafeElevatorDistance = 2.0;
+
+
+    // Scoring offsets
     public final double k_scoringDistance = 0.235;
     public final double k_scoringHorizontalOffset = 0.175;
 

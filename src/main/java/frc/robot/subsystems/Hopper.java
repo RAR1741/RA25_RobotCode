@@ -9,7 +9,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.constants.RobotConstants;
-import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class Hopper extends Subsystem {
   private static Hopper m_instance = null;
@@ -61,11 +60,6 @@ public class Hopper extends Subsystem {
 
   @Override
   public void periodic() {
-    if (m_elevator.getTargetState() == ElevatorState.STOW) {
-      on();
-    } else {
-      off();
-    }
   }
 
   @Override
