@@ -29,14 +29,15 @@ public class PoseAligner extends Subsystem {
   }
 
   private static class PeriodicIO {
-    Pose2d targetPose = new Pose2d();
+    Pose2d safePose = new Pose2d();
+    Pose2d scoringPose = new Pose2d();
   }
 
   @Override
   public void periodic() {
   }
 
-  public void calculate(Pose2d currentPose) {
+  public void calculate(Pose2d currentPose, Branch branch) {
     // Get the current alliance color
     Alliance alliance = DriverStation.getAlliance().isPresent() &&
         DriverStation.getAlliance().get() == Alliance.Red
@@ -68,20 +69,29 @@ public class PoseAligner extends Subsystem {
     ASPoseHelper.addRecord("CorrectedAngle", correctedAngle);
 
     Pose2d safePose = poses[reefSide];
-    // Pose2d scoringPose = getScoringPose(safePose, reefSide, Branch.RIGHT);
-    Pose2d scoringPose = getScoringPose(safePose, reefSide, Branch.LEFT);
+    Pose2d scoringPose = getScoringPose(safePose, reefSide, branch);
     ASPoseHelper.addPose("ScoringPose", scoringPose);
 
-    m_periodicIO.targetPose = scoringPose;
+    m_periodicIO.safePose = safePose;
+    m_periodicIO.scoringPose = scoringPose;
   }
 
-  public Pose2d getAndCalculateTargetPose(Pose2d currentPose) {
-    calculate(currentPose);
-    return getTargetPose();
+  public Pose2d getAndCalculateTargetPose(Pose2d currentPose, Branch branch) {
+    calculate(currentPose, branch);
+
+    if(branch == Branch.NONE) {
+      return getSafePose();
+    }
+
+    return getScoringPose();
   }
 
-  public Pose2d getTargetPose() {
-    return m_periodicIO.targetPose;
+  public Pose2d getSafePose() {
+    return m_periodicIO.safePose;
+  }
+
+  public Pose2d getScoringPose() {
+    return m_periodicIO.scoringPose;
   }
 
   @Override
@@ -162,7 +172,9 @@ public class PoseAligner extends Subsystem {
   }
 
   public enum Branch {
-    LEFT, RIGHT
+    LEFT,
+    RIGHT,
+    NONE
   }
 
   // TODO maybe change the starting pose labels to tag-specific for easier

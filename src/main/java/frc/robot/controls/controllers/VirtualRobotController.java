@@ -3,6 +3,7 @@ package frc.robot.controls.controllers;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.ASPoseHelper;
+import frc.robot.subsystems.PoseAligner.Branch;
 
 public class VirtualRobotController extends FilteredController {
   private Pose2d currentPose = new Pose2d();
@@ -30,6 +31,15 @@ public class VirtualRobotController extends FilteredController {
   // Get rotation
   public double getRotationAxis() {
     return -this.getFilteredAxis(Axis.RIGHT_X_AXIS);
+  }
+
+  public Branch getWantsAutoPositionBranch() {
+    if(this.getRawButtonPressed(Button.LEFT_BUMPER)) {
+      return Branch.LEFT;
+    } else if (this.getRawButtonPressed(Button.RIGHT_BUMPER)) {
+      return Branch.RIGHT;
+    }
+    return Branch.NONE;
   }
 
   // Update and return the virtual robot's pose

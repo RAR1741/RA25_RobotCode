@@ -169,11 +169,15 @@ public class Robot extends LoggedRobot {
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
 
-    Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(m_virtualRobotController.getCurrentPose());
-    ASPoseHelper.addPose("VirtualRobot/target", targetPose);
+    // Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(
+    //     m_virtualRobotController.getCurrentPose(),
+    //     m_virtualRobotController.getWantsAutoPositionBranch());
+    // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
 
     Pose2d currentPose = m_odometry.getPose();
-    Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(currentPose);
+    Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(
+        currentPose,
+        m_driverController.getWantsAutoPositionBranch());
     ASPoseHelper.addPose("VirtualRobot/target", desiredPose);
 
     if (m_driverController.getWantsAutoPosition()) {
