@@ -117,6 +117,11 @@ public class EndEffector extends Subsystem {
 
   @AutoLogOutput(key = "EndEffector/IsSafeToScore")
   public boolean isSafeToScore() {
+    if(m_elevator.getTargetState() != ElevatorState.STOW && m_elevator.getIsAtState()) {
+      // we should only ever be able to score if the elevator is at liberty to move
+      return m_periodicIO.state == EndEffectorState.INDEXED || m_periodicIO.state == EndEffectorState.OFF;
+    }
+  
     return m_periodicIO.state == EndEffectorState.INDEXED;
   }
 
