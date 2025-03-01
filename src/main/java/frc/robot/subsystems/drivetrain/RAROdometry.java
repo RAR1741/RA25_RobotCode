@@ -223,15 +223,15 @@ public class RAROdometry extends Subsystem {
     return m_gyro.getPitch();
   }
 
-  @AutoLogOutput(key = "Odometry/Gyro/RollDeg")
-  public double getGyroRollDeg() {
-    return m_gyro.getRoll();
-  }
+  // @AutoLogOutput(key = "Odometry/Gyro/RollDeg")
+  // public double getGyroRollDeg() {
+  //   return m_gyro.getRoll();
+  // }
 
-  @AutoLogOutput(key = "Odometry/Gyro/NavXTimestamp")
-  public double getNavXTimestamp() {
-    return (double) m_gyro.getLastSensorTimestamp();
-  }
+  // @AutoLogOutput(key = "Odometry/Gyro/NavXTimestamp")
+  // public double getNavXTimestamp() {
+  //   return (double) m_gyro.getLastSensorTimestamp();
+  // }
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")
   public Pose2d getPose() {

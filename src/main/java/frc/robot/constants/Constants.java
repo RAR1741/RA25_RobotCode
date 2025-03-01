@@ -3,6 +3,8 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.wrappers.PIDConstants;
+import frc.robot.wrappers.ProfiledPIDConstants;
 
 public class Constants {
   public final RobotConstants Robot = new RobotConstants();
@@ -10,6 +12,7 @@ public class Constants {
   public final SwerveDriveConstants SwerveDrive = new SwerveDriveConstants();
   public final IntakeConstants Intake = new IntakeConstants();
   public final ArmConstants Arm = new ArmConstants();
+  public final AutoConstants Auto = new AutoConstants();
   public final ElevatorConstants Elevator = new ElevatorConstants();
   public final LaserCanConstants LaserCan = new LaserCanConstants();
   public final EndEffectorConstants EndEffector = new EndEffectorConstants();
@@ -24,8 +27,10 @@ public class Constants {
     public final double k_width = 28.0; // Inches
     public final double k_length = 32.0; // Inches
 
-    public final double k_bumperStart = 1.0; // Inches
-    public final double k_bumperHeight = 5.0; // Inches
+    public double k_bumperStart = 1.0; // Inches
+    public double k_bumperHeight = 5.0; // Inches
+
+    public double k_period = 1.0 / 50.0; // the robot runs at 50Hz
   }
 
   public static class FieldConstants {
@@ -154,6 +159,19 @@ public class Constants {
     }
   }
 
+  public static class AutoConstants {
+    // Needs to be more than the max robot speed, to allow for turning
+    public double k_maxVelocity = 0.0; // Meters per second
+    public double k_maxAcceleration = 0.0; // Meters per second
+    public PIDConstants k_translationConstants = new PIDConstants(0.0, 0.0, 0.0);
+    public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(0.0, 0.0, 0.0, k_maxVelocity, k_maxAcceleration);
+
+    public TimingConstants Timing = new TimingConstants();
+
+    public class TimingConstants {
+      
+    }
+  }
   public static class ElevatorConstants {
     public final int k_elevatorLeftMotorId = 20;
     public final int k_elevatorRightMotorId = 21;
@@ -178,6 +196,8 @@ public class Constants {
     // public final double k_groundAlgaeHeight = 0.0;
     // public final double k_lowAlgaeHeight = 24.8;
     // public final double k_highAlgaeHeight = 42.5;
+
+    public final double k_allowedError = 2.0; //TODO: Change this please 👁️👄👁️
   }
 
   public static class ArmConstants {
@@ -204,6 +224,8 @@ public class Constants {
 
     public final double k_maxAcceleration = 0.8;
     public final double k_maxVelocity = 0.4;
+
+    public final double k_allowedError = 0.1; //TODO: Change this please 🥺
   }
 
   public static class EndEffectorConstants {

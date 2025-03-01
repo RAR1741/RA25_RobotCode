@@ -13,9 +13,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.autonomous.AutoChooser;
+import frc.robot.autonomous.AutoRunner;
+import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
@@ -56,6 +60,10 @@ public class Robot extends LoggedRobot {
   private final Intakes m_intakes;
   private final Hopper m_hopper;
   private final DriverController m_driverController;
+
+  private final AutoRunner m_autoRunner;
+  private final AutoChooser m_autoChooser;
+  private Task m_currentTask;
   private final OperatorController m_operatorController;
   private final PoseAligner m_poseAligner;
   private final SignalManager m_signalManager = SignalManager.getInstance();
@@ -75,6 +83,8 @@ public class Robot extends LoggedRobot {
     m_subsystems = new ArrayList<>();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
+    m_autoRunner = AutoRunner.getInstance();
+    m_autoChooser = AutoChooser.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
     m_endEffector = EndEffector.getInstance();
@@ -97,7 +107,12 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_endEffector);
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
+    
+    m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
+  }
 
+  @Override
+  public void robotInit() {
     new RobotTelemetry();
 
     // Initialize on-board logging
@@ -109,8 +124,6 @@ public class Robot extends LoggedRobot {
     RobotTelemetry.print("Logging Initialized. Fard.");
 
     m_signalManager.finalizeAll();
-
-    m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
 
   @Override
@@ -141,10 +154,33 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
+    m_currentTask = m_autoRunner.getNextTask();
+
+    // Start the first task
+    if (m_currentTask != null) {
+      m_currentTask.prepare();
+    }
   }
 
   @Override
   public void autonomousPeriodic() {
+    // If there is a current task, run it
+    if (m_currentTask != null) {
+      // Run the current task
+      m_currentTask.update();
+      m_currentTask.updateSim();
+
+      // If the current task is finished, get the next task
+      if (m_currentTask.isFinished()) {
+        m_currentTask.done();
+        m_currentTask = m_autoRunner.getNextTask();
+
+        // Start the next task
+        if (m_currentTask != null) {
+          m_currentTask.prepare();
+        }
+      }
+    }
   }
 
   @Override
@@ -179,7 +215,6 @@ public class Robot extends LoggedRobot {
         currentPose,
         m_driverController.getWantsAutoPositionBranch());
     ASPoseHelper.addPose("VirtualRobot/target", desiredPose);
-
     if (m_driverController.getWantsAutoPosition()) {
       m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, desiredPose);
     } else {
@@ -254,6 +289,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
+    if (DriverStation.getMatchType() == MatchType.None) {
+      m_autoRunner.initialize();
+    }
     m_hopper.stop();
   }
 
