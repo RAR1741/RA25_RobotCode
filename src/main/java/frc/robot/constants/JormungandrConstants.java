@@ -22,7 +22,7 @@ public class JormungandrConstants extends Constants {
     SwerveDrive.Turn.k_IZone = 0.0;
 
     Arm.k_stowAngle = 0.2897946238517761;
-    Arm.k_L4Angle = 0.5404757261276245;
+    Arm.k_L4Angle = 0.5541301965713501; //0.5404757261276245;
     Arm.k_horizontalAngle = 0.5404757261276245;
 
     Intake.Left.k_stowPosition = 0.585437536239624;

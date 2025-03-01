@@ -1,5 +1,7 @@
 package frc.robot.controls.controllers;
 
+import frc.robot.subsystems.PoseAligner.Branch;
+
 public class DriverController extends FilteredController {
   public DriverController(int port) {
     super(port, false, false, 0);
@@ -40,11 +42,26 @@ public class DriverController extends FilteredController {
   }
 
   public boolean getWantsAutoPosition() {
-    return this.getRawButton(Button.X);
+    return getRawButton(Button.X) ||
+        getRawButton(Button.LEFT_BUMPER) ||
+        getRawButton(Button.RIGHT_BUMPER);
+  }
+
+  public Branch getWantsAutoPositionBranch() {
+    if(this.getRawButton(Button.LEFT_BUMPER)) {
+      return Branch.LEFT;
+    } else if (this.getRawButton(Button.RIGHT_BUMPER)) {
+      return Branch.RIGHT;
+    }
+    return Branch.NONE;
   }
 
   public boolean getWantsAutoPositionPressed() {
     return this.getRawButtonPressed(Button.X);
+  }
+
+  public boolean getWantsGyroPoseReset() {
+    return this.getRawButtonPressed(Button.A);
   }
 
   public boolean getWantsResetOdometry() {

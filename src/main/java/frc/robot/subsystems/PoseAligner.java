@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ASPoseHelper;
@@ -27,14 +29,15 @@ public class PoseAligner extends Subsystem {
   }
 
   private static class PeriodicIO {
-    Pose2d targetPose = new Pose2d();
+    Pose2d safePose = new Pose2d();
+    Pose2d scoringPose = new Pose2d();
   }
 
   @Override
   public void periodic() {
   }
 
-  public void calculate(Pose2d currentPose) {
+  public void calculate(Pose2d currentPose, Branch branch) {
     // Get the current alliance color
     Alliance alliance = DriverStation.getAlliance().isPresent() &&
         DriverStation.getAlliance().get() == Alliance.Red
@@ -55,22 +58,40 @@ public class PoseAligner extends Subsystem {
     // 180 to face the red wall, 30 to account for the reef's orientation
     int correctedAngle = (int) Helpers.modDegrees(baseAngle + 180.0 + 30.0);
 
-    // TODO we only need to do this once/when the alliance changes
+    // TODO: we only need to do this once/when the alliance changes
     Pose2d[] poses = getAllianceReefScoringPoses(allianceReef);
     String loggingKey = (alliance == Alliance.Red ? "Red/Reef/targets" : "Blue/Reef/targets");
     ASPoseHelper.addPose(loggingKey, poses);
 
     // get the pose corresponding to what sector we're in
-    m_periodicIO.targetPose = poses[Math.floorDiv(correctedAngle, 60)];
+    int reefSide = Math.floorDiv(correctedAngle, 60);
+    ASPoseHelper.addRecord("ReefSide", reefSide);
+    ASPoseHelper.addRecord("CorrectedAngle", correctedAngle);
+
+    Pose2d safePose = poses[reefSide];
+    Pose2d scoringPose = getScoringPose(safePose, reefSide, branch);
+    ASPoseHelper.addPose("ScoringPose", scoringPose);
+
+    m_periodicIO.safePose = safePose;
+    m_periodicIO.scoringPose = scoringPose;
   }
 
-  public Pose2d getAndCalculateTargetPose(Pose2d currentPose) {
-    calculate(currentPose);
-    return getTargetPose();
+  public Pose2d getAndCalculateTargetPose(Pose2d currentPose, Branch branch) {
+    calculate(currentPose, branch);
+
+    if(branch == Branch.NONE) {
+      return getSafePose();
+    }
+
+    return getScoringPose();
   }
 
-  public Pose2d getTargetPose() {
-    return m_periodicIO.targetPose;
+  public Pose2d getSafePose() {
+    return m_periodicIO.safePose;
+  }
+
+  public Pose2d getScoringPose() {
+    return m_periodicIO.scoringPose;
   }
 
   @Override
@@ -85,6 +106,24 @@ public class PoseAligner extends Subsystem {
   public void reset() {
   }
 
+  public Pose2d getScoringPose(Pose2d currentPose, int reefSide, Branch branch) {
+    // x-translation -> down the long side of the field
+    double scoringDistance = RobotConstants.robotConfig.AutoAlign.k_scoringDistance;
+
+    // y-translation -> along the shorter side of the field
+    double scoringHorizontalOffset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+
+    if (branch == Branch.RIGHT) {
+      scoringHorizontalOffset = -scoringHorizontalOffset;
+    }
+
+    Translation2d offset = new Translation2d(scoringDistance, scoringHorizontalOffset);
+
+    Pose2d scoringPose = currentPose.transformBy(new Transform2d(offset, new Rotation2d()));
+    
+    return scoringPose;
+  }
+
   /**
    * Generates a new Pose2d for scoring on all 6 sides of the given alliance reef.
    *
@@ -96,14 +135,13 @@ public class PoseAligner extends Subsystem {
   public Pose2d[] getAllianceReefScoringPoses(Pose3d allianceReefPose) {
     Pose2d[] poses = new Pose2d[6];
 
-    // Calculate poses for each side of the reef (assuming hexagonal reef)
+    // Calculate poses for each side of the reef
     // You might need to adjust these offsets based on the actual reef dimensions
     // and robot's approach
     double reefX = allianceReefPose.getX();
     double reefY = allianceReefPose.getY();
 
-    double offset = 1.5; // TODO Offset from the reef center, adjust as needed (we might want to change
-                         // this)
+    double offset = RobotConstants.robotConfig.AutoAlign.k_minSafeDistance;
 
     poses[ReefStartingPoses.RIGHT_SIDE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
 
@@ -131,6 +169,12 @@ public class PoseAligner extends Subsystem {
     int LEFT_SIDE = 3;
     int BOTTOM_LEFT_SIDE = 4;
     int BOTTOM_RIGHT_SIDE = 5;
+  }
+
+  public enum Branch {
+    LEFT,
+    RIGHT,
+    NONE
   }
 
   // TODO maybe change the starting pose labels to tag-specific for easier

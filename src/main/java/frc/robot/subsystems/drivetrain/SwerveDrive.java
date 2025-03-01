@@ -149,7 +149,7 @@ public class SwerveDrive extends Subsystem {
     ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(
         currentPose,
         targetPose,
-        5.0);
+        RobotConstants.robotConfig.AutoAlign.k_maxApproachSpeed);
 
     drive(driverChassisSpeeds.plus(targetPoseChassisSpeeds));
   }

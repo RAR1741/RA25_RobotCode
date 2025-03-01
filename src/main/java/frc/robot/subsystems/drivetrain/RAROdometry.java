@@ -20,8 +20,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.Limelight.IMUMode;
 import frc.robot.subsystems.Limelight.LimelightType;
+import frc.robot.subsystems.Subsystem;
 
 public class RAROdometry extends Subsystem {
   private static RAROdometry m_instance;
@@ -38,7 +39,7 @@ public class RAROdometry extends Subsystem {
   private RAROdometry() {
     super("Odometry");
 
-    m_limelight = new Limelight("limelight", m_stateLock, LimelightType.LL4);
+    m_limelight = new Limelight("limelight-front", m_stateLock, LimelightType.LL4);
     m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
 
     m_odometryThread = new OdometryThread(m_stateLock);
@@ -82,6 +83,16 @@ public class RAROdometry extends Subsystem {
     m_gyro.reset();
   }
 
+  public void resetRotation() {
+    m_poseEstimator.resetRotation(new Rotation2d());
+    m_limelight.setIMUMode(IMUMode.INTERNAL_OFF);
+  }
+
+  public void resetRotation(Rotation2d rotation) {
+    m_poseEstimator.resetRotation(rotation);
+    m_limelight.setIMUMode(IMUMode.INTERNAL_OFF);
+  }
+
   public AHRS getGyro() {
     return m_gyro;
   }
@@ -107,11 +118,13 @@ public class RAROdometry extends Subsystem {
   }
 
   public void setAllianceGyroAngleAdjustment() {
-    if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      m_gyro.setAngleAdjustment(180.0);
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      setGyroAngleAdjustment(180.0);
     } else {
-      m_gyro.setAngleAdjustment(0.0);
+      setGyroAngleAdjustment(0.0);
     }
+
+    resetRotation(Rotation2d.fromDegrees(getGyroYawDeg()));
   }
 
   public void setGyroAngleAdjustment(double angle) {
@@ -168,7 +181,7 @@ public class RAROdometry extends Subsystem {
       m_odometryThread.start();
     }
 
-    if(!m_limelight.isRunning()) {
+    if (!m_limelight.isRunning()) {
       m_limelight.start();
     }
 
@@ -197,7 +210,7 @@ public class RAROdometry extends Subsystem {
 
   // @AutoLogOutput(key = "Odometry/Gyro/UpdateRate")
   // public double getGyroUpdateRate() {
-  //   return m_gyro.getActualUpdateRate();
+  // return m_gyro.getActualUpdateRate();
   // }
 
   @AutoLogOutput(key = "Odometry/Gyro/UpdateCount")

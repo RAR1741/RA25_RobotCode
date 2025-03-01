@@ -12,6 +12,7 @@ import au.grapplerobotics.CanBridge;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -62,6 +63,7 @@ public class Robot extends LoggedRobot {
   private final GenericHID m_sysIdController;
 
   private final SwerveSysId m_swerveSysId;
+  private Alliance m_alliance;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -109,6 +111,13 @@ public class Robot extends LoggedRobot {
     m_signalManager.finalizeAll();
 
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
+  }
+
+  @Override
+  public void driverStationConnected() {
+    m_alliance = DriverStation.getAlliance().get();
+
+    m_odometry.setAllianceGyroAngleAdjustment();
   }
 
   @Override
@@ -160,11 +169,15 @@ public class Robot extends LoggedRobot {
     ySpeed *= slowScaler * boostScaler;
     rot *= slowScaler * boostScaler;
 
-    Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(m_virtualRobotController.getCurrentPose());
-    ASPoseHelper.addPose("VirtualRobot/target", targetPose);
+    // Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(
+    //     m_virtualRobotController.getCurrentPose(),
+    //     m_virtualRobotController.getWantsAutoPositionBranch());
+    // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
 
     Pose2d currentPose = m_odometry.getPose();
-    Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(currentPose);
+    Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(
+        currentPose,
+        m_driverController.getWantsAutoPositionBranch());
     ASPoseHelper.addPose("VirtualRobot/target", desiredPose);
 
     if (m_driverController.getWantsAutoPosition()) {
@@ -233,6 +246,10 @@ public class Robot extends LoggedRobot {
     if (m_driverController.getWantsAutoPositionPressed()) {
       m_swerve.resetDriveController();
     }
+
+    if (m_driverController.getWantsGyroPoseReset()) {
+      m_odometry.resetRotation();
+    }
   }
 
   @Override
@@ -242,7 +259,12 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    m_odometry.setAllianceGyroAngleAdjustment();
+    Alliance oldAlliance = m_alliance;
+    m_alliance = DriverStation.getAlliance().get();
+
+    if (oldAlliance != m_alliance) { // workin' 9 to 5
+      m_odometry.setAllianceGyroAngleAdjustment();
+    }
 
     if (m_operatorController.getWantsResetElevator()) {
       m_elevator.reset();

@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import frc.robot.constants.RobotConstants;
 import frc.robot.wrappers.ProfiledPIDConstants;
 
 /** Pose targeter for holonomic drive trains */
@@ -103,10 +104,18 @@ public class RARHolonomicDriveController {
     }
 
     Rotation2d targetHeading = goalPose.getTranslation().minus(currentPose.getTranslation()).getAngle();
-    double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation());
+    double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation()); // distance from goal pose
 
     // As we get closer to the target, we should be ramping down our x/y FF
-    double targetSpeed = Math.min(maxApproachSpeed, translationError * 2);
+    double targetSpeed = maxApproachSpeed;
+    double falloffDistance = RobotConstants.robotConfig.AutoAlign.k_fallOffDistance;
+    
+    if (translationError < falloffDistance) {
+      targetSpeed = (maxApproachSpeed / falloffDistance) * translationError;
+    }
+    
+    Logger.recordOutput("AutoAligner/DistanceFromGoalPose", translationError);
+    Logger.recordOutput("AutoAligner/TargetSpeed", targetSpeed);
 
     double xFF = targetSpeed * targetHeading.getCos();
     double yFF = targetSpeed * targetHeading.getSin();

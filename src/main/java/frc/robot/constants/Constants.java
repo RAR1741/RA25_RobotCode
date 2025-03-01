@@ -15,6 +15,7 @@ public class Constants {
   public final EndEffectorConstants EndEffector = new EndEffectorConstants();
   public final OdometryConstants Odometry = new OdometryConstants();
   public final HopperConstants Hopper = new HopperConstants();
+  public final AutoAlignConstants AutoAlign = new AutoAlignConstants();
 
   public static class RobotConstants {
     public final String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -59,7 +60,7 @@ public class Constants {
     // Max speeds
     public final double k_maxSpeed = 1.5; // Meters per second
     public final double k_maxBoostSpeed = 4.5; // Meters per second
-    public final double k_maxAngularSpeed = Math.PI * 2.0; // Radians per second
+    public final double k_maxAngularSpeed = Math.PI * 1.5; // Radians per second
 
     // Max acceleration
     public final double k_maxLinearAcceleration = 12.0; // Meters per second^2
@@ -171,8 +172,8 @@ public class Constants {
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
     public final double k_L2Height = 25.64;
-    public final double k_L3Height = 43.5;
-    public final double k_L4Height = 59.6;
+    public final double k_L3Height = 42.7;
+    public final double k_L4Height = 60.5; //59.6;
     public final double k_maxHeight = 60.5;
     // public final double k_groundAlgaeHeight = 0.0;
     // public final double k_lowAlgaeHeight = 24.8;
@@ -276,7 +277,16 @@ public class Constants {
 
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
-    public final double k_hopperSpeed = 0.5;
+    public final double k_hopperSpeed = 0.2;
+  }
+
+  public static class AutoAlignConstants {
+    public final double k_minSafeDistance = 1.6;
+    public final double k_scoringDistance = 0.235;
+    public final double k_scoringHorizontalOffset = 0.175;
+
+    public final double k_maxApproachSpeed = 5.0;
+    public final double k_fallOffDistance = 1.5;
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants

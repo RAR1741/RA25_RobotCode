@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -25,6 +27,7 @@ public class Limelight implements Runnable {
   private final String m_limelightName;
   private final Thread m_thread;
   private boolean m_isRunning;
+  private int m_internalIMUMode = 0;
 
   /**
    * Constructor
@@ -32,7 +35,7 @@ public class Limelight implements Runnable {
   public Limelight(String limelightName, ReadWriteLock lock, LimelightType llType) {
     m_limelightName = limelightName;
     m_limelightType = llType;
-    m_visionConstants = new VisionConstants(1,100,0,100);
+    m_visionConstants = new VisionConstants(1, 100, 0, 100);
 
     m_limelightTable = NetworkTableInstance.getDefault().getTable(m_limelightName);
     m_thread = new Thread(this);
@@ -55,6 +58,10 @@ public class Limelight implements Runnable {
     if (m_limelightTable != null) {
       m_limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1);
     }
+  }
+
+  public void setIMUMode(int mode) {
+    m_internalIMUMode = mode;
   }
 
   /**
@@ -87,11 +94,6 @@ public class Limelight implements Runnable {
   }
 
   public PoseEstimate getPoseEstimation() {
-    LimelightHelpers.SetRobotOrientation(
-        m_limelightName,
-        RAROdometry.getInstance().getRotation2d().getDegrees(),
-        0, 0, 0, 0, 0);
-
     PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(m_limelightName);
 
     if (estimate != null) {
@@ -180,15 +182,18 @@ public class Limelight implements Runnable {
   }
 
   // private void log(double startTime, PoseEstimate estimate) {
-  //   Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/LimelightPoseEstimation", estimate.pose);
-  //   Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/AverageTagDistance", estimate.avgTagDist);
-  //   Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/ThreadTime", Timer.getFPGATimestamp() - startTime);
+  // Logger.recordOutput("Odometry/Limelight/" + m_limelightName +
+  // "/LimelightPoseEstimation", estimate.pose);
+  // Logger.recordOutput("Odometry/Limelight/" + m_limelightName +
+  // "/AverageTagDistance", estimate.avgTagDist);
+  // Logger.recordOutput("Odometry/Limelight/" + m_limelightName + "/ThreadTime",
+  // Timer.getFPGATimestamp() - startTime);
   // }
 
   @Override
   public void run() {
     double targetTime = 0.0;
-    switch(m_limelightType) {
+    switch (m_limelightType) {
       case LL4 -> {
         targetTime = 1.0 / 120.0;
       }
@@ -199,15 +204,33 @@ public class Limelight implements Runnable {
         targetTime = 1.0 / 25.0;
       }
     }
-    while(true) {
+
+    while (true) {
+      if (DriverStation.isDisabled()) {
+        // setIMUMode(IMUMode.INTERNAL_OFF);
+      }
+
+      LimelightHelpers.SetIMUMode(m_limelightName, m_internalIMUMode);
+
+      // double yaw = LimelightHelpers.getIMUData(m_limelightName).Yaw;
+
+      // if (DriverStation.getAlliance().isPresent()) {
+      // yaw += 180.0;
+      // }
+
+      LimelightHelpers.SetRobotOrientation(
+          m_limelightName,
+          -RAROdometry.getInstance().getGyroYawDeg(),
+          0, 0, 0, 0, 0);
+
       double startTime = Timer.getFPGATimestamp();
       PoseEstimate estimate = getPoseEstimation();
 
       if (checkPose(estimate)) {
         updatePoseWithStdDev(estimate);
       }
-      
-      while(Timer.getFPGATimestamp() - startTime < targetTime) {
+
+      while (Timer.getFPGATimestamp() - startTime < targetTime) {
         try {
           Thread.sleep(0);
         } catch (InterruptedException e) {
@@ -215,20 +238,35 @@ public class Limelight implements Runnable {
         }
       }
 
+      if (DriverStation.isEnabled()) {
+        // setIMUMode(IMUMode.INTERNAL_ON);
+        setIMUMode(IMUMode.INTERNAL_OFF);
+      }
       // log(startTime, estimate);
     }
   }
 
-  // @AutoLogOutput(key = "Odometry/Limelight/{m_limelightTable}/DistanceMetersFromNearestAprilTag")
+  // @AutoLogOutput(key =
+  // "Odometry/Limelight/{m_limelightTable}/DistanceMetersFromNearestAprilTag")
   // public double getDistanceMetersFromNearestAprilTag() {
-  //   PoseEstimate estimate = getPoseEstimation();
+  // PoseEstimate estimate = getPoseEstimation();
 
-  //   if (estimate != null) {
-  //     return estimate.avgTagDist;
-  //   }
-
-  //   return 0.0;
+  // if (estimate != null) {
+  // return estimate.avgTagDist;
   // }
+
+  // return 0.0;
+  // }
+
+  @AutoLogOutput(key = "Odometry/Limelight/Pose")
+  public Pose2d getLLPose() {
+    return getPoseEstimation().pose;
+  }
+
+  @AutoLogOutput(key = "Odometry/Limelight/IMUYaw")
+  public double getIMUYaw() {
+    return LimelightHelpers.getIMUData(m_limelightName).Yaw;
+  }
 
   public boolean isRunning() {
     return m_isRunning;
@@ -236,5 +274,10 @@ public class Limelight implements Runnable {
 
   public enum LimelightType {
     LL2P, LL3, LL4
+  }
+
+  public interface IMUMode {
+    int INTERNAL_OFF = 1;
+    int INTERNAL_ON = 2;
   }
 }
