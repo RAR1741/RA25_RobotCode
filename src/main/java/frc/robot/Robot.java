@@ -380,7 +380,7 @@ public class Robot extends LoggedRobot {
     }
     m_alliance = DriverStation.getAlliance().get();
 
-    if (oldAlliance != m_alliance) { // workin' 9 to 5
+    if (oldAlliance != m_alliance) {
       m_odometry.setAllianceGyroAngleAdjustment();
 
       m_reefPose = Helpers.isBlueAlliance()

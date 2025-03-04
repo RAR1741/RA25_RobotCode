@@ -24,8 +24,12 @@ public class ElevatorTask extends Task {
   }
 
   @Override
-  public boolean isFinished() {
+  public void done() {
     logIsRunning(false);
+  }
+
+  @Override
+  public boolean isFinished() {
     return m_elevator.getIsAtState();
   }
 }

@@ -154,6 +154,15 @@ public class SwerveDrive extends Subsystem {
     drive(driverChassisSpeeds.plus(targetPoseChassisSpeeds));
   }
 
+  public void drive(Pose2d currentPose, Pose2d goalPose) {
+    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculateRobotRelativeSpeeds(
+        currentPose,
+        goalPose,
+        RobotConstants.robotConfig.AutoAlign.k_maxApproachSpeed);
+
+    drive(targetPoseChassisSpeeds);
+  }
+
   public void resetDriveController() {
     Pose2d currentPose = RAROdometry.getInstance().getPose();
     m_driveController.reset(currentPose, m_kinematics.toChassisSpeeds(getCurrentStates())); // this is fine 🔥

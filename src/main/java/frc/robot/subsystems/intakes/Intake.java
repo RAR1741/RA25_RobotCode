@@ -19,6 +19,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
@@ -156,6 +157,19 @@ public class Intake {
   public void stop() {
     m_periodicIO.desiredIntakeState = IntakeState.STOW;
     m_pivotPIDController.setReference(0.0, ControlType.kVoltage);
+  }
+
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/IsAtState")
+  public boolean isAtState() {
+    if (RobotBase.isSimulation()) {
+      return true;
+    }
+
+    double currentPos = getPivotAngle();
+    double targetPos = getTargetPivotAngle();
+    double allowedPivotError = RobotConstants.robotConfig.Intake.k_allowedPivotError;
+
+    return Math.abs(currentPos - targetPos) <= allowedPivotError;
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/IntakeState")

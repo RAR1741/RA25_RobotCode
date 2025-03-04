@@ -281,6 +281,8 @@ public class Constants {
 
     public final double k_maxIntakeSpeed = 600.0;
 
+    public final double k_allowedPivotError = 0.01;
+
     public final LeftConstants Left = new LeftConstants();
     public final RightConstants Right = new RightConstants();
 
@@ -301,7 +303,7 @@ public class Constants {
 
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
-    public final double k_hopperSpeed = 0.2;
+    public final double k_hopperSpeed = 0.3;
   }
 
   public static class AutoAlignConstants {
