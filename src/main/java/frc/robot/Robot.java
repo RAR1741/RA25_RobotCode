@@ -29,13 +29,6 @@ import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
 import frc.robot.controls.controllers.OperatorController;
-import frc.robot.subsystems.Subsystem;
-import frc.robot.subsystems.TaskScheduler;
-import frc.robot.subsystems.drivetrain.RAROdometry;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
-import frc.robot.subsystems.intakes.Intakes;
-import frc.robot.subsystems.intakes.Intake.IntakeState;
-import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
@@ -46,7 +39,14 @@ import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
+import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.TaskScheduler;
+import frc.robot.subsystems.drivetrain.RAROdometry;
+import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.SwerveSysId;
+import frc.robot.subsystems.intakes.Intake.IntakeState;
+import frc.robot.subsystems.intakes.Intakes;
+import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -117,7 +117,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
     m_subsystems.add(m_taskScheduler);
-    
+
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
 
@@ -220,8 +220,8 @@ public class Robot extends LoggedRobot {
     rot *= slowScaler * boostScaler;
 
     // Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(
-    //     m_virtualRobotController.getCurrentPose(),
-    //     m_virtualRobotController.getWantsAutoPositionBranch());
+    // m_virtualRobotController.getCurrentPose(),
+    // m_virtualRobotController.getWantsAutoPositionBranch());
     // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
 
     Pose2d currentPose = m_odometry.getPose();
@@ -235,7 +235,7 @@ public class Robot extends LoggedRobot {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }
 
-    if(!isSafeToIndex() || isSafeToExtend()) {
+    if (!isSafeToIndex() || isSafeToExtend()) {
       m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
       m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
     } else {
@@ -243,11 +243,15 @@ public class Robot extends LoggedRobot {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
       } else if (m_operatorController.getWantsLeftIntakeStow()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-      } else if (m_operatorController.getWantsRightIntakeGround()) {
+      }
+
+      if (m_operatorController.getWantsRightIntakeGround()) {
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
       } else if (m_operatorController.getWantsRightIntakeStow()) {
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
-      } else if (m_operatorController.getWantsIntakeEject()) {
+      }
+
+      if (m_operatorController.getWantsIntakeEject()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
       } else if (m_operatorController.getWantsIntakeStopEjecting()) {
@@ -259,11 +263,11 @@ public class Robot extends LoggedRobot {
     if (m_driverController.getWantsResetOdometry()) {
       m_odometry.reset();
     }
-    
+
     if (m_operatorController.getWantsGoToStow()) {
       if (m_elevator.getTargetState() != ElevatorState.L4) {
         stow();
-      } else if(isSafeToExtendArm()) {
+      } else if (isSafeToExtendArm()) {
         stow();
       }
     } else if (isSafeToExtend() && isSafeToRaiseElevator()) {
@@ -285,7 +289,7 @@ public class Robot extends LoggedRobot {
       m_hopper.off();
     }
 
-    if (m_operatorController.getWantsScore() && isSafeToScore()) {
+    if (m_operatorController.getWantsScore()) {
       if (m_elevator.getTargetState() == ElevatorState.L1) {
         m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
       } else {
@@ -297,9 +301,8 @@ public class Robot extends LoggedRobot {
 
     if (m_driverController.getWantsTest()) {
       m_taskScheduler.scheduleTask(new ParallelTask(
-        new ElevatorTask(ElevatorState.L4),
-        new ArmTask(ArmState.EXTEND)
-      ));
+          new ElevatorTask(ElevatorState.L4),
+          new ArmTask(ArmState.EXTEND)));
       m_taskScheduler.scheduleTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
     }
 
@@ -319,7 +322,7 @@ public class Robot extends LoggedRobot {
   private boolean isSafeToExtend() {
     return m_endEffector.isSafeToScore();
   }
-  
+
   private boolean isSafeToExtendArm() {
     double minSafeDistance = RobotConstants.robotConfig.AutoAlign.k_minSafeArmDistance;
     return distanceToReef() >= minSafeDistance;
@@ -344,14 +347,17 @@ public class Robot extends LoggedRobot {
     m_elevator.setState(ElevatorState.L1);
     m_arm.setArmState(ArmState.STOW);
   }
+
   private void l2() {
     m_elevator.setState(ElevatorState.L2);
     m_arm.setArmState(ArmState.STOW);
   }
+
   private void l3() {
     m_elevator.setState(ElevatorState.L3);
     m_arm.setArmState(ArmState.STOW);
   }
+
   private void l4() {
     m_elevator.setState(ElevatorState.L4);
     m_arm.setArmState(ArmState.EXTEND);
@@ -369,7 +375,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     Alliance oldAlliance = m_alliance;
-    if(!DriverStation.getAlliance().isPresent()) {
+    if (!DriverStation.getAlliance().isPresent()) {
       return;
     }
     m_alliance = DriverStation.getAlliance().get();
@@ -378,8 +384,8 @@ public class Robot extends LoggedRobot {
       m_odometry.setAllianceGyroAngleAdjustment();
 
       m_reefPose = Helpers.isBlueAlliance()
-        ? RobotConstants.robotConfig.Field.k_blueReefPose.toPose2d()
-        : RobotConstants.robotConfig.Field.k_redReefPose.toPose2d();
+          ? RobotConstants.robotConfig.Field.k_blueReefPose.toPose2d()
+          : RobotConstants.robotConfig.Field.k_redReefPose.toPose2d();
     }
 
     if (m_operatorController.getWantsResetElevator()) {
