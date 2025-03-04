@@ -4,7 +4,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class SkippableTask extends Task { // Skibidi Task
+public class SkippableTask extends Task {
   private Task m_initialTask;
   private Task m_nextTask;
   private double m_allottedTime;

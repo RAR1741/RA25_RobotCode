@@ -87,9 +87,9 @@ public class RARHolonomicDriveController {
   /**
    * Calculates the next output of the path following controller
    *
-   * @param currentPose The current robot pose
-   * @param targetState The desired trajectory state
-   * @param goalPose The pose to end at
+   * @param currentPose      The current robot pose
+   * @param targetState      The desired trajectory state
+   * @param goalPose         The pose to end at
    * @param maxApproachSpeed the speed in m/s to run at
    * @return The next robot relative output of the path following controller
    */
@@ -103,17 +103,21 @@ public class RARHolonomicDriveController {
     }
 
     Rotation2d targetHeading = goalPose.getTranslation().minus(currentPose.getTranslation()).getAngle();
-    double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation()); // distance from goal pose
+    double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation()); // distance from goal
+                                                                                                   // pose
+    double rotationError = Math.abs(currentPose.getRotation().minus(goalPose.getRotation()).getDegrees());
 
     // As we get closer to the target, we should be ramping down our x/y FF
     double targetSpeed = maxApproachSpeed;
     double falloffDistance = RobotConstants.robotConfig.AutoAlign.k_fallOffDistance;
-    
+
     if (translationError < falloffDistance) {
       targetSpeed = (maxApproachSpeed / falloffDistance) * translationError;
     }
-    
-    Logger.recordOutput("AutoAligner/DistanceFromGoalPose", translationError);
+
+    Logger.recordOutput("AutoAligner/translationError", translationError);
+    Logger.recordOutput("AutoAligner/rotationError", rotationError);
+
     Logger.recordOutput("AutoAligner/TargetSpeed", targetSpeed);
 
     double xFF = targetSpeed * targetHeading.getCos();
