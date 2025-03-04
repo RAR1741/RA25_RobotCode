@@ -51,11 +51,16 @@ public class LaserCanHandler {
   // }
 
   @AutoLogOutput(key = "LaserCans/Entrance/seesCoral")
-  public boolean getEntranceSeesCoral() { // LaserCAN before elevator
-    if(RobotBase.isSimulation()) {
+  public boolean getEntranceSeesCoral() {
+    if (RobotBase.isSimulation()) {
       return true;
     }
-    return m_entranceLaser.getMeasurement().distance_mm < 100.0;
+    return getEntranceDistance() < 50.0;
+  }
+
+  @AutoLogOutput(key = "LaserCans/Entrance/distance")
+  public double getEntranceDistance() {
+    return m_entranceLaser.getMeasurement().distance_mm;
   }
 
   // @AutoLogOutput(key = "LaserCans/Exit/seesCoral")
