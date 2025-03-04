@@ -2,8 +2,6 @@ package frc.robot.subsystems.drivetrain;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.config.PIDConstants;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import frc.robot.constants.RobotConstants;
+import frc.robot.wrappers.PIDConstants;
 import frc.robot.wrappers.ProfiledPIDConstants;
 
 /** Pose targeter for holonomic drive trains */
@@ -32,21 +31,21 @@ public class RARHolonomicDriveController {
   public RARHolonomicDriveController(
       PIDConstants translationConstants, ProfiledPIDConstants rotationConstants, double period) {
     this.xController = new PIDController(
-        translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
-    this.xController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
+        translationConstants.k_P, translationConstants.k_I, translationConstants.k_D, period);
+    this.xController.setIntegratorRange(-translationConstants.k_iZone, translationConstants.k_iZone);
 
     this.yController = new PIDController(
-        translationConstants.kP, translationConstants.kI, translationConstants.kD, period);
-    this.yController.setIntegratorRange(-translationConstants.iZone, translationConstants.iZone);
+        translationConstants.k_P, translationConstants.k_I, translationConstants.k_D, period);
+    this.yController.setIntegratorRange(-translationConstants.k_iZone, translationConstants.k_iZone);
 
     // Temp rate limit of 0, will be changed in calculate
     this.rotationController = new ProfiledPIDController(
-        rotationConstants.kP,
-        rotationConstants.kI,
-        rotationConstants.kD,
-        new Constraints(rotationConstants.maxVel, rotationConstants.maxAcc),
+        rotationConstants.k_P,
+        rotationConstants.k_I,
+        rotationConstants.k_D,
+        new Constraints(rotationConstants.k_maxVel, rotationConstants.k_maxAcc),
         period);
-    this.rotationController.setIntegratorRange(-rotationConstants.iZone, rotationConstants.iZone);
+    this.rotationController.setIntegratorRange(-rotationConstants.k_iZone, rotationConstants.k_iZone);
     this.rotationController.enableContinuousInput(-Math.PI, Math.PI);
   }
 

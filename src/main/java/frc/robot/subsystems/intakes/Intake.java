@@ -25,7 +25,7 @@ import frc.robot.constants.RobotConstants;
 
 public class Intake {
   private final String m_intakeName;
-  
+
   private final SparkMax m_pivotMotor;
   private final SparkFlex m_rollerMotor;
   private final PeriodicIO m_periodicIO;
@@ -33,14 +33,14 @@ public class Intake {
   private final SparkClosedLoopController m_rollerPIDController;
   private final ArmFeedforward m_pivotFeedforward;
 
-  //TODO Use SmartMotion or MAXMotion
+  // TODO Use SmartMotion or MAXMotion
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
   private double m_previousUpdateTime = Timer.getFPGATimestamp();
 
   private static class PeriodicIO {
-    IntakeState desiredIntakeState = IntakeState.NONE;
+    IntakeState desiredIntakeState = IntakeState.STOW;
   }
 
   Intake(String intakeName, int pivotMotorId, int rollerMotorId, boolean isInverted) {
@@ -69,13 +69,15 @@ public class Intake {
     pivotConfig.idleMode(IdleMode.kBrake);
     pivotConfig.inverted(true);
 
-    //TODO Due to how REV handles their rollovers, we can't do this anymore. Figure out a solution?
-    pivotConfig.absoluteEncoder.positionConversionFactor(1.0); //360.0 // stinky
+    // TODO Due to how REV handles their rollovers, we can't do this anymore. Figure
+    // out a solution?
+    pivotConfig.absoluteEncoder.positionConversionFactor(1.0); // 360.0 // stinky
     pivotConfig.encoder.positionConversionFactor(1.0);
     // if (pivotMotorId == RobotConstants.robotConfig.Intake.k_pivotMotorIdLeft) {
-    //   pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_leftPivotOffset);
-    // } else if (pivotMotorId == RobotConstants.robotConfig.Intake.k_pivotMotorIdRight) {
-    //   pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
+    // pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_leftPivotOffset);
+    // } else if (pivotMotorId ==
+    // RobotConstants.robotConfig.Intake.k_pivotMotorIdRight) {
+    // pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
     // }
 
     // rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
@@ -86,9 +88,9 @@ public class Intake {
     rollerConfig.inverted(isInverted);
 
     pivotConfig.closedLoop.pid(
-      RobotConstants.robotConfig.Intake.k_pivotMotorP,
-      RobotConstants.robotConfig.Intake.k_pivotMotorI,
-      RobotConstants.robotConfig.Intake.k_pivotMotorD);
+        RobotConstants.robotConfig.Intake.k_pivotMotorP,
+        RobotConstants.robotConfig.Intake.k_pivotMotorI,
+        RobotConstants.robotConfig.Intake.k_pivotMotorD);
 
     pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
@@ -99,12 +101,11 @@ public class Intake {
     rollerConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.Intake.k_rollerGearRatio);
 
     rollerConfig.closedLoop
-      .pidf(
-        RobotConstants.robotConfig.Intake.k_rollerMotorP,
-        RobotConstants.robotConfig.Intake.k_rollerMotorI,
-        RobotConstants.robotConfig.Intake.k_rollerMotorD,
-        RobotConstants.robotConfig.Intake.k_rollerMotorFF
-      );
+        .pidf(
+            RobotConstants.robotConfig.Intake.k_rollerMotorP,
+            RobotConstants.robotConfig.Intake.k_rollerMotorI,
+            RobotConstants.robotConfig.Intake.k_rollerMotorD,
+            RobotConstants.robotConfig.Intake.k_rollerMotorFF);
 
     m_rollerMotor.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -144,8 +145,8 @@ public class Intake {
         ClosedLoopSlot.kSlot0,
         ff,
         ArbFFUnits.kVoltage);
-        
-    if(getDesiredRollerSpeed() != 0.0) {
+
+    if (getDesiredRollerSpeed() != 0.0) {
       m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
     } else {
       m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
@@ -153,7 +154,7 @@ public class Intake {
   }
 
   public void stop() {
-    m_periodicIO.desiredIntakeState = IntakeState.NONE;
+    m_periodicIO.desiredIntakeState = IntakeState.STOW;
     m_pivotPIDController.setReference(0.0, ControlType.kVoltage);
   }
 
@@ -164,8 +165,8 @@ public class Intake {
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/RollerSpeed")
   public double getDesiredRollerSpeed() {
-    switch(m_periodicIO.desiredIntakeState) {
-      case NONE -> {
+    switch (m_periodicIO.desiredIntakeState) {
+      case STOW -> {
         return 0.0;
       }
       case INTAKE -> {
@@ -182,30 +183,30 @@ public class Intake {
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotAngleFromTarget")
   public double getTargetPivotAngle() {
-    switch(m_periodicIO.desiredIntakeState) {
-      case NONE -> {
-        if(m_intakeName.equalsIgnoreCase("Left")) {
+    switch (m_periodicIO.desiredIntakeState) {
+      case STOW -> {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
           return RobotConstants.robotConfig.Intake.Left.k_stowPosition;
         } else {
           return RobotConstants.robotConfig.Intake.Right.k_stowPosition;
         }
       }
       case INTAKE -> {
-        if(m_intakeName.equalsIgnoreCase("Left")) {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
           return RobotConstants.robotConfig.Intake.Left.k_groundPosition;
         } else {
           return RobotConstants.robotConfig.Intake.Right.k_groundPosition;
         }
       }
       case EJECT -> {
-        if(m_intakeName.equalsIgnoreCase("Left")) {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
           return RobotConstants.robotConfig.Intake.Left.k_horizontalPosition;
         } else {
           return RobotConstants.robotConfig.Intake.Right.k_horizontalPosition;
         }
       }
       default -> {
-        if(m_intakeName.equalsIgnoreCase("Left")) {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
           return RobotConstants.robotConfig.Intake.Left.k_stowPosition;
         } else {
           return RobotConstants.robotConfig.Intake.Right.k_stowPosition;
@@ -251,7 +252,7 @@ public class Intake {
   }
 
   public enum IntakeState {
-    NONE,
+    STOW,
     INTAKE,
     EJECT
   }

@@ -17,6 +17,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
@@ -169,6 +170,28 @@ public class Arm extends Subsystem {
         return RobotConstants.robotConfig.Arm.k_stowAngle;
       }
     }
+  }
+
+  @AutoLogOutput(key = "Arm/IsSafeToScore")
+  public boolean isSafeToScore() {
+    return getIsAtState();
+  }
+
+  @AutoLogOutput(key = "Arm/isSafeToIndex")
+  public boolean isSafeToIndex() {
+    return getArmState() == ArmState.STOW && getIsAtState();
+  }
+
+  @AutoLogOutput(key = "Arm/isAtState")
+  public boolean getIsAtState() {
+    if(RobotBase.isSimulation()) {
+      return true;
+    }
+    double currentPos = getArmPosition();
+    double targetPos = getArmTarget();
+    double allowedError = RobotConstants.robotConfig.Arm.k_allowedError;
+
+    return Math.abs(currentPos - targetPos) < allowedError; //Super Funky (kong)
   }
 
   @AutoLogOutput(key = "Arm/State")

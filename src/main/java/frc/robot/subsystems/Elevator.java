@@ -16,6 +16,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
@@ -148,6 +149,29 @@ public class Elevator extends Subsystem {
     // if (!m_laserCan.getEntranceSeesCoral()) { TODO Add LaserCan to end effector and replace this line with that call
     m_periodicIO.target_state = state;
     // }
+  }
+
+  @AutoLogOutput(key = "Elevator/IsAtState") 
+  public boolean getIsAtState() {
+    if(RobotBase.isSimulation()) {
+      return true;
+    }
+    
+    double currentPos = getCurrentPosition();
+    double targetPos = getElevatorTarget();
+    double allowedError = RobotConstants.robotConfig.Elevator.k_allowedError;
+
+    return Math.abs(currentPos - targetPos) < allowedError;
+  }
+
+  @AutoLogOutput(key = "Elevator/IsSafeToIndex")
+  public boolean isSafeToIndex() {
+    return m_periodicIO.target_state == ElevatorState.STOW && getIsAtState();
+  }
+
+  @AutoLogOutput(key = "Elevator/isSafeToScore")
+  public boolean isSafeToScore() {
+    return getIsAtState();
   }
 
   @AutoLogOutput(key = "Elevator/Position/Current")

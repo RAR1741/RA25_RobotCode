@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import au.grapplerobotics.CanBridge;
@@ -13,9 +14,17 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.autonomous.AutoChooser;
+import frc.robot.autonomous.AutoRunner;
+import frc.robot.autonomous.tasks.ArmTask;
+import frc.robot.autonomous.tasks.ElevatorTask;
+import frc.robot.autonomous.tasks.EndEffectorTask;
+import frc.robot.autonomous.tasks.ParallelTask;
+import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
@@ -31,6 +40,7 @@ import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.TaskScheduler;
 import frc.robot.subsystems.drivetrain.RAROdometry;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.SwerveSysId;
@@ -55,7 +65,12 @@ public class Robot extends LoggedRobot {
   private final RAROdometry m_odometry;
   private final Intakes m_intakes;
   private final Hopper m_hopper;
+  private final TaskScheduler m_taskScheduler;
   private final DriverController m_driverController;
+
+  private final AutoRunner m_autoRunner;
+  private final AutoChooser m_autoChooser;
+  private Task m_currentTask;
   private final OperatorController m_operatorController;
   private final PoseAligner m_poseAligner;
   private final SignalManager m_signalManager = SignalManager.getInstance();
@@ -64,6 +79,7 @@ public class Robot extends LoggedRobot {
 
   private final SwerveSysId m_swerveSysId;
   private Alliance m_alliance;
+  private Pose2d m_reefPose;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -75,12 +91,15 @@ public class Robot extends LoggedRobot {
     m_subsystems = new ArrayList<>();
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
+    m_autoRunner = AutoRunner.getInstance();
+    m_autoChooser = AutoChooser.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
     m_endEffector = EndEffector.getInstance();
     m_poseAligner = PoseAligner.getInstance();
     m_intakes = Intakes.getInstance();
     m_hopper = Hopper.getInstance();
+    m_taskScheduler = TaskScheduler.getInstance();
 
     CanBridge.runTCP();
 
@@ -97,7 +116,13 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_endEffector);
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
+    m_subsystems.add(m_taskScheduler);
 
+    m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
+  }
+
+  @Override
+  public void robotInit() {
     new RobotTelemetry();
 
     // Initialize on-board logging
@@ -109,13 +134,15 @@ public class Robot extends LoggedRobot {
     RobotTelemetry.print("Logging Initialized. Fard.");
 
     m_signalManager.finalizeAll();
-
-    m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
 
   @Override
   public void driverStationConnected() {
     m_alliance = DriverStation.getAlliance().get();
+
+    m_reefPose = Helpers.isBlueAlliance()
+        ? RobotConstants.robotConfig.Field.k_blueReefPose.toPose2d()
+        : RobotConstants.robotConfig.Field.k_redReefPose.toPose2d();
 
     m_odometry.setAllianceGyroAngleAdjustment();
   }
@@ -141,15 +168,38 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
+    m_currentTask = m_autoRunner.getNextTask();
+
+    // Start the first task
+    if (m_currentTask != null) {
+      m_currentTask.prepare();
+    }
   }
 
   @Override
   public void autonomousPeriodic() {
+    // If there is a current task, run it
+    if (m_currentTask != null) {
+      // Run the current task
+      m_currentTask.update();
+      m_currentTask.updateSim();
+
+      // If the current task is finished, get the next task
+      if (m_currentTask.isFinished()) {
+        m_currentTask.done();
+        m_currentTask = m_autoRunner.getNextTask();
+
+        // Start the next task
+        if (m_currentTask != null) {
+          m_currentTask.prepare();
+        }
+      }
+    }
   }
 
   @Override
   public void teleopInit() {
-    m_hopper.on();
+    m_swerve.setBrake(false);
   }
 
   @Override
@@ -170,8 +220,8 @@ public class Robot extends LoggedRobot {
     rot *= slowScaler * boostScaler;
 
     // Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(
-    //     m_virtualRobotController.getCurrentPose(),
-    //     m_virtualRobotController.getWantsAutoPositionBranch());
+    // m_virtualRobotController.getCurrentPose(),
+    // m_virtualRobotController.getWantsAutoPositionBranch());
     // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
 
     Pose2d currentPose = m_odometry.getPose();
@@ -179,37 +229,35 @@ public class Robot extends LoggedRobot {
         currentPose,
         m_driverController.getWantsAutoPositionBranch());
     ASPoseHelper.addPose("VirtualRobot/target", desiredPose);
-
     if (m_driverController.getWantsAutoPosition()) {
       m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, desiredPose);
     } else {
       m_swerve.drive(xSpeed, ySpeed, rot, true);
     }
 
-    if (m_operatorController.getWantsLeftIntakeGround()) {
-      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-    }
+    if (!isSafeToIndex() || isSafeToExtend()) {
+      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+    } else {
+      if (m_operatorController.getWantsLeftIntakeGround()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
+      } else if (m_operatorController.getWantsLeftIntakeStow()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+      }
 
-    if (m_operatorController.getWantsLeftIntakeStow()) {
-      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
-    }
+      if (m_operatorController.getWantsRightIntakeGround()) {
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
+      } else if (m_operatorController.getWantsRightIntakeStow()) {
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+      }
 
-    if (m_operatorController.getWantsRightIntakeGround()) {
-      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-    }
-
-    if (m_operatorController.getWantsRightIntakeStow()) {
-      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
-    }
-
-    if (m_operatorController.getWantsIntakeEject()) {
-      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
-      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
-    }
-
-    if (m_operatorController.getWantsIntakeStopEjecting()) {
-      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.NONE);
-      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.NONE);
+      if (m_operatorController.getWantsIntakeEject()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
+      } else if (m_operatorController.getWantsIntakeStopEjecting()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+      }
     }
 
     if (m_driverController.getWantsResetOdometry()) {
@@ -217,20 +265,28 @@ public class Robot extends LoggedRobot {
     }
 
     if (m_operatorController.getWantsGoToStow()) {
-      m_elevator.setState(ElevatorState.STOW);
-      m_arm.setArmState(ArmState.STOW);
-    } else if (m_operatorController.getWantsGoToL1()) {
-      m_elevator.setState(ElevatorState.L1);
-      m_arm.setArmState(ArmState.STOW);
-    } else if (m_operatorController.getWantsGoToL2()) {
-      m_elevator.setState(ElevatorState.L2);
-      m_arm.setArmState(ArmState.STOW);
-    } else if (m_operatorController.getWantsGoToL3()) {
-      m_elevator.setState(ElevatorState.L3);
-      m_arm.setArmState(ArmState.STOW);
-    } else if (m_operatorController.getWantsGoToL4()) {
-      m_elevator.setState(ElevatorState.L4);
-      m_arm.setArmState(ArmState.EXTEND);
+      if (m_elevator.getTargetState() != ElevatorState.L4) {
+        stow();
+      } else if (isSafeToExtendArm()) {
+        stow();
+      }
+    } else if (isSafeToExtend() && isSafeToRaiseElevator()) {
+      if (m_operatorController.getWantsGoToL1()) {
+        l1();
+      } else if (m_operatorController.getWantsGoToL2()) {
+        l2();
+      } else if (m_operatorController.getWantsGoToL3()) {
+        l3();
+      } else if (m_operatorController.getWantsGoToL4() && isSafeToExtendArm()) {
+        l4();
+      }
+    }
+
+    // TODO: maybe also check if indexed?
+    if (isSafeToIndex()) {
+      m_hopper.on();
+    } else {
+      m_hopper.off();
     }
 
     if (m_operatorController.getWantsScore()) {
@@ -243,8 +299,11 @@ public class Robot extends LoggedRobot {
       m_endEffector.setState(EndEffectorState.OFF);
     }
 
-    if (m_driverController.getWantsAutoPositionPressed()) {
-      m_swerve.resetDriveController();
+    if (m_driverController.getWantsTest()) {
+      m_taskScheduler.scheduleTask(new ParallelTask(
+          new ElevatorTask(ElevatorState.L4),
+          new ArmTask(ArmState.EXTEND)));
+      m_taskScheduler.scheduleTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
     }
 
     if (m_driverController.getWantsGyroPoseReset()) {
@@ -252,18 +311,81 @@ public class Robot extends LoggedRobot {
     }
   }
 
+  private boolean isSafeToIndex() {
+    return m_elevator.isSafeToIndex() && m_arm.isSafeToIndex();
+  }
+
+  private boolean isSafeToScore() {
+    return m_elevator.isSafeToScore() && m_arm.isSafeToScore() && m_endEffector.isSafeToScore();
+  }
+
+  private boolean isSafeToExtend() {
+    return m_endEffector.isSafeToScore();
+  }
+
+  private boolean isSafeToExtendArm() {
+    double minSafeDistance = RobotConstants.robotConfig.AutoAlign.k_minSafeArmDistance;
+    return distanceToReef() >= minSafeDistance;
+  }
+
+  private boolean isSafeToRaiseElevator() {
+    double minSafeDistance = RobotConstants.robotConfig.AutoAlign.k_minSafeElevatorDistance;
+    return distanceToReef() <= minSafeDistance;
+  }
+
+  @AutoLogOutput(key = "AutoAligner/distanceToReef")
+  private double distanceToReef() {
+    return m_odometry.getPose().getTranslation().getDistance(m_reefPose.getTranslation());
+  }
+
+  private void stow() {
+    m_elevator.setState(ElevatorState.STOW);
+    m_arm.setArmState(ArmState.STOW);
+  }
+
+  private void l1() {
+    m_elevator.setState(ElevatorState.L1);
+    m_arm.setArmState(ArmState.STOW);
+  }
+
+  private void l2() {
+    m_elevator.setState(ElevatorState.L2);
+    m_arm.setArmState(ArmState.STOW);
+  }
+
+  private void l3() {
+    m_elevator.setState(ElevatorState.L3);
+    m_arm.setArmState(ArmState.STOW);
+  }
+
+  private void l4() {
+    m_elevator.setState(ElevatorState.L4);
+    m_arm.setArmState(ArmState.EXTEND);
+  }
+
   @Override
   public void disabledInit() {
-    m_hopper.stop();
+    if (DriverStation.getMatchType() == MatchType.None) {
+      m_autoRunner.initialize();
+    }
+
+    m_swerve.setBrake(true);
   }
 
   @Override
   public void disabledPeriodic() {
     Alliance oldAlliance = m_alliance;
+    if (!DriverStation.getAlliance().isPresent()) {
+      return;
+    }
     m_alliance = DriverStation.getAlliance().get();
 
     if (oldAlliance != m_alliance) { // workin' 9 to 5
       m_odometry.setAllianceGyroAngleAdjustment();
+
+      m_reefPose = Helpers.isBlueAlliance()
+          ? RobotConstants.robotConfig.Field.k_blueReefPose.toPose2d()
+          : RobotConstants.robotConfig.Field.k_redReefPose.toPose2d();
     }
 
     if (m_operatorController.getWantsResetElevator()) {

@@ -115,6 +115,11 @@ public class EndEffector extends Subsystem {
     m_rightMotor.set(speeds[1]);
   }
 
+  @AutoLogOutput(key = "EndEffector/IsSafeToScore")
+  public boolean isSafeToScore() {
+    return m_periodicIO.state == EndEffectorState.INDEXED;
+  }
+
   @AutoLogOutput(key = "EndEffector/State")
   public EndEffectorState getEndEffectorState() {
     return m_periodicIO.state;

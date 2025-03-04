@@ -1,12 +1,14 @@
 package frc.robot.wrappers;
 
-import com.pathplanner.lib.config.PIDConstants;
-
-public class ProfiledPIDConstants extends PIDConstants {
+public class ProfiledPIDConstants {
+  public final double k_P;
+  public final double k_I;
+  public final double k_D;
+  public final double k_iZone;
   /** Max Vel */
-  public final double maxVel;
+  public final double k_maxVel;
   /** Max Acc */
-  public final double maxAcc;
+  public final double k_maxAcc;
 
   /**
    * Create a new ProfiledPIDConstants object
@@ -25,9 +27,12 @@ public class ProfiledPIDConstants extends PIDConstants {
     double iZone,
     double maxVel,
     double maxAcc) {
-    super(kP, kI, kD, iZone);
-    this.maxVel = maxVel;
-    this.maxAcc = maxAcc;
+    k_P = kP;
+    k_I = kI;
+    k_D = kD;
+    k_iZone = iZone;
+    k_maxVel = maxVel;
+    k_maxAcc = maxAcc;
   }
 
   /**
@@ -45,8 +50,11 @@ public class ProfiledPIDConstants extends PIDConstants {
     double kD,
     double maxVel,
     double maxAcc) {
-    super(kP, kI, kD);
-    this.maxVel = maxVel;
-    this.maxAcc = maxAcc;
+      k_P = kP;
+      k_I = kI;
+      k_D = kD;
+      k_iZone = 0.0;
+      k_maxVel = maxVel;
+      k_maxAcc = maxAcc;
   }
 }

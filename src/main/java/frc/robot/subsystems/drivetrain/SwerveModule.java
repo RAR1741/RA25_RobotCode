@@ -59,6 +59,7 @@ public class SwerveModule {
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
     m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
+    // m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
 
     driveConfig.Feedback.SensorToMechanismRatio = RobotConstants.robotConfig.SwerveDrive.k_driveGearRatio;
 
