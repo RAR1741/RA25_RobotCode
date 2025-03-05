@@ -200,7 +200,7 @@ public class SwerveModule {
     return m_periodicIO.desiredState;
   }
 
-    // Pass voltage into drive motor and set turn motor to 0 deg
+  // Pass voltage into drive motor and set turn motor to 0 deg
   public void sysidDrive(double volts) {
     // hold the turn motor in place
     PositionVoltage turnRequest = new PositionVoltage(0).withSlot(0);
@@ -211,7 +211,7 @@ public class SwerveModule {
     m_driveMotor.setVoltage(volts);
   }
 
-    // Pass voltage into turn motor and set drive motor to 0 volts⚡
+  // Pass voltage into turn motor and set drive motor to 0 volts⚡
   public void sysidTurn(double volts) {
     // hold the drive motor
     VelocityVoltage driveRequest = new VelocityVoltage(0).withSlot(0);

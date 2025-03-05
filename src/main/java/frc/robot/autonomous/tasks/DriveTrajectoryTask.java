@@ -22,9 +22,9 @@ public class DriveTrajectoryTask extends Task {
   private final SwerveDrive m_swerve;
 
   private final RARHolonomicDriveController m_driveController;
-  
+
   private final Optional<Trajectory<SwerveSample>> m_trajectory;
-  
+
   private final Timer m_timer;
 
   public DriveTrajectoryTask(String trajectoryName) {
@@ -33,8 +33,9 @@ public class DriveTrajectoryTask extends Task {
 
     m_timer = new Timer();
 
-    m_trajectory = Choreo.loadTrajectory(trajectoryName);
-    
+    m_trajectory = Choreo.loadTrajectory(trajectoryName); // Cory O's!
+    m_trajectory.get().sampleAt(0, !Helpers.isBlueAlliance());
+
     m_driveController = new RARHolonomicDriveController(
         RobotConstants.robotConfig.Auto.k_translationConstants,
         RobotConstants.robotConfig.Auto.k_rotationConstants,
@@ -50,10 +51,11 @@ public class DriveTrajectoryTask extends Task {
       return;
     }
 
-    // Optional<Pose2d> initialPose = m_trajectory.get().getInitialPose(!Helpers.isBlueAlliance());
+    // Optional<Pose2d> initialPose =
+    // m_trajectory.get().getInitialPose(!Helpers.isBlueAlliance());
     // if(initialPose.isPresent()) {
-    //   m_odometry.reset();
-    //   m_odometry.setPose(initialPose.get());
+    // m_odometry.reset();
+    // m_odometry.setPose(initialPose.get());
     // }
 
     m_timer.restart();
@@ -63,25 +65,31 @@ public class DriveTrajectoryTask extends Task {
   @Override
   public void update() {
     logIsRunning(true);
+
     Optional<SwerveSample> sample = m_trajectory.get().sampleAt(m_timer.get(), !Helpers.isBlueAlliance());
 
     if (sample.isPresent()) {
-      ChassisSpeeds m_speeds = m_driveController.calculateRobotRelativeSpeeds(
-        m_odometry.getPose(), sample.get().getPose(), RobotConstants.robotConfig.SwerveDrive.k_maxBoostSpeed);
+      ChassisSpeeds m_speeds = m_driveController.calculateTrajectorySpeeds(m_odometry.getPose(), sample.get());
 
       Logger.recordOutput("Auto/DriveTrajectory/Pose", sample.get().getPose());
-      
+
       if (RobotBase.isSimulation()) {
         m_odometry.setPose(sample.get().getPose());
       }
 
-      m_swerve.drive(m_speeds);
+      m_swerve.drive(m_speeds); // YOLO
     }
+
+    m_isFinished = m_timer.get() > m_trajectory.get().getTotalTime();
+  }
+
+  @Override
+  public void done() {
+    logIsRunning(false);
   }
 
   @Override
   public boolean isFinished() {
-    logIsRunning(false);
     if (m_isFinished) {
       RobotTelemetry.print("Drive Trajectory task... complete!");
       return true;

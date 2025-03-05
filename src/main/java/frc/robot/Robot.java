@@ -204,9 +204,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopPeriodic() {
-    double xSpeed = m_driverController.getForwardAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxSpeed;
-    double ySpeed = m_driverController.getStrafeAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxSpeed;
-    double rot = m_driverController.getTurnAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxAngularSpeed;
+    double xSpeed = m_driverController.getForwardAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverSpeed;
+    double ySpeed = m_driverController.getStrafeAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverSpeed;
+    double rot = m_driverController.getTurnAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverAngularSpeed;
 
     // slowScaler should scale between k_slowScaler and 1
     double slowScaler = RobotConstants.robotConfig.SwerveDrive.k_slowScaler

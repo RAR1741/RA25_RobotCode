@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import org.littletonrobotics.junction.Logger;
 
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,7 +20,10 @@ public class RARHolonomicDriveController {
   private final PIDController yController;
   private final ProfiledPIDController rotationController;
 
-  private boolean isEnabled = true;
+  private boolean m_isEnabled = true;
+  private double mpsToRps = 1.0 / RobotConstants.robotConfig.SwerveDrive.k_wheelBaseRadius;
+
+  // private boolean firstTimeForEverything = false;
 
   /**
    * Constructs a HolonomicDriveController
@@ -68,7 +72,7 @@ public class RARHolonomicDriveController {
    * @param enabled If the controller is enabled or not
    */
   public void setEnabled(boolean enabled) {
-    this.isEnabled = enabled;
+    m_isEnabled = enabled;
   }
 
   /**
@@ -93,18 +97,16 @@ public class RARHolonomicDriveController {
    * @param maxApproachSpeed the speed in m/s to run at
    * @return The next robot relative output of the path following controller
    */
-  public ChassisSpeeds calculateRobotRelativeSpeeds(
-      Pose2d currentPose, Pose2d goalPose, double maxApproachSpeed) {
+  public ChassisSpeeds calculatePoseSpeeds(Pose2d currentPose, Pose2d goalPose, double maxApproachSpeed) {
 
     Logger.recordOutput("Odometry/GoalPose", goalPose);
 
-    if (!this.isEnabled) {
+    if (!m_isEnabled) {
       return ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, 0, currentPose.getRotation());
     }
 
     Rotation2d targetHeading = goalPose.getTranslation().minus(currentPose.getTranslation()).getAngle();
-    double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation()); // distance from goal
-                                                                                                   // pose
+    double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation());
     double rotationError = Math.abs(currentPose.getRotation().minus(goalPose.getRotation()).getDegrees());
 
     // As we get closer to the target, we should be ramping down our x/y FF
@@ -132,4 +134,106 @@ public class RARHolonomicDriveController {
     return ChassisSpeeds.fromFieldRelativeSpeeds(
         xFF + xFeedback, yFF + yFeedback, rotationFeedback, currentPose.getRotation());
   }
+
+  /**
+   * Calculates the next output of the path following controller
+   *
+   * @param currentPose      The current robot pose
+   * @param targetState      The desired trajectory state
+   * @param goalPose         The pose to end at
+   * @param maxApproachSpeed the speed in m/s to run at
+   * @return The next robot relative output of the path following controller
+   */
+  public ChassisSpeeds calculateTrajectorySpeeds(Pose2d currentPose, SwerveSample targetSample) {
+    Pose2d goalPose = targetSample.getPose();
+
+    Logger.recordOutput("Odometry/GoalPose", goalPose);
+
+    if (!m_isEnabled) {
+      return ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, 0, currentPose.getRotation());
+    }
+
+    double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation());
+    double rotationError = Math.abs(currentPose.getRotation().minus(goalPose.getRotation()).getDegrees());
+    double targetSpeed = Math.hypot(targetSample.vx, targetSample.vy);
+
+    Logger.recordOutput("Auto/DriveTrajectory/translationError", translationError);
+    Logger.recordOutput("Auto/DriveTrajectory/rotationError", rotationError);
+    Logger.recordOutput("Auto/DriveTrajectory/TargetSpeed", targetSpeed);
+
+    double xFeedback = this.xController.calculate(currentPose.getX(), goalPose.getX());
+    double yFeedback = this.yController.calculate(currentPose.getY(), goalPose.getY());
+
+    double rotationFeedback = rotationController.calculate(
+        currentPose.getRotation().getRadians(), goalPose.getRotation().getRadians());
+
+    return ChassisSpeeds.fromFieldRelativeSpeeds(
+        targetSample.vx + xFeedback, targetSample.vy + yFeedback, rotationFeedback, currentPose.getRotation());
+  }
+
+  // public ChassisSpeeds calculateTrajectorySpeeds(Pose2d currentPose,
+  // SwerveSample targetState) {
+  // // This is the only thing we actually changed
+  // // if (firstTimeForEverything) {
+  // // firstTimeForEverything = false;
+  // // rotationController.reset(currentPose.getRotation().getRadians());
+  // // }
+
+  // double xFF = targetState.vx * Math.cos(targetState.heading);
+  // double yFF = targetState.vy * Math.sin(targetState.heading);
+
+  // double translationError =
+  // currentPose.getTranslation().getDistance(targetState.getPose().getTranslation());
+  // double rotationError =
+  // Math.abs(currentPose.getRotation().minus(targetState.getPose().getRotation()).getDegrees());
+  // double targetSpeed = Math.hypot(targetState.vx, targetState.vy);
+
+  // if (!m_isEnabled) {
+  // return ChassisSpeeds.fromFieldRelativeSpeeds(xFF, yFF, 0,
+  // currentPose.getRotation());
+  // }
+
+  // double xFeedback = this.xController.calculate(currentPose.getX(),
+  // targetState.x);
+  // double yFeedback = this.yController.calculate(currentPose.getY(),
+  // targetState.y);
+
+  // double angVelConstraint = targetState.omega;
+  // double maxAngVel = angVelConstraint;
+
+  // if (Double.isFinite(maxAngVel)) {
+  // // Approximation of available module speed to do rotation with
+  // double maxAngVelModule = Math.max(0,
+  // RobotConstants.robotConfig.SwerveDrive.k_maxPossibleSpeed
+  // - Math.hypot(targetState.vx, targetState.vy))
+  // * mpsToRps;
+  // maxAngVel = Math.min(angVelConstraint, maxAngVelModule);
+  // }
+
+  // TrapezoidProfile.Constraints rotationConstraints = new
+  // TrapezoidProfile.Constraints(maxAngVel,
+  // Math.hypot(targetState.ax, targetState.ay));
+
+  // Rotation2d targetRotation = targetState.getPose().getRotation();
+
+  // // if (rotationTargetOverride != null) {
+  // // targetRotation = rotationTargetOverride.get().orElse(targetRotation);
+  // // }
+
+  // double rotationFeedback = rotationController.calculate(
+  // currentPose.getRotation().getRadians(),
+  // new TrapezoidProfile.State(targetRotation.getRadians(), 0),
+  // rotationConstraints);
+  // double rotationFF = targetState.omega; //
+  // .orElse(rotationController.getSetpoint().velocity);
+
+  // Logger.recordOutput("Auto/DriveTrajectory/translationError",
+  // translationError);
+  // Logger.recordOutput("Auto/DriveTrajectory/rotationError", rotationError);
+  // Logger.recordOutput("Auto/DriveTrajectory/TargetSpeed", targetSpeed);
+
+  // return ChassisSpeeds.fromFieldRelativeSpeeds(
+  // xFF + xFeedback, yFF + yFeedback, rotationFF + rotationFeedback,
+  // currentPose.getRotation());
+  // }
 }

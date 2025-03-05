@@ -31,6 +31,8 @@ public class DriveToReefTask extends Task {
 
     m_goalPose = PoseAligner.getInstance().getAndCalculateTargetPose(m_currentPose, m_branch);
     m_swerve.resetDriveController();
+
+    m_prepared = true;
   }
 
   @Override
@@ -44,7 +46,7 @@ public class DriveToReefTask extends Task {
 
   @Override
   public boolean isFinished() {
-    double translationError = Math.abs(m_currentPose.getTranslation().getDistance(m_goalPose.getTranslation()));
+    double translationError = m_currentPose.getTranslation().getDistance(m_goalPose.getTranslation());
     double rotationError = Math.abs(m_currentPose.getRotation().minus(m_goalPose.getRotation()).getDegrees());
 
     return translationError <= k_translationErrorThreshold && rotationError <= k_rotationErrorThreshold;

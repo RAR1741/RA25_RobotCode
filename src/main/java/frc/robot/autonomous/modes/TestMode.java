@@ -1,7 +1,6 @@
 package frc.robot.autonomous.modes;
 
-import frc.robot.autonomous.tasks.DriveToReefTask;
-import frc.robot.subsystems.PoseAligner.Branch;
+import frc.robot.autonomous.tasks.DriveTrajectoryTask;
 
 public class TestMode extends AutoModeBase {
   @Override
@@ -40,6 +39,31 @@ public class TestMode extends AutoModeBase {
     // queueTask(new DriveToReefTask(Branch.LEFT));
     // queueTask(new Score());
 
-    queueTask(new DriveToReefTask(Branch.NONE));
+    queueTask(new DriveTrajectoryTask("close side"));
+
+    // Go to safe pose
+    // queueTask(new DriveToReefTask(Branch.NONE));
+
+    // // Extend to score
+    // queueTask(new ParallelTask(
+    // new ElevatorTask(ElevatorState.L4),
+    // new ArmTask(ArmState.EXTEND)));
+
+    // // Drive to score
+    // queueTask(new DriveToReefTask(Branch.LEFT));
+
+    // // Score
+    // queueTask(new ParallelTask(
+    // new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
+    // new WaitTask(0.2)));
+    // queueTask(new EndEffectorTask(EndEffectorState.OFF));
+
+    // // Drive back to safe pose
+    // queueTask(new DriveToReefTask(Branch.NONE));
+
+    // // Stow
+    // queueTask(new ParallelTask(
+    // new ElevatorTask(ElevatorState.STOW),
+    // new ArmTask(ArmState.STOW)));
   }
 }

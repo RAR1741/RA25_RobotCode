@@ -61,15 +61,19 @@ public class Constants {
 
     public final double k_xCenterDistance = k_xDistance / 2.0;
     public final double k_yCenterDistance = k_yDistance / 2.0;
+    public final double k_wheelBaseRadius = Math.hypot(k_xCenterDistance, k_yCenterDistance);
 
     // Max speeds
-    public final double k_maxSpeed = 1.5; // Meters per second
-    public final double k_maxBoostSpeed = 4.5; // Meters per second
-    public final double k_maxAngularSpeed = Math.PI * 1.5; // Radians per second
+    public final double k_maxDriverSpeed = 1.5; // Meters per second
+    public final double k_maxDriverBoostSpeed = 4.5; // Meters per second
+    public final double k_maxPossibleSpeed = 5.0; // Meters per second
+
+    public final double k_maxDriverAngularSpeed = Math.PI * 1.5; // Radians per second
+    public final double k_maxPossibleAngularSpeed = 11.3; // Radians per second, pulled from Choreo
 
     // Max acceleration
     public final double k_maxLinearAcceleration = 12.0; // Meters per second^2
-    public final double k_maxAngularAcceleration = Math.PI * 8.0; // Radians per second^2
+    public final double k_maxAngularAcceleration = 54.5; // Radians per second^2, pulled from Choreo
 
     public final double k_slowScaler = 0; // % reduction in speed
     public final double k_boostScaler = 2; // % increase in speed
@@ -161,11 +165,11 @@ public class Constants {
 
   public static class AutoConstants {
     // Needs to be more than the max robot speed, to allow for turning
-    public double k_maxVelocity = 0.0; // Meters per second
-    public double k_maxAcceleration = 0.0; // Meters per second
-    public PIDConstants k_translationConstants = new PIDConstants(0.0, 0.0, 0.0);
-    public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(0.0, 0.0, 0.0, k_maxVelocity,
-        k_maxAcceleration);
+    public double k_maxAngularVelocity = 11.3; // rads per second
+    public double k_maxAngularAcceleration = 54.5; // rads per second^2
+    public PIDConstants k_translationConstants = new PIDConstants(25.0, 0.0, 0.0);
+    public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(25.0, 0.0, 0.0, k_maxAngularVelocity,
+        k_maxAngularAcceleration);
 
     public TimingConstants Timing = new TimingConstants();
 
