@@ -56,7 +56,7 @@ public class Constants {
     public final String k_canBus = "Drivetrain";
 
     // Drivetrain wheel offsets
-    public final double k_xDistance = Units.inchesToMeters(26.75); // 30 inches Forward/Backward
+    public final double k_xDistance = Units.inchesToMeters(26.75); // 32 inches Forward/Backward
     public final double k_yDistance = Units.inchesToMeters(22.75); // in meters! Side-to-Side
 
     public final double k_xCenterDistance = k_xDistance / 2.0;
@@ -80,7 +80,7 @@ public class Constants {
 
     public final double k_wheelRadiusIn = 2.0; // inches
     public final double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
-    public final double k_driveGearRatio = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
+    public final double k_driveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
     public final double k_turnGearRatio = 150.0 / 7.0;
 
     public final DriveConstants Drive = new DriveConstants();

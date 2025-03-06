@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Helpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
 import frc.robot.subsystems.Limelight;
@@ -124,7 +126,7 @@ public class RAROdometry extends Subsystem {
       setGyroAngleAdjustment(0.0);
     }
 
-    resetRotation(Rotation2d.fromDegrees(getGyroYawDeg()));
+    resetRotation(getRotation2d());
   }
 
   public void setGyroAngleAdjustment(double angle) {
@@ -205,7 +207,7 @@ public class RAROdometry extends Subsystem {
 
   @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
   public double getGyroYawDeg() {
-    return m_gyro.getAngle();
+    return Helpers.modDegrees(m_gyro.getRotation2d().getDegrees());
   }
 
   // @AutoLogOutput(key = "Odometry/Gyro/UpdateRate")

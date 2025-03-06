@@ -69,7 +69,7 @@ public class DriveTrajectoryTask extends Task {
     Optional<SwerveSample> sample = m_trajectory.get().sampleAt(m_timer.get(), !Helpers.isBlueAlliance());
 
     if (sample.isPresent()) {
-      ChassisSpeeds m_speeds = m_driveController.calculateTrajectorySpeeds(m_odometry.getPose(), sample.get());
+      ChassisSpeeds speeds = m_driveController.calculateTrajectorySpeeds(m_odometry.getPose(), sample.get());
 
       Logger.recordOutput("Auto/DriveTrajectory/Pose", sample.get().getPose());
 
@@ -77,7 +77,7 @@ public class DriveTrajectoryTask extends Task {
         m_odometry.setPose(sample.get().getPose());
       }
 
-      m_swerve.drive(m_speeds); // YOLO
+      m_swerve.drive(speeds); // YOLO
     }
 
     m_isFinished = m_timer.get() > m_trajectory.get().getTotalTime();

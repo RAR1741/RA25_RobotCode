@@ -220,7 +220,7 @@ public class Limelight implements Runnable {
 
       LimelightHelpers.SetRobotOrientation(
           m_limelightName,
-          -RAROdometry.getInstance().getGyroYawDeg(),
+          RAROdometry.getInstance().getGyroYawDeg(),
           0, 0, 0, 0, 0);
 
       double startTime = Timer.getFPGATimestamp();
