@@ -167,8 +167,8 @@ public class Constants {
     // Needs to be more than the max robot speed, to allow for turning
     public double k_maxAngularVelocity = 11.3; // rads per second
     public double k_maxAngularAcceleration = 54.5; // rads per second^2
-    public PIDConstants k_translationConstants = new PIDConstants(25.0, 0.0, 0.0);
-    public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(25.0, 0.0, 0.0, k_maxAngularVelocity,
+    public PIDConstants k_translationConstants = new PIDConstants(6.0, 0.0, 0.0);
+    public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(6.0, 0.0, 0.0, k_maxAngularVelocity,
         k_maxAngularAcceleration);
 
     public TimingConstants Timing = new TimingConstants();

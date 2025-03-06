@@ -86,6 +86,8 @@ public class DriveTrajectoryTask extends Task {
   @Override
   public void done() {
     logIsRunning(false);
+
+    m_swerve.stop();
   }
 
   @Override

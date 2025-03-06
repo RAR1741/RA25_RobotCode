@@ -1,6 +1,10 @@
 package frc.robot.autonomous.modes;
 
-import frc.robot.autonomous.tasks.DriveTrajectoryTask;
+import frc.robot.autonomous.tasks.*;
+import frc.robot.subsystems.Arm.ArmState;
+import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.EndEffector.EndEffectorState;
+import frc.robot.subsystems.PoseAligner.Branch;
 
 public class TestMode extends AutoModeBase {
   @Override
@@ -42,28 +46,28 @@ public class TestMode extends AutoModeBase {
     queueTask(new DriveTrajectoryTask("close side"));
 
     // Go to safe pose
-    // queueTask(new DriveToReefTask(Branch.NONE));
+    queueTask(new DriveToReefTask(Branch.NONE));
 
-    // // Extend to score
-    // queueTask(new ParallelTask(
-    // new ElevatorTask(ElevatorState.L4),
-    // new ArmTask(ArmState.EXTEND)));
+    // Extend to score
+    queueTask(new ParallelTask(
+        new ElevatorTask(ElevatorState.L4),
+        new ArmTask(ArmState.EXTEND)));
 
-    // // Drive to score
-    // queueTask(new DriveToReefTask(Branch.LEFT));
+    // Drive to score
+    queueTask(new DriveToReefTask(Branch.LEFT));
 
-    // // Score
-    // queueTask(new ParallelTask(
-    // new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
-    // new WaitTask(0.2)));
-    // queueTask(new EndEffectorTask(EndEffectorState.OFF));
+    // Score
+    queueTask(new ParallelTask(
+        new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
+        new WaitTask(0.2)));
+    queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
-    // // Drive back to safe pose
-    // queueTask(new DriveToReefTask(Branch.NONE));
+    // Drive back to safe pose
+    queueTask(new DriveToReefTask(Branch.NONE));
 
-    // // Stow
-    // queueTask(new ParallelTask(
-    // new ElevatorTask(ElevatorState.STOW),
-    // new ArmTask(ArmState.STOW)));
+    // Stow
+    queueTask(new ParallelTask(
+        new ElevatorTask(ElevatorState.STOW),
+        new ArmTask(ArmState.STOW)));
   }
 }
