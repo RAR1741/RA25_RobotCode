@@ -66,14 +66,14 @@ public class Constants {
     // Max speeds
     public final double k_maxDriverSpeed = 1.5; // Meters per second
     public final double k_maxDriverBoostSpeed = 4.5; // Meters per second
-    public final double k_maxPossibleSpeed = 5.0; // Meters per second
+    public final double k_maxPossibleSpeed = 4.574; // Meters per second
 
     public final double k_maxDriverAngularSpeed = Math.PI * 1.5; // Radians per second
-    public final double k_maxPossibleAngularSpeed = 11.3; // Radians per second, pulled from Choreo
+    public final double k_maxPossibleAngularSpeed = 10.256; // Radians per second, pulled from Choreo
 
     // Max acceleration
-    public final double k_maxLinearAcceleration = 12.0; // Meters per second^2
-    public final double k_maxAngularAcceleration = 54.5; // Radians per second^2, pulled from Choreo
+    public final double k_maxLinearAcceleration = 10.791; // Meters per second^2, pulled from Choreo
+    public final double k_maxAngularAcceleration = 46.304; // Radians per second^2, pulled from Choreo
 
     public final double k_slowScaler = 0; // % reduction in speed
     public final double k_boostScaler = 2; // % increase in speed
@@ -165,8 +165,8 @@ public class Constants {
 
   public static class AutoConstants {
     // Needs to be more than the max robot speed, to allow for turning
-    public double k_maxAngularVelocity = 11.3; // rads per second
-    public double k_maxAngularAcceleration = 54.5; // rads per second^2
+    public double k_maxAngularVelocity = 10.256; // rads per second
+    public double k_maxAngularAcceleration = 46.304; // rads per second^2
     public PIDConstants k_translationConstants = new PIDConstants(6.0, 0.0, 0.0);
     public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(6.0, 0.0, 0.0, k_maxAngularVelocity,
         k_maxAngularAcceleration);

@@ -218,7 +218,7 @@ public class SwerveDrive extends Subsystem {
   }
 
   @AutoLogOutput
-  private SwerveModuleState[] getCurrentStates() {
+  public SwerveModuleState[] getCurrentStates() {
     SwerveModuleState[] currentStates = {
         m_modules[Module.FRONT_LEFT].getState(),
         m_modules[Module.FRONT_RIGHT].getState(),

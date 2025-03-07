@@ -2,6 +2,7 @@ package frc.robot.autonomous.modes;
 
 import frc.robot.autonomous.tasks.ArmTask;
 import frc.robot.autonomous.tasks.DriveToReefTask;
+import frc.robot.autonomous.tasks.DriveTrajectoryTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
 import frc.robot.autonomous.tasks.EndEffectorTask;
 import frc.robot.autonomous.tasks.ParallelTask;
@@ -50,6 +51,8 @@ public class TestMode extends AutoModeBase {
 
     // queueTask(new DriveTrajectoryTask("close side"));
 
+    queueTask(new DriveTrajectoryTask("close side"));
+
     // Go to safe pose
     queueTask(new DriveToReefTask(Branch.NONE));
 
@@ -64,7 +67,7 @@ public class TestMode extends AutoModeBase {
     // Score
     queueTask(new ParallelTask(
         new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
-        new WaitTask(0.2)));
+        new WaitTask(0.5)));
     queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
     // Drive back to safe pose

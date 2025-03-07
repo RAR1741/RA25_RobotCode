@@ -21,7 +21,7 @@ public class RARHolonomicDriveController {
   private final ProfiledPIDController rotationController;
 
   private boolean m_isEnabled = true;
-  private double mpsToRps = 1.0 / RobotConstants.robotConfig.SwerveDrive.k_wheelBaseRadius;
+  // private double mpsToRps = 1.0 / RobotConstants.robotConfig.SwerveDrive.k_wheelBaseRadius;
 
   // private boolean firstTimeForEverything = false;
 

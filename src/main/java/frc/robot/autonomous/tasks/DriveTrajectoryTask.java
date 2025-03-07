@@ -33,7 +33,7 @@ public class DriveTrajectoryTask extends Task {
 
     m_timer = new Timer();
 
-    m_trajectory = Choreo.loadTrajectory(trajectoryName); // Cory O's!
+    m_trajectory = Choreo.loadTrajectory(trajectoryName); // Cory O's! My favorite cereal!
     m_trajectory.get().sampleAt(0, !Helpers.isBlueAlliance());
 
     m_driveController = new RARHolonomicDriveController(
@@ -60,6 +60,8 @@ public class DriveTrajectoryTask extends Task {
 
     m_timer.restart();
     m_prepared = true;
+    m_driveController.reset(m_odometry.getPose(),
+        m_swerve.getKinematics().toChassisSpeeds(m_swerve.getCurrentStates()));
   }
 
   @Override
@@ -80,7 +82,7 @@ public class DriveTrajectoryTask extends Task {
       m_swerve.drive(speeds); // YOLO
     }
 
-    m_isFinished = m_timer.get() > m_trajectory.get().getTotalTime();
+    m_isFinished = (m_timer.get()) > m_trajectory.get().getTotalTime();
   }
 
   @Override
