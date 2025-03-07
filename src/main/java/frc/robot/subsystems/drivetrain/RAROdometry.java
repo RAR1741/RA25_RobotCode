@@ -17,8 +17,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Helpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
 import frc.robot.subsystems.Limelight;
@@ -121,9 +119,9 @@ public class RAROdometry extends Subsystem {
 
   public void setAllianceGyroAngleAdjustment() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      setGyroAngleAdjustment(180.0);
-    } else {
       setGyroAngleAdjustment(0.0);
+    } else {
+      setGyroAngleAdjustment(180.0);
     }
 
     resetRotation(getRotation2d());
@@ -207,7 +205,7 @@ public class RAROdometry extends Subsystem {
 
   @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
   public double getGyroYawDeg() {
-    return Helpers.modDegrees(m_gyro.getRotation2d().getDegrees());
+    return m_gyro.getRotation2d().getDegrees();
   }
 
   // @AutoLogOutput(key = "Odometry/Gyro/UpdateRate")
@@ -227,12 +225,12 @@ public class RAROdometry extends Subsystem {
 
   // @AutoLogOutput(key = "Odometry/Gyro/RollDeg")
   // public double getGyroRollDeg() {
-  //   return m_gyro.getRoll();
+  // return m_gyro.getRoll();
   // }
 
   // @AutoLogOutput(key = "Odometry/Gyro/NavXTimestamp")
   // public double getNavXTimestamp() {
-  //   return (double) m_gyro.getLastSensorTimestamp();
+  // return (double) m_gyro.getLastSensorTimestamp();
   // }
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")

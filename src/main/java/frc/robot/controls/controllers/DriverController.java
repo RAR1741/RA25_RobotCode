@@ -13,11 +13,11 @@ public class DriverController extends FilteredController {
 
   // Drive
   public double getForwardAxis() {
-    return this.getFilteredAxis(Axis.LEFT_Y_AXIS);
+    return this.getFilteredAxis(Axis.LEFT_Y_AXIS) * m_allianceMultiplier;
   }
 
   public double getStrafeAxis() {
-    return this.getFilteredAxis(Axis.LEFT_X_AXIS);
+    return this.getFilteredAxis(Axis.LEFT_X_AXIS) * m_allianceMultiplier;
   }
 
   public double getTurnAxis() {
@@ -48,7 +48,7 @@ public class DriverController extends FilteredController {
   }
 
   public Branch getWantsAutoPositionBranch() {
-    if(this.getRawButton(Button.LEFT_BUMPER)) {
+    if (this.getRawButton(Button.LEFT_BUMPER)) {
       return Branch.LEFT;
     } else if (this.getRawButton(Button.RIGHT_BUMPER)) {
       return Branch.RIGHT;

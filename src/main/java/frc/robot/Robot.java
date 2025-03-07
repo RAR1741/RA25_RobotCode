@@ -138,13 +138,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void driverStationConnected() {
-    m_alliance = DriverStation.getAlliance().get();
-
-    m_reefPose = Helpers.isBlueAlliance()
-        ? RobotConstants.robotConfig.Field.k_blueReefPose.toPose2d()
-        : RobotConstants.robotConfig.Field.k_redReefPose.toPose2d();
-
-    m_odometry.setAllianceGyroAngleAdjustment();
+    setAllianceBasedOnDriverStation();
   }
 
   @Override
@@ -335,6 +329,9 @@ public class Robot extends LoggedRobot {
 
   @AutoLogOutput(key = "AutoAligner/distanceToReef")
   private double distanceToReef() {
+    if (m_reefPose == null) {
+      return 9999;
+    }
     return m_odometry.getPose().getTranslation().getDistance(m_reefPose.getTranslation());
   }
 
@@ -374,19 +371,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    Alliance oldAlliance = m_alliance;
-    if (!DriverStation.getAlliance().isPresent()) {
-      return;
-    }
-    m_alliance = DriverStation.getAlliance().get();
-
-    if (oldAlliance != m_alliance) {
-      m_odometry.setAllianceGyroAngleAdjustment();
-
-      m_reefPose = Helpers.isBlueAlliance()
-          ? RobotConstants.robotConfig.Field.k_blueReefPose.toPose2d()
-          : RobotConstants.robotConfig.Field.k_redReefPose.toPose2d();
-    }
+    setAllianceBasedOnDriverStation();
 
     if (m_operatorController.getWantsResetElevator()) {
       m_elevator.reset();
@@ -396,6 +381,28 @@ public class Robot extends LoggedRobot {
 
     // SCARY
     DriverStation.silenceJoystickConnectionWarning(DriverStation.getMatchType() == DriverStation.MatchType.None);
+  }
+
+  public void setAllianceBasedOnDriverStation() {
+    Alliance oldAlliance = m_alliance;
+    if (!DriverStation.getAlliance().isPresent()) {
+      return;
+    }
+
+    m_alliance = DriverStation.getAlliance().get();
+
+    if (oldAlliance == m_alliance) {
+      return;
+    }
+
+    m_odometry.setAllianceGyroAngleAdjustment();
+
+    m_reefPose = Helpers.isBlueAlliance()
+        ? RobotConstants.robotConfig.Field.k_blueReefPose.toPose2d()
+        : RobotConstants.robotConfig.Field.k_redReefPose.toPose2d();
+
+    m_driverController.setAllianceMultiplier();
+    m_operatorController.setAllianceMultiplier();
   }
 
   @Override
