@@ -60,8 +60,8 @@ public class DriverController extends FilteredController {
     return this.getRawButtonPressed(Button.X);
   }
 
-  public boolean getWantsGyroPoseReset() {
-    return this.getRawButtonPressed(Button.A);
+  public boolean getWantsAutoPositionFeederStation() {
+    return this.getRawButtonPressed(Button.B);
   }
 
   public boolean getWantsResetOdometry() {

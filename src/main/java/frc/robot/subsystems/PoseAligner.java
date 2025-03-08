@@ -70,7 +70,7 @@ public class PoseAligner extends Subsystem {
     ASPoseHelper.addRecord("CorrectedAngle", correctedAngle);
 
     Pose2d safePose = poses[reefSide];
-    Pose2d scoringPose = getScoringPose(safePose, reefSide, branch);
+    Pose2d scoringPose = getReefScoringPose(safePose, reefSide, branch);
     ASPoseHelper.addPose("ScoringPose", scoringPose);
 
     m_periodicIO.safePose = safePose;
@@ -84,7 +84,7 @@ public class PoseAligner extends Subsystem {
       return getSafePose();
     }
 
-    return getScoringPose();
+    return getReefScoringPose();
   }
 
   // public Pose2d getAndCalculateTargetPose(Pose2d currentPose, FeederStation
@@ -96,7 +96,7 @@ public class PoseAligner extends Subsystem {
     return m_periodicIO.safePose;
   }
 
-  public Pose2d getScoringPose() {
+  public Pose2d getReefScoringPose() {
     return m_periodicIO.scoringPose;
   }
 
@@ -112,7 +112,7 @@ public class PoseAligner extends Subsystem {
   public void reset() {
   }
 
-  public Pose2d getScoringPose(Pose2d currentPose, int reefSide, Branch branch) {
+  public Pose2d getReefScoringPose(Pose2d currentPose, int reefSide, Branch branch) {
     // x-translation -> down the long side of the field
     double scoringDistance = RobotConstants.robotConfig.AutoAlign.k_scoringDistance;
 
@@ -128,6 +128,25 @@ public class PoseAligner extends Subsystem {
     Pose2d scoringPose = currentPose.transformBy(new Transform2d(offset, new Rotation2d()));
 
     return scoringPose;
+  }
+
+  public Pose2d getFeederStationTargetPose(Pose2d currentPose) {
+    int direction;
+    int allianceOffset = Helpers.isBlueAlliance() ? 0 : 2;
+
+    boolean isLeft = currentPose.getY() > RobotConstants.robotConfig.Field.k_width / 2;
+    isLeft = Helpers.isBlueAlliance() ? isLeft : !isLeft;
+
+    // Left is 0, right is 1
+    if (isLeft) {
+      direction = 0;
+    } else {
+      direction = 1;
+    }
+
+    Pose2d[] feederStationPoses = getFeederStationPoses();
+
+    return feederStationPoses[allianceOffset + direction];
   }
 
   /**

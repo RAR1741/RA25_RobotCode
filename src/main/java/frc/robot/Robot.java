@@ -300,9 +300,17 @@ public class Robot extends LoggedRobot {
       m_taskScheduler.scheduleTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
     }
 
-    if (m_driverController.getWantsGyroPoseReset()) {
-      m_odometry.resetRotation();
+    if(m_operatorController.getWantsForwardHopper()) {
+      m_hopper.forward();
     }
+
+    if(m_operatorController.getWantsReverseHopper()) {
+      m_hopper.reverse();
+    }
+
+    // if (m_driverController.getWantsGyroPoseReset()) {
+    // m_odometry.resetRotation();
+    // }
   }
 
   private boolean isSafeToIndex() {

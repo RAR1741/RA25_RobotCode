@@ -17,6 +17,7 @@ public class Hopper extends Subsystem {
 
   public static class PeriodicIO {
     boolean is_hopper_on = false;
+    boolean reverse = false;
   }
 
   private Hopper() {
@@ -50,6 +51,14 @@ public class Hopper extends Subsystem {
     m_periodicIO.is_hopper_on = false;
   }
 
+  public void forward() {
+    m_periodicIO.reverse = false;
+  }
+
+  public void reverse() {
+    m_periodicIO.reverse = true;
+  }
+
   @Override
   public void reset() {
     off();
@@ -61,8 +70,12 @@ public class Hopper extends Subsystem {
 
   @Override
   public void writePeriodicOutputs() {
+    double speed = RobotConstants.robotConfig.Hopper.k_hopperSpeed;
+    if(m_periodicIO.reverse) {
+      speed *= -1;
+    }
     if (isHopperOn()) {
-      m_hopperMotor.set(RobotConstants.robotConfig.Hopper.k_hopperSpeed);
+      m_hopperMotor.set(speed);
     } else {
       m_hopperMotor.set(0.0);
     }

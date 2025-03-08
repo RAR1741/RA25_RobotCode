@@ -123,7 +123,7 @@ public class Elevator extends Subsystem {
 
     // Set PID controller to new state
     m_leftPIDController.setReference(
-        m_currentState.position,
+        m_currentState.position, // setpoint to reach
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
         RobotConstants.robotConfig.Elevator.k_FF,
@@ -151,12 +151,10 @@ public class Elevator extends Subsystem {
     // }
   }
 
-  @AutoLogOutput(key = "Elevator/IsAtState") 
-  public boolean getIsAtState() {
+  @AutoLogOutput(key = "Elevator/IsAtState")  public boolean getIsAtState() {
     if(RobotBase.isSimulation()) {
       return true;
     }
-    
     double currentPos = getCurrentPosition();
     double targetPos = getElevatorTarget();
     double allowedError = RobotConstants.robotConfig.Elevator.k_allowedError;

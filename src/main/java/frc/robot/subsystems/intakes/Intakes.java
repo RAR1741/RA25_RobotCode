@@ -25,7 +25,7 @@ public class Intakes extends Subsystem {
   }
 
   public static Intakes getInstance() {
-    if(m_instance == null) {
+    if (m_instance == null) {
       m_instance = new Intakes();
     }
     return m_instance;

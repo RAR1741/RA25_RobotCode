@@ -3,11 +3,13 @@ package frc.robot.autonomous.modes;
 import java.util.ArrayList;
 
 import frc.robot.autonomous.tasks.ArmTask;
+import frc.robot.autonomous.tasks.CollectCoralTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
 import frc.robot.autonomous.tasks.EndEffectorTask;
 import frc.robot.autonomous.tasks.ParallelTask;
+import frc.robot.autonomous.tasks.SequentialTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.autonomous.tasks.WaitTask;
 import frc.robot.autonomous.tasks.WaitTask.WaitCondition;
@@ -42,7 +44,7 @@ public abstract class AutoModeBase {
 
   public abstract void queueTasks();
 
-  public void autoScore(ElevatorState elevatorState, Branch branch) {
+  public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
     // Go to safe pose
     queueTask(new DriveToPoseTask(Branch.NONE));
 
@@ -64,11 +66,20 @@ public abstract class AutoModeBase {
     queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
     // Drive back to safe pose
-    queueTask(new DriveToPoseTask(Branch.NONE));
+    // queueTask(new DriveToPoseTask(Branch.NONE));
+
+    queueTask(new ParallelTask(
+        new DriveToPoseTask(feederStation),
+        new CollectCoralTask(),
+        new SequentialTask(
+            new WaitTask(0.4),
+            new ParallelTask(
+                new ElevatorTask(ElevatorState.STOW),
+                new ArmTask(ArmState.STOW)))));
 
     // Stow
-    queueTask(new ParallelTask(
-        new ElevatorTask(ElevatorState.STOW),
-        new ArmTask(ArmState.STOW)));
+    // queueTask(new ParallelTask(
+    // new ElevatorTask(ElevatorState.STOW),
+    // new ArmTask(ArmState.STOW)));
   }
 }

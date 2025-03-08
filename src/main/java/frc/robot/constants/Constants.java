@@ -199,6 +199,7 @@ public class Constants {
     public final double k_L3Height = 42.7;
     public final double k_L4Height = 60.5; // 59.6;
     public final double k_maxHeight = 60.5;
+    public final double k_feederHeight = 28.36;
     // public final double k_groundAlgaeHeight = 0.0;
     // public final double k_lowAlgaeHeight = 24.8;
     // public final double k_highAlgaeHeight = 42.5;
@@ -227,6 +228,7 @@ public class Constants {
     public double k_stowAngle;
     public double k_L4Angle;
     public double k_horizontalAngle;
+    public double k_sourceAngle;
 
     public final double k_maxAcceleration = 0.8;
     public final double k_maxVelocity = 0.4;
@@ -323,8 +325,8 @@ public class Constants {
     public final double k_fallOffDistance = 1.5;
 
     // Base feeder scoring pose
-    public final double k_feederStationXOffset = 1.0;
-    public final double k_feederStationYOffset = 1.25;
+    public final double k_feederStationXOffset = 1.2;
+    public final double k_feederStationYOffset = 0.92;
     public final double k_feederStationRotationOffset = 54.0;
   }
 
