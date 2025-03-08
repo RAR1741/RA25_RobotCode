@@ -66,7 +66,7 @@ public abstract class AutoModeBase {
     // Score
     queueTask(new ParallelTask(
         new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
-        new WaitTask(0.3)));
+        new WaitTask(0.4)));
     queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
     queueTask(new ParallelTask(

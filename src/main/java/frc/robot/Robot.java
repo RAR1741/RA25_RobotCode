@@ -299,12 +299,11 @@ public class Robot extends LoggedRobot {
       m_taskScheduler.scheduleTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
     }
 
-    if(m_operatorController.getWantsForwardHopper()) {
-      m_hopper.forward();
-    }
-
-    if(m_operatorController.getWantsReverseHopper()) {
+    if (m_operatorController.getWantsReverseHopper()) {
       m_hopper.reverse();
+      m_endEffector.setState(EndEffectorState.FORWARD_INDEX);
+    } else {
+      m_hopper.forward();
     }
 
     // if (m_driverController.getWantsGyroPoseReset()) {

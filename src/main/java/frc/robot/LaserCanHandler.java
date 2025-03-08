@@ -13,6 +13,9 @@ public class LaserCanHandler {
   private LaserCan m_entranceLaser;
   private LaserCan m_exitLaser;
 
+  private int debounceCounter = 0;
+  private int debounceMax = 3;
+
   public static LaserCanHandler getInstance() {
     if (m_instance == null) {
       m_instance = new LaserCanHandler();
@@ -42,7 +45,14 @@ public class LaserCanHandler {
     if (RobotBase.isSimulation()) {
       return true;
     }
-    return getEntranceDistance() < 50.0;
+
+    if (getEntranceDistance() < RobotConstants.robotConfig.LaserCan.k_entranceThreshold) {
+      debounceCounter++;
+    } else {
+      debounceCounter = 0;
+    }
+
+    return debounceCounter >= debounceMax;
   }
 
   @AutoLogOutput(key = "LaserCans/Entrance/distance")

@@ -243,7 +243,7 @@ public class Constants {
     public final int k_rightMotorId = 32;
 
     public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
-    public final double[] k_forwardIndexSpeeds = new double[] { 0.15, 0.15 };
+    public final double[] k_forwardIndexSpeeds = new double[] { 0.10, 0.10 };
     public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
     public final double[] k_branchSpeeds = new double[] { 0.5, 0.4 };
     public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
@@ -253,6 +253,8 @@ public class Constants {
     public final int k_indexId = 33;
     public final int k_entranceId = 34;
     public final int k_exitId = 35;
+
+    public final double k_entranceThreshold = 110.0;
   }
 
   public static class IntakeConstants {
