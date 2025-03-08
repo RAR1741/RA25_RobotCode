@@ -66,7 +66,6 @@ public class EndEffector extends Subsystem {
     OFF,
     FORWARD_INDEX,
     REVERSE_INDEX,
-    REVERSE,
     SCORE_BRANCHES,
     SCORE_TROUGH,
     INDEXED
@@ -82,10 +81,6 @@ public class EndEffector extends Subsystem {
 
   private void index() {
     setState(EndEffectorState.FORWARD_INDEX);
-  }
-
-  private void reverse() {
-    setState(EndEffectorState.REVERSE);
   }
 
   private void branches() {
@@ -140,10 +135,6 @@ public class EndEffector extends Subsystem {
         return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeeds;
       }
 
-      case REVERSE -> {
-        return RobotConstants.robotConfig.EndEffector.k_reverseSpeeds;
-      }
-
       case SCORE_BRANCHES -> {
         if (m_arm.getArmState() == ArmState.EXTEND || m_elevator.getTargetState() == ElevatorState.L4) {
           return new double[] { -RobotConstants.robotConfig.EndEffector.k_branchSpeeds[0],
@@ -190,12 +181,6 @@ public class EndEffector extends Subsystem {
         if (m_laserCan.getEntranceSeesCoral()) {
           index();
         }
-      }
-
-      case REVERSE -> {
-        // if (m_laserCan.getIndexSeesCoral()) {
-        off();
-        // }
       }
 
       case SCORE_BRANCHES -> {

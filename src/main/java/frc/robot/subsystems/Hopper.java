@@ -14,7 +14,6 @@ public class Hopper extends Subsystem {
   private static Hopper m_instance = null;
   private final SparkMax m_hopperMotor;
   private static PeriodicIO m_periodicIO;
-  private Elevator m_elevator;
 
   public static class PeriodicIO {
     boolean is_hopper_on = false;
@@ -32,8 +31,6 @@ public class Hopper extends Subsystem {
     // add config
     config.inverted(false);
     m_hopperMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    m_elevator = Elevator.getInstance();
 
     m_periodicIO = new PeriodicIO();
   }

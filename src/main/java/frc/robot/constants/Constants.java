@@ -241,7 +241,6 @@ public class Constants {
     public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
     public final double[] k_forwardIndexSpeeds = new double[] { 0.15, 0.15 };
     public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
-    public final double[] k_reverseSpeeds = new double[] { -0.1, -0.1 };
     public final double[] k_branchSpeeds = new double[] { 0.5, 0.4 };
     public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
   }
@@ -322,6 +321,11 @@ public class Constants {
 
     public final double k_maxApproachSpeed = 5.0;
     public final double k_fallOffDistance = 1.5;
+
+    // Base feeder scoring pose
+    public final double k_feederStationXOffset = 1.0;
+    public final double k_feederStationYOffset = 1.25;
+    public final double k_feederStationRotationOffset = 54.0;
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants

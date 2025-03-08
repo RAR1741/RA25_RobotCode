@@ -35,6 +35,7 @@ public class PoseAligner extends Subsystem {
 
   @Override
   public void periodic() {
+    getFeederStationPoses();
   }
 
   public void calculate(Pose2d currentPose, Branch branch) {
@@ -79,12 +80,17 @@ public class PoseAligner extends Subsystem {
   public Pose2d getAndCalculateTargetPose(Pose2d currentPose, Branch branch) {
     calculate(currentPose, branch);
 
-    if(branch == Branch.NONE) {
+    if (branch == Branch.NONE) {
       return getSafePose();
     }
 
     return getScoringPose();
   }
+
+  // public Pose2d getAndCalculateTargetPose(Pose2d currentPose, FeederStation
+  // station) {
+  // calculate(currentPose, station);
+  // }
 
   public Pose2d getSafePose() {
     return m_periodicIO.safePose;
@@ -120,7 +126,7 @@ public class PoseAligner extends Subsystem {
     Translation2d offset = new Translation2d(scoringDistance, scoringHorizontalOffset);
 
     Pose2d scoringPose = currentPose.transformBy(new Transform2d(offset, new Rotation2d()));
-    
+
     return scoringPose;
   }
 
@@ -162,6 +168,31 @@ public class PoseAligner extends Subsystem {
     return poses;
   }
 
+  public Pose2d[] getFeederStationPoses() {
+    Pose2d[] poses = new Pose2d[4];
+
+    double fieldWidth = RobotConstants.robotConfig.Field.k_width;
+    double fieldLength = RobotConstants.robotConfig.Field.k_length;
+
+    double xOffset = RobotConstants.robotConfig.AutoAlign.k_feederStationXOffset;
+    double yOffset = RobotConstants.robotConfig.AutoAlign.k_feederStationYOffset;
+    double rotOffset = RobotConstants.robotConfig.AutoAlign.k_feederStationRotationOffset;
+
+    poses[FeederStation.BLUE_RIGHT] = new Pose2d(xOffset, yOffset, Rotation2d.fromDegrees(rotOffset));
+
+    poses[FeederStation.BLUE_LEFT] = new Pose2d(xOffset, fieldWidth - yOffset, Rotation2d.fromDegrees(-rotOffset));
+
+    poses[FeederStation.RED_LEFT] = new Pose2d(fieldLength - xOffset, yOffset,
+        Rotation2d.fromDegrees(180 - rotOffset));
+
+    poses[FeederStation.RED_RIGHT] = new Pose2d(fieldLength - xOffset, fieldWidth - yOffset,
+        Rotation2d.fromDegrees(rotOffset - 180));
+
+    ASPoseHelper.addPose("PoseAligner/FeederStationPoses", poses);
+
+    return poses;
+  }
+
   public interface ReefStartingPoses {
     int RIGHT_SIDE = 0;
     int TOP_RIGHT_SIDE = 1;
@@ -175,6 +206,15 @@ public class PoseAligner extends Subsystem {
     LEFT,
     RIGHT,
     NONE
+  }
+
+  public interface FeederStation {
+    int BLUE_LEFT = 0;
+    int BLUE_RIGHT = 1;
+    int RED_LEFT = 2;
+    int RED_RIGHT = 3;
+    int LEFT = 4;
+    int RIGHT = 5;
   }
 
   // TODO maybe change the starting pose labels to tag-specific for easier

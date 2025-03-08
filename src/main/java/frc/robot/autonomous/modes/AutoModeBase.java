@@ -2,8 +2,19 @@ package frc.robot.autonomous.modes;
 
 import java.util.ArrayList;
 
+import frc.robot.autonomous.tasks.ArmTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
+import frc.robot.autonomous.tasks.DriveToPoseTask;
+import frc.robot.autonomous.tasks.ElevatorTask;
+import frc.robot.autonomous.tasks.EndEffectorTask;
+import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.Task;
+import frc.robot.autonomous.tasks.WaitTask;
+import frc.robot.autonomous.tasks.WaitTask.WaitCondition;
+import frc.robot.subsystems.Arm.ArmState;
+import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.EndEffector.EndEffectorState;
+import frc.robot.subsystems.PoseAligner.Branch;
 
 public abstract class AutoModeBase {
   private ArrayList<Task> m_tasks;
@@ -30,4 +41,34 @@ public abstract class AutoModeBase {
   }
 
   public abstract void queueTasks();
+
+  public void autoScore(ElevatorState elevatorState, Branch branch) {
+    // Go to safe pose
+    queueTask(new DriveToPoseTask(Branch.NONE));
+
+    // Wait for the coral to be indexed
+    queueTask(new WaitTask(WaitCondition.END_EFFECTOR_INDEXED));
+
+    // Extend to score
+    queueTask(new ParallelTask(
+        new ElevatorTask(elevatorState),
+        new ArmTask(ArmState.EXTEND)));
+
+    // Drive to score
+    queueTask(new DriveToPoseTask(branch));
+
+    // Score
+    queueTask(new ParallelTask(
+        new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
+        new WaitTask(0.5)));
+    queueTask(new EndEffectorTask(EndEffectorState.OFF));
+
+    // Drive back to safe pose
+    queueTask(new DriveToPoseTask(Branch.NONE));
+
+    // Stow
+    queueTask(new ParallelTask(
+        new ElevatorTask(ElevatorState.STOW),
+        new ArmTask(ArmState.STOW)));
+  }
 }
