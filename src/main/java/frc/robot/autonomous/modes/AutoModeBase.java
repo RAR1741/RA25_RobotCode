@@ -1,4 +1,4 @@
-package frc.robot.autonomous.modes;
+'package frc.robot.autonomous.modes;
 
 import java.util.ArrayList;
 
@@ -65,9 +65,6 @@ public abstract class AutoModeBase {
         new WaitTask(0.5)));
     queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
-    // Drive back to safe pose
-    // queueTask(new DriveToPoseTask(Branch.NONE));
-
     queueTask(new ParallelTask(
         new DriveToPoseTask(feederStation),
         new CollectCoralTask(),
@@ -76,10 +73,5 @@ public abstract class AutoModeBase {
             new ParallelTask(
                 new ElevatorTask(ElevatorState.STOW),
                 new ArmTask(ArmState.STOW)))));
-
-    // Stow
-    // queueTask(new ParallelTask(
-    // new ElevatorTask(ElevatorState.STOW),
-    // new ArmTask(ArmState.STOW)));
   }
 }

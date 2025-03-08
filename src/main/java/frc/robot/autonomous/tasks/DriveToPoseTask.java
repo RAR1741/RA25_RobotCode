@@ -1,6 +1,7 @@
 package frc.robot.autonomous.tasks;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Helpers;
 import frc.robot.RobotTelemetry;
 import frc.robot.subsystems.PoseAligner;
@@ -16,8 +17,8 @@ public class DriveToPoseTask extends Task {
   private final RAROdometry m_odometry;
   private final PoseAligner m_poseAligner;
 
-  private final double k_translationErrorThreshold = 0.01; // distance (meters)
-  private final double k_rotationErrorThreshold = 0.5; // degrees
+  private double k_translationErrorThreshold = Units.inchesToMeters(0.5);
+  private double k_rotationErrorThreshold = 0.5; // degrees
 
   private final Branch m_branch;
   private final int m_station; // FeederStation
@@ -26,6 +27,10 @@ public class DriveToPoseTask extends Task {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
     m_poseAligner = PoseAligner.getInstance();
+
+    if (branch == Branch.NONE) {
+      k_translationErrorThreshold = Units.inchesToMeters(4);
+    }
 
     m_branch = branch;
     m_station = -1;
