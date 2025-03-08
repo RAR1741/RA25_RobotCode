@@ -27,6 +27,7 @@ public class SequentialTask extends Task {
 
   @Override
   public void update() {
+    logIsRunning(true);
     if (m_currentTask.isFinished()) {
       m_currentTask.done();
 
@@ -52,6 +53,7 @@ public class SequentialTask extends Task {
 
   @Override
   public void done() {
+    logIsRunning(false);
     RobotTelemetry.print("Sequential task done");
   }
 

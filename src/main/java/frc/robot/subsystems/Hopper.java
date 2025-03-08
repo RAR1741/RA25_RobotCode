@@ -71,7 +71,7 @@ public class Hopper extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     double speed = RobotConstants.robotConfig.Hopper.k_hopperSpeed;
-    if(m_periodicIO.reverse) {
+    if (m_periodicIO.reverse) {
       speed *= -1;
     }
     if (isHopperOn()) {
@@ -94,5 +94,10 @@ public class Hopper extends Subsystem {
   @AutoLogOutput(key = "Hopper/IsOn")
   public boolean isHopperOn() {
     return m_periodicIO.is_hopper_on;
+  }
+
+  @AutoLogOutput(key = "Hopper/CurrentCurrentAtThisCurrentMoment")
+  public double getCurrent() {
+    return m_hopperMotor.getOutputCurrent();
   }
 }

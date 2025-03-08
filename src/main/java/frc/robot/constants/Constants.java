@@ -171,6 +171,8 @@ public class Constants {
     public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(6.0, 0.0, 0.0, k_maxAngularVelocity,
         k_maxAngularAcceleration);
 
+    public final double k_lowSpeed = 0.2;
+
     public TimingConstants Timing = new TimingConstants();
 
     public class TimingConstants {

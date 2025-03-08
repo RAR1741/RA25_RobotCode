@@ -1,7 +1,9 @@
 package frc.robot.autonomous.tasks;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotTelemetry;
+import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 
@@ -17,6 +19,7 @@ public class WaitTask extends Task {
   public enum WaitCondition {
     TIME,
     END_EFFECTOR_INDEXED,
+    LOW_SPEED
   }
 
   public WaitTask(double timeSeconds) {
@@ -37,17 +40,22 @@ public class WaitTask extends Task {
   @Override
   public void update() {
     logIsRunning(true);
-
-    m_swerve.drive(0, 0, 0, false);
   }
 
   @Override
   public boolean isFinished() {
     switch (m_condition) {
-      case TIME:
+      case TIME -> {
         return m_runningTimer.get() >= m_targetTime;
-      case END_EFFECTOR_INDEXED:
+      }
+      case END_EFFECTOR_INDEXED -> {
         return m_endEffector.isSafeToScore();
+      }
+      case LOW_SPEED -> {
+        ChassisSpeeds currentSpeed = m_swerve.getChassisSpeeds();
+        return Math.hypot(currentSpeed.vxMetersPerSecond,
+            currentSpeed.vyMetersPerSecond) < RobotConstants.robotConfig.Auto.k_lowSpeed;
+      }
     }
     return true;
   }

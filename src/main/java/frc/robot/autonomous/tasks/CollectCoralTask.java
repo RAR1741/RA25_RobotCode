@@ -11,7 +11,7 @@ public class CollectCoralTask extends Task {
   private final Intakes m_intakes;
   private final Hopper m_hopper;
   private final LaserCanHandler m_laserCans;
-  private final EndEffector m_endEffector; // Commit
+  private final EndEffector m_endEffector;
 
   public CollectCoralTask() {
     m_intakes = Intakes.getInstance();

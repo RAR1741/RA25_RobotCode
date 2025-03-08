@@ -69,7 +69,6 @@ public class DriveToPoseTask extends Task {
     logIsRunning(true);
 
     m_currentPose = m_odometry.getPose();
-
     m_swerve.drive(m_currentPose, m_goalPose);
   }
 
@@ -85,6 +84,7 @@ public class DriveToPoseTask extends Task {
   public void done() {
     logIsRunning(false);
 
+    // TODO: THIS
     m_swerve.stop();
   }
 }

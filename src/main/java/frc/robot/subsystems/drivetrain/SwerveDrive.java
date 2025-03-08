@@ -165,13 +165,17 @@ public class SwerveDrive extends Subsystem {
 
   public void resetDriveController() {
     Pose2d currentPose = RAROdometry.getInstance().getPose();
-    m_driveController.reset(currentPose, m_kinematics.toChassisSpeeds(getCurrentStates())); // this is fine 🔥
+    m_driveController.reset(currentPose, getChassisSpeeds()); // this is fine 🔥
   }
 
   public void resetDriveEncoders() {
     for (SwerveModule module : m_modules) {
       module.resetDriveEncoder();
     }
+  }
+
+  public ChassisSpeeds getChassisSpeeds() {
+    return m_kinematics.toChassisSpeeds(getCurrentStates());
   }
 
   @Override

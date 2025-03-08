@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.LoggedRobot;
 
-import au.grapplerobotics.CanBridge;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -101,7 +100,7 @@ public class Robot extends LoggedRobot {
     m_hopper = Hopper.getInstance();
     m_taskScheduler = TaskScheduler.getInstance();
 
-    CanBridge.runTCP();
+    // CanBridge.runTCP(); // For LaserCan configuration
 
     m_driverController = new DriverController(0, true, true, 0.5);
     m_operatorController = new OperatorController(1, true, true, 0.5);
