@@ -28,7 +28,6 @@
             "/RealOutputs/Intakes/Right/Current",
             "/RealOutputs/Intakes/Right/Desired",
             "/RealOutputs/EndEffector",
-            "/RealOutputs",
             "/RealOutputs/LaserCans",
             "/RealOutputs/LaserCans/Entrance",
             "/RealOutputs/Auto",
@@ -38,11 +37,12 @@
             "/RealOutputs/Intakes",
             "/RealOutputs/Intakes/Left",
             "/RealOutputs/Intakes/Left/Current",
-            "/RealOutputs/Intakes/Left/Desired"
+            "/RealOutputs/Intakes/Left/Desired",
+            "/RealOutputs"
           ]
         },
         "tabs": {
-          "selected": 3,
+          "selected": 12,
           "tabs": [
             {
               "type": 0,
@@ -275,40 +275,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -7.255993658884416,
-                  8.416003373023642,
-                  0.4858150359716634
+                  -6.4352358739130535,
+                  12.04835101932532,
+                  0.056479379875195086
                 ],
                 "cameraTarget": [
-                  -5.52974910105543,
-                  -7.329743724128971,
-                  0.5113738323824147
+                  -4.417254508359287,
+                  -7.219089705766748,
+                  0.050283310334839466
                 ]
               },
               "controlsHeight": 272
-            },
-            {
-              "type": 2,
-              "title": "2D",
-              "controller": {
-                "sources": [
-                  {
-                    "type": "robot",
-                    "logKey": "/RealOutputs/Odometry/PoseEstimator/Pose2d",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {}
-                  }
-                ],
-                "game": "2025 Field (Welded)",
-                "bumpers": "auto",
-                "origin": "blue",
-                "orientation": 0,
-                "size": 30
-              },
-              "controllerUUID": "ibs46t3mi554qmoz417wn12m75mkv5hz",
-              "renderer": null,
-              "controlsHeight": 200
             },
             {
               "type": 1,
@@ -925,7 +902,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Auto/Tasks/ElevatorTask",
+                    "logKey": "/RealOutputs/Auto/Tasks/CollectCoralTask",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -934,7 +911,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Auto/Tasks/EndEffectorTask",
+                    "logKey": "/RealOutputs/Auto/Tasks/DriveToPoseTask",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -943,7 +920,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Auto/Tasks/IntakeTask",
+                    "logKey": "/RealOutputs/Auto/Tasks/ElevatorTask",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -952,7 +929,16 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Auto/Tasks/WaitTask",
+                    "logKey": "/RealOutputs/Auto/Tasks/EndEffectorTask",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Auto/Tasks/ParallelTask",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -961,29 +947,20 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Auto/Tasks/DriveTrajectoryTask",
+                    "logKey": "/RealOutputs/Auto/Tasks/SequentialTask",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#858584"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Auto/Tasks/WaitTask",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
                       "color": "#3b875a"
-                    }
-                  },
-                  {
-                    "type": "stripes",
-                    "logKey": "/RealOutputs/Auto/Tasks/CollectCoralTask",
-                    "logType": "Boolean",
-                    "visible": true,
-                    "options": {
-                      "color": "#d993aa"
-                    }
-                  },
-                  {
-                    "type": "stripes",
-                    "logKey": "/RealOutputs/Auto/Tasks/DriveToPoseTask",
-                    "logType": "Boolean",
-                    "visible": true,
-                    "options": {
-                      "color": "#5f4528"
                     }
                   }
                 ],

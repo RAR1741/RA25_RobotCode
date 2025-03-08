@@ -11,10 +11,6 @@ public class TestMode extends AutoModeBase {
 
     autoScore(ElevatorState.L4, Branch.RIGHT, FeederStation.LEFT);
 
-    // queueTask(new ParallelTask(
-    // new DriveToPoseTask(),
-    // new CollectCoralTask()));
-
     autoScore(ElevatorState.L4, Branch.RIGHT, FeederStation.LEFT);
   }
 }

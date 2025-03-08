@@ -45,16 +45,20 @@ public abstract class AutoModeBase {
   public abstract void queueTasks();
 
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
-    // Go to safe pose
-    queueTask(new DriveToPoseTask(Branch.NONE));
+    ArmState armTarget;
+    if (elevatorState == ElevatorState.L4) {
+      armTarget = ArmState.EXTEND;
+    } else {
+      armTarget = ArmState.STOW;
+    }
 
-    // Wait for the coral to be indexed
-    queueTask(new WaitTask(WaitCondition.END_EFFECTOR_INDEXED));
-
-    // Extend to score
     queueTask(new ParallelTask(
-        new ElevatorTask(elevatorState),
-        new ArmTask(ArmState.EXTEND)));
+        new DriveToPoseTask(Branch.NONE),
+        new SequentialTask(
+            new WaitTask(WaitCondition.END_EFFECTOR_INDEXED),
+            new ParallelTask(
+                new ElevatorTask(elevatorState),
+                new ArmTask(armTarget)))));
 
     // Drive to score
     queueTask(new DriveToPoseTask(branch));
@@ -62,7 +66,7 @@ public abstract class AutoModeBase {
     // Score
     queueTask(new ParallelTask(
         new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
-        new WaitTask(0.5)));
+        new WaitTask(0.3)));
     queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
     queueTask(new ParallelTask(
