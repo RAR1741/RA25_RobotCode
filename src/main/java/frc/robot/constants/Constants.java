@@ -203,8 +203,8 @@ public class Constants {
     public final double k_maxHeight = 60.5;
     public final double k_feederHeight = 28.36;
     // public final double k_groundAlgaeHeight = 0.0;
-    // public final double k_lowAlgaeHeight = 24.8;
-    // public final double k_highAlgaeHeight = 42.5;
+    public final double k_lowAlgaeHeight = 27.643;
+    public final double k_highAlgaeHeight = 44.571;
 
     public final double k_allowedError = 0.2; // TODO: Change this please 👁️👄👁️
   }
@@ -324,6 +324,7 @@ public class Constants {
     // Scoring offsets
     public final double k_scoringDistance = 0.235;
     public final double k_scoringHorizontalOffset = 0.175;
+    public final double k_algaeHorizontalOffset = 0.0;
 
     public final double k_maxApproachSpeed = 5.0;
     public final double k_fallOffDistance = 1.5;

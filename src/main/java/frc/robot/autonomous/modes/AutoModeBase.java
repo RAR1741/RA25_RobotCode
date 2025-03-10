@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import frc.robot.autonomous.tasks.ArmTask;
 import frc.robot.autonomous.tasks.CollectCoralTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
+import frc.robot.autonomous.tasks.DriveTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
 import frc.robot.autonomous.tasks.EndEffectorTask;
@@ -44,6 +45,18 @@ public abstract class AutoModeBase {
 
   public abstract void queueTasks();
 
+  public void deAlgae() {
+    queueTask(new DriveToPoseTask(Branch.NONE));
+    queueTask(new ArmTask(ArmState.EXTEND));
+    queueTask(new ElevatorTask(ElevatorState.ALGAE_HIGH));
+    queueTask(new DriveToPoseTask(Branch.ALGAE));
+    queueTask(new ParallelTask(
+        new DriveToPoseTask(Branch.NONE),
+        new ArmTask(ArmState.STOW)
+    ));
+    queueTask(new ElevatorTask(ElevatorState.STOW));
+  }
+
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
     ArmState armTarget;
     if (elevatorState == ElevatorState.L4) {
@@ -55,7 +68,7 @@ public abstract class AutoModeBase {
     queueTask(new ParallelTask(
         new DriveToPoseTask(Branch.NONE),
         new SequentialTask(
-            new WaitTask(WaitCondition.END_EFFECTOR_INDEXED),
+            new WaitTask(WaitCondition.END_EFFECTOR_INDEXED), 
             new ParallelTask(
                 new ElevatorTask(elevatorState),
                 new ArmTask(armTarget)))));

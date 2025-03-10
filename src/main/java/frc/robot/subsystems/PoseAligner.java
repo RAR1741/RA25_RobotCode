@@ -117,15 +117,19 @@ public class PoseAligner extends Subsystem {
     double scoringDistance = RobotConstants.robotConfig.AutoAlign.k_scoringDistance;
 
     // y-translation -> along the shorter side of the field
-    double scoringHorizontalOffset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    double offset = 0.0;
 
     if (branch == Branch.RIGHT) {
-      scoringHorizontalOffset = -scoringHorizontalOffset;
+      offset = -RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    } else if (branch == Branch.LEFT) {
+      offset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    } else if (branch == Branch.ALGAE) {
+      offset = RobotConstants.robotConfig.AutoAlign.k_algaeHorizontalOffset;
     }
 
-    Translation2d offset = new Translation2d(scoringDistance, scoringHorizontalOffset);
+    Translation2d translation = new Translation2d(scoringDistance, offset);
 
-    Pose2d scoringPose = currentPose.transformBy(new Transform2d(offset, new Rotation2d()));
+    Pose2d scoringPose = currentPose.transformBy(new Transform2d(translation, new Rotation2d()));
 
     return scoringPose;
   }
@@ -224,6 +228,7 @@ public class PoseAligner extends Subsystem {
   public enum Branch {
     LEFT,
     RIGHT,
+    ALGAE,
     NONE
   }
 
