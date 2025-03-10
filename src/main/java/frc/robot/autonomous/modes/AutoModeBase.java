@@ -45,6 +45,14 @@ public abstract class AutoModeBase {
   public abstract void queueTasks();
 
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
+    score(elevatorState, branch, new DriveToPoseTask(feederStation));
+  }
+
+  public void autoScore(ElevatorState elevatorState, Branch branch) {
+    score(elevatorState, branch, new DriveToPoseTask(Branch.NONE));
+  }
+
+  private void score(ElevatorState elevatorState, Branch branch, Task finalDriveTask) {
     ArmState armTarget;
     if (elevatorState == ElevatorState.L4) {
       armTarget = ArmState.EXTEND;
@@ -70,7 +78,7 @@ public abstract class AutoModeBase {
     queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
     queueTask(new ParallelTask(
-        new DriveToPoseTask(feederStation),
+        finalDriveTask,
         new CollectCoralTask(),
         new SequentialTask(
             new WaitTask(0.4),

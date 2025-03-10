@@ -1,7 +1,6 @@
 package frc.robot.autonomous.tasks;
 
 import frc.robot.LaserCanHandler;
-import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes;
@@ -11,12 +10,12 @@ public class CollectCoralTask extends Task {
   private final Intakes m_intakes;
   private final Hopper m_hopper;
   private final LaserCanHandler m_laserCans;
-  private final EndEffector m_endEffector;
+  // private final EndEffector m_endEffector;
 
   public CollectCoralTask() {
     m_intakes = Intakes.getInstance();
     m_hopper = Hopper.getInstance();
-    m_endEffector = EndEffector.getInstance();
+    // m_endEffector = EndEffector.getInstance();
     m_laserCans = LaserCanHandler.getInstance();
   }
 

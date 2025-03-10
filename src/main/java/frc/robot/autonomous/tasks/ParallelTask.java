@@ -5,7 +5,6 @@ import frc.robot.RobotTelemetry;
 public class ParallelTask extends Task {
   private Task[] m_tasks;
   private boolean[] m_finished;
-  private boolean m_allFinished = false;
 
   public ParallelTask(Task... tasks) {
     m_tasks = tasks;
@@ -32,12 +31,6 @@ public class ParallelTask extends Task {
         }
       }
     }
-    m_allFinished = true;
-    for (boolean b : m_finished) {
-      if (!b) {
-        m_allFinished = false;
-      }
-    }
   }
 
   @Override
@@ -51,13 +44,12 @@ public class ParallelTask extends Task {
 
   @Override
   public boolean isFinished() {
-    for(Task task : m_tasks) {
-      if(!task.isFinished()) {
+    for (Task task : m_tasks) {
+      if (!task.isFinished()) {
         return false;
       }
     }
     return true;
-    // return m_allFinished;
   }
 
   @Override
