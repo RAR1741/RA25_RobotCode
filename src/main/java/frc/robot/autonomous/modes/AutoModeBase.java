@@ -51,7 +51,9 @@ public abstract class AutoModeBase {
     queueTask(new ElevatorTask(ElevatorState.ALGAE_HIGH));
     queueTask(new DriveToPoseTask(Branch.ALGAE));
     queueTask(new ParallelTask(
-        new DriveToPoseTask(Branch.NONE),
+        new SequentialTask(
+            new WaitTask(0.5),
+            new DriveToPoseTask(Branch.NONE)),
         new ArmTask(ArmState.STOW)
     ));
     queueTask(new ElevatorTask(ElevatorState.STOW));
