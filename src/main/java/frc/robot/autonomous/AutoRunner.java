@@ -2,7 +2,10 @@ package frc.robot.autonomous;
 
 import frc.robot.RobotTelemetry;
 import frc.robot.autonomous.modes.AutoModeBase;
+import frc.robot.autonomous.modes.CenterMode;
 import frc.robot.autonomous.modes.DoNothingMode;
+import frc.robot.autonomous.modes.LeftMode;
+import frc.robot.autonomous.modes.RightMode;
 import frc.robot.autonomous.modes.TestMode;
 import frc.robot.autonomous.tasks.Task;
 
@@ -14,7 +17,10 @@ public class AutoRunner {
   public enum AutoMode {
     DO_NOTHING,
     DEFAULT,
-    TEST
+    TEST,
+    LEFT,
+    RIGHT,
+    CENTER
   }
 
   private AutoRunner() {
@@ -58,6 +64,15 @@ public class AutoRunner {
         break;
       case TEST:
         m_autoMode = new TestMode();
+        break;
+      case LEFT:
+        m_autoMode = new LeftMode();
+        break;
+      case RIGHT:
+        m_autoMode = new RightMode();
+        break;
+      case CENTER:
+        m_autoMode = new CenterMode();
         break;
       default:
         RobotTelemetry.print("Invalid auto mode selected. Defaulting to do nothing.");
