@@ -308,7 +308,7 @@ public class Robot extends LoggedRobot {
                 new WaitTask(0.5),
                 new DriveToPoseTask(Branch.ALGAE_REVERSE)),
             new ArmTask(ArmState.STOW)));
-        m_taskScheduler.scheduleTask(new ElevatorTask(ElevatorState.STOW));
+        m_taskScheduler.scheduleTask(new ElevatorTask(ElevatorState.L1));
       }
 
       if (m_operatorController.getWantsReverseHopper()) {
