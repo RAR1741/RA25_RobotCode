@@ -19,13 +19,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
-import frc.robot.autonomous.tasks.ArmTask;
-import frc.robot.autonomous.tasks.DriveToPoseTask;
-import frc.robot.autonomous.tasks.ElevatorTask;
-import frc.robot.autonomous.tasks.ParallelTask;
-import frc.robot.autonomous.tasks.SequentialTask;
+import frc.robot.autonomous.modes.AutoModeBase;
 import frc.robot.autonomous.tasks.Task;
-import frc.robot.autonomous.tasks.WaitTask;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
@@ -39,7 +34,6 @@ import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
-import frc.robot.subsystems.PoseAligner.Branch;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.TaskScheduler;
@@ -297,18 +291,7 @@ public class Robot extends LoggedRobot {
       }
 
       if (m_driverController.getWantsDeAlgaeTasks()) {
-        m_taskScheduler.reset();
-        m_taskScheduler.scheduleTask(new ParallelTask(
-            new DriveToPoseTask(Branch.NONE),
-            new ArmTask(ArmState.EXTEND),
-            new ElevatorTask(ElevatorState.ALGAE_HIGH)));
-        m_taskScheduler.scheduleTask(new DriveToPoseTask(Branch.ALGAE));
-        m_taskScheduler.scheduleTask(new ParallelTask(
-            new SequentialTask(
-                new WaitTask(0.5),
-                new DriveToPoseTask(Branch.ALGAE_REVERSE)),
-            new ArmTask(ArmState.STOW)));
-        m_taskScheduler.scheduleTask(new ElevatorTask(ElevatorState.L1));
+        m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks(ElevatorState.ALGAE_HIGH));
       }
 
       if (m_operatorController.getWantsReverseHopper()) {

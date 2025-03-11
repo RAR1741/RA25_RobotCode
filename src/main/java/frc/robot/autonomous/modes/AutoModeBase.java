@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import frc.robot.autonomous.tasks.ArmTask;
 import frc.robot.autonomous.tasks.CollectCoralTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
-import frc.robot.autonomous.tasks.DriveTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
 import frc.robot.autonomous.tasks.EndEffectorTask;
@@ -39,26 +38,37 @@ public abstract class AutoModeBase {
     m_tasks.add(task);
   }
 
+  public void queueTasks(ArrayList<Task> tasks) {
+    for (Task task : tasks) {
+      m_tasks.add(task);
+    }
+  }
+
   public void queueEnd() {
     queueTask(new DriveForwardTask(0, 0));
   }
 
   public abstract void queueTasks();
 
-  public void deAlgae() {
-    queueTask(new ParallelTask(
-      new DriveToPoseTask(Branch.NONE),
-      new ArmTask(ArmState.EXTEND),
-      new ElevatorTask(ElevatorState.ALGAE_LOW)
-    ));
-    queueTask(new DriveToPoseTask(Branch.ALGAE));
-    queueTask(new ParallelTask(
+  public static ArrayList<Task> getDeAlgaeTasks(ElevatorState elevatorState) {
+    ArrayList<Task> tasks = new ArrayList<>();
+
+    tasks.add(new ParallelTask(
+        new DriveToPoseTask(Branch.NONE),
+        new ArmTask(ArmState.EXTEND),
+        new ElevatorTask(elevatorState)));
+
+    tasks.add(new DriveToPoseTask(Branch.ALGAE));
+
+    tasks.add(new ParallelTask(
         new SequentialTask(
             new WaitTask(0.5),
             new DriveToPoseTask(Branch.ALGAE_REVERSE)),
-        new ArmTask(ArmState.STOW)
-    ));
-    queueTask(new ElevatorTask(ElevatorState.STOW));
+        new ArmTask(ArmState.STOW)));
+
+    tasks.add(new ElevatorTask(ElevatorState.L1));
+
+    return tasks;
   }
 
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
@@ -80,7 +90,7 @@ public abstract class AutoModeBase {
     queueTask(new ParallelTask(
         new DriveToPoseTask(Branch.NONE),
         new SequentialTask(
-            new WaitTask(WaitCondition.END_EFFECTOR_INDEXED), 
+            new WaitTask(WaitCondition.END_EFFECTOR_INDEXED),
             new ParallelTask(
                 new ElevatorTask(elevatorState),
                 new ArmTask(armTarget)))));

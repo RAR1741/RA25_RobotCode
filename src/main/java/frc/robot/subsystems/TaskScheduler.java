@@ -27,6 +27,12 @@ public class TaskScheduler extends Subsystem {
     m_tasks.add(task);
   }
 
+  public void scheduleTasks(ArrayList<Task> tasks) {
+    for (Task task : tasks) {
+      m_tasks.add(task);
+    }
+  }
+
   public void removeCurrentTask() {
     if (m_tasks.size() > 0) {
       m_tasks.remove(0);
