@@ -197,9 +197,9 @@ public class PoseAligner extends Subsystem {
     double yOffset = RobotConstants.robotConfig.AutoAlign.k_feederStationYOffset;
     double rotOffset = RobotConstants.robotConfig.AutoAlign.k_feederStationRotationOffset;
 
-    poses[FeederStation.BLUE_RIGHT] = new Pose2d(xOffset, yOffset, Rotation2d.fromDegrees(rotOffset));
-
     poses[FeederStation.BLUE_LEFT] = new Pose2d(xOffset, fieldWidth - yOffset, Rotation2d.fromDegrees(-rotOffset));
+
+    poses[FeederStation.BLUE_RIGHT] = new Pose2d(xOffset, yOffset, Rotation2d.fromDegrees(rotOffset));
 
     poses[FeederStation.RED_LEFT] = new Pose2d(fieldLength - xOffset, yOffset,
         Rotation2d.fromDegrees(180 - rotOffset));

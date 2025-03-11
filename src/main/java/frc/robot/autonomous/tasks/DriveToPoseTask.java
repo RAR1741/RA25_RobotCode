@@ -1,7 +1,10 @@
 package frc.robot.autonomous.tasks;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.ASPoseHelper;
 import frc.robot.Helpers;
 import frc.robot.RobotTelemetry;
 import frc.robot.subsystems.PoseAligner;
@@ -20,8 +23,9 @@ public class DriveToPoseTask extends Task {
   private double k_translationErrorThreshold = Units.inchesToMeters(0.5);
   private double k_rotationErrorThreshold = 0.5; // degrees
 
-  private final Branch m_branch;
-  private final int m_station; // FeederStation
+  private Branch m_branch;
+  private int m_station; // FeederStation
+  private int m_direction = -1;
 
   public DriveToPoseTask(Branch branch) {
     m_swerve = SwerveDrive.getInstance();
@@ -40,19 +44,22 @@ public class DriveToPoseTask extends Task {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
     m_poseAligner = PoseAligner.getInstance();
-
-    // go go gadget enable jank
-    if (Helpers.isBlueAlliance()) {
-      m_station = direction - 4;
-    } else {
-      m_station = direction - 2;
-    }
-
-    m_branch = null;
+    m_direction = direction;
   }
 
   @Override
   public void prepare() {
+    if (m_direction != -1) {
+      // go go gadget enable jank
+      if (Helpers.isBlueAlliance()) {
+        m_station = m_direction - 4;
+      } else {
+        m_station = m_direction - 2;
+      }
+
+      m_branch = null;
+    }
+
     if (m_station == -1) {
       // we want to target the reef
       m_currentPose = m_odometry.getPose();
@@ -75,6 +82,9 @@ public class DriveToPoseTask extends Task {
 
     m_currentPose = m_odometry.getPose();
     m_swerve.drive(m_currentPose, m_goalPose);
+
+    Logger.recordOutput("PoseAligner/Station", m_station);
+    ASPoseHelper.addPose("PoseAligner/GoalPose", m_goalPose);
   }
 
   @Override

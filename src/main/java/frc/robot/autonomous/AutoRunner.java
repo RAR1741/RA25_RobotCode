@@ -59,25 +59,25 @@ public class AutoRunner {
     RobotTelemetry.print(m_selectedAuto.toString());
 
     switch (m_selectedAuto) {
-      case DO_NOTHING:
+      case DO_NOTHING -> {
         m_autoMode = new DoNothingMode();
-        break;
-      case TEST:
+      }
+      case TEST -> {
         m_autoMode = new TestMode();
-        break;
-      case LEFT:
+      }
+      case LEFT -> {
         m_autoMode = new LeftMode();
-        break;
-      case RIGHT:
+      }
+      case RIGHT -> {
         m_autoMode = new RightMode();
-        break;
-      case CENTER:
+      }
+      case CENTER -> {
         m_autoMode = new CenterMode();
-        break;
-      default:
+      }
+      default -> {
         RobotTelemetry.print("Invalid auto mode selected. Defaulting to do nothing.");
         m_autoMode = new DoNothingMode();
-        break;
+      }
     }
 
     m_autoMode.queueTasks();
