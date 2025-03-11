@@ -325,6 +325,7 @@ public class Constants {
     public final double k_scoringDistance = 0.235;
     public final double k_scoringHorizontalOffset = 0.175;
     public final double k_algaeHorizontalOffset = 0.0;
+    public final double k_algaeReverseExtraDistance = -0.5;
 
     public final double k_maxApproachSpeed = 5.0;
     public final double k_fallOffDistance = 1.5;

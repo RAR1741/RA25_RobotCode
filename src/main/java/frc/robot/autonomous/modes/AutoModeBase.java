@@ -53,7 +53,7 @@ public abstract class AutoModeBase {
     queueTask(new ParallelTask(
         new SequentialTask(
             new WaitTask(0.5),
-            new DriveToPoseTask(Branch.NONE)),
+            new DriveToPoseTask(Branch.ALGAE_REVERSE)),
         new ArmTask(ArmState.STOW)
     ));
     queueTask(new ElevatorTask(ElevatorState.STOW));

@@ -84,6 +84,10 @@ public class PoseAligner extends Subsystem {
       return getSafePose();
     }
 
+    if(branch == Branch.ALGAE_REVERSE) {
+      return getAlgaeReversePose();
+    }
+
     return getReefScoringPose();
   }
 
@@ -98,6 +102,12 @@ public class PoseAligner extends Subsystem {
 
   public Pose2d getReefScoringPose() {
     return m_periodicIO.scoringPose;
+  }
+
+  public Pose2d getAlgaeReversePose() {
+    Pose2d safePose = m_periodicIO.safePose;
+    return safePose.transformBy(new Transform2d(
+        RobotConstants.robotConfig.AutoAlign.k_algaeReverseExtraDistance, 0.0, new Rotation2d()));
   }
 
   @Override
@@ -229,6 +239,7 @@ public class PoseAligner extends Subsystem {
     LEFT,
     RIGHT,
     ALGAE,
+    ALGAE_REVERSE,
     NONE
   }
 
