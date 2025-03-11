@@ -22,7 +22,6 @@ import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.tasks.ArmTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
-import frc.robot.autonomous.tasks.EndEffectorTask;
 import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.SequentialTask;
 import frc.robot.autonomous.tasks.Task;
@@ -201,7 +200,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (m_taskScheduler.getNumberOfTasks() <= 0) {
+    if (!m_taskScheduler.hasAnyTasks()) {
       double xSpeed = m_driverController.getForwardAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverSpeed;
       double ySpeed = m_driverController.getStrafeAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverSpeed;
       double rot = m_driverController.getTurnAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverAngularSpeed;
@@ -298,6 +297,7 @@ public class Robot extends LoggedRobot {
       }
 
       if (m_driverController.getWantsDeAlgaeTasks()) {
+        m_taskScheduler.reset();
         m_taskScheduler.scheduleTask(new ParallelTask(
             new DriveToPoseTask(Branch.NONE),
             new ArmTask(ArmState.EXTEND),
@@ -321,10 +321,10 @@ public class Robot extends LoggedRobot {
       // if (m_driverController.getWantsGyroPoseReset()) {
       // m_odometry.resetRotation();
       // }
-    } else {
-      if (m_driverController.getWantsClearTellyTasks()) {
-        m_taskScheduler.clearAllTasks();
-      }
+    }
+
+    if (m_driverController.getWantsClearTellyTasks()) {
+      m_taskScheduler.reset();
     }
   }
 

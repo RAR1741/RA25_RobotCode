@@ -84,7 +84,7 @@ public class PoseAligner extends Subsystem {
       return getSafePose();
     }
 
-    if(branch == Branch.ALGAE_REVERSE) {
+    if (branch == Branch.ALGAE_REVERSE) {
       return getAlgaeReversePose();
     }
 
