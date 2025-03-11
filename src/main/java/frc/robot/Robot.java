@@ -20,10 +20,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.tasks.ArmTask;
+import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
 import frc.robot.autonomous.tasks.EndEffectorTask;
 import frc.robot.autonomous.tasks.ParallelTask;
+import frc.robot.autonomous.tasks.SequentialTask;
 import frc.robot.autonomous.tasks.Task;
+import frc.robot.autonomous.tasks.WaitTask;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
@@ -37,6 +40,7 @@ import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
+import frc.robot.subsystems.PoseAligner.Branch;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.TaskScheduler;
@@ -197,118 +201,131 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopPeriodic() {
-    double xSpeed = m_driverController.getForwardAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverSpeed;
-    double ySpeed = m_driverController.getStrafeAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverSpeed;
-    double rot = m_driverController.getTurnAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverAngularSpeed;
+    if (m_taskScheduler.getNumberOfTasks() <= 0) {
+      double xSpeed = m_driverController.getForwardAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverSpeed;
+      double ySpeed = m_driverController.getStrafeAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverSpeed;
+      double rot = m_driverController.getTurnAxis() * RobotConstants.robotConfig.SwerveDrive.k_maxDriverAngularSpeed;
 
-    // slowScaler should scale between k_slowScaler and 1
-    double slowScaler = RobotConstants.robotConfig.SwerveDrive.k_slowScaler
-        + ((1 - m_driverController.getSlowScaler()) * (1 - RobotConstants.robotConfig.SwerveDrive.k_slowScaler));
-    // boostScaler should scale between 1 and k_boostScaler
-    double boostScaler = 1
-        + (m_driverController.getBoostScaler() * (RobotConstants.robotConfig.SwerveDrive.k_boostScaler - 1));
+      // slowScaler should scale between k_slowScaler and 1
+      double slowScaler = RobotConstants.robotConfig.SwerveDrive.k_slowScaler
+          + ((1 - m_driverController.getSlowScaler()) * (1 - RobotConstants.robotConfig.SwerveDrive.k_slowScaler));
+      // boostScaler should scale between 1 and k_boostScaler
+      double boostScaler = 1
+          + (m_driverController.getBoostScaler() * (RobotConstants.robotConfig.SwerveDrive.k_boostScaler - 1));
 
-    xSpeed *= slowScaler * boostScaler;
-    ySpeed *= slowScaler * boostScaler;
-    rot *= slowScaler * boostScaler;
+      xSpeed *= slowScaler * boostScaler;
+      ySpeed *= slowScaler * boostScaler;
+      rot *= slowScaler * boostScaler;
 
-    // Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(
-    // m_virtualRobotController.getCurrentPose(),
-    // m_virtualRobotController.getWantsAutoPositionBranch());
-    // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
+      // Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(
+      // m_virtualRobotController.getCurrentPose(),
+      // m_virtualRobotController.getWantsAutoPositionBranch());
+      // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
 
-    Pose2d currentPose = m_odometry.getPose();
-    Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(
-        currentPose,
-        m_driverController.getWantsAutoPositionBranch());
-    ASPoseHelper.addPose("VirtualRobot/target", desiredPose);
-    if (m_driverController.getWantsAutoPosition()) {
-      m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, desiredPose);
-    } else {
-      m_swerve.drive(xSpeed, ySpeed, rot, true);
-    }
-
-    if (!isSafeToIndex() || isSafeToExtend()) {
-      m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-      m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
-    } else {
-      if (m_operatorController.getWantsLeftIntakeGround()) {
-        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-      } else if (m_operatorController.getWantsLeftIntakeStow()) {
-        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-      }
-
-      if (m_operatorController.getWantsRightIntakeGround()) {
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-      } else if (m_operatorController.getWantsRightIntakeStow()) {
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
-      }
-
-      if (m_operatorController.getWantsIntakeEject()) {
-        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
-      } else if (m_operatorController.getWantsIntakeStopEjecting()) {
-        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
-      }
-    }
-
-    if (m_driverController.getWantsResetOdometry()) {
-      m_odometry.reset();
-    }
-
-    if (m_operatorController.getWantsGoToStow()) {
-      if (m_elevator.getTargetState() != ElevatorState.L4) {
-        stow();
-      } else if (isSafeToExtendArm()) {
-        stow();
-      }
-    } else if (isSafeToExtend() && isSafeToRaiseElevator()) {
-      if (m_operatorController.getWantsGoToL1()) {
-        l1();
-      } else if (m_operatorController.getWantsGoToL2()) {
-        l2();
-      } else if (m_operatorController.getWantsGoToL3()) {
-        l3();
-      } else if (m_operatorController.getWantsGoToL4() && isSafeToExtendArm()) {
-        l4();
-      }
-    }
-
-    // TODO: maybe also check if indexed?
-    if (isSafeToIndex()) {
-      m_hopper.on();
-    } else {
-      m_hopper.off();
-    }
-
-    if (m_operatorController.getWantsScore()) {
-      if (m_elevator.getTargetState() == ElevatorState.L1) {
-        m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
+      Pose2d currentPose = m_odometry.getPose();
+      Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(
+          currentPose,
+          m_driverController.getWantsAutoPositionBranch());
+      ASPoseHelper.addPose("VirtualRobot/target", desiredPose);
+      if (m_driverController.getWantsAutoPosition()) {
+        m_swerve.drive(xSpeed, ySpeed, rot, true, currentPose, desiredPose);
       } else {
-        m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
+        m_swerve.drive(xSpeed, ySpeed, rot, true);
       }
-    } else if (m_operatorController.getWantsEndEffectorOff()) {
-      m_endEffector.setState(EndEffectorState.OFF);
-    }
 
-    if (m_driverController.getWantsTest()) {
-      m_taskScheduler.scheduleTask(new ParallelTask(
-          new ElevatorTask(ElevatorState.L4),
-          new ArmTask(ArmState.EXTEND)));
-      m_taskScheduler.scheduleTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
-    }
+      if (!isSafeToIndex() || isSafeToExtend()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+      } else {
+        if (m_operatorController.getWantsLeftIntakeGround()) {
+          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
+        } else if (m_operatorController.getWantsLeftIntakeStow()) {
+          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+        }
 
-    if (m_operatorController.getWantsReverseHopper()) {
-      m_hopper.reverse();
-      m_endEffector.setState(EndEffectorState.FORWARD_INDEX);
+        if (m_operatorController.getWantsRightIntakeGround()) {
+          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
+        } else if (m_operatorController.getWantsRightIntakeStow()) {
+          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+        }
+
+        if (m_operatorController.getWantsIntakeEject()) {
+          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
+          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
+        } else if (m_operatorController.getWantsIntakeStopEjecting()) {
+          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+        }
+      }
+
+      if (m_driverController.getWantsResetOdometry()) {
+        m_odometry.reset();
+      }
+
+      if (m_operatorController.getWantsGoToStow()) {
+        if (m_elevator.getTargetState() != ElevatorState.L4) {
+          stow();
+        } else if (isSafeToExtendArm()) {
+          stow();
+        }
+      } else if (isSafeToExtend() && isSafeToRaiseElevator()) {
+        if (m_operatorController.getWantsGoToL1()) {
+          l1();
+        } else if (m_operatorController.getWantsGoToL2()) {
+          l2();
+        } else if (m_operatorController.getWantsGoToL3()) {
+          l3();
+        } else if (m_operatorController.getWantsGoToL4() && isSafeToExtendArm()) {
+          l4();
+        }
+      }
+
+      // TODO: maybe also check if indexed?
+      if (isSafeToIndex()) {
+        m_hopper.on();
+      } else {
+        m_hopper.off();
+      }
+
+      if (m_operatorController.getWantsScore()) {
+        if (m_elevator.getTargetState() == ElevatorState.L1) {
+          m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
+        } else {
+          m_endEffector.setState(EndEffectorState.SCORE_BRANCHES);
+        }
+      } else if (m_operatorController.getWantsEndEffectorOff()) {
+        m_endEffector.setState(EndEffectorState.OFF);
+      }
+
+      if (m_driverController.getWantsDeAlgaeTasks()) {
+        m_taskScheduler.scheduleTask(new ParallelTask(
+            new DriveToPoseTask(Branch.NONE),
+            new ArmTask(ArmState.EXTEND),
+            new ElevatorTask(ElevatorState.ALGAE_HIGH)));
+        m_taskScheduler.scheduleTask(new DriveToPoseTask(Branch.ALGAE));
+        m_taskScheduler.scheduleTask(new ParallelTask(
+            new SequentialTask(
+                new WaitTask(0.5),
+                new DriveToPoseTask(Branch.ALGAE_REVERSE)),
+            new ArmTask(ArmState.STOW)));
+        m_taskScheduler.scheduleTask(new ElevatorTask(ElevatorState.STOW));
+      }
+
+      if (m_operatorController.getWantsReverseHopper()) {
+        m_hopper.reverse();
+        m_endEffector.setState(EndEffectorState.FORWARD_INDEX);
+      } else {
+        m_hopper.forward();
+      }
+
+      // if (m_driverController.getWantsGyroPoseReset()) {
+      // m_odometry.resetRotation();
+      // }
     } else {
-      m_hopper.forward();
+      if (m_driverController.getWantsClearTellyTasks()) {
+        m_taskScheduler.clearAllTasks();
+      }
     }
-
-    // if (m_driverController.getWantsGyroPoseReset()) {
-    // m_odometry.resetRotation();
-    // }
   }
 
   private boolean isSafeToIndex() {
