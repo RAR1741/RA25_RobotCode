@@ -68,7 +68,11 @@ public class DriverController extends FilteredController {
     return this.getRawButtonPressed(Button.START);
   }
 
-  public boolean getWantsTest() {
-    return this.getRawButtonPressed(Button.BACK);
+  public boolean getWantsDeAlgaeTasks() {
+    return this.getRawButtonPressed(Button.Y);
+  }
+
+  public boolean getWantsClearTellyTasks() {
+    return this.getRawButtonReleased(Button.Y);
   }
 }

@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import frc.robot.autonomous.tasks.Task;
 
 public class TaskScheduler extends Subsystem {
@@ -75,5 +77,10 @@ public class TaskScheduler extends Subsystem {
   @Override
   public void stop() {
     throw new UnsupportedOperationException("Unimplemented method 'stop'");
+  }
+
+  @AutoLogOutput(key = "TaskScheduler/NumOfTasks")
+  public int getNumberOfTasks() {
+    return m_tasks.size();
   }
 }

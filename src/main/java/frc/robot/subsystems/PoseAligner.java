@@ -84,6 +84,10 @@ public class PoseAligner extends Subsystem {
       return getSafePose();
     }
 
+    if(branch == Branch.ALGAE_REVERSE) {
+      return getAlgaeReversePose();
+    }
+
     return getReefScoringPose();
   }
 
@@ -98,6 +102,12 @@ public class PoseAligner extends Subsystem {
 
   public Pose2d getReefScoringPose() {
     return m_periodicIO.scoringPose;
+  }
+
+  public Pose2d getAlgaeReversePose() {
+    Pose2d safePose = m_periodicIO.safePose;
+    return safePose.transformBy(new Transform2d(
+        RobotConstants.robotConfig.AutoAlign.k_algaeReverseExtraDistance, 0.0, new Rotation2d()));
   }
 
   @Override
@@ -117,15 +127,19 @@ public class PoseAligner extends Subsystem {
     double scoringDistance = RobotConstants.robotConfig.AutoAlign.k_scoringDistance;
 
     // y-translation -> along the shorter side of the field
-    double scoringHorizontalOffset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    double offset = 0.0;
 
     if (branch == Branch.RIGHT) {
-      scoringHorizontalOffset = -scoringHorizontalOffset;
+      offset = -RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    } else if (branch == Branch.LEFT) {
+      offset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    } else if (branch == Branch.ALGAE) {
+      offset = RobotConstants.robotConfig.AutoAlign.k_algaeHorizontalOffset;
     }
 
-    Translation2d offset = new Translation2d(scoringDistance, scoringHorizontalOffset);
+    Translation2d translation = new Translation2d(scoringDistance, offset);
 
-    Pose2d scoringPose = currentPose.transformBy(new Transform2d(offset, new Rotation2d()));
+    Pose2d scoringPose = currentPose.transformBy(new Transform2d(translation, new Rotation2d()));
 
     return scoringPose;
   }
@@ -224,6 +238,8 @@ public class PoseAligner extends Subsystem {
   public enum Branch {
     LEFT,
     RIGHT,
+    ALGAE,
+    ALGAE_REVERSE,
     NONE
   }
 
