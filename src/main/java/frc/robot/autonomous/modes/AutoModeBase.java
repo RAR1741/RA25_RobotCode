@@ -46,9 +46,11 @@ public abstract class AutoModeBase {
   public abstract void queueTasks();
 
   public void deAlgae() {
-    queueTask(new DriveToPoseTask(Branch.NONE));
-    queueTask(new ArmTask(ArmState.EXTEND));
-    queueTask(new ElevatorTask(ElevatorState.ALGAE_HIGH));
+    queueTask(new ParallelTask(
+      new DriveToPoseTask(Branch.NONE),
+      new ArmTask(ArmState.EXTEND),
+      new ElevatorTask(ElevatorState.ALGAE_LOW)
+    ));
     queueTask(new DriveToPoseTask(Branch.ALGAE));
     queueTask(new ParallelTask(
         new SequentialTask(
