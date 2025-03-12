@@ -16,6 +16,7 @@ import frc.robot.autonomous.tasks.WaitTask.WaitCondition;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
+import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.PoseAligner.Branch;
 
 public abstract class AutoModeBase {
@@ -50,8 +51,9 @@ public abstract class AutoModeBase {
 
   public abstract void queueTasks();
 
-  public static ArrayList<Task> getDeAlgaeTasks(ElevatorState elevatorState) {
+  public static ArrayList<Task> getDeAlgaeTasks() {
     ArrayList<Task> tasks = new ArrayList<>();
+    ElevatorState elevatorState = PoseAligner.getInstance().getDeAlgaeElevatorState();
 
     tasks.add(new ParallelTask(
         new DriveToPoseTask(Branch.NONE),

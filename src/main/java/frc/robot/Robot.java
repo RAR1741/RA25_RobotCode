@@ -291,7 +291,7 @@ public class Robot extends LoggedRobot {
       }
 
       if (m_driverController.getWantsDeAlgaeTasks()) {
-        m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks(ElevatorState.ALGAE_HIGH));
+        m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
       }
 
       if (m_operatorController.getWantsReverseHopper()) {

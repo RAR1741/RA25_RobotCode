@@ -10,11 +10,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ASPoseHelper;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class PoseAligner extends Subsystem {
   private static PoseAligner m_poseAligner;
 
   private final PeriodicIO m_periodicIO = new PeriodicIO();
+  private int m_reefSide = -1;
 
   private PoseAligner() {
     super("PoseAligner");
@@ -66,6 +68,7 @@ public class PoseAligner extends Subsystem {
 
     // get the pose corresponding to what sector we're in
     int reefSide = Math.floorDiv(correctedAngle, 60);
+    m_reefSide = reefSide;
     ASPoseHelper.addRecord("ReefSide", reefSide);
     ASPoseHelper.addRecord("CorrectedAngle", correctedAngle);
 
@@ -120,6 +123,14 @@ public class PoseAligner extends Subsystem {
 
   @Override
   public void reset() {
+  }
+
+  public ElevatorState getDeAlgaeElevatorState() {
+    if (Helpers.isBlueAlliance()) {
+      return m_reefSide % 2 != 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
+    } else {
+      return m_reefSide % 2 == 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
+    }
   }
 
   public Pose2d getReefScoringPose(Pose2d currentPose, int reefSide, Branch branch) {
@@ -182,20 +193,20 @@ public class PoseAligner extends Subsystem {
 
     double offset = RobotConstants.robotConfig.AutoAlign.k_minSafeTargetDistance;
 
-    poses[ReefStartingPoses.RIGHT_SIDE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
+    poses[ReefStartingPoses.CLOSE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
 
-    poses[ReefStartingPoses.TOP_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866,
+    poses[ReefStartingPoses.CLOSE_RIGHT] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866,
         Rotation2d.fromDegrees(240));
 
-    poses[ReefStartingPoses.TOP_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866,
+    poses[ReefStartingPoses.FAR_RIGHT] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866,
         Rotation2d.fromDegrees(300));
 
-    poses[ReefStartingPoses.LEFT_SIDE] = new Pose2d(reefX - offset, reefY, Rotation2d.fromDegrees(0));
+    poses[ReefStartingPoses.FAR] = new Pose2d(reefX - offset, reefY, Rotation2d.fromDegrees(0));
 
-    poses[ReefStartingPoses.BOTTOM_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866,
+    poses[ReefStartingPoses.FAR_LEFT] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866,
         Rotation2d.fromDegrees(60));
 
-    poses[ReefStartingPoses.BOTTOM_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866,
+    poses[ReefStartingPoses.CLOSE_LEFT] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866,
         Rotation2d.fromDegrees(120));
 
     return poses;
@@ -227,12 +238,12 @@ public class PoseAligner extends Subsystem {
   }
 
   public interface ReefStartingPoses {
-    int RIGHT_SIDE = 0;
-    int TOP_RIGHT_SIDE = 1;
-    int TOP_LEFT_SIDE = 2;
-    int LEFT_SIDE = 3;
-    int BOTTOM_LEFT_SIDE = 4;
-    int BOTTOM_RIGHT_SIDE = 5;
+    int CLOSE = 0; // high
+    int CLOSE_RIGHT = 1; // low
+    int FAR_RIGHT = 2; // high
+    int FAR = 3; // low
+    int FAR_LEFT = 4; // high
+    int CLOSE_LEFT = 5; // low
   }
 
   public enum Branch {
