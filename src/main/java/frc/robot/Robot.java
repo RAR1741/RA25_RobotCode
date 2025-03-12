@@ -257,13 +257,15 @@ public class Robot extends LoggedRobot {
         m_odometry.reset();
       }
 
+      ElevatorState desiredElevatorState = m_operatorController.getDesiredElevatorState();
+
       if (m_driverController.getWantsAutoScoreLeft()) {
         m_taskScheduler.scheduleTasks(AutoModeBase.getAutoScoreTasks(
-            m_operatorController.getDesiredElevatorState(),
+            desiredElevatorState,
             Branch.LEFT));
       } else if (m_driverController.getWantsAutoScoreRight()) {
         m_taskScheduler.scheduleTasks(AutoModeBase.getAutoScoreTasks(
-            m_operatorController.getDesiredElevatorState(),
+            desiredElevatorState,
             Branch.RIGHT));
       } else if (m_driverController.getWantsDeAlgaeTasks()) {
         m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());

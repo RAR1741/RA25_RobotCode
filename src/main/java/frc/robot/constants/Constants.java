@@ -75,8 +75,8 @@ public class Constants {
     public final double k_maxLinearAcceleration = 10.791; // Meters per second^2, pulled from Choreo
     public final double k_maxAngularAcceleration = 46.304; // Radians per second^2, pulled from Choreo
 
-    public final double k_slowScaler = 0; // % reduction in speed
-    public final double k_boostScaler = 2; // % increase in speed
+    public final double k_slowScaler = 0.5; // % reduction in speed
+    public final double k_boostScaler = 3; // % increase in speed
 
     public final double k_wheelRadiusIn = 2.0; // inches
     public final double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters

@@ -80,6 +80,6 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean getWantsReverseHopper() {
-    return this.getRawButtonPressed(Button.Y);
+    return this.getRawButton(Button.Y);
   }
 }
