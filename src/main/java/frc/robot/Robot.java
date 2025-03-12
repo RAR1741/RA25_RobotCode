@@ -34,6 +34,7 @@ import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
+import frc.robot.subsystems.PoseAligner.Branch;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.TaskScheduler;
@@ -65,6 +66,7 @@ public class Robot extends LoggedRobot {
   private final DriverController m_driverController;
 
   private final AutoRunner m_autoRunner;
+  @SuppressWarnings("unused")
   private final AutoChooser m_autoChooser;
   private Task m_currentTask;
   private final OperatorController m_operatorController;
@@ -255,21 +257,23 @@ public class Robot extends LoggedRobot {
         m_odometry.reset();
       }
 
-      if (m_operatorController.getWantsGoToStow()) {
+      if (m_driverController.getWantsAutoScoreLeft()) {
+        m_taskScheduler.scheduleTasks(AutoModeBase.getAutoScoreTasks(
+            m_operatorController.getDesiredElevatorState(),
+            Branch.LEFT));
+      } else if (m_driverController.getWantsAutoScoreRight()) {
+        m_taskScheduler.scheduleTasks(AutoModeBase.getAutoScoreTasks(
+            m_operatorController.getDesiredElevatorState(),
+            Branch.RIGHT));
+      } else if (m_driverController.getWantsDeAlgaeTasks()) {
+        m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
+      }
+
+      if (m_operatorController.getWantsStow()) {
         if (m_elevator.getTargetState() != ElevatorState.L4) {
           stow();
         } else if (isSafeToExtendArm()) {
           stow();
-        }
-      } else if (isSafeToExtend() && isSafeToRaiseElevator()) {
-        if (m_operatorController.getWantsGoToL1()) {
-          l1();
-        } else if (m_operatorController.getWantsGoToL2()) {
-          l2();
-        } else if (m_operatorController.getWantsGoToL3()) {
-          l3();
-        } else if (m_operatorController.getWantsGoToL4() && isSafeToExtendArm()) {
-          l4();
         }
       }
 
@@ -288,10 +292,6 @@ public class Robot extends LoggedRobot {
         }
       } else if (m_operatorController.getWantsEndEffectorOff()) {
         m_endEffector.setState(EndEffectorState.OFF);
-      }
-
-      if (m_driverController.getWantsDeAlgaeTasks()) {
-        m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
       }
 
       if (m_operatorController.getWantsReverseHopper()) {
@@ -315,9 +315,10 @@ public class Robot extends LoggedRobot {
     return m_elevator.isSafeToIndex() && m_arm.isSafeToIndex();
   }
 
-  private boolean isSafeToScore() {
-    return m_elevator.isSafeToScore() && m_arm.isSafeToScore() && m_endEffector.isSafeToScore();
-  }
+  // private boolean isSafeToScore() {
+  // return m_elevator.isSafeToScore() && m_arm.isSafeToScore() &&
+  // m_endEffector.isSafeToScore();
+  // }
 
   private boolean isSafeToExtend() {
     return m_endEffector.isSafeToScore();
@@ -328,10 +329,11 @@ public class Robot extends LoggedRobot {
     return distanceToReef() >= minSafeDistance;
   }
 
-  private boolean isSafeToRaiseElevator() {
-    double minSafeDistance = RobotConstants.robotConfig.AutoAlign.k_minSafeElevatorDistance;
-    return distanceToReef() <= minSafeDistance;
-  }
+  // private boolean isSafeToRaiseElevator() {
+  // double minSafeDistance =
+  // RobotConstants.robotConfig.AutoAlign.k_minSafeElevatorDistance;
+  // return distanceToReef() <= minSafeDistance;
+  // }
 
   @AutoLogOutput(key = "AutoAligner/distanceToReef")
   private double distanceToReef() {
@@ -344,26 +346,7 @@ public class Robot extends LoggedRobot {
   private void stow() {
     m_elevator.setState(ElevatorState.STOW);
     m_arm.setArmState(ArmState.STOW);
-  }
-
-  private void l1() {
-    m_elevator.setState(ElevatorState.L1);
-    m_arm.setArmState(ArmState.STOW);
-  }
-
-  private void l2() {
-    m_elevator.setState(ElevatorState.L2);
-    m_arm.setArmState(ArmState.STOW);
-  }
-
-  private void l3() {
-    m_elevator.setState(ElevatorState.L3);
-    m_arm.setArmState(ArmState.STOW);
-  }
-
-  private void l4() {
-    m_elevator.setState(ElevatorState.L4);
-    m_arm.setArmState(ArmState.EXTEND);
+    m_endEffector.setState(EndEffectorState.OFF);
   }
 
   @Override

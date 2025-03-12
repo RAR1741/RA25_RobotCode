@@ -73,6 +73,37 @@ public abstract class AutoModeBase {
     return tasks;
   }
 
+  public static ArrayList<Task> getAutoScoreTasks(ElevatorState elevatorState, Branch branch) {
+    ArrayList<Task> tasks = new ArrayList<>();
+    ArmState armTarget;
+    if (elevatorState == ElevatorState.L4) {
+      armTarget = ArmState.EXTEND;
+    } else {
+      armTarget = ArmState.STOW;
+    }
+
+    tasks.add(new ParallelTask(
+        new DriveToPoseTask(Branch.NONE),
+        new SequentialTask(
+            new WaitTask(WaitCondition.END_EFFECTOR_INDEXED),
+            new ParallelTask(
+                new ElevatorTask(elevatorState),
+                new ArmTask(armTarget)))));
+
+    // Drive to score
+    tasks.add(new DriveToPoseTask(branch));
+
+    // Score
+    tasks.add(new ParallelTask(
+        new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
+        new WaitTask(0.4)));
+
+    tasks.add(new EndEffectorTask(EndEffectorState.OFF));
+    tasks.add(new DriveToPoseTask(Branch.NONE));
+
+    return tasks;
+  }
+
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
     score(elevatorState, branch, new DriveToPoseTask(feederStation));
   }

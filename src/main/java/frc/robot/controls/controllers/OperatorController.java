@@ -1,6 +1,12 @@
 package frc.robot.controls.controllers;
 
+import org.littletonrobotics.junction.Logger;
+
+import frc.robot.subsystems.Elevator.ElevatorState;
+
 public class OperatorController extends FilteredController {
+  private ElevatorState m_desiredElevatorState = ElevatorState.STOW;
+
   public OperatorController(int port) {
     super(port, false, false, 0);
   }
@@ -9,70 +15,69 @@ public class OperatorController extends FilteredController {
     super(port, useDeadband, useSquaredInput, triggerActivationThreshold);
   }
 
-  int m_leftIntakeButton = Button.LEFT_BUMPER;
+  private final int k_leftIntakeButton = Button.LEFT_BUMPER;
 
   public boolean getWantsLeftIntakeGround() {
-    return getRawButton(m_leftIntakeButton);
+    return getRawButton(k_leftIntakeButton);
   }
 
   public boolean getWantsLeftIntakeStow() {
-    return getRawButtonReleased(m_leftIntakeButton);
+    return getRawButtonReleased(k_leftIntakeButton);
   }
 
-  int m_rightIntakeButton = Button.RIGHT_BUMPER;
+  private final int k_rightIntakeButton = Button.RIGHT_BUMPER;
 
   public boolean getWantsRightIntakeGround() {
-    return getRawButton(m_rightIntakeButton);
+    return getRawButton(k_rightIntakeButton);
   }
 
   public boolean getWantsRightIntakeStow() {
-    return getRawButtonReleased(m_rightIntakeButton);
+    return getRawButtonReleased(k_rightIntakeButton);
   }
 
-  int m_IntakeEjectButton = Button.B;
+  private final int k_intakeEjectButton = Button.B;
 
   public boolean getWantsIntakeEject() {
-    return getRawButton(m_IntakeEjectButton);
+    return getRawButton(k_intakeEjectButton);
   }
 
   public boolean getWantsIntakeStopEjecting() {
-    return getRawButtonReleased(m_IntakeEjectButton);
+    return getRawButtonReleased(k_intakeEjectButton);
   }
 
-  public boolean getWantsGoToStow() {
+  public ElevatorState getDesiredElevatorState() {
+    if (getHatPressed(Direction.DOWN)) {
+      m_desiredElevatorState = ElevatorState.L1;
+    } else if (getHatPressed(Direction.RIGHT)) {
+      m_desiredElevatorState = ElevatorState.L2;
+    } else if (getHatPressed(Direction.LEFT)) {
+      m_desiredElevatorState = ElevatorState.L3;
+    } else if (getHatPressed(Direction.UP)) {
+      m_desiredElevatorState = ElevatorState.L4;
+    }
+
+    Logger.recordOutput("OperatorController/DesiredElevatorState", m_desiredElevatorState.toString());
+
+    return m_desiredElevatorState;
+  }
+
+  public boolean getWantsStow() {
     return this.getRawButtonPressed(Button.A);
-  }
-
-  public boolean getWantsGoToL1() {
-    return this.getHatPressed(Direction.DOWN);
-  }
-
-  public boolean getWantsGoToL2() {
-    return this.getHatPressed(Direction.RIGHT);
-  }
-
-  public boolean getWantsGoToL3() {
-    return this.getHatPressed(Direction.LEFT);
-  }
-
-  public boolean getWantsGoToL4() {
-    return this.getHatPressed(Direction.UP);
   }
 
   public boolean getWantsResetElevator() {
     return this.getRawButtonPressed(Button.START);
   }
 
-  int m_scoreButton = Button.X;
+  private final int k_scoreButton = Button.X;
 
   public boolean getWantsScore() {
-    return this.getRawButton(m_scoreButton);
+    return this.getRawButton(k_scoreButton);
   }
 
   public boolean getWantsEndEffectorOff() {
-    return this.getRawButtonReleased(m_scoreButton);
+    return this.getRawButtonReleased(k_scoreButton);
   }
-
 
   public boolean getWantsReverseHopper() {
     return this.getRawButtonPressed(Button.Y);
