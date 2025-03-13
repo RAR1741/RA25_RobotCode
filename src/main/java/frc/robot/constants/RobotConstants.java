@@ -13,8 +13,8 @@ public final class RobotConstants {
 
   public static Constants robotConfig;
 
-  public final String k_compSerial = "00000000";
-  public final String k_pracSerial = "023AC973";
+  public final String k_compSerial = "03266A0E";
+  public final String k_practiceSerial = "023AC973";
 
   private RobotType m_robotType = null;
 
@@ -38,14 +38,18 @@ public final class RobotConstants {
 
     checkRobotType();
     switch (getRobotType()) {
-      case SIM -> {}
-        // Set (riiiiiiiiiiiiiiiight the constants) all the constants (designed)
-        // specifically for the simulation
+      case SIM -> {
+      }
+      // Set (riiiiiiiiiiiiiiiight the constants) all the constants (designed)
+      // specifically for the simulation
       case JORMUNGANDR -> {
         robotConfig = new JormungandrConstants();
       }
+      case MONARCH -> {
+        robotConfig = new MonarchConstants();
+      }
       default -> {
-        robotConfig = new JormungandrConstants(); // TODO change this once we have Monarch
+        robotConfig = new MonarchConstants(); // TODO change this once we have Monarch
       }
     }
 
@@ -55,31 +59,31 @@ public final class RobotConstants {
   public RobotType checkRobotType() {
     if (Robot.isSimulation()) {
       m_robotType = RobotType.SIM;
-      robotConfig = new JormungandrConstants();
+      robotConfig = new MonarchConstants();
       RobotTelemetry.print("Robot Type: Simulation");
     } else if (m_rioSerial.equals(k_compSerial)) {
       m_robotType = RobotType.MONARCH;
-      // config = new MonarchConstants();
+      robotConfig = new MonarchConstants();
       RobotTelemetry.print("Robot Type: Monarch");
-    } else if (m_rioSerial.equals(k_pracSerial)) {
+    } else if (m_rioSerial.equals(k_practiceSerial)) {
       m_robotType = RobotType.JORMUNGANDR;
       robotConfig = new JormungandrConstants();
       RobotTelemetry.print("Robot Type: Jormungandr");
     } else {
-      // m_robotType = RobotType.APOLLO;
-      // config = new ApolloConstants();
+      m_robotType = RobotType.MONARCH;
+      robotConfig = new MonarchConstants();
       RobotTelemetry.print(System.getenv("serialnum"));
       DriverStation.reportError(
-          "Could not match rio to robot config; defaulting to JORMUNGANDR robot config",
+          "Could not match rio to robot config; defaulting to MONARCH robot config",
           false);
-      RobotTelemetry.print("Robot Type: JORMUNGANDR");
+      RobotTelemetry.print("Robot Type: MONARCH");
     }
     return m_robotType;
   }
 
   public RobotType getRobotType() {
     if (m_robotType == null) {
-      m_robotType = RobotType.JORMUNGANDR;
+      m_robotType = RobotType.MONARCH;
     }
     return m_robotType;
   }
