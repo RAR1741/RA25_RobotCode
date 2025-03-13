@@ -3,11 +3,12 @@ package frc.robot.autonomous.modes;
 import java.util.ArrayList;
 
 import frc.robot.autonomous.tasks.ArmTask;
-import frc.robot.autonomous.tasks.CollectCoralTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
 import frc.robot.autonomous.tasks.EndEffectorTask;
+import frc.robot.autonomous.tasks.HopperTask;
+import frc.robot.autonomous.tasks.IntakeTask;
 import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.SequentialTask;
 import frc.robot.autonomous.tasks.Task;
@@ -18,6 +19,8 @@ import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.PoseAligner;
 import frc.robot.subsystems.PoseAligner.Branch;
+import frc.robot.subsystems.intakes.Intake.IntakeState;
+import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
 
 public abstract class AutoModeBase {
   private ArrayList<Task> m_tasks;
@@ -120,6 +123,7 @@ public abstract class AutoModeBase {
       armTarget = ArmState.STOW;
     }
 
+    // Drive to safe
     queueTask(new ParallelTask(
         new DriveToPoseTask(Branch.NONE),
         new SequentialTask(
@@ -137,13 +141,23 @@ public abstract class AutoModeBase {
         new WaitTask(0.4)));
     queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
+    // Drive to feeder station
     queueTask(new ParallelTask(
         finalDriveTask,
-        new CollectCoralTask(),
+        new IntakeTask(IntakeVariant.LEFT, IntakeState.INTAKE),
+        new IntakeTask(IntakeVariant.RIGHT, IntakeState.INTAKE),
+        new HopperTask(true),
         new SequentialTask(
             new WaitTask(0.4),
             new ParallelTask(
                 new ElevatorTask(ElevatorState.STOW),
                 new ArmTask(ArmState.STOW)))));
+
+    // Wait for the new coral
+    queueTask(new WaitTask(0.5));
+
+    queueTask(new ParallelTask(
+        new IntakeTask(IntakeVariant.LEFT, IntakeState.STOW),
+        new IntakeTask(IntakeVariant.RIGHT, IntakeState.STOW)));
   }
 }
