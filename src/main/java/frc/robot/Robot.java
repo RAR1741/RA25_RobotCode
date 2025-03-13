@@ -314,7 +314,9 @@ public class Robot extends LoggedRobot {
   }
 
   private boolean isSafeToIndex() {
-    return m_elevator.isSafeToIndex() && m_arm.isSafeToIndex();
+    return m_elevator.isSafeToIndex() &&
+        m_arm.isSafeToIndex() &&
+        m_endEffector.getEndEffectorState() != EndEffectorState.INDEXED;
   }
 
   // private boolean isSafeToScore() {
