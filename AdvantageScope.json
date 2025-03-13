@@ -39,16 +39,14 @@
             "/RealOutputs/SysID",
             "/RealOutputs/SysID/drive",
             "/RealOutputs/SwerveDrive",
-            "/RealOutputs/SwerveDrive/Modules",
             "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/FR/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder",
-            "/RealOutputs/SwerveDrive/Modules/BL",
             "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder"
           ]
         },
         "tabs": {
-          "selected": 9,
+          "selected": 3,
           "tabs": [
             {
               "type": 0,
@@ -291,14 +289,14 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -10.137932385441054,
-                  10.199018445642146,
-                  0.4430867797606354
+                  -8.520530250680238,
+                  7.746691145320892,
+                  0.5728057249592594
                 ],
                 "cameraTarget": [
-                  -1.767638256412553,
-                  -6.2977987894964835,
-                  0.4409810537271789
+                  -2.070543280579411,
+                  -4.74532933476588,
+                  0.4598914049581413
                 ]
               },
               "controlsHeight": 295
@@ -516,6 +514,71 @@
               "controllerUUID": "wz1bvn5rxbt01rqkg9azcjdxu0u623u3",
               "renderer": null,
               "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Drive Abs",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder/AbsolutePosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/FR/AbsoluteEncoder/AbsolutePosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder/AbsolutePosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder/AbsolutePosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "molhrpkxry1tzir22nmshq81l3yized6",
+              "renderer": null,
+              "controlsHeight": 477
             },
             {
               "type": 1,
@@ -824,71 +887,6 @@
               "controllerUUID": "jny8io3mszrjqgdabbrd9rmkhqefftnt",
               "renderer": null,
               "controlsHeight": 240
-            },
-            {
-              "type": 1,
-              "title": "Line Graph",
-              "controller": {
-                "leftSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder/AbsolutePosition",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#2b66a2",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveDrive/Modules/FR/AbsoluteEncoder/AbsolutePosition",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#e5b31b",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder/AbsolutePosition",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#80588e",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder/AbsolutePosition",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#af2437",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "rightSources": [],
-                "discreteSources": [],
-                "leftLockedRange": null,
-                "rightLockedRange": null,
-                "leftUnitConversion": {
-                  "type": null,
-                  "factor": 1
-                },
-                "rightUnitConversion": {
-                  "type": null,
-                  "factor": 1
-                },
-                "leftFilter": 0,
-                "rightFilter": 0
-              },
-              "controllerUUID": "molhrpkxry1tzir22nmshq81l3yized6",
-              "renderer": null,
-              "controlsHeight": 477
             },
             {
               "type": 1,
