@@ -207,7 +207,7 @@ public class Constants {
     public final double k_lowAlgaeHeight = 27.643;
     public final double k_highAlgaeHeight = 44.571;
 
-    public final double k_allowedError = 0.2; // TODO: Change this please 👁️👄👁️
+    public final double k_allowedError = 0.4;
   }
 
   public static class ArmConstants {
@@ -323,7 +323,8 @@ public class Constants {
     public final double k_minSafeElevatorDistance = 2.0;
 
     // Scoring offsets
-    public final double k_scoringDistance = 0.235;
+    public final double k_l4ScoringDistance = 0.254;
+    public final double k_otherScoringOffset = 0.0;
     public final double k_scoringHorizontalOffset = 0.175;
     public final double k_algaeHorizontalOffset = 0.0;
     public final double k_algaeReverseExtraDistance = -0.5;

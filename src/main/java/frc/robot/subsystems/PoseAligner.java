@@ -74,6 +74,14 @@ public class PoseAligner extends Subsystem {
 
     Pose2d safePose = poses[reefSide];
     Pose2d scoringPose = getReefScoringPose(safePose, reefSide, branch);
+
+    ElevatorState targetState = Elevator.getInstance().getTargetState();
+    if (targetState == ElevatorState.L1 || targetState == ElevatorState.L2 || targetState == ElevatorState.L3) {
+      Translation2d translation = new Translation2d(RobotConstants.robotConfig.AutoAlign.k_otherScoringOffset, 0.0);
+
+      scoringPose = scoringPose.transformBy(new Transform2d(translation, new Rotation2d()));
+    }
+
     ASPoseHelper.addPose("ScoringPose", scoringPose);
 
     m_periodicIO.safePose = safePose;
@@ -93,11 +101,6 @@ public class PoseAligner extends Subsystem {
 
     return getReefScoringPose();
   }
-
-  // public Pose2d getAndCalculateTargetPose(Pose2d currentPose, FeederStation
-  // station) {
-  // calculate(currentPose, station);
-  // }
 
   public Pose2d getSafePose() {
     return m_periodicIO.safePose;
@@ -133,9 +136,9 @@ public class PoseAligner extends Subsystem {
     }
   }
 
-  public Pose2d getReefScoringPose(Pose2d currentPose, int reefSide, Branch branch) {
+  public Pose2d getReefScoringPose(Pose2d safePose, int reefSide, Branch branch) {
     // x-translation -> down the long side of the field
-    double scoringDistance = RobotConstants.robotConfig.AutoAlign.k_scoringDistance;
+    double scoringDistance = RobotConstants.robotConfig.AutoAlign.k_l4ScoringDistance;
 
     // y-translation -> along the shorter side of the field
     double offset = 0.0;
@@ -150,7 +153,7 @@ public class PoseAligner extends Subsystem {
 
     Translation2d translation = new Translation2d(scoringDistance, offset);
 
-    Pose2d scoringPose = currentPose.transformBy(new Transform2d(translation, new Rotation2d()));
+    Pose2d scoringPose = safePose.transformBy(new Transform2d(translation, new Rotation2d()));
 
     return scoringPose;
   }
