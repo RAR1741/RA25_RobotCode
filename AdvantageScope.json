@@ -9,15 +9,11 @@
         "sidebar": {
           "width": 348,
           "expanded": [
-            "/RealOutputs/SwerveDrive/Modules/FR/Turn",
-            "/RealOutputs/SwerveDrive/Modules/BR/Turn",
-            "/RealOutputs/SwerveDrive/Modules/BR",
             "/AdvantageKit",
             "/AdvantageKit/RealOutputs",
             "/RealOutputs/ASPoseHelper/BlueReef/target",
             "/RealOutputs/loggingKey",
             "/RealOutputs/ASPoseHelper/Blue/Reef",
-            "/RealOutputs/ASPoseHelper/Red/Reef",
             "/RealOutputs/ASPoseHelper/VirtualRobotPose",
             "/RealOutputs/ASPoseHelper/LimelightCheckPose/translation",
             "/RealOutputs/ASPoseHelper/LimelightCheckPose/rotation",
@@ -27,22 +23,32 @@
             "/RealOutputs/Odometry/Limelight/limelight-front/RawPoseEstimation",
             "/RealOutputs/Intakes/Right/Current",
             "/RealOutputs/Intakes/Right/Desired",
-            "/RealOutputs/EndEffector",
-            "/RealOutputs/LaserCans",
             "/RealOutputs/LaserCans/Entrance",
-            "/RealOutputs/Auto",
             "/RealOutputs/Auto/Tasks",
             "/RealOutputs/Auto/DriveTrajectory",
-            "/RealOutputs/ASPoseHelper/PoseAligner/FeederStationPoses",
-            "/RealOutputs/Intakes",
             "/RealOutputs/Intakes/Left",
             "/RealOutputs/Intakes/Left/Current",
             "/RealOutputs/Intakes/Left/Desired",
-            "/RealOutputs"
+            "/RealOutputs",
+            "/RealOutputs/ASPoseHelper/PoseAligner",
+            "/RealOutputs/ASPoseHelper/PoseAligner/GoalPose",
+            "/RealOutputs/ASPoseHelper/Red/Reef",
+            "/RealOutputs/ASPoseHelper/Red/Reef/targets",
+            "/RealOutputs/TaskScheduler",
+            "/RealOutputs/OperatorController",
+            "/RealOutputs/SysID",
+            "/RealOutputs/SysID/drive",
+            "/RealOutputs/SwerveDrive",
+            "/RealOutputs/SwerveDrive/Modules",
+            "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder",
+            "/RealOutputs/SwerveDrive/Modules/FR/AbsoluteEncoder",
+            "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder",
+            "/RealOutputs/SwerveDrive/Modules/BL",
+            "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder"
           ]
         },
         "tabs": {
-          "selected": 12,
+          "selected": 9,
           "tabs": [
             {
               "type": 0,
@@ -265,6 +271,16 @@
                       "model": "2025 RA25",
                       "color": "#ffff00"
                     }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/ASPoseHelper/PoseAligner/GoalPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 RA25",
+                      "color": "#ff00ff"
+                    }
                   }
                 ],
                 "game": "2025 Field (AndyMark)",
@@ -275,17 +291,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -6.4352358739130535,
-                  12.04835101932532,
-                  0.056479379875195086
+                  -10.137932385441054,
+                  10.199018445642146,
+                  0.4430867797606354
                 ],
                 "cameraTarget": [
-                  -4.417254508359287,
-                  -7.219089705766748,
-                  0.050283310334839466
+                  -1.767638256412553,
+                  -6.2977987894964835,
+                  0.4409810537271789
                 ]
               },
-              "controlsHeight": 272
+              "controlsHeight": 295
             },
             {
               "type": 1,
@@ -503,6 +519,122 @@
             },
             {
               "type": 1,
+              "title": "Sys ID",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/FL/Drive/CurrentA",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/FR/Drive/CurrentA",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/BR/Drive/CurrentA",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/BL/Drive/CurrentA",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#3b875a",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SysID/drive/volts",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/FL/Drive/VoltageV",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/FR/Drive/VoltageV",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/BR/Drive/VoltageV",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#858584",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/BL/Drive/VoltageV",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#d993aa",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "ljuzvv6ii3vhphrq8vras4u8kmm4knfl",
+              "renderer": null,
+              "controlsHeight": 543
+            },
+            {
+              "type": 1,
               "title": "Elevator",
               "controller": {
                 "leftSources": [
@@ -692,6 +824,71 @@
               "controllerUUID": "jny8io3mszrjqgdabbrd9rmkhqefftnt",
               "renderer": null,
               "controlsHeight": 240
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder/AbsolutePosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/FR/AbsoluteEncoder/AbsolutePosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder/AbsolutePosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder/AbsolutePosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "molhrpkxry1tzir22nmshq81l3yized6",
+              "renderer": null,
+              "controlsHeight": 477
             },
             {
               "type": 1,
@@ -888,7 +1085,18 @@
               "type": 1,
               "title": "AutoTasks",
               "controller": {
-                "leftSources": [],
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/TaskScheduler/NumOfTasks",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#d993aa",
+                      "size": "normal"
+                    }
+                  }
+                ],
                 "rightSources": [],
                 "discreteSources": [
                   {
@@ -961,6 +1169,15 @@
                     "visible": true,
                     "options": {
                       "color": "#3b875a"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/OperatorController/DesiredElevatorState",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#5f4528"
                     }
                   }
                 ],

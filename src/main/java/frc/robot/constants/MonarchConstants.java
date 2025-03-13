@@ -11,29 +11,34 @@ public class MonarchConstants extends Constants {
     SwerveDrive.Drive.k_FFV = 0.67229;
     SwerveDrive.Drive.k_FFA = 0.080151;
 
-    SwerveDrive.Turn.k_FLOffset = -0.1521;
-    SwerveDrive.Turn.k_FROffset = 0.02417;
-    SwerveDrive.Turn.k_BLOffset = 0.594889;
-    SwerveDrive.Turn.k_BROffset = 0.419678;
+    // SwerveDrive.Turn.k_FLOffset = 0.282958984375;
+    // SwerveDrive.Turn.k_FROffset = -0.1513671875;
+    // SwerveDrive.Turn.k_BLOffset = -0.318115234375;
+    // SwerveDrive.Turn.k_BROffset = -0.036865234375;
+
+    SwerveDrive.Turn.k_FLOffset = -0.2783;
+    SwerveDrive.Turn.k_FROffset = 0.154;
+    SwerveDrive.Turn.k_BLOffset = 0.3174;
+    SwerveDrive.Turn.k_BROffset = 0.0408;
 
     SwerveDrive.Turn.k_P = 70.0;
     SwerveDrive.Turn.k_I = 0.0;
     SwerveDrive.Turn.k_D = 1.0;
     SwerveDrive.Turn.k_IZone = 0.0;
 
-    Arm.k_stowAngle = 0.2897946238517761;
-    Arm.k_L4Angle = 0.5541301965713501; // 0.5404757261276245;
-    Arm.k_horizontalAngle = 0.5404757261276245;
+    Arm.k_stowAngle = 0.26152366399765015;
+    Arm.k_L4Angle = 0.5249119997024536;
+    Arm.k_horizontalAngle = 0.5074164867401123;
     Arm.k_sourceAngle = 0.37661659717559814;
 
-    Intake.Left.k_stowPosition = 0.5951240658760071;
-    Intake.Left.k_groundPosition = 0.22542721033096313;
-    Intake.Left.k_ejectPosition = 0.36690253019332886;
-    Intake.Left.k_horizontalPosition = 0.36690253019332886;
+    Intake.Left.k_stowPosition = 0.542549729347229;
+    Intake.Left.k_groundPosition = 0.19023025035858154;
+    Intake.Left.k_ejectPosition = 0.31802046298980713;
+    Intake.Left.k_horizontalPosition = 0.31802046298980713;
 
-    Intake.Right.k_stowPosition = 0.48890572786331177;
-    Intake.Right.k_groundPosition = 0.855; // 0.8605759143829346;
-    Intake.Right.k_ejectPosition = 0.710295557975769;
-    Intake.Right.k_horizontalPosition = 0.710295557975769;
+    Intake.Right.k_stowPosition = 0.499617338180542;
+    Intake.Right.k_groundPosition = 0.8430086374282837;
+    Intake.Right.k_ejectPosition = 0.7199869155883789;
+    Intake.Right.k_horizontalPosition = 0.7199869155883789;
   }
 }
