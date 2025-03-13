@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -75,10 +76,10 @@ public class SwerveModule {
     driveConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFV;
     driveConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Drive.k_FFA;
 
-    driveConfig.CurrentLimits.SupplyCurrentLimit = RobotConstants.robotConfig.SwerveDrive.Drive.k_currentLimit;
-
-    // driveConfig.CurrentLimits.StatorCurrentLimit = 15.0;
-    // driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    driveConfig.CurrentLimits.StatorCurrentLimit = RobotConstants.robotConfig.SwerveDrive.Drive.k_statorCurrentLimit;
+    driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    driveConfig.CurrentLimits.SupplyCurrentLimit = RobotConstants.robotConfig.SwerveDrive.Drive.k_supplyCurrentLimit;
+    driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     m_driveMotor.getConfigurator().apply(driveConfig);
     // END DRIVE MOTOR INIT
@@ -104,7 +105,9 @@ public class SwerveModule {
     turnConfig.Slot0.kV = RobotConstants.robotConfig.SwerveDrive.Turn.k_V;
     turnConfig.Slot0.kA = RobotConstants.robotConfig.SwerveDrive.Turn.k_A;
 
-    turnConfig.CurrentLimits.SupplyCurrentLimit = RobotConstants.robotConfig.SwerveDrive.Turn.k_currentLimit;
+    turnConfig.CurrentLimits.StatorCurrentLimit = RobotConstants.robotConfig.SwerveDrive.Turn.k_statorCurrentLimit;
+    turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    turnConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
 
     turnConfig.MotionMagic.MotionMagicAcceleration = 1000;
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
@@ -203,10 +206,12 @@ public class SwerveModule {
   // Pass voltage into drive motor and set turn motor to 0 deg
   public void sysidDrive(double volts) {
     // hold the turn motor in place
+    // MotionMagicVoltage turnRequest = new MotionMagicVoltage(0).withSlot(0);
     PositionVoltage turnRequest = new PositionVoltage(0).withSlot(0);
-    // VelocityVoltage turnRequest = new VelocityVoltage(0).withSlot(0);
     turnRequest.EnableFOC = true;
     m_turnMotor.setControl(turnRequest);
+
+    Logger.recordOutput("SysID/drive/volts", volts);
 
     m_driveMotor.setVoltage(volts);
   }

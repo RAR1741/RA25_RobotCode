@@ -92,7 +92,8 @@ public class Constants {
       public final int k_BLMotorId = 7;
       public final int k_BRMotorId = 8;
 
-      public final int k_currentLimit = 40;
+      public final int k_statorCurrentLimit = 120;
+      public final int k_supplyCurrentLimit = 70;
 
       public double k_P;
       public double k_I;
@@ -119,7 +120,7 @@ public class Constants {
       public final int k_BLAbsId = 15;
       public final int k_BRAbsId = 16;
 
-      public final int k_currentLimit = 25;
+      public final int k_statorCurrentLimit = 40;
 
       public final int k_FLMotorId = 9;
       public final int k_FRMotorId = 10;
