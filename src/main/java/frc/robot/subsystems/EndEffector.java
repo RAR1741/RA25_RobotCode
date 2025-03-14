@@ -184,6 +184,12 @@ public class EndEffector extends Subsystem {
         }
       }
 
+      case INDEXED -> {
+        if (!m_laserCan.getExitSeesCoral()) {
+          setState(EndEffectorState.OFF);
+        }
+      }
+
       case OFF -> {
         // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
         // && m_laserCan.getExitSeesCoral()) {
