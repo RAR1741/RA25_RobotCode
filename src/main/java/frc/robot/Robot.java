@@ -44,6 +44,7 @@ import frc.robot.subsystems.drivetrain.SwerveSysId;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
+import frc.robot.subsystems.leds.LEDs;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -63,6 +64,7 @@ public class Robot extends LoggedRobot {
   private final Intakes m_intakes;
   private final Hopper m_hopper;
   private final TaskScheduler m_taskScheduler;
+  private final LEDs m_leds;
   private final DriverController m_driverController;
 
   private final AutoRunner m_autoRunner;
@@ -98,6 +100,7 @@ public class Robot extends LoggedRobot {
     m_intakes = Intakes.getInstance();
     m_hopper = Hopper.getInstance();
     m_taskScheduler = TaskScheduler.getInstance();
+    m_leds = LEDs.getInstance();
 
     // CanBridge.runTCP(); // For LaserCan configuration
 
@@ -115,6 +118,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
     m_subsystems.add(m_taskScheduler);
+    m_subsystems.add(m_leds);
 
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }

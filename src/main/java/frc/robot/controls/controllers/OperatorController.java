@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class OperatorController extends FilteredController {
-  private ElevatorState m_desiredElevatorState = ElevatorState.STOW;
+  private ElevatorState m_desiredElevatorState = ElevatorState.L4;
 
   public OperatorController(int port) {
     super(port, false, false, 0);

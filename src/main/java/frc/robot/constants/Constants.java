@@ -19,6 +19,7 @@ public class Constants {
   public final OdometryConstants Odometry = new OdometryConstants();
   public final HopperConstants Hopper = new HopperConstants();
   public final AutoAlignConstants AutoAlign = new AutoAlignConstants();
+  public final LEDConstants LEDs = new LEDConstants();
 
   public static class RobotConstants {
     public final String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -338,6 +339,30 @@ public class Constants {
     public final double k_feederStationXOffset = 1.2;
     public final double k_feederStationYOffset = 0.92;
     public final double k_feederStationRotationOffset = 54.0;
+  }
+
+  public static class LEDConstants {
+    // public int k_PWMId = 1;
+    public int k_PWMId = 0;
+    public boolean k_isEnabled;
+    public int k_drivetrainUnusedLEDCount = 30;
+
+    public RightSideElevator Right = new RightSideElevator();
+
+    public class RightSideElevator {
+      public int k_start = 0;
+      public int k_length = 120;
+    }
+
+    public LeftSideElevator Left = new LeftSideElevator();
+
+    public class LeftSideElevator {
+      public int k_start = k_drivetrainUnusedLEDCount + Right.k_start + Right.k_length;
+      public int k_length = 120;
+    }
+
+    public int k_totalLength = 300;
+
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants

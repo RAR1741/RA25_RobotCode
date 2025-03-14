@@ -59,7 +59,7 @@ public class EndEffector extends Subsystem {
   }
 
   private static class PeriodicIO {
-    EndEffectorState state = EndEffectorState.OFF;
+    EndEffectorState state = EndEffectorState.INDEXED;
   }
 
   public enum EndEffectorState {
