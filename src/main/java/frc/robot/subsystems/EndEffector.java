@@ -64,7 +64,8 @@ public class EndEffector extends Subsystem {
 
   public enum EndEffectorState {
     OFF,
-    FORWARD_INDEX,
+    FORWARD_INDEX_FAST,
+    FORWARD_INDEX_SLOW,
     REVERSE_INDEX,
     SCORE_BRANCHES,
     SCORE_TROUGH,
@@ -79,8 +80,8 @@ public class EndEffector extends Subsystem {
     setState(EndEffectorState.OFF);
   }
 
-  private void index() {
-    setState(EndEffectorState.FORWARD_INDEX);
+  private void indexFast() {
+    setState(EndEffectorState.FORWARD_INDEX_FAST);
   }
 
   private void branches() {
@@ -127,8 +128,12 @@ public class EndEffector extends Subsystem {
         return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
       }
 
-      case FORWARD_INDEX -> {
-        return RobotConstants.robotConfig.EndEffector.k_forwardIndexSpeeds;
+      case FORWARD_INDEX_SLOW -> {
+        return RobotConstants.robotConfig.EndEffector.k_forwardIndexSlowSpeeds;
+      }
+
+      case FORWARD_INDEX_FAST -> {
+        return RobotConstants.robotConfig.EndEffector.k_forwardIndexFastSpeeds;
       }
 
       case REVERSE_INDEX -> {
@@ -161,7 +166,13 @@ public class EndEffector extends Subsystem {
 
   private void checkAutoTasks() {
     switch (m_periodicIO.state) {
-      case FORWARD_INDEX -> {
+      case FORWARD_INDEX_FAST -> {
+        if (m_laserCan.getExitSeesCoral()) {
+          setState(EndEffectorState.FORWARD_INDEX_SLOW);
+        }
+      }
+
+      case FORWARD_INDEX_SLOW -> {
         if (!m_laserCan.getEntranceSeesCoral()) {
           setState(EndEffectorState.REVERSE_INDEX);
         }
@@ -179,7 +190,7 @@ public class EndEffector extends Subsystem {
         // reverse();
         // } else
         if (m_laserCan.getEntranceSeesCoral()) {
-          index();
+          indexFast();
         }
       }
 

@@ -60,9 +60,23 @@ public class LaserCanHandler {
     return m_entranceLaser.getMeasurement().distance_mm;
   }
 
-  // @AutoLogOutput(key = "LaserCans/Exit/seesCoral")
-  // public boolean getExitSeesCoral() {
-  // return m_exitLaser.getMeasurement().distance_mm < 75.0; // Value gotten from
-  // Cranberry Alarm code
-  // }
+  @AutoLogOutput(key = "LaserCans/Exit/distance")
+  public double getExitDistance() {
+    return m_exitLaser.getMeasurement().distance_mm;
+  }
+
+  @AutoLogOutput(key = "LaserCans/Exit/seesCoral")
+  public boolean getExitSeesCoral() {
+    if (RobotBase.isSimulation()) {
+      return true;
+    }
+
+    if (getExitDistance() < RobotConstants.robotConfig.LaserCan.k_exitThreshold) {
+      debounceCounter++;
+    } else {
+      debounceCounter = 0;
+    }
+
+    return debounceCounter >= debounceMax;
+  }
 }

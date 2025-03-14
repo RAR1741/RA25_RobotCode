@@ -298,7 +298,10 @@ public class Robot extends LoggedRobot {
 
       if (m_operatorController.getWantsReverseHopper()) {
         m_hopper.reverse();
-        m_endEffector.setState(EndEffectorState.FORWARD_INDEX);
+        m_endEffector.setState(EndEffectorState.FORWARD_INDEX_FAST);
+      } else if (m_operatorController.getStoppedReverseHopper()) {
+        m_hopper.forward();
+        m_endEffector.setState(EndEffectorState.OFF);
       } else {
         m_hopper.forward();
       }

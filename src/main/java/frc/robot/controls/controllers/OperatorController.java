@@ -79,7 +79,13 @@ public class OperatorController extends FilteredController {
     return this.getRawButtonReleased(k_scoreButton);
   }
 
+  private final int k_hopperButton = Button.Y;
+
   public boolean getWantsReverseHopper() {
-    return this.getRawButton(Button.Y);
+    return this.getRawButton(k_hopperButton);
+  }
+
+  public boolean getStoppedReverseHopper() {
+    return this.getRawButtonReleased(k_hopperButton);
   }
 }
