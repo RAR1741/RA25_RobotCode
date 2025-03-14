@@ -201,19 +201,19 @@ public class EndEffector extends Subsystem {
       }
 
       case SCORE_BRANCHES -> {
-        // if (!m_laserCan.getExitSeesCoral()) {
-        // off();
-        // } else {
-        branches();
-        // }
+        if (!m_laserCan.getExitSeesCoral()) {
+          off();
+        } else {
+          branches();
+        }
       }
 
       case SCORE_TROUGH -> {
-        // if (!m_laserCan.getExitSeesCoral()) {
-        // off();
-        // } else {
-        trough();
-        // }
+        if (!m_laserCan.getExitSeesCoral()) {
+          off();
+        } else {
+          trough();
+        }
       }
 
       default -> {
