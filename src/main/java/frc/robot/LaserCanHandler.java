@@ -13,7 +13,8 @@ public class LaserCanHandler {
   private LaserCan m_entranceLaser;
   private LaserCan m_exitLaser;
 
-  private int debounceCounter = 0;
+  private int entranceDebounceCounter = 0;
+  private int exitDebounceCounter = 0;
   private int debounceMax = 3;
 
   public static LaserCanHandler getInstance() {
@@ -25,16 +26,17 @@ public class LaserCanHandler {
 
   private LaserCanHandler() {
     m_entranceLaser = new LaserCan(RobotConstants.robotConfig.LaserCan.k_entranceId);
-    // m_exitLaser = new LaserCan(RobotConstants.robotConfig.LaserCan.k_exitId);
+    m_exitLaser = new LaserCan(RobotConstants.robotConfig.LaserCan.k_exitId);
 
     try {
       m_entranceLaser.setRangingMode(LaserCan.RangingMode.SHORT);
       m_entranceLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
       m_entranceLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
 
-      // m_exitLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-      // m_exitLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      // m_exitLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      m_exitLaser.setRangingMode(LaserCan.RangingMode.SHORT);
+      m_exitLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
+      m_exitLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
@@ -47,12 +49,12 @@ public class LaserCanHandler {
     }
 
     if (getEntranceDistance() < RobotConstants.robotConfig.LaserCan.k_entranceThreshold) {
-      debounceCounter++;
+      entranceDebounceCounter++;
     } else {
-      debounceCounter = 0;
+      entranceDebounceCounter = 0;
     }
 
-    return debounceCounter >= debounceMax;
+    return entranceDebounceCounter >= debounceMax;
   }
 
   @AutoLogOutput(key = "LaserCans/Entrance/distance")
@@ -72,11 +74,11 @@ public class LaserCanHandler {
     }
 
     if (getExitDistance() < RobotConstants.robotConfig.LaserCan.k_exitThreshold) {
-      debounceCounter++;
+      exitDebounceCounter++;
     } else {
-      debounceCounter = 0;
+      exitDebounceCounter = 0;
     }
 
-    return debounceCounter >= debounceMax;
+    return exitDebounceCounter >= debounceMax;
   }
 }
