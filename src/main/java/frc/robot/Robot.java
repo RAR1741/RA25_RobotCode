@@ -298,10 +298,9 @@ public class Robot extends LoggedRobot {
 
       if (m_operatorController.getWantsReverseHopper()) {
         m_hopper.reverse();
-        m_endEffector.setState(EndEffectorState.FORWARD_INDEX_FAST);
+        m_endEffector.setState(EndEffectorState.OFF);
       } else if (m_operatorController.getStoppedReverseHopper()) {
         m_hopper.forward();
-        m_endEffector.setState(EndEffectorState.OFF);
       } else {
         m_hopper.forward();
       }
@@ -353,7 +352,7 @@ public class Robot extends LoggedRobot {
   private void stow() {
     m_elevator.setState(ElevatorState.STOW);
     m_arm.setArmState(ArmState.STOW);
-    m_endEffector.setState(EndEffectorState.OFF);
+    m_endEffector.setState(EndEffectorState.OFF); // TODO: FIX THIS
   }
 
   @Override

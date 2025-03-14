@@ -138,7 +138,7 @@ public abstract class AutoModeBase {
     // Score
     queueTask(new ParallelTask(
         new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
-        new WaitTask(0.4)));
+        new WaitTask(0.2)));
     queueTask(new EndEffectorTask(EndEffectorState.OFF));
 
     // Drive to feeder station
@@ -154,7 +154,7 @@ public abstract class AutoModeBase {
                 new ArmTask(ArmState.STOW)))));
 
     // Wait for the new coral
-    queueTask(new WaitTask(0.5));
+    // queueTask(new WaitTask(0.5));
 
     queueTask(new ParallelTask(
         new IntakeTask(IntakeVariant.LEFT, IntakeState.STOW),

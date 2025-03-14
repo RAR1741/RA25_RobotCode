@@ -26,7 +26,6 @@
             "/RealOutputs/LaserCans/Entrance",
             "/RealOutputs/Auto/Tasks",
             "/RealOutputs/Auto/DriveTrajectory",
-            "/RealOutputs/Intakes/Left",
             "/RealOutputs/Intakes/Left/Current",
             "/RealOutputs/Intakes/Left/Desired",
             "/RealOutputs",
@@ -42,7 +41,10 @@
             "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/FR/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder",
-            "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder"
+            "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder",
+            "/RealOutputs/Intakes/Left",
+            "/RealOutputs/LaserCans",
+            "/RealOutputs/LaserCans/Exit"
           ]
         },
         "tabs": {
@@ -289,14 +291,14 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -8.520530250680238,
-                  7.746691145320892,
-                  0.5728057249592594
+                  -9.396130369652179,
+                  7.251089361883371,
+                  0.6532992586259685
                 ],
                 "cameraTarget": [
-                  -2.070543280579411,
-                  -4.74532933476588,
-                  0.4598914049581413
+                  -2.5925518150474236,
+                  -5.051671574125309,
+                  0.5152795651753141
                 ]
               },
               "controlsHeight": 295
@@ -740,6 +742,26 @@
                       "color": "#3b875a",
                       "size": "normal"
                     }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Elevator/Current/Left",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#d993aa",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Elevator/Current/Right",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#5f4528",
+                      "size": "normal"
+                    }
                   }
                 ],
                 "rightSources": [
@@ -971,7 +993,26 @@
                     }
                   }
                 ],
-                "discreteSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Intakes/Right/Desired/IntakeState",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Intakes/Right/IsAtState",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -1016,7 +1057,26 @@
                     }
                   }
                 ],
-                "discreteSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Intakes/Left/Desired/IntakeState",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Intakes/Left/IsAtState",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -1049,6 +1109,16 @@
                       "color": "#e5b31b",
                       "size": "normal"
                     }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/LaserCans/Exit/distance",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
                   }
                 ],
                 "discreteSources": [
@@ -1059,6 +1129,24 @@
                     "visible": true,
                     "options": {
                       "color": "#2b66a2"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/LaserCans/Entrance/seesCoral",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/LaserCans/Exit/seesCoral",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
                     }
                   }
                 ],
