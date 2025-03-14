@@ -9,6 +9,6 @@ public class RightMode extends AutoModeBase {
   public void queueTasks() {
     autoScore(ElevatorState.L4, Branch.LEFT, FeederStation.RIGHT);
     autoScore(ElevatorState.L4, Branch.LEFT, FeederStation.RIGHT);
-    autoScore(ElevatorState.L4, Branch.RIGHT, FeederStation.RIGHT);
+    // autoScore(ElevatorState.L4, Branch.RIGHT, FeederStation.RIGHT);
   }
 }

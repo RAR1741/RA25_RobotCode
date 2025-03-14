@@ -194,7 +194,7 @@ public class Constants {
     public final double k_maxVelocity = 130;
     public final double k_maxAcceleration = 400;
 
-    public final int k_maxCurrent = 80;
+    public final int k_maxCurrent = 40;
 
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
