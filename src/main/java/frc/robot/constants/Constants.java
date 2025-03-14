@@ -257,7 +257,7 @@ public class Constants {
     public final int k_exitId = 35;
 
     public final double k_entranceThreshold = 110.0;
-    public final double k_exitThreshold = 110.0;
+    public final double k_exitThreshold = 40.0;
   }
 
   public static class IntakeConstants {
