@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -44,6 +45,7 @@ import frc.robot.subsystems.drivetrain.SwerveSysId;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
+import frc.robot.subsystems.leds.LEDModes;
 import frc.robot.subsystems.leds.LEDs;
 
 /**
@@ -136,6 +138,8 @@ public class Robot extends LoggedRobot {
     RobotTelemetry.print("Logging Initialized. Fard.");
 
     m_signalManager.finalizeAll();
+
+    m_leds.setAllColorMode(LEDModes.redChase);
   }
 
   @Override
