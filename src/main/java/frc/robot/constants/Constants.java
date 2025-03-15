@@ -343,7 +343,7 @@ public class Constants {
 
   public static class LEDConstants {
     // public int k_PWMId = 1;
-    public int k_PWMId = 9;
+    public int k_PWMId = 0;
     public boolean k_isEnabled = true;
     public int k_drivetrainUnusedLEDCount = 30;
 

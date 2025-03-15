@@ -120,7 +120,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
     m_subsystems.add(m_taskScheduler);
-    // m_subsystems.add(m_leds);
+    m_subsystems.add(m_leds);
 
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
@@ -138,8 +138,6 @@ public class Robot extends LoggedRobot {
     RobotTelemetry.print("Logging Initialized. Fard.");
 
     m_signalManager.finalizeAll();
-
-    m_leds.setAllColorMode(LEDModes.redChase);
   }
 
   @Override
@@ -268,14 +266,19 @@ public class Robot extends LoggedRobot {
       ElevatorState desiredElevatorState = m_operatorController.getDesiredElevatorState();
 
       if (m_driverController.getWantsAutoScoreLeft()) {
+        m_leds.setLeftColor(Color.kGreen);
+        m_leds.setRightColor(Color.kBlack);
         m_taskScheduler.scheduleTasks(AutoModeBase.getAutoScoreTasks(
             desiredElevatorState,
             Branch.LEFT));
       } else if (m_driverController.getWantsAutoScoreRight()) {
+        m_leds.setRightColor(Color.kGreen);
+        m_leds.setLeftColor(Color.kBlack);
         m_taskScheduler.scheduleTasks(AutoModeBase.getAutoScoreTasks(
             desiredElevatorState,
             Branch.RIGHT));
       } else if (m_driverController.getWantsDeAlgaeTasks()) {
+        m_leds.setAllColor(Color.kAqua);
         m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
       }
 

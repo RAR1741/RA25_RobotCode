@@ -2,6 +2,7 @@ package frc.robot.autonomous.tasks;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.LaserCanHandler;
 import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.EndEffector;
@@ -20,6 +21,7 @@ public class WaitTask extends Task {
     TIME,
     END_EFFECTOR_INDEXED,
     LOW_SPEED
+    // CORAL_SCORED
   }
 
   public WaitTask(double timeSeconds) {
@@ -56,6 +58,9 @@ public class WaitTask extends Task {
         return Math.hypot(currentSpeed.vxMetersPerSecond,
             currentSpeed.vyMetersPerSecond) < RobotConstants.robotConfig.Auto.k_lowSpeed;
       }
+      // case CORAL_SCORED -> {
+      //   return !LaserCanHandler.getInstance().getExitSeesCoral();
+      // }
     }
     return true;
   }

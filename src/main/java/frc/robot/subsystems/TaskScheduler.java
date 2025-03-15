@@ -29,8 +29,11 @@ public class TaskScheduler extends Subsystem {
   }
 
   public void scheduleTasks(ArrayList<Task> tasks) {
-    for (Task task : tasks) {
-      m_tasks.add(task);
+    // for (Task task : tasks) {
+    //   m_tasks.add(task);
+    // }
+    for(int i = 0; i < tasks.size(); i++) {
+      m_tasks.add(tasks.get(i));
     }
   }
 

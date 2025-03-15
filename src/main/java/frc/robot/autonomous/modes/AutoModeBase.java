@@ -97,12 +97,12 @@ public abstract class AutoModeBase {
     tasks.add(new DriveToPoseTask(branch));
 
     // Score
-    tasks.add(new ParallelTask(
-        new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
-        new WaitTask(0.4)));
+    // tasks.add(new ParallelTask(
+    tasks.add(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
+    // new WaitTask(0.4)));
 
-    tasks.add(new EndEffectorTask(EndEffectorState.OFF));
-    tasks.add(new DriveToPoseTask(Branch.NONE));
+    // tasks.add(new EndEffectorTask(EndEffectorState.OFF));
+    // tasks.add(new DriveToPoseTask(Branch.NONE));
 
     return tasks;
   }

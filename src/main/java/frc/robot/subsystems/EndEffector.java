@@ -10,10 +10,12 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.leds.LEDs;
 
 public class EndEffector extends Subsystem {
   private static EndEffector m_instance;
@@ -26,6 +28,7 @@ public class EndEffector extends Subsystem {
   private LaserCanHandler m_laserCan;
   private Arm m_arm;
   private Elevator m_elevator;
+  private LEDs m_leds;
 
   public static EndEffector getInstance() {
     if (m_instance == null) {
@@ -45,6 +48,7 @@ public class EndEffector extends Subsystem {
     m_laserCan = LaserCanHandler.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
+    m_leds = LEDs.getInstance();
 
     SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kBrake);
 
@@ -74,6 +78,18 @@ public class EndEffector extends Subsystem {
 
   public void setState(EndEffectorState state) {
     m_periodicIO.state = state;
+
+    switch(state) {
+      case OFF -> {
+        m_leds.setAllColor(Color.kRed);
+      }
+      case FORWARD_INDEX_FAST -> {
+        m_leds.setAllColor(Color.kYellow);
+      }
+      case INDEXED -> {
+        m_leds.setAllColor(Color.kGreen);
+      }
+    }
   }
 
   private void off() {
