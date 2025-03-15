@@ -62,7 +62,7 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean isDPadUsed() {
-    return getHatPressed(Direction.UP) || getHatPressed(Direction.DOWN) || getHatPressed(Direction.LEFT) || getHatPressed(Direction.RIGHT);
+    return this.getHat(Direction.UP) || this.getHat(Direction.DOWN) || this.getHat(Direction.LEFT) || this.getHat(Direction.RIGHT);
   }
 
   public boolean getWantsStow() {

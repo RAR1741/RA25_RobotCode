@@ -7,7 +7,8 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import frc.robot.autonomous.tasks.Task;
 
 public class TaskScheduler extends Subsystem {
-  private final ArrayList<Task> m_tasks;
+  private ArrayList<Task> m_tasks;
+  Task m_currentTask;
   private static TaskScheduler m_instance = null;
 
   private TaskScheduler() {
@@ -41,36 +42,42 @@ public class TaskScheduler extends Subsystem {
 
   @Override
   public void reset() {
-    for (Task task : m_tasks) {
-      task.done();
+    // for (Task task : m_tasks) {
+    //   task.done();
+    // }
+    if(m_currentTask != null) {
+      m_currentTask.done();
     }
+    m_currentTask = null;
 
     m_tasks.clear();
+    m_tasks = new ArrayList<Task>();
   }
 
   @Override
   public void periodic() {
     // Get the current task
-    Task currentTask;
+    // Task currentTask;
     if (!m_tasks.isEmpty()) {
-      currentTask = m_tasks.get(0);
+      m_currentTask = m_tasks.get(0);
     } else {
+      m_currentTask = null;
       return;
     }
 
-    if (currentTask != null) {
+    if (m_currentTask != null) {
       // Prepare the current task
-      if (!currentTask.isPrepared()) {
-        currentTask.prepare();
+      if (!m_currentTask.isPrepared()) {
+        m_currentTask.prepare();
       }
 
       // Run the current task
-      currentTask.update();
-      currentTask.updateSim();
+      m_currentTask.update();
+      m_currentTask.updateSim();
 
       // get rid of the task, if finished
-      if (currentTask.isFinished()) {
-        currentTask.done();
+      if (m_currentTask.isFinished()) {
+        m_currentTask.done();
         removeCurrentTask();
       }
     }

@@ -120,7 +120,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
     m_subsystems.add(m_taskScheduler);
-    m_subsystems.add(m_leds);
+    // m_subsystems.add(m_leds);
 
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
   }
@@ -319,6 +319,7 @@ public class Robot extends LoggedRobot {
     }
 
     if(m_operatorController.isDPadUsed()) {
+      RobotTelemetry.print("Resetting Op Tasks!");
       m_operatorController.getDesiredElevatorState();
       m_taskScheduler.reset();
     }
@@ -365,7 +366,7 @@ public class Robot extends LoggedRobot {
   private void stow() {
     m_elevator.setState(ElevatorState.STOW);
     m_arm.setArmState(ArmState.STOW);
-    m_endEffector.setState(EndEffectorState.OFF); // TODO: FIX THIS
+    // m_endEffector.setState(EndEffectorState.OFF); // TODO: FIX THIS (aka remove)
   }
 
   @Override
