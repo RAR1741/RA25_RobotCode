@@ -8,7 +8,6 @@ import frc.robot.autonomous.tasks.Task;
 
 public class TaskScheduler extends Subsystem {
   private ArrayList<Task> m_tasks;
-  Task m_currentTask;
   private static TaskScheduler m_instance = null;
 
   private TaskScheduler() {
@@ -29,12 +28,12 @@ public class TaskScheduler extends Subsystem {
   }
 
   public void scheduleTasks(ArrayList<Task> tasks) {
-    // for (Task task : tasks) {
-    //   m_tasks.add(task);
-    // }
-    for(int i = 0; i < tasks.size(); i++) {
-      m_tasks.add(tasks.get(i));
+    for (Task task : tasks) {
+      m_tasks.add(task);
     }
+    // for(int i = 0; i < tasks.size(); i++) {
+    //   m_tasks.add(tasks.get(i));
+    // }
   }
 
   public void removeCurrentTask() {
@@ -43,44 +42,37 @@ public class TaskScheduler extends Subsystem {
     }
   }
 
-  @Override
   public void reset() {
-    // for (Task task : m_tasks) {
-    //   task.done();
-    // }
-    if(m_currentTask != null) {
-      m_currentTask.done();
+    for (Task task : m_tasks) {
+      task.done();
     }
-    m_currentTask = null;
 
     m_tasks.clear();
-    m_tasks = new ArrayList<Task>();
   }
 
   @Override
   public void periodic() {
     // Get the current task
-    // Task currentTask;
+    Task currentTask;
     if (!m_tasks.isEmpty()) {
-      m_currentTask = m_tasks.get(0);
+      currentTask = m_tasks.get(0);
     } else {
-      m_currentTask = null;
       return;
     }
 
-    if (m_currentTask != null) {
+    if (currentTask != null) {
       // Prepare the current task
-      if (!m_currentTask.isPrepared()) {
-        m_currentTask.prepare();
+      if (!currentTask.isPrepared()) {
+        currentTask.prepare();
       }
 
       // Run the current task
-      m_currentTask.update();
-      m_currentTask.updateSim();
+      currentTask.update();
+      currentTask.updateSim();
 
       // get rid of the task, if finished
-      if (m_currentTask.isFinished()) {
-        m_currentTask.done();
+      if (currentTask.isFinished()) {
+        currentTask.done();
         removeCurrentTask();
       }
     }
