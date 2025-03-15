@@ -318,6 +318,11 @@ public class Robot extends LoggedRobot {
       // }
     }
 
+    if(m_operatorController.isDPadUsed()) {
+      m_operatorController.getDesiredElevatorState();
+      m_taskScheduler.reset();
+    }
+
     if (m_driverController.getWantsClearTellyTasks()) {
       m_taskScheduler.reset();
     }

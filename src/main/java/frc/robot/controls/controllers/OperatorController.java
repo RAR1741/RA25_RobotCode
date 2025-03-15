@@ -61,6 +61,10 @@ public class OperatorController extends FilteredController {
     return m_desiredElevatorState;
   }
 
+  public boolean isDPadUsed() {
+    return getHatPressed(Direction.UP) || getHatPressed(Direction.DOWN) || getHatPressed(Direction.LEFT) || getHatPressed(Direction.RIGHT);
+  }
+
   public boolean getWantsStow() {
     return this.getRawButtonPressed(Button.A);
   }
