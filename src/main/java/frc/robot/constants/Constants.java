@@ -292,7 +292,7 @@ public class Constants {
     public final double k_maxAcceleration = 3.0;
     public final double k_maxVelocity = 1.0;
 
-    public final double k_maxIntakeSpeed = 600.0;
+    public final double k_maxIntakeSpeed = 400.0; 
 
     public final double k_allowedPivotError = 0.01;
 
