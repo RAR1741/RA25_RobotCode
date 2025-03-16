@@ -248,7 +248,7 @@ public class Constants {
     public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
     public final double[] k_forwardIndexSlowSpeeds = new double[] { 0.10, 0.10 };
     public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
-    public final double[] k_branchSpeeds = new double[] { 0.7, 0.5 };
+    public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
     public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
   }
 

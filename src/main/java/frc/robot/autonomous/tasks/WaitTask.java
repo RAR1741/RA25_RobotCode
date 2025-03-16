@@ -2,7 +2,6 @@ package frc.robot.autonomous.tasks;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.LaserCanHandler;
 import frc.robot.RobotTelemetry;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.EndEffector;

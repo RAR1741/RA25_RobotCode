@@ -45,7 +45,6 @@ import frc.robot.subsystems.drivetrain.SwerveSysId;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
-import frc.robot.subsystems.leds.LEDModes;
 import frc.robot.subsystems.leds.LEDs;
 
 /**

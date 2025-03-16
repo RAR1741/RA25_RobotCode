@@ -1,7 +1,5 @@
 package frc.robot.autonomous;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.RobotTelemetry;
 import frc.robot.autonomous.modes.AutoModeBase;

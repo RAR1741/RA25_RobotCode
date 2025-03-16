@@ -5,7 +5,6 @@ import java.util.function.Function;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.Robot;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Subsystem;
 
