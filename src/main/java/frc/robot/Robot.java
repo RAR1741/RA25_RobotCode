@@ -306,24 +306,24 @@ public class Robot extends LoggedRobot {
         m_endEffector.setState(EndEffectorState.OFF);
       }
 
-      if (m_operatorController.getWantsReverseHopper()) {
-        m_hopper.reverse();
-        m_endEffector.setState(EndEffectorState.OFF);
-      } else if (m_operatorController.getStoppedReverseHopper()) {
-        m_hopper.forward();
-      } else {
-        m_hopper.forward();
-      }
-
       // if (m_driverController.getWantsGyroPoseReset()) {
       // m_odometry.resetRotation();
       // }
     }
 
-    if(m_operatorController.isDPadUsed()) {
-      RobotTelemetry.print("Resetting Op Tasks!");
-      m_operatorController.getDesiredElevatorState();
-      m_taskScheduler.reset();
+    // if(m_operatorController.isDPadUsed()) {
+    //   RobotTelemetry.print("Resetting Op Tasks!");
+    //   m_operatorController.getDesiredElevatorState();
+    //   m_taskScheduler.reset();
+    // }
+
+    if (m_operatorController.getWantsReverseHopper()) {
+      m_hopper.reverse();
+      // m_endEffector.setState(EndEffectorState.OFF);
+    } else if (m_operatorController.getStoppedReverseHopper()) {
+      m_hopper.forward();
+    } else {
+      m_hopper.forward();
     }
 
     if (m_driverController.getWantsClearTellyTasks()) {
