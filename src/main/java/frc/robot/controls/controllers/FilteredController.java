@@ -13,7 +13,7 @@ public class FilteredController extends GenericHID {
   private boolean m_useSquaredInput;
   private double m_triggerActivationThreshold;
 
-  public double k_allianceMultiplier = -1.0;
+  public double m_allianceMultiplier = -1.0;
 
   private Deadband m_deadband = new Deadband(k_deadbandLimit);
   private SquaredInput m_squaredInput = new SquaredInput(k_deadbandLimit);
@@ -37,9 +37,9 @@ public class FilteredController extends GenericHID {
 
   public void setAllianceMultiplier() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      k_allianceMultiplier = -1.0;
+      m_allianceMultiplier = 1.0;
     } else {
-      k_allianceMultiplier = 1.0;
+      m_allianceMultiplier = -1.0;
     }
   }
 

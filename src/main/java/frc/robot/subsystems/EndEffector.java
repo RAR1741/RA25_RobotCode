@@ -10,10 +10,12 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.leds.LEDs;
 
 public class EndEffector extends Subsystem {
   private static EndEffector m_instance;
@@ -26,6 +28,7 @@ public class EndEffector extends Subsystem {
   private LaserCanHandler m_laserCan;
   private Arm m_arm;
   private Elevator m_elevator;
+  private LEDs m_leds;
 
   public static EndEffector getInstance() {
     if (m_instance == null) {
@@ -45,6 +48,7 @@ public class EndEffector extends Subsystem {
     m_laserCan = LaserCanHandler.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
+    m_leds = LEDs.getInstance();
 
     SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kBrake);
 
@@ -59,14 +63,14 @@ public class EndEffector extends Subsystem {
   }
 
   private static class PeriodicIO {
-    EndEffectorState state = EndEffectorState.OFF;
+    EndEffectorState state = EndEffectorState.INDEXED;
   }
 
   public enum EndEffectorState {
     OFF,
-    FORWARD_INDEX,
+    FORWARD_INDEX_FAST,
+    FORWARD_INDEX_SLOW,
     REVERSE_INDEX,
-    REVERSE,
     SCORE_BRANCHES,
     SCORE_TROUGH,
     INDEXED
@@ -74,18 +78,26 @@ public class EndEffector extends Subsystem {
 
   public void setState(EndEffectorState state) {
     m_periodicIO.state = state;
+
+    switch(state) {
+      case OFF -> {
+        m_leds.setAllColor(Color.kRed);
+      }
+      case FORWARD_INDEX_FAST -> {
+        m_leds.setAllColor(Color.kYellow);
+      }
+      case INDEXED -> {
+        m_leds.setAllColor(Color.kGreen);
+      }
+    }
   }
 
   private void off() {
     setState(EndEffectorState.OFF);
   }
 
-  private void index() {
-    setState(EndEffectorState.FORWARD_INDEX);
-  }
-
-  private void reverse() {
-    setState(EndEffectorState.REVERSE);
+  private void indexFast() {
+    setState(EndEffectorState.FORWARD_INDEX_FAST);
   }
 
   private void branches() {
@@ -132,16 +144,16 @@ public class EndEffector extends Subsystem {
         return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
       }
 
-      case FORWARD_INDEX -> {
-        return RobotConstants.robotConfig.EndEffector.k_forwardIndexSpeeds;
+      case FORWARD_INDEX_SLOW -> {
+        return RobotConstants.robotConfig.EndEffector.k_forwardIndexSlowSpeeds;
+      }
+
+      case FORWARD_INDEX_FAST -> {
+        return RobotConstants.robotConfig.EndEffector.k_forwardIndexFastSpeeds;
       }
 
       case REVERSE_INDEX -> {
         return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeeds;
-      }
-
-      case REVERSE -> {
-        return RobotConstants.robotConfig.EndEffector.k_reverseSpeeds;
       }
 
       case SCORE_BRANCHES -> {
@@ -170,7 +182,13 @@ public class EndEffector extends Subsystem {
 
   private void checkAutoTasks() {
     switch (m_periodicIO.state) {
-      case FORWARD_INDEX -> {
+      case FORWARD_INDEX_FAST -> {
+        if (m_laserCan.getExitSeesCoral()) {
+          setState(EndEffectorState.FORWARD_INDEX_SLOW);
+        }
+      }
+
+      case FORWARD_INDEX_SLOW -> {
         if (!m_laserCan.getEntranceSeesCoral()) {
           setState(EndEffectorState.REVERSE_INDEX);
         }
@@ -182,36 +200,36 @@ public class EndEffector extends Subsystem {
         }
       }
 
+      case INDEXED -> {
+        if (!m_laserCan.getExitSeesCoral()) {
+          setState(EndEffectorState.OFF);
+        }
+      }
+
       case OFF -> {
         // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
         // && m_laserCan.getExitSeesCoral()) {
         // reverse();
         // } else
         if (m_laserCan.getEntranceSeesCoral()) {
-          index();
+          indexFast();
         }
       }
 
-      case REVERSE -> {
-        // if (m_laserCan.getIndexSeesCoral()) {
-        off();
-        // }
-      }
-
       case SCORE_BRANCHES -> {
-        // if (!m_laserCan.getExitSeesCoral()) {
-        // off();
-        // } else {
-        branches();
-        // }
+        if (!m_laserCan.getExitSeesCoral()) {
+          off();
+        } else {
+          branches();
+        }
       }
 
       case SCORE_TROUGH -> {
-        // if (!m_laserCan.getExitSeesCoral()) {
-        // off();
-        // } else {
-        trough();
-        // }
+        if (!m_laserCan.getExitSeesCoral()) {
+          off();
+        } else {
+          trough();
+        }
       }
 
       default -> {

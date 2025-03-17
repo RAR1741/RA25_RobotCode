@@ -19,6 +19,7 @@ public class Constants {
   public final OdometryConstants Odometry = new OdometryConstants();
   public final HopperConstants Hopper = new HopperConstants();
   public final AutoAlignConstants AutoAlign = new AutoAlignConstants();
+  public final LEDConstants LEDs = new LEDConstants();
 
   public static class RobotConstants {
     public final String k_canBus = "rio"; // this is the default, but it helps differentiate between this and the
@@ -56,27 +57,31 @@ public class Constants {
     public final String k_canBus = "Drivetrain";
 
     // Drivetrain wheel offsets
-    public final double k_xDistance = Units.inchesToMeters(26.75); // 30 inches Forward/Backward
+    public final double k_xDistance = Units.inchesToMeters(26.75); // 32 inches Forward/Backward
     public final double k_yDistance = Units.inchesToMeters(22.75); // in meters! Side-to-Side
 
     public final double k_xCenterDistance = k_xDistance / 2.0;
     public final double k_yCenterDistance = k_yDistance / 2.0;
+    public final double k_wheelBaseRadius = Math.hypot(k_xCenterDistance, k_yCenterDistance);
 
     // Max speeds
-    public final double k_maxSpeed = 1.5; // Meters per second
-    public final double k_maxBoostSpeed = 4.5; // Meters per second
-    public final double k_maxAngularSpeed = Math.PI * 1.5; // Radians per second
+    public final double k_maxDriverSpeed = 2.0; // Meters per second
+    public final double k_maxDriverBoostSpeed = 4.5; // Meters per second
+    public final double k_maxPossibleSpeed = 4.574; // Meters per second
+
+    public final double k_maxDriverAngularSpeed = Math.PI * 1.5; // Radians per second
+    public final double k_maxPossibleAngularSpeed = 10.256; // Radians per second, pulled from Choreo
 
     // Max acceleration
-    public final double k_maxLinearAcceleration = 12.0; // Meters per second^2
-    public final double k_maxAngularAcceleration = Math.PI * 8.0; // Radians per second^2
+    public final double k_maxLinearAcceleration = 10.791; // Meters per second^2, pulled from Choreo
+    public final double k_maxAngularAcceleration = 46.304; // Radians per second^2, pulled from Choreo
 
-    public final double k_slowScaler = 0; // % reduction in speed
-    public final double k_boostScaler = 2; // % increase in speed
+    public final double k_slowScaler = 0.5; // % reduction in speed
+    public final double k_boostScaler = (4.5 / 2.0); // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
 
     public final double k_wheelRadiusIn = 2.0; // inches
     public final double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
-    public final double k_driveGearRatio = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
+    public final double k_driveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
     public final double k_turnGearRatio = 150.0 / 7.0;
 
     public final DriveConstants Drive = new DriveConstants();
@@ -88,7 +93,8 @@ public class Constants {
       public final int k_BLMotorId = 7;
       public final int k_BRMotorId = 8;
 
-      public final int k_currentLimit = 40;
+      public final int k_statorCurrentLimit = 120;
+      public final int k_supplyCurrentLimit = 70;
 
       public double k_P;
       public double k_I;
@@ -115,7 +121,7 @@ public class Constants {
       public final int k_BLAbsId = 15;
       public final int k_BRAbsId = 16;
 
-      public final int k_currentLimit = 25;
+      public final int k_statorCurrentLimit = 40;
 
       public final int k_FLMotorId = 9;
       public final int k_FRMotorId = 10;
@@ -161,11 +167,13 @@ public class Constants {
 
   public static class AutoConstants {
     // Needs to be more than the max robot speed, to allow for turning
-    public double k_maxVelocity = 0.0; // Meters per second
-    public double k_maxAcceleration = 0.0; // Meters per second
-    public PIDConstants k_translationConstants = new PIDConstants(0.0, 0.0, 0.0);
-    public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(0.0, 0.0, 0.0, k_maxVelocity,
-        k_maxAcceleration);
+    public double k_maxAngularVelocity = 10.256; // rads per second
+    public double k_maxAngularAcceleration = 46.304; // rads per second^2
+    public PIDConstants k_translationConstants = new PIDConstants(6.0, 0.0, 0.0);
+    public ProfiledPIDConstants k_rotationConstants = new ProfiledPIDConstants(6.0, 0.0, 0.0, k_maxAngularVelocity,
+        k_maxAngularAcceleration);
+
+    public final double k_lowSpeed = 0.2;
 
     public TimingConstants Timing = new TimingConstants();
 
@@ -184,10 +192,10 @@ public class Constants {
     public final double k_IZone = 0.0;
     public final double k_FF = 0.50;
 
-    public final double k_maxVelocity = 65;
-    public final double k_maxAcceleration = 200;
+    public final double k_maxVelocity = 130;
+    public final double k_maxAcceleration = 400;
 
-    public final int k_maxCurrent = 30;
+    public final int k_maxCurrent = 40;
 
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
@@ -195,11 +203,12 @@ public class Constants {
     public final double k_L3Height = 42.7;
     public final double k_L4Height = 60.5; // 59.6;
     public final double k_maxHeight = 60.5;
+    public final double k_feederHeight = 28.36;
     // public final double k_groundAlgaeHeight = 0.0;
-    // public final double k_lowAlgaeHeight = 24.8;
-    // public final double k_highAlgaeHeight = 42.5;
+    public final double k_lowAlgaeHeight = 27.643;
+    public final double k_highAlgaeHeight = 44.571;
 
-    public final double k_allowedError = 0.2; // TODO: Change this please 👁️👄👁️
+    public final double k_allowedError = 0.4;
   }
 
   public static class ArmConstants {
@@ -223,6 +232,7 @@ public class Constants {
     public double k_stowAngle;
     public double k_L4Angle;
     public double k_horizontalAngle;
+    public double k_sourceAngle;
 
     public final double k_maxAcceleration = 0.8;
     public final double k_maxVelocity = 0.4;
@@ -235,10 +245,10 @@ public class Constants {
     public final int k_rightMotorId = 32;
 
     public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
-    public final double[] k_forwardIndexSpeeds = new double[] { 0.15, 0.15 };
+    public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
+    public final double[] k_forwardIndexSlowSpeeds = new double[] { 0.10, 0.10 };
     public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
-    public final double[] k_reverseSpeeds = new double[] { -0.1, -0.1 };
-    public final double[] k_branchSpeeds = new double[] { 0.5, 0.4 };
+    public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
     public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
   }
 
@@ -246,6 +256,9 @@ public class Constants {
     public final int k_indexId = 33;
     public final int k_entranceId = 34;
     public final int k_exitId = 35;
+
+    public final double k_entranceThreshold = 110.0;
+    public final double k_exitThreshold = 40.0;
   }
 
   public static class IntakeConstants {
@@ -279,7 +292,9 @@ public class Constants {
     public final double k_maxAcceleration = 3.0;
     public final double k_maxVelocity = 1.0;
 
-    public final double k_maxIntakeSpeed = 600.0;
+    public final double k_maxIntakeSpeed = 400.0; 
+
+    public final double k_allowedPivotError = 0.01;
 
     public final LeftConstants Left = new LeftConstants();
     public final RightConstants Right = new RightConstants();
@@ -301,7 +316,7 @@ public class Constants {
 
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
-    public final double k_hopperSpeed = 0.2;
+    public final double k_hopperSpeed = 0.3;
   }
 
   public static class AutoAlignConstants {
@@ -311,11 +326,43 @@ public class Constants {
     public final double k_minSafeElevatorDistance = 2.0;
 
     // Scoring offsets
-    public final double k_scoringDistance = 0.235;
+    public final double k_l4ScoringDistance = 0.254;
+    public final double k_otherScoringOffset = 0.0;
     public final double k_scoringHorizontalOffset = 0.175;
+    public final double k_algaeHorizontalOffset = 0.0;
+    public final double k_algaeReverseExtraDistance = -0.5;
 
     public final double k_maxApproachSpeed = 5.0;
     public final double k_fallOffDistance = 1.5;
+
+    // Base feeder scoring pose
+    public final double k_feederStationXOffset = 1.2;
+    public final double k_feederStationYOffset = 0.92;
+    public final double k_feederStationRotationOffset = 54.0;
+  }
+
+  public static class LEDConstants {
+    // public int k_PWMId = 1;
+    public int k_PWMId = 0;
+    public boolean k_isEnabled = true;
+    public int k_drivetrainUnusedLEDCount = 30;
+
+    public RightSideElevator Right = new RightSideElevator();
+
+    public class RightSideElevator {
+      public int k_start = 0;
+      public int k_length = 120;
+    }
+
+    public LeftSideElevator Left = new LeftSideElevator();
+
+    public class LeftSideElevator {
+      public int k_start = k_drivetrainUnusedLEDCount + Right.k_start + Right.k_length;
+      public int k_length = 120;
+    }
+
+    public int k_totalLength = 300;
+
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants

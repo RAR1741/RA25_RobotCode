@@ -27,8 +27,11 @@ public class ArmTask extends Task {
 
   @Override
   public boolean isFinished() {
-    logIsRunning(false);
     return m_arm.getIsAtState();
   }
 
+  @Override
+  public void done() {
+    logIsRunning(false);
+  }
 }

@@ -10,11 +10,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ASPoseHelper;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class PoseAligner extends Subsystem {
   private static PoseAligner m_poseAligner;
 
   private final PeriodicIO m_periodicIO = new PeriodicIO();
+  private int m_reefSide = -1;
 
   private PoseAligner() {
     super("PoseAligner");
@@ -35,6 +37,7 @@ public class PoseAligner extends Subsystem {
 
   @Override
   public void periodic() {
+    getFeederStationPoses();
   }
 
   public void calculate(Pose2d currentPose, Branch branch) {
@@ -65,11 +68,20 @@ public class PoseAligner extends Subsystem {
 
     // get the pose corresponding to what sector we're in
     int reefSide = Math.floorDiv(correctedAngle, 60);
+    m_reefSide = reefSide;
     ASPoseHelper.addRecord("ReefSide", reefSide);
     ASPoseHelper.addRecord("CorrectedAngle", correctedAngle);
 
     Pose2d safePose = poses[reefSide];
-    Pose2d scoringPose = getScoringPose(safePose, reefSide, branch);
+    Pose2d scoringPose = getReefScoringPose(safePose, reefSide, branch);
+
+    ElevatorState targetState = Elevator.getInstance().getTargetState();
+    if (targetState == ElevatorState.L1 || targetState == ElevatorState.L2 || targetState == ElevatorState.L3) {
+      Translation2d translation = new Translation2d(RobotConstants.robotConfig.AutoAlign.k_otherScoringOffset, 0.0);
+
+      scoringPose = scoringPose.transformBy(new Transform2d(translation, new Rotation2d()));
+    }
+
     ASPoseHelper.addPose("ScoringPose", scoringPose);
 
     m_periodicIO.safePose = safePose;
@@ -79,19 +91,29 @@ public class PoseAligner extends Subsystem {
   public Pose2d getAndCalculateTargetPose(Pose2d currentPose, Branch branch) {
     calculate(currentPose, branch);
 
-    if(branch == Branch.NONE) {
+    if (branch == Branch.NONE) {
       return getSafePose();
     }
 
-    return getScoringPose();
+    if (branch == Branch.ALGAE_REVERSE) {
+      return getAlgaeReversePose();
+    }
+
+    return getReefScoringPose();
   }
 
   public Pose2d getSafePose() {
     return m_periodicIO.safePose;
   }
 
-  public Pose2d getScoringPose() {
+  public Pose2d getReefScoringPose() {
     return m_periodicIO.scoringPose;
+  }
+
+  public Pose2d getAlgaeReversePose() {
+    Pose2d safePose = m_periodicIO.safePose;
+    return safePose.transformBy(new Transform2d(
+        RobotConstants.robotConfig.AutoAlign.k_algaeReverseExtraDistance, 0.0, new Rotation2d()));
   }
 
   @Override
@@ -106,22 +128,53 @@ public class PoseAligner extends Subsystem {
   public void reset() {
   }
 
-  public Pose2d getScoringPose(Pose2d currentPose, int reefSide, Branch branch) {
+  public ElevatorState getDeAlgaeElevatorState() {
+    if (Helpers.isBlueAlliance()) {
+      return m_reefSide % 2 != 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
+    } else {
+      return m_reefSide % 2 == 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
+    }
+  }
+
+  public Pose2d getReefScoringPose(Pose2d safePose, int reefSide, Branch branch) {
     // x-translation -> down the long side of the field
-    double scoringDistance = RobotConstants.robotConfig.AutoAlign.k_scoringDistance;
+    double scoringDistance = RobotConstants.robotConfig.AutoAlign.k_l4ScoringDistance;
 
     // y-translation -> along the shorter side of the field
-    double scoringHorizontalOffset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    double offset = 0.0;
 
     if (branch == Branch.RIGHT) {
-      scoringHorizontalOffset = -scoringHorizontalOffset;
+      offset = -RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    } else if (branch == Branch.LEFT) {
+      offset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+    } else if (branch == Branch.ALGAE) {
+      offset = RobotConstants.robotConfig.AutoAlign.k_algaeHorizontalOffset;
     }
 
-    Translation2d offset = new Translation2d(scoringDistance, scoringHorizontalOffset);
+    Translation2d translation = new Translation2d(scoringDistance, offset);
 
-    Pose2d scoringPose = currentPose.transformBy(new Transform2d(offset, new Rotation2d()));
-    
+    Pose2d scoringPose = safePose.transformBy(new Transform2d(translation, new Rotation2d()));
+
     return scoringPose;
+  }
+
+  public Pose2d getFeederStationTargetPose(Pose2d currentPose) {
+    int direction;
+    int allianceOffset = Helpers.isBlueAlliance() ? 0 : 2;
+
+    boolean isLeft = currentPose.getY() > RobotConstants.robotConfig.Field.k_width / 2;
+    isLeft = Helpers.isBlueAlliance() ? isLeft : !isLeft;
+
+    // Left is 0, right is 1
+    if (isLeft) {
+      direction = 0;
+    } else {
+      direction = 1;
+    }
+
+    Pose2d[] feederStationPoses = getFeederStationPoses();
+
+    return feederStationPoses[allianceOffset + direction];
   }
 
   /**
@@ -143,38 +196,74 @@ public class PoseAligner extends Subsystem {
 
     double offset = RobotConstants.robotConfig.AutoAlign.k_minSafeTargetDistance;
 
-    poses[ReefStartingPoses.RIGHT_SIDE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
+    poses[ReefStartingPoses.CLOSE] = new Pose2d(reefX + offset, reefY, Rotation2d.fromDegrees(180));
 
-    poses[ReefStartingPoses.TOP_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866,
+    poses[ReefStartingPoses.CLOSE_RIGHT] = new Pose2d(reefX + offset * 0.5, reefY + offset * 0.866,
         Rotation2d.fromDegrees(240));
 
-    poses[ReefStartingPoses.TOP_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866,
+    poses[ReefStartingPoses.FAR_RIGHT] = new Pose2d(reefX - offset * 0.5, reefY + offset * 0.866,
         Rotation2d.fromDegrees(300));
 
-    poses[ReefStartingPoses.LEFT_SIDE] = new Pose2d(reefX - offset, reefY, Rotation2d.fromDegrees(0));
+    poses[ReefStartingPoses.FAR] = new Pose2d(reefX - offset, reefY, Rotation2d.fromDegrees(0));
 
-    poses[ReefStartingPoses.BOTTOM_LEFT_SIDE] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866,
+    poses[ReefStartingPoses.FAR_LEFT] = new Pose2d(reefX - offset * 0.5, reefY - offset * 0.866,
         Rotation2d.fromDegrees(60));
 
-    poses[ReefStartingPoses.BOTTOM_RIGHT_SIDE] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866,
+    poses[ReefStartingPoses.CLOSE_LEFT] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866,
         Rotation2d.fromDegrees(120));
 
     return poses;
   }
 
+  public Pose2d[] getFeederStationPoses() {
+    Pose2d[] poses = new Pose2d[4];
+
+    double fieldWidth = RobotConstants.robotConfig.Field.k_width;
+    double fieldLength = RobotConstants.robotConfig.Field.k_length;
+
+    double xOffset = RobotConstants.robotConfig.AutoAlign.k_feederStationXOffset;
+    double yOffset = RobotConstants.robotConfig.AutoAlign.k_feederStationYOffset;
+    double rotOffset = RobotConstants.robotConfig.AutoAlign.k_feederStationRotationOffset;
+
+    poses[FeederStation.BLUE_LEFT] = new Pose2d(xOffset, fieldWidth - yOffset, Rotation2d.fromDegrees(-rotOffset));
+
+    poses[FeederStation.BLUE_RIGHT] = new Pose2d(xOffset, yOffset, Rotation2d.fromDegrees(rotOffset));
+
+    poses[FeederStation.RED_LEFT] = new Pose2d(fieldLength - xOffset, yOffset,
+        Rotation2d.fromDegrees(180 - rotOffset));
+
+    poses[FeederStation.RED_RIGHT] = new Pose2d(fieldLength - xOffset, fieldWidth - yOffset,
+        Rotation2d.fromDegrees(rotOffset - 180));
+
+    ASPoseHelper.addPose("PoseAligner/FeederStationPoses", poses);
+
+    return poses;
+  }
+
   public interface ReefStartingPoses {
-    int RIGHT_SIDE = 0;
-    int TOP_RIGHT_SIDE = 1;
-    int TOP_LEFT_SIDE = 2;
-    int LEFT_SIDE = 3;
-    int BOTTOM_LEFT_SIDE = 4;
-    int BOTTOM_RIGHT_SIDE = 5;
+    int CLOSE = 0; // high
+    int CLOSE_RIGHT = 1; // low
+    int FAR_RIGHT = 2; // high
+    int FAR = 3; // low
+    int FAR_LEFT = 4; // high
+    int CLOSE_LEFT = 5; // low
   }
 
   public enum Branch {
     LEFT,
     RIGHT,
+    ALGAE,
+    ALGAE_REVERSE,
     NONE
+  }
+
+  public interface FeederStation {
+    int BLUE_LEFT = 0;
+    int BLUE_RIGHT = 1;
+    int RED_LEFT = 2;
+    int RED_RIGHT = 3;
+    int LEFT = 4;
+    int RIGHT = 5;
   }
 
   // TODO maybe change the starting pose labels to tag-specific for easier

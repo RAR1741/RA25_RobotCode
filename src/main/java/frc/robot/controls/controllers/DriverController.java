@@ -13,11 +13,11 @@ public class DriverController extends FilteredController {
 
   // Drive
   public double getForwardAxis() {
-    return this.getFilteredAxis(Axis.LEFT_Y_AXIS);
+    return this.getFilteredAxis(Axis.LEFT_Y_AXIS) * m_allianceMultiplier;
   }
 
   public double getStrafeAxis() {
-    return this.getFilteredAxis(Axis.LEFT_X_AXIS);
+    return this.getFilteredAxis(Axis.LEFT_X_AXIS) * m_allianceMultiplier;
   }
 
   public double getTurnAxis() {
@@ -48,7 +48,7 @@ public class DriverController extends FilteredController {
   }
 
   public Branch getWantsAutoPositionBranch() {
-    if(this.getRawButton(Button.LEFT_BUMPER)) {
+    if (this.getRawButton(Button.LEFT_BUMPER)) {
       return Branch.LEFT;
     } else if (this.getRawButton(Button.RIGHT_BUMPER)) {
       return Branch.RIGHT;
@@ -60,15 +60,34 @@ public class DriverController extends FilteredController {
     return this.getRawButtonPressed(Button.X);
   }
 
-  public boolean getWantsGyroPoseReset() {
-    return this.getRawButtonPressed(Button.A);
+  public boolean getWantsAutoPositionFeederStation() {
+    return this.getRawButtonPressed(Button.B);
   }
 
   public boolean getWantsResetOdometry() {
     return this.getRawButtonPressed(Button.START);
   }
 
-  public boolean getWantsTest() {
-    return this.getRawButtonPressed(Button.BACK);
+  private final int k_deAlgaeButton = Button.Y;
+
+  public boolean getWantsDeAlgaeTasks() {
+    return this.getRawButtonPressed(k_deAlgaeButton);
+  }
+
+  private final int k_autoScoreLeftButton = Button.LEFT_BUMPER;
+  private final int k_autoScoreRightButton = Button.RIGHT_BUMPER;
+
+  public boolean getWantsAutoScoreLeft() {
+    return this.getRawButtonPressed(k_autoScoreLeftButton);
+  }
+
+  public boolean getWantsAutoScoreRight() {
+    return this.getRawButtonPressed(k_autoScoreRightButton);
+  }
+
+  public boolean getWantsClearTellyTasks() {
+    return this.getRawButtonReleased(k_deAlgaeButton) ||
+        this.getRawButtonReleased(k_autoScoreLeftButton) ||
+        this.getRawButtonReleased(k_autoScoreRightButton);
   }
 }

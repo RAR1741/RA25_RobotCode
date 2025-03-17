@@ -2,10 +2,12 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import frc.robot.autonomous.tasks.Task;
 
 public class TaskScheduler extends Subsystem {
-  private final ArrayList<Task> m_tasks;
+  private ArrayList<Task> m_tasks;
   private static TaskScheduler m_instance = null;
 
   private TaskScheduler() {
@@ -15,7 +17,7 @@ public class TaskScheduler extends Subsystem {
   }
 
   public static TaskScheduler getInstance() {
-    if(m_instance == null) {
+    if (m_instance == null) {
       m_instance = new TaskScheduler();
     }
     return m_instance;
@@ -25,26 +27,33 @@ public class TaskScheduler extends Subsystem {
     m_tasks.add(task);
   }
 
-  public void clearAllTasks() {
-    m_tasks.clear();
+  public void scheduleTasks(ArrayList<Task> tasks) {
+    // for (Task task : tasks) {
+    //   m_tasks.add(task);
+    // }
+    for(int i = 0; i < tasks.size(); i++) {
+      m_tasks.add(tasks.get(i));
+    }
   }
 
-  public void skipCurrentTask() {
-    if(m_tasks.size() > 0) {
+  public void removeCurrentTask() {
+    if (m_tasks.size() > 0) {
       m_tasks.remove(0);
     }
   }
 
-  @Override
   public void reset() {
-    clearAllTasks();
+    for (Task task : m_tasks) {
+      task.done();
+    }
+    m_tasks.clear();
   }
 
   @Override
   public void periodic() {
     // Get the current task
     Task currentTask;
-    if(!m_tasks.isEmpty()) {
+    if (!m_tasks.isEmpty()) {
       currentTask = m_tasks.get(0);
     } else {
       return;
@@ -52,7 +61,7 @@ public class TaskScheduler extends Subsystem {
 
     if (currentTask != null) {
       // Prepare the current task
-      if(!currentTask.isPrepared()) {
+      if (!currentTask.isPrepared()) {
         currentTask.prepare();
       }
 
@@ -63,7 +72,7 @@ public class TaskScheduler extends Subsystem {
       // get rid of the task, if finished
       if (currentTask.isFinished()) {
         currentTask.done();
-        skipCurrentTask();
+        removeCurrentTask();
       }
     }
   }
@@ -75,5 +84,15 @@ public class TaskScheduler extends Subsystem {
   @Override
   public void stop() {
     throw new UnsupportedOperationException("Unimplemented method 'stop'");
+  }
+
+  @AutoLogOutput(key = "TaskScheduler/NumOfTasks")
+  public int getNumberOfTasks() {
+    return m_tasks.size();
+  }
+
+  @AutoLogOutput(key = "TaskScheduler/hasAnyTasks")
+  public boolean hasAnyTasks() {
+    return !m_tasks.isEmpty();
   }
 }

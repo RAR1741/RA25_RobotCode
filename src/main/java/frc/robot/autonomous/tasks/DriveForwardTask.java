@@ -40,7 +40,7 @@ public class DriveForwardTask extends Task {
     double xSpeed = m_speed * Math.cos(currentPose.getRotation().getRadians());
     double ySpeed = m_speed * Math.sin(currentPose.getRotation().getRadians());
 
-    m_swerve.drive(xSpeed, ySpeed, 0, true);
+    m_swerve.drive(xSpeed, ySpeed, 0, false);
   }
 
   @Override

@@ -10,11 +10,13 @@ public abstract class Task {
 
   public abstract void update();
 
-  public void updateSim() {}
+  public void updateSim() {
+  }
 
   public abstract boolean isFinished();
 
-  public void done() {};
+  public void done() {
+  };
 
   public void logIsRunning(boolean isRunning) {
     Logger.recordOutput("Auto/Tasks/" + this.getClass().getSimpleName(), isRunning);

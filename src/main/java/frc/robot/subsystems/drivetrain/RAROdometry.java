@@ -119,12 +119,12 @@ public class RAROdometry extends Subsystem {
 
   public void setAllianceGyroAngleAdjustment() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      setGyroAngleAdjustment(180.0);
-    } else {
       setGyroAngleAdjustment(0.0);
+    } else {
+      setGyroAngleAdjustment(180.0);
     }
 
-    resetRotation(Rotation2d.fromDegrees(getGyroYawDeg()));
+    resetRotation(getRotation2d());
   }
 
   public void setGyroAngleAdjustment(double angle) {
@@ -205,7 +205,7 @@ public class RAROdometry extends Subsystem {
 
   @AutoLogOutput(key = "Odometry/Gyro/YawDeg")
   public double getGyroYawDeg() {
-    return m_gyro.getAngle();
+    return m_gyro.getRotation2d().getDegrees();
   }
 
   // @AutoLogOutput(key = "Odometry/Gyro/UpdateRate")
@@ -225,12 +225,12 @@ public class RAROdometry extends Subsystem {
 
   // @AutoLogOutput(key = "Odometry/Gyro/RollDeg")
   // public double getGyroRollDeg() {
-  //   return m_gyro.getRoll();
+  // return m_gyro.getRoll();
   // }
 
   // @AutoLogOutput(key = "Odometry/Gyro/NavXTimestamp")
   // public double getNavXTimestamp() {
-  //   return (double) m_gyro.getLastSensorTimestamp();
+  // return (double) m_gyro.getLastSensorTimestamp();
   // }
 
   @AutoLogOutput(key = "Odometry/PoseEstimator/Pose2d")

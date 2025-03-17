@@ -98,7 +98,9 @@ public class Elevator extends Subsystem {
     L1,
     L2,
     L3,
-    L4
+    L4,
+    ALGAE_LOW,
+    ALGAE_HIGH
   }
 
   private static class PeriodicIO {
@@ -123,7 +125,7 @@ public class Elevator extends Subsystem {
 
     // Set PID controller to new state
     m_leftPIDController.setReference(
-        m_currentState.position,
+        m_currentState.position, // setpoint to reach
         SparkBase.ControlType.kPosition,
         ClosedLoopSlot.kSlot0,
         RobotConstants.robotConfig.Elevator.k_FF,
@@ -146,17 +148,17 @@ public class Elevator extends Subsystem {
     // if the LaserCAN cannot see any coral, we can safely assume that the elevator
     // is free to move
 
-    // if (!m_laserCan.getEntranceSeesCoral()) { TODO Add LaserCan to end effector and replace this line with that call
+    // if (!m_laserCan.getEntranceSeesCoral()) { TODO Add LaserCan to end effector
+    // and replace this line with that call
     m_periodicIO.target_state = state;
     // }
   }
 
-  @AutoLogOutput(key = "Elevator/IsAtState") 
+  @AutoLogOutput(key = "Elevator/IsAtState")
   public boolean getIsAtState() {
-    if(RobotBase.isSimulation()) {
+    if (RobotBase.isSimulation()) {
       return true;
     }
-    
     double currentPos = getCurrentPosition();
     double targetPos = getElevatorTarget();
     double allowedError = RobotConstants.robotConfig.Elevator.k_allowedError;
@@ -206,6 +208,12 @@ public class Elevator extends Subsystem {
       }
       case L4 -> {
         return RobotConstants.robotConfig.Elevator.k_L4Height;
+      }
+      case ALGAE_HIGH -> {
+        return RobotConstants.robotConfig.Elevator.k_highAlgaeHeight;
+      }
+      case ALGAE_LOW -> {
+        return RobotConstants.robotConfig.Elevator.k_lowAlgaeHeight;
       }
       default -> {
         return RobotConstants.robotConfig.Elevator.k_stowHeight;
