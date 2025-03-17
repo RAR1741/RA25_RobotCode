@@ -65,7 +65,7 @@ public class AutoRunner {
   private void onAutoChange(String newAuto) {
     // Color color = DriverStation.getAlliance().get().equals(Alliance.Blue) ? Color.kBlue : Color.kRed;
     Optional<Alliance> alliance = DriverStation.getAlliance();
-    Color color = Color.kRed;
+    Color color = Color.kWhite;
     if(alliance.isPresent()) {
       color = alliance.get().equals(Alliance.Blue) ? Color.kBlue : Color.kRed;
     }
