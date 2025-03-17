@@ -1,5 +1,9 @@
 package frc.robot.autonomous;
 
+import java.util.Optional;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.RobotTelemetry;
 import frc.robot.autonomous.modes.AutoModeBase;
@@ -29,7 +33,7 @@ public class AutoRunner {
 
   private AutoRunner() {
     // Use this to set the default auto mode
-    AutoMode defaultAuto = AutoMode.TEST; // TODO: maybe change this
+    AutoMode defaultAuto = AutoMode.CENTER; // TODO: maybe change this
     m_leds = LEDs.getInstance();
 
     m_autoChooser = AutoChooser.getInstance();
@@ -60,14 +64,11 @@ public class AutoRunner {
 
   private void onAutoChange(String newAuto) {
     // Color color = DriverStation.getAlliance().get().equals(Alliance.Blue) ? Color.kBlue : Color.kRed;
-    // Alliance alliance = DriverStation.getAlliance().get();
-    // Color color;
-    // if(alliance != null) {
-    //   color = alliance.equals(Alliance.Blue) ? Color.kBlue : Color.kRed;
-    // } else {
-    //   color = Color.kBlue;
-    // }
+    Optional<Alliance> alliance = DriverStation.getAlliance();
     Color color = Color.kRed;
+    if(alliance.isPresent()) {
+      color = alliance.get().equals(Alliance.Blue) ? Color.kBlue : Color.kRed;
+    }
     RobotTelemetry.print("AUTO CHANGED");
     m_selectedAuto = AutoMode.valueOf(newAuto);
     RobotTelemetry.print(m_selectedAuto.toString());
