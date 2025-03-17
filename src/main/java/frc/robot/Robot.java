@@ -326,6 +326,10 @@ public class Robot extends LoggedRobot {
       m_hopper.forward();
     }
 
+    if (m_operatorController.getWantsElevatorOverride()){
+      m_elevator.setState(m_operatorController.getDesiredElevatorState());
+    }
+
     if (m_driverController.getWantsClearTellyTasks()) {
       m_taskScheduler.reset();
     }
