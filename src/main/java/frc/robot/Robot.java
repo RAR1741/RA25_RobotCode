@@ -326,8 +326,14 @@ public class Robot extends LoggedRobot {
       m_hopper.forward();
     }
 
+    ElevatorState elevatorState = m_operatorController.getDesiredElevatorState();
     if (m_operatorController.getWantsElevatorOverride()){
-      m_elevator.setState(m_operatorController.getDesiredElevatorState());
+      m_elevator.setState(elevatorState);
+      if(elevatorState == ElevatorState.L4) {
+        m_arm.setArmState(ArmState.EXTEND);
+      } else {
+        m_arm.setArmState(ArmState.STOW);
+      }
     }
 
     if (m_driverController.getWantsClearTellyTasks()) {
