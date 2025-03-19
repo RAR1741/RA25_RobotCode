@@ -248,14 +248,6 @@ public class Robot extends LoggedRobot {
         } else if (m_operatorController.getWantsRightIntakeStow()) {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
         }
-
-        if (m_operatorController.getWantsIntakeEject()) {
-          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
-          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
-        } else if (m_operatorController.getWantsIntakeStopEjecting()) {
-          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
-        }
       }
 
       if (m_driverController.getWantsResetOdometry()) {

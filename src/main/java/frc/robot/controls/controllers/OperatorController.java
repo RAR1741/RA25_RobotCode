@@ -18,7 +18,7 @@ public class OperatorController extends FilteredController {
   private final int k_leftIntakeButton = Button.LEFT_BUMPER;
 
   public boolean getWantsLeftIntakeGround() {
-    return getRawButton(k_leftIntakeButton);
+    return getRawButtonPressed(k_leftIntakeButton);
   }
 
   public boolean getWantsLeftIntakeStow() {
@@ -28,21 +28,11 @@ public class OperatorController extends FilteredController {
   private final int k_rightIntakeButton = Button.RIGHT_BUMPER;
 
   public boolean getWantsRightIntakeGround() {
-    return getRawButton(k_rightIntakeButton);
+    return getRawButtonPressed(k_rightIntakeButton);
   }
 
   public boolean getWantsRightIntakeStow() {
     return getRawButtonReleased(k_rightIntakeButton);
-  }
-
-  private final int k_intakeEjectButton = Button.B;
-
-  public boolean getWantsIntakeEject() {
-    return getRawButton(k_intakeEjectButton);
-  }
-
-  public boolean getWantsIntakeStopEjecting() {
-    return getRawButtonReleased(k_intakeEjectButton);
   }
 
   public ElevatorState getDesiredElevatorState() {

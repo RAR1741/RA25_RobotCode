@@ -35,10 +35,12 @@ public class MonarchConstants extends Constants {
     Intake.Left.k_groundPosition = 0.19023025035858154;
     Intake.Left.k_ejectPosition = 0.31802046298980713;
     Intake.Left.k_horizontalPosition = 0.31802046298980713;
+    Intake.Left.k_stuckPosition = 0.5542285442352295;
 
     Intake.Right.k_stowPosition = 0.4848584532737732;
     Intake.Right.k_groundPosition = 0.8430086374282837;
     Intake.Right.k_ejectPosition = 0.7199869155883789;
     Intake.Right.k_horizontalPosition = 0.7199869155883789;
+    Intake.Right.k_stuckPosition = 0.7980979681015015;
   }
 }

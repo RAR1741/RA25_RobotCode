@@ -269,32 +269,33 @@ public class Constants {
     public final int k_rollerMotorIdRight = 43;
 
     public final int k_pivotCurrentLimit = 30;
-    public final int k_rollerCurrentLimit = 40;
+    public final int k_rollerCurrentLimit = 60;
 
     public final double k_rollerGearRatio = (1.0 / 4.0);
 
-    // TODO: maybe tune more for higher speed, needs to match with drive train speed
-    public final double k_pivotMotorP = 15.0;
+    public final double k_pivotMotorP = 4.0; //15.0;
     public final double k_pivotMotorI = 0.0;
-    public final double k_pivotMotorD = 0.0007; // TODO: Please don't do this
+    public final double k_pivotMotorD = 0.0;
 
     public final double k_pivotMotorKS = 0.0;
-    public final double k_pivotMotorKG = 0.35;
+    public final double k_pivotMotorKG = -0.25;
     public final double k_pivotMotorKV = 0.0;
     public final double k_pivotMotorKA = 0.0;
 
     // TODO: maybe tune P and FF further
-    public final double k_rollerMotorP = 0.000425; // 0.0017;
+    public final double k_rollerMotorP = 0.001; //0.0015; 
     public final double k_rollerMotorI = 0.0;
-    public final double k_rollerMotorD = 0.0; // 0.1;
-    public final double k_rollerMotorFF = 0.0006; // 0.25
+    public final double k_rollerMotorD = 0.0; 
+    public final double k_rollerMotorFF = 0.0006; 
 
-    public final double k_maxAcceleration = 3.0;
-    public final double k_maxVelocity = 1.0;
+    public final double k_maxAcceleration = 4.0;
+    public final double k_maxVelocity = 2.0;
 
-    public final double k_maxIntakeSpeed = 400.0; 
+    public final double k_maxIntakeSpeed = 300.0; 
 
     public final double k_allowedPivotError = 0.01;
+    public final double k_lowestRollerSpeed = -1000.0; //TODO: Make this work
+    public final int k_debounceLimit = 5;
 
     public final LeftConstants Left = new LeftConstants();
     public final RightConstants Right = new RightConstants();
@@ -304,6 +305,7 @@ public class Constants {
       public double k_groundPosition;
       public double k_ejectPosition;
       public double k_horizontalPosition;
+      public double k_stuckPosition;
     }
 
     public class RightConstants {
@@ -311,6 +313,7 @@ public class Constants {
       public double k_groundPosition;
       public double k_ejectPosition;
       public double k_horizontalPosition;
+      public double k_stuckPosition;
     }
   }
 

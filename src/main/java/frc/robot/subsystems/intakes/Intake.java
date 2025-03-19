@@ -2,6 +2,7 @@ package frc.robot.subsystems.intakes;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.AutoLogOutputManager;
+import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -81,7 +82,7 @@ public class Intake {
     // pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
     // }
 
-    // rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
+    rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
     pivotConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_pivotCurrentLimit);
 
     pivotConfig.inverted(true);
@@ -117,7 +118,26 @@ public class Intake {
     m_periodicIO.desiredIntakeState = target;
   }
 
+  int counter = 0;
+
   public void periodic() {
+    getRollerVolts();
+    if (getRollerSpeed() <= RobotConstants.robotConfig.Intake.k_lowestRollerSpeed
+        && getPivotAngle() > getTargetPivotAngle(IntakeState.EJECT) && getDesiredIntakeState() != "STOW") {
+      counter++;
+      if (counter > RobotConstants.robotConfig.Intake.k_debounceLimit) {
+        setIntakeState(IntakeState.STUCK);
+        counter = 0;
+      }
+    } else {
+      counter = 0;
+    }
+
+    Logger.recordOutput("Intakes/" + m_intakeName + "/DebounceCounter", counter);
+    Logger.recordOutput("Intakes/" + m_intakeName + "/IsRollerBelowLowest",
+        getRollerSpeed() <= RobotConstants.robotConfig.Intake.k_lowestRollerSpeed);
+    Logger.recordOutput("Intakes/" + m_intakeName + "/IsPivotAboveHorz",
+        getPivotAngle() > getTargetPivotAngle(IntakeState.EJECT));
   }
 
   public void reset() {
@@ -139,6 +159,8 @@ public class Intake {
 
     double ff = m_pivotFeedforward.calculate(getPivotReferenceToHorizontal(), m_currentState.velocity);
 
+    Logger.recordOutput("Intakes/" + m_intakeName + "/Feedforward", ff);
+
     // Set PID controller to new state
     m_pivotPIDController.setReference(
         m_currentState.position,
@@ -150,7 +172,9 @@ public class Intake {
     if (getDesiredRollerSpeed() != 0.0) {
       m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
     } else {
-      m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
+      if (isAtState()) {
+        m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
+      }
     }
   }
 
@@ -186,6 +210,9 @@ public class Intake {
       case INTAKE -> {
         return RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
       }
+      case STUCK -> {
+        return RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
+      }
       case EJECT -> {
         return -RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
       }
@@ -195,9 +222,8 @@ public class Intake {
     }
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotAngleFromTarget")
-  public double getTargetPivotAngle() {
-    switch (m_periodicIO.desiredIntakeState) {
+  public double getTargetPivotAngle(IntakeState state) {
+    switch (state) {
       case STOW -> {
         if (m_intakeName.equalsIgnoreCase("Left")) {
           return RobotConstants.robotConfig.Intake.Left.k_stowPosition;
@@ -219,6 +245,13 @@ public class Intake {
           return RobotConstants.robotConfig.Intake.Right.k_horizontalPosition;
         }
       }
+      case STUCK -> {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_stuckPosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_stuckPosition;
+        }
+      }
       default -> {
         if (m_intakeName.equalsIgnoreCase("Left")) {
           return RobotConstants.robotConfig.Intake.Left.k_stowPosition;
@@ -227,6 +260,11 @@ public class Intake {
         }
       }
     }
+  }
+
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotAngleFromTarget")
+  public double getTargetPivotAngle() {
+    return getTargetPivotAngle(m_periodicIO.desiredIntakeState);
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotAngle")
@@ -265,9 +303,20 @@ public class Intake {
     return m_pivotMotor.getOutputCurrent();
   }
 
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/RollerAmps")
+  public double getRollerCurrentAmps() {
+    return m_rollerMotor.getOutputCurrent();
+  }
+
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/RollerVolts")
+  public double getRollerVolts() {
+    return Helpers.getVoltage(m_rollerMotor);
+  }
+
   public enum IntakeState {
     STOW,
     INTAKE,
+    STUCK,
     EJECT
   }
 }
