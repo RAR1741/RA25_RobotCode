@@ -92,4 +92,8 @@ public class OperatorController extends FilteredController {
   public boolean getStoppedReverseHopper() {
     return this.getRawButtonReleased(k_hopperButton);
   }
+
+  public boolean getWantsElevatorOverride(){
+    return this.getRawButton(Button.START);
+  }
 }

@@ -6,9 +6,8 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.constants.RobotConstants;
-import frc.robot.subsystems.Subsystem;
 
-public class LEDs extends Subsystem {
+public class LEDs implements Runnable {
   private static LEDs m_instance;
 
   private AddressableLED m_led;
@@ -21,6 +20,8 @@ public class LEDs extends Subsystem {
       .setColor(Color.kRed);
   private Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> m_rightColor = LEDModes.rainbowChase;
 
+  private Thread m_thread;
+
   public static LEDs getInstance() {
     if (m_instance == null) {
       m_instance = new LEDs();
@@ -29,18 +30,19 @@ public class LEDs extends Subsystem {
   }
 
   private LEDs() {
-    super("LEDs");
-
     if (RobotConstants.robotConfig.LEDs.k_isEnabled) {
       m_led = new AddressableLED(RobotConstants.robotConfig.LEDs.k_PWMId);
       m_led.setLength(m_ledTotalLength);
       m_buffer = new AddressableLEDBuffer(m_ledTotalLength);
       m_led.start();
+
+      m_thread = new Thread(this);
+      m_thread.setDaemon(true);
     }
   }
 
   @Override
-  public void periodic() {
+  public void run() {
     if (RobotConstants.robotConfig.LEDs.k_isEnabled) {
       setRightColorMode();
       setLeftColorMode();
@@ -135,17 +137,5 @@ public class LEDs extends Subsystem {
     m_buffer = m_rightColor.apply(RobotConstants.robotConfig.LEDs.Right.k_start)
         .apply(RobotConstants.robotConfig.LEDs.Right.k_length)
         .apply(m_buffer);
-  }
-
-  @Override
-  public void stop() {
-  }
-
-  @Override
-  public void writePeriodicOutputs() {
-  }
-
-  @Override
-  public void reset() {
   }
 }
