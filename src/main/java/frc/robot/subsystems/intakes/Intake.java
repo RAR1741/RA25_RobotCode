@@ -28,14 +28,17 @@ import frc.robot.constants.RobotConstants;
 public class Intake {
   private final String m_intakeName;
 
+  private final PeriodicIO m_periodicIO;
+
   private final SparkMax m_pivotMotor;
   private final SparkFlex m_rollerMotor;
-  private final PeriodicIO m_periodicIO;
+
   private final SparkClosedLoopController m_pivotPIDController;
   private final SparkClosedLoopController m_rollerPIDController;
+
   private final ArmFeedforward m_pivotFeedforward;
 
-  // TODO Use SmartMotion or MAXMotion
+  // TODO: Use SmartMotion or MAXMotion
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
@@ -180,7 +183,6 @@ public class Intake {
 
   public void stop() {
     m_periodicIO.desiredIntakeState = IntakeState.STOW;
-    m_pivotPIDController.setReference(0.0, ControlType.kVoltage);
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/IsAtState")

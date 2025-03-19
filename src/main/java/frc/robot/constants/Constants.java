@@ -77,7 +77,7 @@ public class Constants {
     public final double k_maxAngularAcceleration = 46.304; // Radians per second^2, pulled from Choreo
 
     public final double k_slowScaler = 0.5; // % reduction in speed
-    public final double k_boostScaler = (4.5 / 2.0); // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
+    public final double k_boostScaler = 4.5 / 2.0; // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
 
     public final double k_wheelRadiusIn = 2.0; // inches
     public final double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
@@ -244,12 +244,28 @@ public class Constants {
     public final int k_leftMotorId = 31;
     public final int k_rightMotorId = 32;
 
-    public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
-    public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
-    public final double[] k_forwardIndexSlowSpeeds = new double[] { 0.10, 0.10 };
-    public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
-    public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
-    public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
+    public final double k_rollerGearRatio = 1.0 / 10.0;
+
+    public final double k_rollerP = 0.0;
+    public final double k_rollerI = 0.0;
+    public final double k_rollerD = 0.0;
+    public final double k_rollerFF = 0.0;
+
+    public final double k_speedScaleFactor = 1.0;
+
+    // public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
+    // public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
+    // public final double[] k_forwardIndexSlowSpeeds = new double[] { 0.10, 0.10 };
+    // public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
+    // public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
+    // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
+
+    public final double k_stopSpeed = 0.0;
+    public final double k_forwardIndexFastSpeed = 0.0;
+    public final double k_forwardIndexSlowSpeed = 0.0;
+    public final double k_reverseIndexSpeed = 0.0;
+    public final double k_branchSpeed = 0.0;
+    public final double k_troughSpeed = 0.0;
   }
 
   public static class LaserCanConstants {
