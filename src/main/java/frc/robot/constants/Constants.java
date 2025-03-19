@@ -192,10 +192,10 @@ public class Constants {
     public final double k_IZone = 0.0;
     public final double k_FF = 0.50;
 
-    public final double k_maxVelocity = 130;
-    public final double k_maxAcceleration = 400;
+    public final double k_maxVelocity = 150; //130;
+    public final double k_maxAcceleration = 600; //400;
 
-    public final int k_maxCurrent = 40;
+    public final int k_maxCurrent = 50;
 
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
@@ -216,7 +216,7 @@ public class Constants {
 
     public final double k_P = 10.8;
     public final double k_I = 0.0;
-    public final double k_D = 0.0;
+    public final double k_D = 0.005;
     public final double k_IZone = 0.0;
 
     public final double k_FFS = 0.0;
@@ -227,15 +227,15 @@ public class Constants {
     public final double k_constantVoltage = -0.4;
     public final double k_stowThreshold = 0.02;
 
-    public final int k_maxCurrent = 10; // TODO: maybe change this?
+    public final int k_maxCurrent = 20; // TODO: maybe change this?
 
     public double k_stowAngle;
     public double k_L4Angle;
     public double k_horizontalAngle;
     public double k_sourceAngle;
 
-    public final double k_maxAcceleration = 0.8;
-    public final double k_maxVelocity = 0.4;
+    public final double k_maxAcceleration = 2.0;
+    public final double k_maxVelocity = 0.8;
 
     public final double k_allowedError = 0.02; // TODO: Change this please 🥺
   }
