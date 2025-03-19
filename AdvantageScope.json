@@ -21,8 +21,6 @@
             "/RealOutputs/Odometry/Limelight",
             "/RealOutputs/Odometry/Limelight/limelight-front",
             "/RealOutputs/Odometry/Limelight/limelight-front/RawPoseEstimation",
-            "/RealOutputs/Intakes/Right/Current",
-            "/RealOutputs/Intakes/Right/Desired",
             "/RealOutputs/LaserCans/Entrance",
             "/RealOutputs/Auto/Tasks",
             "/RealOutputs/Auto/DriveTrajectory",
@@ -33,22 +31,21 @@
             "/RealOutputs/ASPoseHelper/PoseAligner/GoalPose",
             "/RealOutputs/ASPoseHelper/Red/Reef",
             "/RealOutputs/ASPoseHelper/Red/Reef/targets",
-            "/RealOutputs/TaskScheduler",
             "/RealOutputs/OperatorController",
             "/RealOutputs/SysID",
             "/RealOutputs/SysID/drive",
-            "/RealOutputs/SwerveDrive",
             "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/FR/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder",
-            "/RealOutputs/Intakes/Left",
-            "/RealOutputs/LaserCans",
-            "/RealOutputs/LaserCans/Exit"
+            "/RealOutputs/LaserCans/Exit",
+            "/RealOutputs/Intakes",
+            "/RealOutputs/Intakes/Right",
+            "/RealOutputs/Intakes/Left"
           ]
         },
         "tabs": {
-          "selected": 3,
+          "selected": 13,
           "tabs": [
             {
               "type": 0,
@@ -291,9 +288,9 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -9.396130369652179,
-                  7.251089361883371,
-                  0.6532992586259685
+                  -9.06827313806339,
+                  7.427501179503779,
+                  0.48465335488426026
                 ],
                 "cameraTarget": [
                   -2.5925518150474236,
@@ -843,7 +840,7 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/Arm/CurrentAmps",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e48b32",
                       "size": "normal"
@@ -856,6 +853,16 @@
                     "visible": false,
                     "options": {
                       "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Arm/ff",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#3b875a",
                       "size": "normal"
                     }
                   }
@@ -892,7 +899,17 @@
                     }
                   }
                 ],
-                "discreteSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Arm/State",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#858584"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -970,7 +987,28 @@
               "type": 1,
               "title": "Right Intake",
               "controller": {
-                "leftSources": [],
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Right/PivotAmps",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Right/Feedforward",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  }
+                ],
                 "rightSources": [
                   {
                     "type": "stepped",
@@ -989,6 +1027,16 @@
                     "visible": true,
                     "options": {
                       "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Right/Desired/PivotAngleFromTarget",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#858584",
                       "size": "normal"
                     }
                   }
@@ -1032,6 +1080,110 @@
             },
             {
               "type": 1,
+              "title": "Right Rollers",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Right/RollerAmps",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Right/DebounceCounter",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Right/RollerVolts",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#3b875a",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Right/Desired/RollerSpeed",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Right/Current/RollerSpeed",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Intakes/Right/Desired/IntakeState",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#858584"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Intakes/Right/IsPivotAboveHorz",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Intakes/Right/IsRollerBelowLowest",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#c0b487"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "tswvk2lxg2exqzae0pd3c7m3mnwwegb1",
+              "renderer": null,
+              "controlsHeight": 274
+            },
+            {
+              "type": 1,
               "title": "Left Intake",
               "controller": {
                 "leftSources": [],
@@ -1053,6 +1205,16 @@
                     "visible": true,
                     "options": {
                       "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Intakes/Left/Desired/PivotAngleFromTarget",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32",
                       "size": "normal"
                     }
                   }
