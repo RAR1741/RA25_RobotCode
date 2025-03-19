@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
@@ -118,6 +119,8 @@ public class Arm extends Subsystem {
     m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
 
     double ff = m_feedForward.calculate(absolutePositionToHorizontalRads(), m_currentState.velocity);
+
+    Logger.recordOutput(loggingKey + "/ff", ff);
 
     if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold) {
       m_motor.setVoltage(RobotConstants.robotConfig.Arm.k_constantVoltage);

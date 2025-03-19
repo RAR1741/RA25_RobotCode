@@ -49,10 +49,10 @@ public class Intake {
     AutoLogOutputManager.addObject(this);
 
     m_pivotFeedforward = new ArmFeedforward(
-        RobotConstants.robotConfig.Arm.k_FFS,
-        RobotConstants.robotConfig.Arm.k_FFG,
-        RobotConstants.robotConfig.Arm.k_FFV,
-        RobotConstants.robotConfig.Arm.k_FFA);
+        RobotConstants.robotConfig.Intake.k_pivotMotorKS,
+        RobotConstants.robotConfig.Intake.k_pivotMotorKG,
+        RobotConstants.robotConfig.Intake.k_pivotMotorKV,
+        RobotConstants.robotConfig.Intake.k_pivotMotorKA);
 
     m_profile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
