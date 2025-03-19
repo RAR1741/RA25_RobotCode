@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
@@ -304,9 +304,9 @@ public class Robot extends LoggedRobot {
     }
 
     // if(m_operatorController.isDPadUsed()) {
-    //   RobotTelemetry.print("Resetting Op Tasks!");
-    //   m_operatorController.getDesiredElevatorState();
-    //   m_taskScheduler.reset();
+    // RobotTelemetry.print("Resetting Op Tasks!");
+    // m_operatorController.getDesiredElevatorState();
+    // m_taskScheduler.reset();
     // }
 
     if (m_operatorController.getWantsReverseHopper()) {
@@ -319,9 +319,9 @@ public class Robot extends LoggedRobot {
     }
 
     ElevatorState elevatorState = m_operatorController.getDesiredElevatorState();
-    if (m_operatorController.getWantsElevatorOverride()){
+    if (m_operatorController.getWantsElevatorOverride()) {
       m_elevator.setState(elevatorState);
-      if(elevatorState == ElevatorState.L4) {
+      if (elevatorState == ElevatorState.L4) {
         m_arm.setArmState(ArmState.EXTEND);
       } else {
         m_arm.setArmState(ArmState.STOW);

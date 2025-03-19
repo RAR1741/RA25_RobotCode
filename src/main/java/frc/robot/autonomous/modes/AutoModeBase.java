@@ -79,14 +79,21 @@ public abstract class AutoModeBase {
   public static ArrayList<Task> getAutoScoreTasks(ElevatorState elevatorState, Branch branch) {
     ArrayList<Task> tasks = new ArrayList<>();
     ArmState armTarget;
+    boolean useSafePose;
+    DriveToPoseTask firstDriveTask;
+
     if (elevatorState == ElevatorState.L4) {
       armTarget = ArmState.EXTEND;
+      useSafePose = true;
+      firstDriveTask = new DriveToPoseTask(Branch.NONE);
     } else {
       armTarget = ArmState.STOW;
+      useSafePose = false;
+      firstDriveTask = new DriveToPoseTask(branch);
     }
 
     tasks.add(new ParallelTask(
-        new DriveToPoseTask(Branch.NONE),
+        firstDriveTask,
         new SequentialTask(
             new WaitTask(WaitCondition.END_EFFECTOR_INDEXED),
             new ParallelTask(
@@ -94,15 +101,12 @@ public abstract class AutoModeBase {
                 new ArmTask(armTarget)))));
 
     // Drive to score
-    tasks.add(new DriveToPoseTask(branch));
+    if (useSafePose) {
+      tasks.add(new DriveToPoseTask(branch));
+    }
 
     // Score
-    // tasks.add(new ParallelTask(
     tasks.add(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
-    // new WaitTask(0.4)));
-
-    // tasks.add(new EndEffectorTask(EndEffectorState.OFF));
-    // tasks.add(new DriveToPoseTask(Branch.NONE));
 
     return tasks;
   }
