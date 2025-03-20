@@ -246,10 +246,10 @@ public class Constants {
 
     public final double k_rollerGearRatio = 1.0 / 10.0;
 
-    public final double k_rollerP = 0.0;
-    public final double k_rollerI = 0.0;
+    public final double k_rollerP = 0.0015;
+    public final double k_rollerI = 0.000;
     public final double k_rollerD = 0.0;
-    public final double k_rollerFF = 0.0;
+    public final double k_rollerFF = 0.001;
 
     public final double k_speedScaleFactor = 1.0;
 
@@ -261,11 +261,10 @@ public class Constants {
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
 
     public final double k_stopSpeed = 0.0;
-    public final double k_forwardIndexFastSpeed = 0.0;
-    public final double k_forwardIndexSlowSpeed = 0.0;
-    public final double k_reverseIndexSpeed = 0.0;
-    public final double k_branchSpeed = 0.0;
-    public final double k_troughSpeed = 0.0;
+    public final double k_forwardIndexFastSpeed = 40.0;
+    public final double k_forwardIndexSlowSpeed = 20.0;
+    public final double k_branchSpeed = 80.0;
+    public final double k_troughSpeed = 80.0;
   }
 
   public static class LaserCanConstants {

@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.Helpers;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Arm.ArmState;
@@ -89,7 +90,7 @@ public class EndEffector extends Subsystem {
     OFF,
     FORWARD_INDEX_FAST,
     FORWARD_INDEX_SLOW,
-    REVERSE_INDEX,
+    // REVERSE_INDEX,
     SCORE_BRANCHES,
     SCORE_TROUGH,
     INDEXED
@@ -135,23 +136,47 @@ public class EndEffector extends Subsystem {
 
   @Override
   public void periodic() {
-    checkAutoTasks();
+    updateState();
   }
 
   @Override
   public void writePeriodicOutputs() {
     double desiredSpeed = getDesiredRollerSpeed();
 
-    if (desiredSpeed != 0.0) {
-      m_rightRollerPIDController.setReference(desiredSpeed, ControlType.kVelocity);
-      m_leftRollerPIDController.setReference(
-        desiredSpeed * RobotConstants.robotConfig.EndEffector.k_speedScaleFactor,
-        ControlType.kVelocity);
-    }
-    else {
-      m_rightRollerPIDController.setReference(0.0, ControlType.kVoltage);
-      m_leftRollerPIDController.setReference(0.0, ControlType.kVoltage);
-    }
+    m_rightRollerPIDController.setReference(desiredSpeed, ControlType.kVelocity);
+    m_leftRollerPIDController.setReference(
+      desiredSpeed * RobotConstants.robotConfig.EndEffector.k_speedScaleFactor,
+      ControlType.kVelocity);
+  }
+
+  @AutoLogOutput(key = "EndEffector/RightMotorVoltage")
+  public double getRightMotorVoltage() {
+    return Helpers.getVoltage(m_rightMotor);
+  }
+
+  @AutoLogOutput(key = "EndEffector/LeftMotorVoltage")
+  public double getLeftMotorVoltage() {
+    return Helpers.getVoltage(m_leftMotor);
+  }
+
+  @AutoLogOutput(key = "EndEffector/RightMotorCurrent")
+  public double getRightMotorCurrent() {
+    return m_rightMotor.getOutputCurrent();
+  }
+
+  @AutoLogOutput(key = "EndEffector/LeftMotorCurrent")
+  public double getLeftMotorCurrent() {
+    return m_leftMotor.getOutputCurrent();
+  }
+
+  @AutoLogOutput(key = "EndEffector/RightMotorVelocityRPM")
+  public double getRightMotorVelocity() {
+    return m_rightMotor.getEncoder().getVelocity();
+  }
+
+  @AutoLogOutput(key = "EndEffector/LeftMotorVelocityRPM")
+  public double getLeftMotorVelocity() {
+    return m_leftMotor.getEncoder().getVelocity();
   }
 
   @AutoLogOutput(key = "EndEffector/IsSafeToScore")
@@ -179,9 +204,9 @@ public class EndEffector extends Subsystem {
         return RobotConstants.robotConfig.EndEffector.k_forwardIndexFastSpeed;
       }
 
-      case REVERSE_INDEX -> {
-        return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
-      }
+      // case REVERSE_INDEX -> {
+      //   return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
+      // }
 
       case SCORE_BRANCHES -> {
         if (m_arm.getArmState() == ArmState.EXTEND || m_elevator.getTargetState() == ElevatorState.L4) {
@@ -206,7 +231,7 @@ public class EndEffector extends Subsystem {
     off();
   }
 
-  private void checkAutoTasks() {
+  private void updateState() {
     switch (m_periodicIO.state) {
       case FORWARD_INDEX_FAST -> {
         if (m_laserCan.getExitSeesCoral()) {
@@ -216,15 +241,15 @@ public class EndEffector extends Subsystem {
 
       case FORWARD_INDEX_SLOW -> {
         if (!m_laserCan.getEntranceSeesCoral()) {
-          setState(EndEffectorState.REVERSE_INDEX);
-        }
-      }
-
-      case REVERSE_INDEX -> {
-        if (m_laserCan.getEntranceSeesCoral()) {
           setState(EndEffectorState.INDEXED);
         }
       }
+
+      // case REVERSE_INDEX -> {
+      //   if (m_laserCan.getEntranceSeesCoral()) {
+      //     setState(EndEffectorState.INDEXED);
+      //   }
+      // }
 
       case INDEXED -> {
         if (!m_laserCan.getExitSeesCoral()) {
