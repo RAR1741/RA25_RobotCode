@@ -263,8 +263,9 @@ public class Constants {
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
 
     public final double k_stopSpeed = 0.0;
-    public final double k_forwardIndexFastSpeed = 120.0;
+    public final double k_forwardIndexFastSpeed = 200.0;
     public final double k_forwardIndexSlowSpeed = 80.0;
+    public final double k_reverseIndexSpeed = -40.0;
     public final double k_branchSpeed = 300.0;
     public final double k_troughSpeed = 300.0;
   }
