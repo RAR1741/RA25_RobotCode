@@ -338,6 +338,8 @@ public class Constants {
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
     public final double k_hopperSpeed = 0.3;
+
+    public final int k_maxCurrent = 20;
   }
 
   public static class AutoAlignConstants {

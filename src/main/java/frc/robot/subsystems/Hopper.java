@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.RobotConstants;
 
 public class Hopper extends Subsystem {
@@ -15,9 +16,14 @@ public class Hopper extends Subsystem {
   private final SparkMax m_hopperMotor;
   private static PeriodicIO m_periodicIO;
 
+  private int m_stuckCounter = 0;
+  private int m_stuckMax = 10;
+
+  private double m_unstuckTime = 0.5;
+  private Timer m_unstuckTimer = new Timer();
+
   public static class PeriodicIO {
-    boolean is_hopper_on = false;
-    boolean reverse = false;
+    HopperState state = HopperState.OFF;
   }
 
   private Hopper() {
@@ -30,7 +36,10 @@ public class Hopper extends Subsystem {
     SparkMaxConfig config = new SparkMaxConfig();
 
     // add config
-    config.inverted(false);
+    config
+        .smartCurrentLimit(RobotConstants.robotConfig.Hopper.k_maxCurrent)
+        .inverted(false);
+
     m_hopperMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_periodicIO = new PeriodicIO();
@@ -44,19 +53,36 @@ public class Hopper extends Subsystem {
   }
 
   public void on() {
-    m_periodicIO.is_hopper_on = true;
+    setState(HopperState.INDEX);
   }
 
   public void off() {
-    m_periodicIO.is_hopper_on = false;
+    setState(HopperState.OFF);
   }
 
   public void forward() {
-    m_periodicIO.reverse = false;
+    setState(HopperState.INDEX);
   }
 
   public void reverse() {
-    m_periodicIO.reverse = true;
+    setState(HopperState.REVERSE);
+  }
+
+  public enum HopperState {
+    OFF,
+    INDEX,
+    REVERSE,
+    STUCK
+  }
+
+  public void setState(HopperState state) {
+    // Don't allow overriding of the STUCK state
+    // while the timer is still running
+    if (m_periodicIO.state != HopperState.STUCK) {
+      m_periodicIO.state = state;
+    } else if (m_unstuckTimer.get() > m_unstuckTime) {
+      m_periodicIO.state = state;
+    }
   }
 
   @Override
@@ -66,13 +92,29 @@ public class Hopper extends Subsystem {
 
   @Override
   public void periodic() {
+    if (getCurrent() > 15.0) {
+      m_stuckCounter++;
+
+      if (m_stuckCounter > m_stuckMax) {
+        setState(HopperState.STUCK);
+        m_unstuckTimer.reset();
+        m_unstuckTimer.start();
+      }
+    } else {
+      m_stuckCounter = 0;
+    }
+
+    if (m_periodicIO.state == HopperState.STUCK && m_unstuckTimer.get() > m_unstuckTime) {
+      setState(HopperState.INDEX);
+    }
   }
 
   @Override
   public void writePeriodicOutputs() {
     double speed = RobotConstants.robotConfig.Hopper.k_hopperSpeed;
-    if (m_periodicIO.reverse) {
-      speed *= -1;
+
+    if (m_periodicIO.state == HopperState.REVERSE || m_periodicIO.state == HopperState.STUCK) {
+      speed *= -0.7;
     }
     if (isHopperOn()) {
       m_hopperMotor.set(speed);
@@ -93,10 +135,15 @@ public class Hopper extends Subsystem {
 
   @AutoLogOutput(key = "Hopper/IsOn")
   public boolean isHopperOn() {
-    return m_periodicIO.is_hopper_on;
+    return m_periodicIO.state != HopperState.OFF;
   }
 
-  @AutoLogOutput(key = "Hopper/CurrentCurrentAtThisCurrentMoment")
+  @AutoLogOutput(key = "Hopper/State")
+  public HopperState getHopperState() {
+    return m_periodicIO.state;
+  }
+
+  @AutoLogOutput(key = "Hopper/amps")
   public double getCurrent() {
     return m_hopperMotor.getOutputCurrent();
   }
