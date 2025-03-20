@@ -1,5 +1,6 @@
 package frc.robot.subsystems.leds;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 
 import edu.wpi.first.math.MathUtil;
@@ -8,6 +9,15 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public final class LEDModes {
   private static final double k_scale = 0.5;
+
+  public static ArrayList<Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>> makeAL(
+      Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>... tempArray) {
+    ArrayList<Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>> tempL = new ArrayList<>(
+        tempArray.length);
+    for (Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> x : tempArray)
+      tempL.add(x);
+    return tempL;
+  }
 
   public static Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> setColor(
       Color color) {

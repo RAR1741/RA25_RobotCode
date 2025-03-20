@@ -255,6 +255,7 @@ public class Robot extends LoggedRobot {
       }
 
       ElevatorState desiredElevatorState = m_operatorController.getDesiredElevatorState();
+      m_leds.setColorFromElevatorState(desiredElevatorState);
 
       if (m_driverController.getWantsAutoScoreLeft()) {
         m_leds.setLeftColor(Color.kGreen);

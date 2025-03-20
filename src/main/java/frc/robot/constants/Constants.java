@@ -365,27 +365,28 @@ public class Constants {
   }
 
   public static class LEDConstants {
-    // public int k_PWMId = 1;
     public int k_PWMId = 0;
     public boolean k_isEnabled = true;
-    public int k_drivetrainUnusedLEDCount = 30;
+    public int k_drivetrainUnusedLEDCount = 38;
 
-    public RightSideElevator Right = new RightSideElevator();
+    public RightElevator Right = new RightElevator();
 
-    public class RightSideElevator {
+    public class RightElevator {
       public int k_start = 0;
-      public int k_length = 120;
+      // public int k_sections = 8;
+      public int k_sectionLength = 15;
+
+      public int k_length = 116;
     }
 
-    public LeftSideElevator Left = new LeftSideElevator();
+    public LeftElevator Left = new LeftElevator();
 
-    public class LeftSideElevator {
+    public class LeftElevator {
       public int k_start = k_drivetrainUnusedLEDCount + Right.k_start + Right.k_length;
-      public int k_length = 120;
+      public int k_length = 116;
     }
 
     public int k_totalLength = 300;
-
   }
 
   // TODO add Gamepiece class for Coral- and Algae-related constants
