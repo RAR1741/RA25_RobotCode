@@ -39,13 +39,12 @@
             "/RealOutputs/SwerveDrive/Modules/BR/AbsoluteEncoder",
             "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder",
             "/RealOutputs/LaserCans/Exit",
-            "/RealOutputs/Intakes",
             "/RealOutputs/Intakes/Right",
-            "/RealOutputs/Intakes/Left"
+            "/RealOutputs/Hopper"
           ]
         },
         "tabs": {
-          "selected": 13,
+          "selected": 3,
           "tabs": [
             {
               "type": 0,
@@ -288,14 +287,14 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -9.06827313806339,
-                  7.427501179503779,
-                  0.48465335488426026
+                  -10.089997247474917,
+                  10.27788622425322,
+                  0.4781192794940041
                 ],
                 "cameraTarget": [
-                  -2.5925518150474236,
-                  -5.051671574125309,
-                  0.5152795651753141
+                  -2.378076749845899,
+                  -4.943052211825455,
+                  0.48926170872458286
                 ]
               },
               "controlsHeight": 295
@@ -985,6 +984,120 @@
             },
             {
               "type": 1,
+              "title": "EndEffector",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/EndEffector/LeftMotorCurrent",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/EndEffector/RightMotorCurrent",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#858584",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/LaserCans/Entrance/distance",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/LaserCans/Exit/distance",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/EndEffector/LeftMotorVelocityRPM",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#3b875a",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/EndEffector/RightMotorVelocityRPM",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#d993aa",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/EndEffector/State",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/LaserCans/Entrance/seesCoral",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/LaserCans/Exit/seesCoral",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "hasxa3gq788i8l063bz5gsr2bxjqbgm3",
+              "renderer": null,
+              "controlsHeight": 310
+            },
+            {
+              "type": 1,
               "title": "Right Intake",
               "controller": {
                 "leftSources": [
@@ -1258,23 +1371,24 @@
             },
             {
               "type": 1,
-              "title": "EndEffector",
+              "title": "Hopper",
               "controller": {
-                "leftSources": [],
-                "rightSources": [
+                "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/LaserCans/Entrance/distance",
+                    "logKey": "/RealOutputs/Hopper/amps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#e5b31b",
+                      "color": "#2b66a2",
                       "size": "normal"
                     }
-                  },
+                  }
+                ],
+                "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/LaserCans/Exit/distance",
+                    "logKey": "/RealOutputs/Hopper/Velocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -1286,29 +1400,20 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/EndEffector/State",
+                    "logKey": "/RealOutputs/Hopper/IsOn",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Hopper/State",
                     "logType": "String",
                     "visible": true,
                     "options": {
-                      "color": "#2b66a2"
-                    }
-                  },
-                  {
-                    "type": "stripes",
-                    "logKey": "/RealOutputs/LaserCans/Entrance/seesCoral",
-                    "logType": "Boolean",
-                    "visible": true,
-                    "options": {
                       "color": "#80588e"
-                    }
-                  },
-                  {
-                    "type": "stripes",
-                    "logKey": "/RealOutputs/LaserCans/Exit/seesCoral",
-                    "logType": "Boolean",
-                    "visible": true,
-                    "options": {
-                      "color": "#e48b32"
                     }
                   }
                 ],
@@ -1325,7 +1430,7 @@
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "hasxa3gq788i8l063bz5gsr2bxjqbgm3",
+              "controllerUUID": "fsqgijav6todsy1m1zyjiqiceagxzf0r",
               "renderer": null,
               "controlsHeight": 200
             },
