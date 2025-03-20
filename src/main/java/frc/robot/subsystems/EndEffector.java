@@ -61,15 +61,17 @@ public class EndEffector extends Subsystem {
 
     SparkBaseConfig rollerConfig = new SparkFlexConfig();
 
-    rollerConfig.idleMode(IdleMode.kBrake);
+    rollerConfig
+        .smartCurrentLimit(RobotConstants.robotConfig.EndEffector.k_maxCurrent)
+        .idleMode(IdleMode.kBrake);
 
     rollerConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.EndEffector.k_rollerGearRatio);
 
     rollerConfig.closedLoop.pidf(
-      RobotConstants.robotConfig.EndEffector.k_rollerP,
-      RobotConstants.robotConfig.EndEffector.k_rollerI,
-      RobotConstants.robotConfig.EndEffector.k_rollerD,
-      RobotConstants.robotConfig.EndEffector.k_rollerFF);
+        RobotConstants.robotConfig.EndEffector.k_rollerP,
+        RobotConstants.robotConfig.EndEffector.k_rollerI,
+        RobotConstants.robotConfig.EndEffector.k_rollerD,
+        RobotConstants.robotConfig.EndEffector.k_rollerFF);
 
     m_rightMotor.configure(
         rollerConfig,
@@ -99,7 +101,7 @@ public class EndEffector extends Subsystem {
   public void setState(EndEffectorState state) {
     m_periodicIO.state = state;
 
-    switch(state) {
+    switch (state) {
       case OFF -> {
         m_leds.setAllColor(Color.kRed);
       }
@@ -145,8 +147,8 @@ public class EndEffector extends Subsystem {
 
     m_rightRollerPIDController.setReference(desiredSpeed, ControlType.kVelocity);
     m_leftRollerPIDController.setReference(
-      desiredSpeed * RobotConstants.robotConfig.EndEffector.k_speedScaleFactor,
-      ControlType.kVelocity);
+        desiredSpeed * RobotConstants.robotConfig.EndEffector.k_speedScaleFactor,
+        ControlType.kVelocity);
   }
 
   @AutoLogOutput(key = "EndEffector/RightMotorVoltage")
@@ -205,7 +207,7 @@ public class EndEffector extends Subsystem {
       }
 
       // case REVERSE_INDEX -> {
-      //   return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
+      // return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
       // }
 
       case SCORE_BRANCHES -> {
@@ -246,9 +248,9 @@ public class EndEffector extends Subsystem {
       }
 
       // case REVERSE_INDEX -> {
-      //   if (m_laserCan.getEntranceSeesCoral()) {
-      //     setState(EndEffectorState.INDEXED);
-      //   }
+      // if (m_laserCan.getEntranceSeesCoral()) {
+      // setState(EndEffectorState.INDEXED);
+      // }
       // }
 
       case INDEXED -> {

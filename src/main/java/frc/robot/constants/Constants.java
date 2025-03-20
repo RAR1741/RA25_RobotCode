@@ -192,8 +192,8 @@ public class Constants {
     public final double k_IZone = 0.0;
     public final double k_FF = 0.50;
 
-    public final double k_maxVelocity = 150; //130;
-    public final double k_maxAcceleration = 600; //400;
+    public final double k_maxVelocity = 150; // 130;
+    public final double k_maxAcceleration = 600; // 400;
 
     public final int k_maxCurrent = 50;
 
@@ -246,12 +246,14 @@ public class Constants {
 
     public final double k_rollerGearRatio = 1.0 / 10.0;
 
-    public final double k_rollerP = 0.0015;
+    public final double k_rollerP = 0.0010;
     public final double k_rollerI = 0.000;
     public final double k_rollerD = 0.0;
     public final double k_rollerFF = 0.001;
 
-    public final double k_speedScaleFactor = 1.0;
+    public final int k_maxCurrent = 20;
+
+    public final double k_speedScaleFactor = 3.0 / 2.0; // Right diameter / left diameter
 
     // public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
     // public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
@@ -261,10 +263,10 @@ public class Constants {
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
 
     public final double k_stopSpeed = 0.0;
-    public final double k_forwardIndexFastSpeed = 40.0;
-    public final double k_forwardIndexSlowSpeed = 20.0;
-    public final double k_branchSpeed = 80.0;
-    public final double k_troughSpeed = 80.0;
+    public final double k_forwardIndexFastSpeed = 120.0;
+    public final double k_forwardIndexSlowSpeed = 80.0;
+    public final double k_branchSpeed = 300.0;
+    public final double k_troughSpeed = 300.0;
   }
 
   public static class LaserCanConstants {
@@ -288,7 +290,7 @@ public class Constants {
 
     public final double k_rollerGearRatio = (1.0 / 4.0);
 
-    public final double k_pivotMotorP = 4.0; //15.0;
+    public final double k_pivotMotorP = 4.0; // 15.0;
     public final double k_pivotMotorI = 0.0;
     public final double k_pivotMotorD = 0.0;
 
@@ -298,18 +300,18 @@ public class Constants {
     public final double k_pivotMotorKA = 0.0;
 
     // TODO: maybe tune P and FF further
-    public final double k_rollerMotorP = 0.001; //0.0015; 
+    public final double k_rollerMotorP = 0.001; // 0.0015;
     public final double k_rollerMotorI = 0.0;
-    public final double k_rollerMotorD = 0.0; 
-    public final double k_rollerMotorFF = 0.0006; 
+    public final double k_rollerMotorD = 0.0;
+    public final double k_rollerMotorFF = 0.0006;
 
     public final double k_maxAcceleration = 4.0;
     public final double k_maxVelocity = 2.0;
 
-    public final double k_maxIntakeSpeed = 300.0; 
+    public final double k_maxIntakeSpeed = 300.0;
 
     public final double k_allowedPivotError = 0.01;
-    public final double k_lowestRollerSpeed = -1000.0; //TODO: Make this work
+    public final double k_lowestRollerSpeed = -1000.0; // TODO: Make this work
     public final int k_debounceLimit = 5;
 
     public final LeftConstants Left = new LeftConstants();
