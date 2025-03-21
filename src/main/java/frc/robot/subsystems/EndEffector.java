@@ -2,8 +2,10 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -11,6 +13,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.Helpers;
 import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Arm.ArmState;
@@ -20,10 +23,13 @@ import frc.robot.subsystems.leds.LEDs;
 public class EndEffector extends Subsystem {
   private static EndEffector m_instance;
 
-  private PeriodicIO m_periodicIO;
+  private final PeriodicIO m_periodicIO;
 
-  SparkMax m_leftMotor;
-  SparkMax m_rightMotor;
+  private final SparkMax m_leftMotor;
+  private final SparkMax m_rightMotor;
+
+  private final SparkClosedLoopController m_rightRollerPIDController;
+  private final SparkClosedLoopController m_leftRollerPIDController;
 
   private LaserCanHandler m_laserCan;
   private Arm m_arm;
@@ -45,19 +51,35 @@ public class EndEffector extends Subsystem {
     m_leftMotor = new SparkMax(RobotConstants.robotConfig.EndEffector.k_leftMotorId, MotorType.kBrushless);
     m_rightMotor = new SparkMax(RobotConstants.robotConfig.EndEffector.k_rightMotorId, MotorType.kBrushless);
 
+    m_rightRollerPIDController = m_rightMotor.getClosedLoopController();
+    m_leftRollerPIDController = m_leftMotor.getClosedLoopController();
+
     m_laserCan = LaserCanHandler.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
     m_leds = LEDs.getInstance();
 
-    SparkBaseConfig endEffectorConfig = new SparkFlexConfig().idleMode(IdleMode.kBrake);
+    SparkBaseConfig rollerConfig = new SparkFlexConfig();
+
+    rollerConfig
+        .smartCurrentLimit(RobotConstants.robotConfig.EndEffector.k_maxCurrent)
+        .idleMode(IdleMode.kBrake);
+
+    rollerConfig.encoder.velocityConversionFactor(RobotConstants.robotConfig.EndEffector.k_rollerGearRatio);
+
+    rollerConfig.closedLoop.pidf(
+        RobotConstants.robotConfig.EndEffector.k_rollerP,
+        RobotConstants.robotConfig.EndEffector.k_rollerI,
+        RobotConstants.robotConfig.EndEffector.k_rollerD,
+        RobotConstants.robotConfig.EndEffector.k_rollerFF);
 
     m_rightMotor.configure(
-        endEffectorConfig,
+        rollerConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
+
     m_leftMotor.configure(
-        endEffectorConfig.inverted(true),
+        rollerConfig.inverted(true),
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
   }
@@ -79,7 +101,7 @@ public class EndEffector extends Subsystem {
   public void setState(EndEffectorState state) {
     m_periodicIO.state = state;
 
-    switch(state) {
+    switch (state) {
       case OFF -> {
         m_leds.setAllColor(Color.kRed);
       }
@@ -110,21 +132,51 @@ public class EndEffector extends Subsystem {
 
   @Override
   public void reset() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'reset'");
   }
 
   @Override
   public void periodic() {
-    checkAutoTasks();
+    updateState();
   }
 
   @Override
   public void writePeriodicOutputs() {
-    double[] speeds = getIntakeSpeeds();
+    double desiredSpeed = getDesiredRollerSpeed();
 
-    m_leftMotor.set(speeds[0]);
-    m_rightMotor.set(speeds[1]);
+    m_rightRollerPIDController.setReference(desiredSpeed, ControlType.kVelocity);
+    m_leftRollerPIDController.setReference(
+        desiredSpeed * RobotConstants.robotConfig.EndEffector.k_speedScaleFactor,
+        ControlType.kVelocity);
+  }
+
+  @AutoLogOutput(key = "EndEffector/RightMotorVoltage")
+  public double getRightMotorVoltage() {
+    return Helpers.getVoltage(m_rightMotor);
+  }
+
+  @AutoLogOutput(key = "EndEffector/LeftMotorVoltage")
+  public double getLeftMotorVoltage() {
+    return Helpers.getVoltage(m_leftMotor);
+  }
+
+  @AutoLogOutput(key = "EndEffector/RightMotorCurrent")
+  public double getRightMotorCurrent() {
+    return m_rightMotor.getOutputCurrent();
+  }
+
+  @AutoLogOutput(key = "EndEffector/LeftMotorCurrent")
+  public double getLeftMotorCurrent() {
+    return m_leftMotor.getOutputCurrent();
+  }
+
+  @AutoLogOutput(key = "EndEffector/RightMotorVelocityRPM")
+  public double getRightMotorVelocity() {
+    return m_rightMotor.getEncoder().getVelocity();
+  }
+
+  @AutoLogOutput(key = "EndEffector/LeftMotorVelocityRPM")
+  public double getLeftMotorVelocity() {
+    return m_leftMotor.getEncoder().getVelocity();
   }
 
   @AutoLogOutput(key = "EndEffector/IsSafeToScore")
@@ -138,49 +190,48 @@ public class EndEffector extends Subsystem {
   }
 
   @AutoLogOutput(key = "EndEffector/Position/Target")
-  private double[] getIntakeSpeeds() {
+  private double getDesiredRollerSpeed() {
     switch (m_periodicIO.state) {
       case OFF -> {
-        return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_stopSpeed;
       }
 
       case FORWARD_INDEX_SLOW -> {
-        return RobotConstants.robotConfig.EndEffector.k_forwardIndexSlowSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_forwardIndexSlowSpeed;
       }
 
       case FORWARD_INDEX_FAST -> {
-        return RobotConstants.robotConfig.EndEffector.k_forwardIndexFastSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_forwardIndexFastSpeed;
       }
 
       case REVERSE_INDEX -> {
-        return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
       }
 
       case SCORE_BRANCHES -> {
         if (m_arm.getArmState() == ArmState.EXTEND || m_elevator.getTargetState() == ElevatorState.L4) {
-          return new double[] { -RobotConstants.robotConfig.EndEffector.k_branchSpeeds[0],
-              -RobotConstants.robotConfig.EndEffector.k_branchSpeeds[1] };
+          return -RobotConstants.robotConfig.EndEffector.k_branchSpeed;
         }
-        return RobotConstants.robotConfig.EndEffector.k_branchSpeeds;
+
+        return RobotConstants.robotConfig.EndEffector.k_branchSpeed;
       }
 
       case SCORE_TROUGH -> {
-        return RobotConstants.robotConfig.EndEffector.k_troughSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_troughSpeed;
       }
 
       default -> {
-        return RobotConstants.robotConfig.EndEffector.k_stopSpeeds;
+        return RobotConstants.robotConfig.EndEffector.k_stopSpeed;
       }
     }
   }
 
   @Override
   public void stop() {
-    // we might want more here later, but this is enough for testing
     off();
   }
 
-  private void checkAutoTasks() {
+  private void updateState() {
     switch (m_periodicIO.state) {
       case FORWARD_INDEX_FAST -> {
         if (m_laserCan.getExitSeesCoral()) {
@@ -190,6 +241,7 @@ public class EndEffector extends Subsystem {
 
       case FORWARD_INDEX_SLOW -> {
         if (!m_laserCan.getEntranceSeesCoral()) {
+          // setState(EndEffectorState.INDEXED);
           setState(EndEffectorState.REVERSE_INDEX);
         }
       }

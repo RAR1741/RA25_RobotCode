@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
@@ -233,28 +233,28 @@ public class Robot extends LoggedRobot {
         m_swerve.drive(xSpeed, ySpeed, rot, true);
       }
 
-      if (!isSafeToIndex() || isSafeToExtend()) {
+      if (m_operatorController.getWantsIntakeEject()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
+      } else if (m_operatorController.getWantsIntakeEjectStopped()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
       } else {
-        if (m_operatorController.getWantsLeftIntakeGround()) {
-          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsLeftIntakeStow()) {
-          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-        }
-
-        if (m_operatorController.getWantsRightIntakeGround()) {
-          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsRightIntakeStow()) {
-          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
-        }
-
-        if (m_operatorController.getWantsIntakeEject()) {
-          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
-          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
-        } else if (m_operatorController.getWantsIntakeStopEjecting()) {
+        if (!isSafeToIndex() || isSafeToExtend()) {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+        } else {
+          if (m_operatorController.getWantsLeftIntakeGround()) {
+            m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
+          } else if (m_operatorController.getWantsLeftIntakeStow()) {
+            m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+          }
+  
+          if (m_operatorController.getWantsRightIntakeGround()) {
+            m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
+          } else if (m_operatorController.getWantsRightIntakeStow()) {
+            m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+          }
         }
       }
 
@@ -263,6 +263,7 @@ public class Robot extends LoggedRobot {
       }
 
       ElevatorState desiredElevatorState = m_operatorController.getDesiredElevatorState();
+      m_leds.setColorFromElevatorState(desiredElevatorState);
 
       if (m_driverController.getWantsAutoScoreLeft()) {
         m_leds.setLeftColor(Color.kGreen);
@@ -289,7 +290,6 @@ public class Robot extends LoggedRobot {
         }
       }
 
-      // TODO: maybe also check if indexed?
       if (isSafeToIndex()) {
         m_hopper.on();
       } else {
@@ -312,9 +312,9 @@ public class Robot extends LoggedRobot {
     }
 
     // if(m_operatorController.isDPadUsed()) {
-    //   RobotTelemetry.print("Resetting Op Tasks!");
-    //   m_operatorController.getDesiredElevatorState();
-    //   m_taskScheduler.reset();
+    // RobotTelemetry.print("Resetting Op Tasks!");
+    // m_operatorController.getDesiredElevatorState();
+    // m_taskScheduler.reset();
     // }
 
     if (m_operatorController.getWantsReverseHopper()) {
@@ -324,6 +324,16 @@ public class Robot extends LoggedRobot {
       m_hopper.forward();
     } else {
       m_hopper.forward();
+    }
+
+    ElevatorState elevatorState = m_operatorController.getDesiredElevatorState();
+    if (m_operatorController.getWantsElevatorOverride()) {
+      m_elevator.setState(elevatorState);
+      if (elevatorState == ElevatorState.L4) {
+        m_arm.setArmState(ArmState.EXTEND);
+      } else {
+        m_arm.setArmState(ArmState.STOW);
+      }
     }
 
     if (m_driverController.getWantsClearTellyTasks()) {
@@ -368,7 +378,6 @@ public class Robot extends LoggedRobot {
   private void stow() {
     m_elevator.setState(ElevatorState.STOW);
     m_arm.setArmState(ArmState.STOW);
-    // m_endEffector.setState(EndEffectorState.OFF); // TODO: FIX THIS (aka remove)
   }
 
   @Override

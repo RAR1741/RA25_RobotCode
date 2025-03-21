@@ -20,8 +20,8 @@ public class DriveToPoseTask extends Task {
   private final RAROdometry m_odometry;
   private final PoseAligner m_poseAligner;
 
-  private double k_translationErrorThreshold = Units.inchesToMeters(0.5);
-  private double k_rotationErrorThreshold = 0.5; // degrees
+  private final double k_translationErrorThreshold;
+  private final double k_rotationErrorThreshold; // degrees
 
   private Branch m_branch;
   private int m_station; // FeederStation
@@ -32,9 +32,17 @@ public class DriveToPoseTask extends Task {
     m_odometry = RAROdometry.getInstance();
     m_poseAligner = PoseAligner.getInstance();
 
+    
     if (branch == Branch.NONE) {
+      // Safe pose
       k_translationErrorThreshold = Units.inchesToMeters(4);
+      k_rotationErrorThreshold = 1.0;
+    } else {
+      // Scoring poses
+      k_translationErrorThreshold = Units.inchesToMeters(0.5);
+      k_rotationErrorThreshold = 0.5;
     }
+    
 
     m_branch = branch;
     m_station = -1;
@@ -45,6 +53,10 @@ public class DriveToPoseTask extends Task {
     m_odometry = RAROdometry.getInstance();
     m_poseAligner = PoseAligner.getInstance();
     m_direction = direction;
+
+    // Feeder poses
+    k_translationErrorThreshold = Units.inchesToMeters(12);
+    k_rotationErrorThreshold = 5.0;
   }
 
   @Override
@@ -99,8 +111,6 @@ public class DriveToPoseTask extends Task {
   public void done() {
     logIsRunning(false);
 
-    // TODO: THIS
-    // m_swerve.stop();
     m_swerve.drive(0.0, 0.0, 0.0, true);
   }
 }

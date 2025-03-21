@@ -2,6 +2,7 @@ package frc.robot.subsystems.intakes;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.AutoLogOutputManager;
+import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -27,14 +28,17 @@ import frc.robot.constants.RobotConstants;
 public class Intake {
   private final String m_intakeName;
 
+  private final PeriodicIO m_periodicIO;
+
   private final SparkMax m_pivotMotor;
   private final SparkFlex m_rollerMotor;
-  private final PeriodicIO m_periodicIO;
+
   private final SparkClosedLoopController m_pivotPIDController;
   private final SparkClosedLoopController m_rollerPIDController;
+
   private final ArmFeedforward m_pivotFeedforward;
 
-  // TODO Use SmartMotion or MAXMotion
+  // TODO: Use SmartMotion or MAXMotion
   private TrapezoidProfile m_profile;
   private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
@@ -49,10 +53,10 @@ public class Intake {
     AutoLogOutputManager.addObject(this);
 
     m_pivotFeedforward = new ArmFeedforward(
-        RobotConstants.robotConfig.Arm.k_FFS,
-        RobotConstants.robotConfig.Arm.k_FFG,
-        RobotConstants.robotConfig.Arm.k_FFV,
-        RobotConstants.robotConfig.Arm.k_FFA);
+        RobotConstants.robotConfig.Intake.k_pivotMotorKS,
+        RobotConstants.robotConfig.Intake.k_pivotMotorKG,
+        RobotConstants.robotConfig.Intake.k_pivotMotorKV,
+        RobotConstants.robotConfig.Intake.k_pivotMotorKA);
 
     m_profile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
@@ -81,7 +85,7 @@ public class Intake {
     // pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
     // }
 
-    // rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
+    rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
     pivotConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_pivotCurrentLimit);
 
     pivotConfig.inverted(true);
@@ -117,7 +121,26 @@ public class Intake {
     m_periodicIO.desiredIntakeState = target;
   }
 
+  int counter = 0;
+
   public void periodic() {
+    getRollerVolts();
+    if (getRollerSpeed() <= RobotConstants.robotConfig.Intake.k_lowestRollerSpeed
+        && getPivotAngle() > getTargetPivotAngle(IntakeState.EJECT) && getDesiredIntakeState() != "STOW") {
+      counter++;
+      if (counter > RobotConstants.robotConfig.Intake.k_debounceLimit) {
+        setIntakeState(IntakeState.STUCK);
+        counter = 0;
+      }
+    } else {
+      counter = 0;
+    }
+
+    Logger.recordOutput("Intakes/" + m_intakeName + "/DebounceCounter", counter);
+    Logger.recordOutput("Intakes/" + m_intakeName + "/IsRollerBelowLowest",
+        getRollerSpeed() <= RobotConstants.robotConfig.Intake.k_lowestRollerSpeed);
+    Logger.recordOutput("Intakes/" + m_intakeName + "/IsPivotAboveHorz",
+        getPivotAngle() > getTargetPivotAngle(IntakeState.EJECT));
   }
 
   public void reset() {
@@ -139,6 +162,8 @@ public class Intake {
 
     double ff = m_pivotFeedforward.calculate(getPivotReferenceToHorizontal(), m_currentState.velocity);
 
+    Logger.recordOutput("Intakes/" + m_intakeName + "/Feedforward", ff);
+
     // Set PID controller to new state
     m_pivotPIDController.setReference(
         m_currentState.position,
@@ -150,13 +175,14 @@ public class Intake {
     if (getDesiredRollerSpeed() != 0.0) {
       m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
     } else {
-      m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
+      if (isAtState()) {
+        m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
+      }
     }
   }
 
   public void stop() {
     m_periodicIO.desiredIntakeState = IntakeState.STOW;
-    m_pivotPIDController.setReference(0.0, ControlType.kVoltage);
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/IsAtState")
@@ -186,6 +212,9 @@ public class Intake {
       case INTAKE -> {
         return RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
       }
+      case STUCK -> {
+        return RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
+      }
       case EJECT -> {
         return -RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
       }
@@ -195,9 +224,8 @@ public class Intake {
     }
   }
 
-  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotAngleFromTarget")
-  public double getTargetPivotAngle() {
-    switch (m_periodicIO.desiredIntakeState) {
+  public double getTargetPivotAngle(IntakeState state) {
+    switch (state) {
       case STOW -> {
         if (m_intakeName.equalsIgnoreCase("Left")) {
           return RobotConstants.robotConfig.Intake.Left.k_stowPosition;
@@ -214,9 +242,16 @@ public class Intake {
       }
       case EJECT -> {
         if (m_intakeName.equalsIgnoreCase("Left")) {
-          return RobotConstants.robotConfig.Intake.Left.k_horizontalPosition;
+          return getPivotAngle();
         } else {
-          return RobotConstants.robotConfig.Intake.Right.k_horizontalPosition;
+          return getPivotAngle();
+        }
+      }
+      case STUCK -> {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_stuckPosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_stuckPosition;
         }
       }
       default -> {
@@ -227,6 +262,11 @@ public class Intake {
         }
       }
     }
+  }
+
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotAngleFromTarget")
+  public double getTargetPivotAngle() {
+    return getTargetPivotAngle(m_periodicIO.desiredIntakeState);
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Current/PivotAngle")
@@ -265,9 +305,20 @@ public class Intake {
     return m_pivotMotor.getOutputCurrent();
   }
 
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/RollerAmps")
+  public double getRollerCurrentAmps() {
+    return m_rollerMotor.getOutputCurrent();
+  }
+
+  @AutoLogOutput(key = "Intakes/{m_intakeName}/RollerVolts")
+  public double getRollerVolts() {
+    return Helpers.getVoltage(m_rollerMotor);
+  }
+
   public enum IntakeState {
     STOW,
     INTAKE,
+    STUCK,
     EJECT
   }
 }

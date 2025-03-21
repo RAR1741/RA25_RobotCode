@@ -77,7 +77,7 @@ public class Constants {
     public final double k_maxAngularAcceleration = 46.304; // Radians per second^2, pulled from Choreo
 
     public final double k_slowScaler = 0.5; // % reduction in speed
-    public final double k_boostScaler = (4.5 / 2.0); // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
+    public final double k_boostScaler = 4.5 / 2.0; // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
 
     public final double k_wheelRadiusIn = 2.0; // inches
     public final double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
@@ -192,10 +192,10 @@ public class Constants {
     public final double k_IZone = 0.0;
     public final double k_FF = 0.50;
 
-    public final double k_maxVelocity = 130;
-    public final double k_maxAcceleration = 400;
+    public final double k_maxVelocity = 150; // 130;
+    public final double k_maxAcceleration = 600; // 400;
 
-    public final int k_maxCurrent = 40;
+    public final int k_maxCurrent = 50;
 
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
@@ -214,7 +214,7 @@ public class Constants {
   public static class ArmConstants {
     public final int k_motorId = 30;
 
-    public final double k_P = 10.8;
+    public final double k_P = 5.0;
     public final double k_I = 0.0;
     public final double k_D = 0.0;
     public final double k_IZone = 0.0;
@@ -227,29 +227,47 @@ public class Constants {
     public final double k_constantVoltage = -0.4;
     public final double k_stowThreshold = 0.02;
 
-    public final int k_maxCurrent = 10; // TODO: maybe change this?
+    public final int k_maxCurrent = 30;
 
     public double k_stowAngle;
     public double k_L4Angle;
     public double k_horizontalAngle;
     public double k_sourceAngle;
 
-    public final double k_maxAcceleration = 0.8;
-    public final double k_maxVelocity = 0.4;
+    public final double k_maxAcceleration = 8.0;
+    public final double k_maxVelocity = 2.0;
 
-    public final double k_allowedError = 0.02; // TODO: Change this please 🥺
+    public final double k_allowedError = 0.02;
   }
 
   public static class EndEffectorConstants {
     public final int k_leftMotorId = 31;
     public final int k_rightMotorId = 32;
 
-    public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
-    public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
-    public final double[] k_forwardIndexSlowSpeeds = new double[] { 0.10, 0.10 };
-    public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
-    public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
-    public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
+    public final double k_rollerGearRatio = 1.0 / 10.0;
+
+    public final double k_rollerP = 0.0010;
+    public final double k_rollerI = 0.000;
+    public final double k_rollerD = 0.0;
+    public final double k_rollerFF = 0.001;
+
+    public final int k_maxCurrent = 20;
+
+    public final double k_speedScaleFactor = 3.0 / 2.0; // Right diameter / left diameter
+
+    // public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
+    // public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
+    // public final double[] k_forwardIndexSlowSpeeds = new double[] { 0.10, 0.10 };
+    // public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
+    // public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
+    // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
+
+    public final double k_stopSpeed = 0.0;
+    public final double k_forwardIndexFastSpeed = 200.0;
+    public final double k_forwardIndexSlowSpeed = 80.0;
+    public final double k_reverseIndexSpeed = -40.0;
+    public final double k_branchSpeed = 300.0;
+    public final double k_troughSpeed = 300.0;
   }
 
   public static class LaserCanConstants {
@@ -269,32 +287,33 @@ public class Constants {
     public final int k_rollerMotorIdRight = 43;
 
     public final int k_pivotCurrentLimit = 30;
-    public final int k_rollerCurrentLimit = 40;
+    public final int k_rollerCurrentLimit = 60;
 
     public final double k_rollerGearRatio = (1.0 / 4.0);
 
-    // TODO: maybe tune more for higher speed, needs to match with drive train speed
-    public final double k_pivotMotorP = 15.0;
+    public final double k_pivotMotorP = 4.0; // 15.0;
     public final double k_pivotMotorI = 0.0;
-    public final double k_pivotMotorD = 0.0007; // TODO: Please don't do this
+    public final double k_pivotMotorD = 0.0;
 
     public final double k_pivotMotorKS = 0.0;
-    public final double k_pivotMotorKG = 0.0;
+    public final double k_pivotMotorKG = -0.25;
     public final double k_pivotMotorKV = 0.0;
     public final double k_pivotMotorKA = 0.0;
 
     // TODO: maybe tune P and FF further
-    public final double k_rollerMotorP = 0.000425; // 0.0017;
+    public final double k_rollerMotorP = 0.001; // 0.0015;
     public final double k_rollerMotorI = 0.0;
-    public final double k_rollerMotorD = 0.0; // 0.1;
-    public final double k_rollerMotorFF = 0.0006; // 0.25
+    public final double k_rollerMotorD = 0.0;
+    public final double k_rollerMotorFF = 0.0006;
 
-    public final double k_maxAcceleration = 3.0;
-    public final double k_maxVelocity = 1.0;
+    public final double k_maxAcceleration = 4.0;
+    public final double k_maxVelocity = 2.0;
 
-    public final double k_maxIntakeSpeed = 400.0; 
+    public final double k_maxIntakeSpeed = 300.0;
 
     public final double k_allowedPivotError = 0.01;
+    public final double k_lowestRollerSpeed = -1000.0; // TODO: Make this work
+    public final int k_debounceLimit = 5;
 
     public final LeftConstants Left = new LeftConstants();
     public final RightConstants Right = new RightConstants();
@@ -304,6 +323,7 @@ public class Constants {
       public double k_groundPosition;
       public double k_ejectPosition;
       public double k_horizontalPosition;
+      public double k_stuckPosition;
     }
 
     public class RightConstants {
@@ -311,12 +331,15 @@ public class Constants {
       public double k_groundPosition;
       public double k_ejectPosition;
       public double k_horizontalPosition;
+      public double k_stuckPosition;
     }
   }
 
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
     public final double k_hopperSpeed = 0.3;
+
+    public final int k_maxCurrent = 20;
   }
 
   public static class AutoAlignConstants {
@@ -342,28 +365,27 @@ public class Constants {
   }
 
   public static class LEDConstants {
-    // public int k_PWMId = 1;
     public int k_PWMId = 0;
     public boolean k_isEnabled = true;
-    public int k_drivetrainUnusedLEDCount = 30;
+    public int k_drivetrainUnusedLEDCount = 38;
 
-    public RightSideElevator Right = new RightSideElevator();
+    public RightElevator Right = new RightElevator();
 
-    public class RightSideElevator {
+    public class RightElevator {
       public int k_start = 0;
-      public int k_length = 120;
+      // public int k_sections = 8;
+      public int k_sectionLength = 15;
+
+      public int k_length = 116;
     }
 
-    public LeftSideElevator Left = new LeftSideElevator();
+    public LeftElevator Left = new LeftElevator();
 
-    public class LeftSideElevator {
+    public class LeftElevator {
       public int k_start = k_drivetrainUnusedLEDCount + Right.k_start + Right.k_length;
-      public int k_length = 120;
+      public int k_length = 116;
     }
 
     public int k_totalLength = 300;
-
   }
-
-  // TODO add Gamepiece class for Coral- and Algae-related constants
 }

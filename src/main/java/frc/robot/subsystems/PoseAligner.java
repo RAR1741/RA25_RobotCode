@@ -265,7 +265,4 @@ public class PoseAligner extends Subsystem {
     int LEFT = 4;
     int RIGHT = 5;
   }
-
-  // TODO maybe change the starting pose labels to tag-specific for easier
-  // labeling
 }

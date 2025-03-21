@@ -15,7 +15,7 @@ public class AutoChooser {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private AutoChooser() {
-    m_chooser.setDefaultOption("TEST", "TEST"); // TODO: This should be DO_NOTHING or whatever we are defaulting to for auto
+    m_chooser.setDefaultOption("CENTER", "CENTER");
 
     // Populate the chooser with all the available autos
     for (AutoMode mode : AutoRunner.AutoMode.values()) {

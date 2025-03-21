@@ -33,7 +33,7 @@ public class AutoRunner {
 
   private AutoRunner() {
     // Use this to set the default auto mode
-    AutoMode defaultAuto = AutoMode.CENTER; // TODO: maybe change this
+    AutoMode defaultAuto = AutoMode.CENTER;
     m_leds = LEDs.getInstance();
 
     m_autoChooser = AutoChooser.getInstance();

@@ -32,6 +32,7 @@ public class IntakeTask extends Task {
 
   @Override
   public boolean isFinished() {
-    return m_intakes.isAtState(m_intakeVariant);
+    return true;
+    // return m_intakes.isAtState(m_intakeVariant);
   }
 }

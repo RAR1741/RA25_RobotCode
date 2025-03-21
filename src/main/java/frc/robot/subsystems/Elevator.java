@@ -145,13 +145,7 @@ public class Elevator extends Subsystem {
   }
 
   public void setState(ElevatorState state) {
-    // if the LaserCAN cannot see any coral, we can safely assume that the elevator
-    // is free to move
-
-    // if (!m_laserCan.getEntranceSeesCoral()) { TODO Add LaserCan to end effector
-    // and replace this line with that call
     m_periodicIO.target_state = state;
-    // }
   }
 
   @AutoLogOutput(key = "Elevator/IsAtState")

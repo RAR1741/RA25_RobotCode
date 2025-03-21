@@ -25,6 +25,9 @@ public class EndEffectorTask extends Task {
 
   @Override
   public boolean isFinished() {
+    if (m_targetState == EndEffectorState.SCORE_BRANCHES || m_targetState == EndEffectorState.SCORE_TROUGH) {
+      return m_endEffector.getEndEffectorState() == EndEffectorState.OFF;
+    }
     return true;
   }
 

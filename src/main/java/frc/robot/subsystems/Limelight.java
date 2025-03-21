@@ -156,10 +156,9 @@ public class Limelight implements Runnable {
     return true;
   }
 
-  // TODO Add these to Constants when we're done testing them
   private double xyStdDevCoefficient = 0.005;
   private double thetaStdDevCoefficient = 0.01;
-  private double stdDevFactor = 0.5; // TODO Add more!
+  private double stdDevFactor = 0.5;
   private boolean useVisionRotation = true;
 
   private void updatePoseWithStdDev(PoseEstimate estimate) {

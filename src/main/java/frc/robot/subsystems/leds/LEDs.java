@@ -1,11 +1,13 @@
 package frc.robot.subsystems.leds;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Subsystem;
 
 public class LEDs extends Subsystem {
@@ -17,9 +19,8 @@ public class LEDs extends Subsystem {
   private int m_ledTotalLength = RobotConstants.robotConfig.LEDs.k_totalLength;
 
   // Main sections
-  private Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> m_leftColor = LEDModes
-      .setColor(Color.kRed);
-  private Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> m_rightColor = LEDModes.rainbowChase;
+  private ArrayList<Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>> m_leftColors = new ArrayList<Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>>();
+  private ArrayList<Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>> m_rightColors = new ArrayList<Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>>();
 
   public static LEDs getInstance() {
     if (m_instance == null) {
@@ -32,6 +33,9 @@ public class LEDs extends Subsystem {
     super("LEDs");
 
     if (RobotConstants.robotConfig.LEDs.k_isEnabled) {
+      m_leftColors.add(LEDModes.rainbowChase);
+      m_rightColors.add(LEDModes.rainbowChase);
+
       m_led = new AddressableLED(RobotConstants.robotConfig.LEDs.k_PWMId);
       m_led.setLength(m_ledTotalLength);
       m_buffer = new AddressableLEDBuffer(m_ledTotalLength);
@@ -42,18 +46,19 @@ public class LEDs extends Subsystem {
   @Override
   public void periodic() {
     if (RobotConstants.robotConfig.LEDs.k_isEnabled) {
-      setRightColorMode();
-      setLeftColorMode();
+      setColorModes();
 
       m_led.setData(m_buffer);
+      m_leftColors.clear();
+      m_rightColors.clear();
     }
   }
 
   public void setAllColorMode(
       Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> mode) {
     if (RobotConstants.robotConfig.LEDs.k_isEnabled) {
-      m_leftColor = mode;
-      m_rightColor = mode;
+      m_leftColors.add(mode);
+      m_rightColors.add(mode);
     }
   }
 
@@ -65,16 +70,67 @@ public class LEDs extends Subsystem {
   }
 
   public void setLeftColor(Color color) {
-    m_leftColor = LEDModes.setColor(color);
+    m_leftColors.clear();
+    m_leftColors.add(LEDModes.setColor(color));
   }
 
   public void setLeftColor(
       Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> colorMode) {
-    m_leftColor = colorMode;
+    m_leftColors.clear();
+    m_leftColors.add(colorMode);
+  }
+
+  public void setLeftColors(
+      Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>... colors) {
+    m_leftColors = LEDModes.makeAL(colors);
   }
 
   public void setRightColor(Color color) {
-    m_rightColor = LEDModes.setColor(color);
+    m_rightColors.clear();
+    m_rightColors.add(LEDModes.setColor(color));
+  }
+
+  public void setRightColors(
+      Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>... colors) {
+    m_rightColors = LEDModes.makeAL(colors);
+  }
+
+  public void setColorFromElevatorState(ElevatorState state) {
+    switch (state) {
+      case L2:
+        setAllColorModes(
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kBlack),
+            LEDModes.setColor(Color.kBlack),
+            LEDModes.setColor(Color.kBlack),
+            LEDModes.setColor(Color.kBlack),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed));
+        break;
+      case L3:
+        setAllColorModes(
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kBlack),
+            LEDModes.setColor(Color.kBlack),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed));
+        break;
+      case L4:
+        setAllColorModes(
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed),
+            LEDModes.setColor(Color.kRed));
+        break;
+    }
   }
 
   public void chase() {
@@ -125,16 +181,54 @@ public class LEDs extends Subsystem {
     }
   }
 
-  public void setLeftColorMode() {
-    m_buffer = m_leftColor.apply(RobotConstants.robotConfig.LEDs.Left.k_start)
-        .apply(RobotConstants.robotConfig.LEDs.Left.k_length)
-        .apply(m_buffer);
+  public void setAllColorModes(
+      Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>>... colors) {
+    setLeftColors(colors);
+    setRightColors(colors);
   }
 
-  public void setRightColorMode() {
-    m_buffer = m_rightColor.apply(RobotConstants.robotConfig.LEDs.Right.k_start)
-        .apply(RobotConstants.robotConfig.LEDs.Right.k_length)
-        .apply(m_buffer);
+  public void setColorModes() {
+    for (int i = 0; i < m_rightColors.size(); i++) {
+      Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> tempMode = m_rightColors
+          .get(i);
+
+      int sections = m_rightColors.size();
+      int ledsPerSection = RobotConstants.robotConfig.LEDs.Right.k_length / sections;
+
+      m_buffer = tempMode
+          .apply(RobotConstants.robotConfig.LEDs.Right.k_start + (i * ledsPerSection))
+          .apply(ledsPerSection)
+          .apply(m_buffer);
+    }
+
+    for (int i = 0; i < m_leftColors.size(); i++) {
+      Function<Integer, Function<Integer, Function<AddressableLEDBuffer, AddressableLEDBuffer>>> tempMode = m_leftColors
+          .get(i);
+
+      int sections = m_leftColors.size();
+      int ledsPerSection = RobotConstants.robotConfig.LEDs.Left.k_length / sections;
+
+      m_buffer = tempMode
+          .apply(RobotConstants.robotConfig.LEDs.Left.k_start + (i * ledsPerSection))
+          .apply(ledsPerSection)
+          .apply(m_buffer);
+    }
+
+    // m_buffer = m_right1Color.apply(RobotConstants.robotConfig.LEDs.Left.k_start)
+    // .apply(RobotConstants.robotConfig.LEDs.Left.k_length)
+    // .apply(m_buffer);
+
+    // m_buffer = m_right2Color.apply(RobotConstants.robotConfig.LEDs.Left.k_start)
+    // .apply(RobotConstants.robotConfig.LEDs.Left.k_length)
+    // .apply(m_buffer);
+
+    // m_buffer = m_right3Color.apply(RobotConstants.robotConfig.LEDs.Left.k_start)
+    // .apply(RobotConstants.robotConfig.LEDs.Left.k_length)
+    // .apply(m_buffer);
+
+    // m_buffer = m_right4Color.apply(RobotConstants.robotConfig.LEDs.Left.k_start)
+    // .apply(RobotConstants.robotConfig.LEDs.Left.k_length)
+    // .apply(m_buffer);
   }
 
   @Override
