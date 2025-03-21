@@ -3,6 +3,7 @@ package frc.robot.autonomous.modes;
 import java.util.ArrayList;
 
 import frc.robot.autonomous.tasks.ArmTask;
+import frc.robot.autonomous.tasks.DoNothingTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
@@ -11,6 +12,7 @@ import frc.robot.autonomous.tasks.HopperTask;
 import frc.robot.autonomous.tasks.IntakeTask;
 import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.SequentialTask;
+import frc.robot.autonomous.tasks.SkippableTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.autonomous.tasks.WaitTask;
 import frc.robot.autonomous.tasks.WaitTask.WaitCondition;
@@ -113,6 +115,7 @@ public abstract class AutoModeBase {
 
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
     score(elevatorState, branch, new DriveToPoseTask(feederStation));
+    // score(elevatorState, branch, new SkippableTask(new DriveToPoseTask(feederStation), 2.2, new DoNothingTask()));
   }
 
   public void autoScore(ElevatorState elevatorState, Branch branch) {
@@ -140,11 +143,7 @@ public abstract class AutoModeBase {
     queueTask(new DriveToPoseTask(branch));
 
     // Score
-    queueTask(new ParallelTask(
-        new EndEffectorTask(EndEffectorState.SCORE_BRANCHES),
-        new WaitTask(0.2)));
-    queueTask(new EndEffectorTask(EndEffectorState.OFF));
-
+    queueTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
     // Drive to feeder station
     queueTask(new ParallelTask(
         finalDriveTask,
@@ -162,6 +161,7 @@ public abstract class AutoModeBase {
 
     queueTask(new ParallelTask(
         new IntakeTask(IntakeVariant.LEFT, IntakeState.STOW),
-        new IntakeTask(IntakeVariant.RIGHT, IntakeState.STOW)));
+        new IntakeTask(IntakeVariant.RIGHT, IntakeState.STOW),
+        new WaitTask(0.5)));
   }
 }

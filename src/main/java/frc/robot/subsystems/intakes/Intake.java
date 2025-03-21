@@ -242,9 +242,9 @@ public class Intake {
       }
       case EJECT -> {
         if (m_intakeName.equalsIgnoreCase("Left")) {
-          return RobotConstants.robotConfig.Intake.Left.k_horizontalPosition;
+          return getPivotAngle();
         } else {
-          return RobotConstants.robotConfig.Intake.Right.k_horizontalPosition;
+          return getPivotAngle();
         }
       }
       case STUCK -> {

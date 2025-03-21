@@ -35,6 +35,16 @@ public class OperatorController extends FilteredController {
     return getRawButtonReleased(k_rightIntakeButton);
   }
 
+  private final int k_ejectButton = Button.B;
+
+  public boolean getWantsIntakeEject() {
+    return getRawButtonPressed(k_ejectButton);
+  }
+
+  public boolean getWantsIntakeEjectStopped() {
+    return getRawButtonReleased(k_ejectButton);
+  }
+
   public ElevatorState getDesiredElevatorState() {
     if (getHatPressed(Direction.DOWN)) {
       m_desiredElevatorState = ElevatorState.L1;

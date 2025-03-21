@@ -233,20 +233,28 @@ public class Robot extends LoggedRobot {
         m_swerve.drive(xSpeed, ySpeed, rot, true);
       }
 
-      if (!isSafeToIndex() || isSafeToExtend()) {
+      if (m_operatorController.getWantsIntakeEject()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
+      } else if (m_operatorController.getWantsIntakeEjectStopped()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
-      } else {
-        if (m_operatorController.getWantsLeftIntakeGround()) {
-          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsLeftIntakeStow()) {
-          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-        }
-
-        if (m_operatorController.getWantsRightIntakeGround()) {
-          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsRightIntakeStow()) {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+      } else {
+        if (!isSafeToIndex() || isSafeToExtend()) {
+          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+        } else {
+          if (m_operatorController.getWantsLeftIntakeGround()) {
+            m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
+          } else if (m_operatorController.getWantsLeftIntakeStow()) {
+            m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+          }
+  
+          if (m_operatorController.getWantsRightIntakeGround()) {
+            m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
+          } else if (m_operatorController.getWantsRightIntakeStow()) {
+            m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+          }
         }
       }
 
