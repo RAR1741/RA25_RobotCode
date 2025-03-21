@@ -99,8 +99,6 @@ public class DriveToPoseTask extends Task {
   public void done() {
     logIsRunning(false);
 
-    // TODO: THIS
-    // m_swerve.stop();
     m_swerve.drive(0.0, 0.0, 0.0, true);
   }
 }

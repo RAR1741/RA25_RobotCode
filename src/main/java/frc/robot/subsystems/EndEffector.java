@@ -132,8 +132,6 @@ public class EndEffector extends Subsystem {
 
   @Override
   public void reset() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'reset'");
   }
 
   @Override

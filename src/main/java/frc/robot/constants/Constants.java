@@ -227,7 +227,7 @@ public class Constants {
     public final double k_constantVoltage = -0.4;
     public final double k_stowThreshold = 0.02;
 
-    public final int k_maxCurrent = 30; // TODO: maybe change this?
+    public final int k_maxCurrent = 30;
 
     public double k_stowAngle;
     public double k_L4Angle;
@@ -237,7 +237,7 @@ public class Constants {
     public final double k_maxAcceleration = 8.0;
     public final double k_maxVelocity = 2.0;
 
-    public final double k_allowedError = 0.02; // TODO: Change this please 🥺
+    public final double k_allowedError = 0.02;
   }
 
   public static class EndEffectorConstants {
@@ -388,6 +388,4 @@ public class Constants {
 
     public int k_totalLength = 300;
   }
-
-  // TODO add Gamepiece class for Coral- and Algae-related constants
 }

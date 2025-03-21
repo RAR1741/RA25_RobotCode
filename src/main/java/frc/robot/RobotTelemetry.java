@@ -7,6 +7,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.constants.RobotConstants;
 
 public class RobotTelemetry {
 
@@ -30,8 +31,7 @@ public class RobotTelemetry {
       }
     }
 
-    // TODO this
-    // Logger.recordMetadata("RobotType", RobotConstants.getRobotType().name());
+    Logger.recordMetadata("RobotType", RobotConstants.getInstance().getRobotType().name());
     Logger.recordMetadata("ProjectName", "2025 REEFSCAPE");
 
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")

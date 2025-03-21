@@ -282,7 +282,6 @@ public class Robot extends LoggedRobot {
         }
       }
 
-      // TODO: maybe also check if indexed?
       if (isSafeToIndex()) {
         m_hopper.on();
       } else {
@@ -371,7 +370,6 @@ public class Robot extends LoggedRobot {
   private void stow() {
     m_elevator.setState(ElevatorState.STOW);
     m_arm.setArmState(ArmState.STOW);
-    // m_endEffector.setState(EndEffectorState.OFF); // TODO: FIX THIS (aka remove)
   }
 
   @Override

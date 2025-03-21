@@ -49,7 +49,7 @@ public final class RobotConstants {
         robotConfig = new MonarchConstants();
       }
       default -> {
-        robotConfig = new MonarchConstants(); // TODO change this once we have Monarch
+        robotConfig = new MonarchConstants();
       }
     }
 
