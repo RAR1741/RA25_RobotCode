@@ -95,7 +95,8 @@ public class EndEffector extends Subsystem {
     REVERSE_INDEX,
     SCORE_BRANCHES,
     SCORE_TROUGH,
-    INDEXED
+    INDEXED,
+    L4_REVERSE
   }
 
   public void setState(EndEffectorState state) {
@@ -218,6 +219,10 @@ public class EndEffector extends Subsystem {
 
       case SCORE_TROUGH -> {
         return RobotConstants.robotConfig.EndEffector.k_troughSpeed;
+      }
+
+      case L4_REVERSE -> {
+        return -RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
       }
 
       default -> {

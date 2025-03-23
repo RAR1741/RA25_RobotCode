@@ -349,6 +349,7 @@ public class Constants {
     public final double k_minSafeElevatorDistance = 2.0;
 
     // Scoring offsets
+    // public final double k_l4ScoringDistance = 0.384;
     public final double k_l4ScoringDistance = 0.254;
     public final double k_otherScoringOffset = 0.0;
     public final double k_scoringHorizontalOffset = 0.175;
