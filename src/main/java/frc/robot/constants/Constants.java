@@ -253,7 +253,7 @@ public class Constants {
 
     public final int k_maxCurrent = 20;
 
-    public final double k_speedScaleFactor = 3.0 / 2.0; // Right diameter / left diameter
+    public final double k_speedScaleFactor = 4.5 / 2.0; // Right diameter / left diameter
 
     // public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
     // public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
@@ -266,8 +266,8 @@ public class Constants {
     public final double k_forwardIndexFastSpeed = 200.0;
     public final double k_forwardIndexSlowSpeed = 80.0;
     public final double k_reverseIndexSpeed = -40.0;
-    public final double k_branchSpeed = 300.0;
-    public final double k_troughSpeed = 300.0;
+    public final double k_branchSpeed = 200.0;
+    public final double k_troughSpeed = 200.0;
   }
 
   public static class LaserCanConstants {
