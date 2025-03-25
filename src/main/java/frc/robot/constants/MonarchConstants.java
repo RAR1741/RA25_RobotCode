@@ -27,7 +27,7 @@ public class MonarchConstants extends Constants {
     SwerveDrive.Turn.k_IZone = 0.0;
 
     Arm.k_stowAngle = 0.26152366399765015;
-    Arm.k_L4Angle = 0.5249119997024536;
+    Arm.k_L4Angle = 0.5249119997024536; //0.5834578275680542;
     Arm.k_horizontalAngle = 0.5074164867401123;
     Arm.k_sourceAngle = 0.37661659717559814;
 
@@ -38,7 +38,7 @@ public class MonarchConstants extends Constants {
     Intake.Left.k_stuckPosition = 0.5542285442352295;
 
     Intake.Right.k_stowPosition = 0.4848584532737732;
-    Intake.Right.k_groundPosition = 0.8430086374282837;
+    Intake.Right.k_groundPosition = 0.850831151008606; //0.8430086374282837;
     Intake.Right.k_ejectPosition = 0.7199869155883789;
     Intake.Right.k_horizontalPosition = 0.7199869155883789;
     Intake.Right.k_stuckPosition = 0.7980979681015015;

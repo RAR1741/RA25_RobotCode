@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class Intake {
   private final String m_intakeName;
@@ -205,6 +207,10 @@ public class Intake {
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/RollerSpeed")
   public double getDesiredRollerSpeed() {
+    if (!(Elevator.getInstance().getIsAtState() && Elevator.getInstance().getTargetState() == ElevatorState.STOW)) {
+      return 0.0;
+    }
+
     switch (m_periodicIO.desiredIntakeState) {
       case STOW -> {
         return 0.0;

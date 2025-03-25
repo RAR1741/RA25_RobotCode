@@ -91,7 +91,7 @@ public abstract class AutoModeBase {
     } else {
       armTarget = ArmState.STOW;
       useSafePose = false;
-      firstDriveTask = new DriveToPoseTask(branch);
+      firstDriveTask = new DriveToPoseTask(Branch.NONE);
     }
 
     tasks.add(new ParallelTask(
@@ -103,9 +103,9 @@ public abstract class AutoModeBase {
                 new ArmTask(armTarget)))));
 
     // Drive to score
-    if (useSafePose) {
+    // if (useSafePose) {
       tasks.add(new DriveToPoseTask(branch));
-    }
+    // }
 
     // Score
     tasks.add(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));

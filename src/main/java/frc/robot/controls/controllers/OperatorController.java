@@ -96,4 +96,14 @@ public class OperatorController extends FilteredController {
   public boolean getWantsElevatorOverride(){
     return this.getRawButton(Button.START);
   }
+
+  private final int k_reverseButton = Button.BACK;
+
+  public boolean getWantsReverseEndEffector() {
+    return this.getRawButton(k_reverseButton);
+  }
+
+  public boolean getWantsReverseEndEffectorStopped() {
+    return this.getRawButtonReleased(k_reverseButton);
+  }
 }

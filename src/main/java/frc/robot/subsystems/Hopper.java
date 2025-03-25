@@ -19,7 +19,7 @@ public class Hopper extends Subsystem {
   private int m_stuckCounter = 0;
   private int m_stuckMax = 10;
 
-  private double m_unstuckTime = 0.5;
+  private double m_unstuckTime = 0.3;
   private Timer m_unstuckTimer = new Timer();
 
   public static class PeriodicIO {
@@ -114,7 +114,7 @@ public class Hopper extends Subsystem {
     double speed = RobotConstants.robotConfig.Hopper.k_hopperSpeed;
 
     if (m_periodicIO.state == HopperState.REVERSE || m_periodicIO.state == HopperState.STUCK) {
-      speed *= -0.7;
+      speed *= -0.4;
     }
     if (isHopperOn()) {
       m_hopperMotor.set(speed);
