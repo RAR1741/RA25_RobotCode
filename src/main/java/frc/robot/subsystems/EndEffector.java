@@ -237,6 +237,11 @@ public class EndEffector extends Subsystem {
   }
 
   private void updateState() {
+    if (!m_laserCan.getExitSeesCoral() && getEndEffectorState() != EndEffectorState.FORWARD_INDEX_FAST && getEndEffectorState() != EndEffectorState.OFF) {
+      setState(EndEffectorState.OFF);
+      return;
+    }
+
     switch (m_periodicIO.state) {
       case FORWARD_INDEX_FAST -> {
         if (m_laserCan.getExitSeesCoral()) {

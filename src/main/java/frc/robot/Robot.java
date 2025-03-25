@@ -290,12 +290,6 @@ public class Robot extends LoggedRobot {
         }
       }
 
-      if (isSafeToIndex()) {
-        m_hopper.on();
-      } else {
-        m_hopper.off();
-      }
-
       if (m_operatorController.getWantsScore()) {
         if (m_elevator.getTargetState() == ElevatorState.L1) {
           m_endEffector.setState(EndEffectorState.SCORE_TROUGH);
@@ -323,9 +317,13 @@ public class Robot extends LoggedRobot {
     } else if (m_operatorController.getStoppedReverseHopper()) {
       m_hopper.forward();
     } else {
-      m_hopper.forward();
+      if (isSafeToIndex()) {
+        m_hopper.on();
+      } else {
+        m_hopper.off();
+      }
     }
-
+    
     ElevatorState elevatorState = m_operatorController.getDesiredElevatorState();
     if (m_operatorController.getWantsElevatorOverride()) {
       m_elevator.setState(elevatorState);
