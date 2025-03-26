@@ -54,6 +54,8 @@ public class OperatorController extends FilteredController {
       m_desiredElevatorState = ElevatorState.L3;
     } else if (getHatPressed(Direction.UP)) {
       m_desiredElevatorState = ElevatorState.L4;
+    } else if (getRawButtonPressed(Button.LEFT_JOYSTICK)) {
+      m_desiredElevatorState = ElevatorState.FEEDER_STATION;
     }
 
     Logger.recordOutput("OperatorController/DesiredElevatorState", m_desiredElevatorState.toString());

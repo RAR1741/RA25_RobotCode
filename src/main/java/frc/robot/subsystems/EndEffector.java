@@ -251,8 +251,8 @@ public class EndEffector extends Subsystem {
 
       case FORWARD_INDEX_SLOW -> {
         if (!m_laserCan.getEntranceSeesCoral()) {
-          // setState(EndEffectorState.INDEXED);
-          setState(EndEffectorState.REVERSE_INDEX);
+          setState(EndEffectorState.INDEXED);
+          // setState(EndEffectorState.REVERSE_INDEX);
         }
       }
 

@@ -100,7 +100,8 @@ public class Elevator extends Subsystem {
     L3,
     L4,
     ALGAE_LOW,
-    ALGAE_HIGH
+    ALGAE_HIGH,
+    FEEDER_STATION
   }
 
   private static class PeriodicIO {
@@ -208,6 +209,9 @@ public class Elevator extends Subsystem {
       }
       case ALGAE_LOW -> {
         return RobotConstants.robotConfig.Elevator.k_lowAlgaeHeight;
+      }
+      case FEEDER_STATION -> {
+        return RobotConstants.robotConfig.Elevator.k_feederHeight;
       }
       default -> {
         return RobotConstants.robotConfig.Elevator.k_stowHeight;

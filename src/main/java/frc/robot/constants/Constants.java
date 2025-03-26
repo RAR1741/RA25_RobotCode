@@ -203,7 +203,7 @@ public class Constants {
     public final double k_L3Height = 42.7;
     public final double k_L4Height = 60.5; // 59.6;
     public final double k_maxHeight = 60.5;
-    public final double k_feederHeight = 28.36;
+    public final double k_feederHeight = 29.57;
     // public final double k_groundAlgaeHeight = 0.0;
     public final double k_lowAlgaeHeight = 27.643;
     public final double k_highAlgaeHeight = 44.571;
@@ -246,14 +246,14 @@ public class Constants {
 
     public final double k_rollerGearRatio = 1.0 / 10.0;
 
-    public final double k_rollerP = 0.0010;
+    public final double k_rollerP = 0.0002;
     public final double k_rollerI = 0.000;
     public final double k_rollerD = 0.0;
     public final double k_rollerFF = 0.001;
 
     public final int k_maxCurrent = 20;
 
-    public final double k_speedScaleFactor = 4.5 / 2.0; // Right diameter / left diameter
+    public final double k_speedScaleFactor = 1.0; //4.5 / 2.0; // Right diameter / left diameter
 
     // public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
     // public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
@@ -263,11 +263,11 @@ public class Constants {
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
 
     public final double k_stopSpeed = 0.0;
-    public final double k_forwardIndexFastSpeed = 200.0;
+    public final double k_forwardIndexFastSpeed = 300.0;
     public final double k_forwardIndexSlowSpeed = 80.0;
-    public final double k_reverseIndexSpeed = -40.0;
-    public final double k_branchSpeed = 200.0;
-    public final double k_troughSpeed = 200.0;
+    public final double k_reverseIndexSpeed = -60.0;
+    public final double k_branchSpeed = 300.0;
+    public final double k_troughSpeed = 300.0;
   }
 
   public static class LaserCanConstants {

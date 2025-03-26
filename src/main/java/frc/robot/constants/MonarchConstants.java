@@ -29,7 +29,7 @@ public class MonarchConstants extends Constants {
     Arm.k_stowAngle = 0.26152366399765015;
     Arm.k_L4Angle = 0.5249119997024536; //0.5834578275680542;
     Arm.k_horizontalAngle = 0.5074164867401123;
-    Arm.k_sourceAngle = 0.37661659717559814;
+    Arm.k_sourceAngle = 0.35026;
 
     Intake.Left.k_stowPosition = 0.551323413848877;
     Intake.Left.k_groundPosition = 0.19023025035858154;
