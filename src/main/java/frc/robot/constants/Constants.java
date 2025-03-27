@@ -246,7 +246,7 @@ public class Constants {
 
     public final double k_rollerGearRatio = 1.0 / 10.0;
 
-    public final double k_rollerP = 0.0002;
+    public final double k_rollerP = 0.0008;
     public final double k_rollerI = 0.000;
     public final double k_rollerD = 0.0;
     public final double k_rollerFF = 0.001;
