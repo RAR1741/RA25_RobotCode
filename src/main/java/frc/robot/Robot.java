@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.modes.AutoModeBase;
+import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
@@ -219,11 +220,6 @@ public class Robot extends LoggedRobot {
       ySpeed *= slowScaler * boostScaler;
       rot *= slowScaler * boostScaler;
 
-      // Pose2d targetPose = m_poseAligner.getAndCalculateTargetPose(
-      // m_virtualRobotController.getCurrentPose(),
-      // m_virtualRobotController.getWantsAutoPositionBranch());
-      // ASPoseHelper.addPose("VirtualRobot/target", targetPose);
-
       Pose2d currentPose = m_odometry.getPose();
       Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(
           currentPose,
@@ -270,17 +266,28 @@ public class Robot extends LoggedRobot {
       if (m_driverController.getWantsAutoScoreLeft()) {
         m_leds.setLeftColor(Color.kGreen);
         m_leds.setRightColor(Color.kBlack);
-        m_taskScheduler.scheduleTasks(AutoModeBase.getAutoScoreTasks(
-            desiredElevatorState,
-            Branch.LEFT));
+
+        ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.LEFT);
+
+        if (m_driverController.getWantsAutoScorePlusAlgaePressed()) {
+          tasks.add(new DriveToPoseTask(Branch.NONE));
+          tasks.addAll(AutoModeBase.getDeAlgaeTasks());
+        }
+        m_taskScheduler.scheduleTasks(tasks);
       } else if (m_driverController.getWantsAutoScoreRight()) {
         m_leds.setRightColor(Color.kGreen);
         m_leds.setLeftColor(Color.kBlack);
-        m_taskScheduler.scheduleTasks(AutoModeBase.getAutoScoreTasks(
-            desiredElevatorState,
-            Branch.RIGHT));
+
+        ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.RIGHT);
+
+        if (m_driverController.getWantsAutoScorePlusAlgaePressed()) {
+          tasks.add(new DriveToPoseTask(Branch.NONE));
+          tasks.addAll(AutoModeBase.getDeAlgaeTasks());
+        }
+        m_taskScheduler.scheduleTasks(tasks);
       } else if (m_driverController.getWantsDeAlgaeTasks()) {
         m_leds.setAllColor(Color.kAqua);
+
         m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
       }
 
