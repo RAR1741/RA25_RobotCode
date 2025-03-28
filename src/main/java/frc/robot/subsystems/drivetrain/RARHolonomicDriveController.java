@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.EndEffector;
 import frc.robot.wrappers.PIDConstants;
 import frc.robot.wrappers.ProfiledPIDConstants;
 
@@ -19,9 +20,11 @@ public class RARHolonomicDriveController {
   private final PIDController xController;
   private final PIDController yController;
   private final ProfiledPIDController rotationController;
+  private EndEffector m_endEffector;
 
   private boolean m_isEnabled = true;
-  // private double mpsToRps = 1.0 / RobotConstants.robotConfig.SwerveDrive.k_wheelBaseRadius;
+  // private double mpsToRps = 1.0 /
+  // RobotConstants.robotConfig.SwerveDrive.k_wheelBaseRadius;
 
   // private boolean firstTimeForEverything = false;
 
@@ -51,6 +54,8 @@ public class RARHolonomicDriveController {
         period);
     this.rotationController.setIntegratorRange(-rotationConstants.k_iZone, rotationConstants.k_iZone);
     this.rotationController.enableContinuousInput(-Math.PI, Math.PI);
+
+    this.m_endEffector = EndEffector.getInstance();
   }
 
   /**
@@ -62,6 +67,8 @@ public class RARHolonomicDriveController {
   public RARHolonomicDriveController(
       PIDConstants translationConstants, ProfiledPIDConstants rotationConstants) {
     this(translationConstants, rotationConstants, 0.02);
+
+    this.m_endEffector = EndEffector.getInstance();
   }
 
   /**
@@ -91,14 +98,12 @@ public class RARHolonomicDriveController {
   /**
    * Calculates the next output of the path following controller
    *
-   * @param currentPose      The current robot pose
-   * @param targetState      The desired trajectory state
-   * @param goalPose         The pose to end at
-   * @param maxApproachSpeed the speed in m/s to run at
+   * @param currentPose The current robot pose
+   * @param targetState The desired trajectory state
+   * @param goalPose    The pose to end at
    * @return The next robot relative output of the path following controller
    */
-  public ChassisSpeeds calculatePoseSpeeds(Pose2d currentPose, Pose2d goalPose, double maxApproachSpeed) {
-
+  public ChassisSpeeds calculatePoseSpeeds(Pose2d currentPose, Pose2d goalPose) {
     Logger.recordOutput("Odometry/GoalPose", goalPose);
 
     if (!m_isEnabled) {
@@ -108,6 +113,13 @@ public class RARHolonomicDriveController {
     Rotation2d targetHeading = goalPose.getTranslation().minus(currentPose.getTranslation()).getAngle();
     double translationError = currentPose.getTranslation().getDistance(goalPose.getTranslation());
     double rotationError = Math.abs(currentPose.getRotation().minus(goalPose.getRotation()).getDegrees());
+
+    double maxApproachSpeed = RobotConstants.robotConfig.AutoAlign.k_maxApproachSpeed;
+
+    // If we haven't indexed yet, we should be running at a slower speed
+    if (m_endEffector.shouldDriveSlow()) {
+      maxApproachSpeed = RobotConstants.robotConfig.AutoAlign.k_maxIndexApproachSpeed;
+    }
 
     // As we get closer to the target, we should be ramping down our x/y FF
     double targetSpeed = maxApproachSpeed;

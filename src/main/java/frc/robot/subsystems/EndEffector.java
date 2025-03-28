@@ -36,6 +36,8 @@ public class EndEffector extends Subsystem {
   private Elevator m_elevator;
   private LEDs m_leds;
 
+  public boolean shouldBeIndexingCoral = false;
+
   public static EndEffector getInstance() {
     if (m_instance == null) {
       m_instance = new EndEffector();
@@ -150,6 +152,11 @@ public class EndEffector extends Subsystem {
         ControlType.kVelocity);
   }
 
+  public boolean shouldDriveSlow() {
+    return shouldBeIndexingCoral
+        && (m_periodicIO.state == EndEffectorState.OFF || m_periodicIO.state == EndEffectorState.FORWARD_INDEX_FAST);
+  }
+
   @AutoLogOutput(key = "EndEffector/RightMotorVoltage")
   public double getRightMotorVoltage() {
     return Helpers.getVoltage(m_rightMotor);
@@ -237,7 +244,8 @@ public class EndEffector extends Subsystem {
   }
 
   private void updateState() {
-    if (!m_laserCan.getExitSeesCoral() && getEndEffectorState() != EndEffectorState.FORWARD_INDEX_FAST && getEndEffectorState() != EndEffectorState.OFF) {
+    if (!m_laserCan.getExitSeesCoral() && getEndEffectorState() != EndEffectorState.FORWARD_INDEX_FAST
+        && getEndEffectorState() != EndEffectorState.OFF) {
       setState(EndEffectorState.OFF);
       return;
     }

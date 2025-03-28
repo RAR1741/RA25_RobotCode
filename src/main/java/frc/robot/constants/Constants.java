@@ -356,6 +356,7 @@ public class Constants {
     public final double k_algaeReverseExtraDistance = -0.5;
 
     public final double k_maxApproachSpeed = 5.0;
+    public final double k_maxIndexApproachSpeed = 2.0;
     public final double k_fallOffDistance = 1.5;
 
     // Base feeder scoring pose

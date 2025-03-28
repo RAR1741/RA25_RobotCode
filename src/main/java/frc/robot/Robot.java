@@ -196,6 +196,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    m_endEffector.shouldBeIndexingCoral = false;
+
     m_swerve.setBrake(false);
   }
 
@@ -238,23 +240,23 @@ public class Robot extends LoggedRobot {
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
       } else if (m_operatorController.getWantsIntakeEjectStopped()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
       } else {
         // if (!isSafeToIndex() || isSafeToExtend()) {
-        //   m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-        //   m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+        // m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+        // m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
         // } else {
-          if (m_operatorController.getWantsLeftIntakeGround()) {
-            m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-          } else if (m_operatorController.getWantsLeftIntakeStow()) {
-            m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-          }
-  
-          if (m_operatorController.getWantsRightIntakeGround()) {
-            m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-          } else if (m_operatorController.getWantsRightIntakeStow()) {
-            m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
-          }
+        if (m_operatorController.getWantsLeftIntakeGround()) {
+          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
+        } else if (m_operatorController.getWantsLeftIntakeStow()) {
+          m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
+        }
+
+        if (m_operatorController.getWantsRightIntakeGround()) {
+          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
+        } else if (m_operatorController.getWantsRightIntakeStow()) {
+          m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+        }
         // }
       }
 
@@ -323,7 +325,7 @@ public class Robot extends LoggedRobot {
         m_hopper.off();
       }
     }
-    
+
     ElevatorState elevatorState = m_operatorController.getDesiredElevatorState();
     if (m_operatorController.getWantsElevatorOverride()) {
       m_elevator.setState(elevatorState);
@@ -336,9 +338,11 @@ public class Robot extends LoggedRobot {
       }
     }
 
-    if (m_elevator.getIsAtState() && m_elevator.getTargetState() == ElevatorState.L4 && m_operatorController.getWantsReverseEndEffector()) {
+    if (m_elevator.getIsAtState() && m_elevator.getTargetState() == ElevatorState.L4
+        && m_operatorController.getWantsReverseEndEffector()) {
       m_endEffector.setState(EndEffectorState.L4_REVERSE);
-    } else if (m_elevator.getIsAtState() && m_elevator.getTargetState() == ElevatorState.L4 && m_operatorController.getWantsReverseEndEffectorStopped()) {
+    } else if (m_elevator.getIsAtState() && m_elevator.getTargetState() == ElevatorState.L4
+        && m_operatorController.getWantsReverseEndEffectorStopped()) {
       m_endEffector.setState(EndEffectorState.INDEXED);
     }
 
