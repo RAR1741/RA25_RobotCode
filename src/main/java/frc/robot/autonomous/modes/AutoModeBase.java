@@ -67,7 +67,7 @@ public abstract class AutoModeBase {
 
     tasks.add(new ParallelTask(
         new SequentialTask(
-            new WaitTask(0.5),
+            new WaitTask(0.2),
             new DriveToPoseTask(Branch.ALGAE_REVERSE)),
         new ArmTask(ArmState.STOW)));
 
@@ -102,7 +102,7 @@ public abstract class AutoModeBase {
 
     // Drive to score
     // if (useSafePose) {
-      tasks.add(new DriveToPoseTask(branch));
+    tasks.add(new DriveToPoseTask(branch));
     // }
 
     // Score
@@ -113,7 +113,8 @@ public abstract class AutoModeBase {
 
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
     score(elevatorState, branch, new DriveToPoseTask(feederStation));
-    // score(elevatorState, branch, new SkippableTask(new DriveToPoseTask(feederStation), 2.2, new DoNothingTask()));
+    // score(elevatorState, branch, new SkippableTask(new
+    // DriveToPoseTask(feederStation), 2.2, new DoNothingTask()));
   }
 
   public void autoScore(ElevatorState elevatorState, Branch branch) {

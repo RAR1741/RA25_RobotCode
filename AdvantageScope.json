@@ -18,7 +18,6 @@
             "/RealOutputs/ASPoseHelper/LimelightCheckPose/translation",
             "/RealOutputs/ASPoseHelper/LimelightCheckPose/rotation",
             "/RealOutputs/Odometry/Limelight/Pose/rotation",
-            "/RealOutputs/Odometry/Limelight",
             "/RealOutputs/Odometry/Limelight/limelight-front",
             "/RealOutputs/Odometry/Limelight/limelight-front/RawPoseEstimation",
             "/RealOutputs/LaserCans/Entrance",
@@ -31,7 +30,6 @@
             "/RealOutputs/ASPoseHelper/PoseAligner/GoalPose",
             "/RealOutputs/ASPoseHelper/Red/Reef",
             "/RealOutputs/ASPoseHelper/Red/Reef/targets",
-            "/RealOutputs/OperatorController",
             "/RealOutputs/SysID",
             "/RealOutputs/SysID/drive",
             "/RealOutputs/SwerveDrive/Modules/FL/AbsoluteEncoder",
@@ -40,7 +38,9 @@
             "/RealOutputs/SwerveDrive/Modules/BL/AbsoluteEncoder",
             "/RealOutputs/LaserCans/Exit",
             "/RealOutputs/Intakes/Right",
-            "/RealOutputs/Hopper"
+            "/RealOutputs/EndEffector/Position",
+            "/RealOutputs/Odometry",
+            "/RealOutputs/ASPoseHelper/Red"
           ]
         },
         "tabs": {
@@ -287,17 +287,67 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -10.089997247474917,
-                  10.27788622425322,
-                  0.4781192794940041
+                  -7.319288299989129,
+                  9.52346144067519,
+                  0.12265759074077881
                 ],
                 "cameraTarget": [
-                  -2.378076749845899,
-                  -4.943052211825455,
-                  0.48926170872458286
+                  -4.500154969510189,
+                  -3.16339397123331,
+                  0.12525163873521075
                 ]
               },
               "controlsHeight": 295
+            },
+            {
+              "type": 2,
+              "title": "2D",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Odometry/PoseEstimator/Pose2d",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Odometry/GoalPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff"
+                    }
+                  },
+                  {
+                    "type": "arrow",
+                    "logKey": "/RealOutputs/ASPoseHelper/Red/Reef/pose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "position": "center"
+                    }
+                  },
+                  {
+                    "type": "robot",
+                    "logKey": "/RealOutputs/ASPoseHelper/Red/Reef/targets",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {}
+                  }
+                ],
+                "game": "2025 Field (Welded)",
+                "bumpers": "auto",
+                "origin": "blue",
+                "orientation": 0,
+                "size": 30
+              },
+              "controllerUUID": "nwnoogx8bu7m474o1snvizdej2hshing",
+              "renderer": null,
+              "controlsHeight": 200
             },
             {
               "type": 1,
@@ -318,11 +368,11 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/AutoAligner/targetSpeed",
+                    "logKey": "/RealOutputs/AutoAligner/TargetSpeed",
                     "logType": "Number",
                     "visible": false,
                     "options": {
-                      "color": "#2b66a2",
+                      "color": "#e48b32",
                       "size": "normal"
                     }
                   },
@@ -1013,7 +1063,7 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/LaserCans/Entrance/distance",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e5b31b",
                       "size": "normal"
@@ -1023,7 +1073,7 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/LaserCans/Exit/distance",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#af2437",
                       "size": "normal"
@@ -1033,7 +1083,7 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/EndEffector/LeftMotorVelocityRPM",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#3b875a",
                       "size": "normal"
@@ -1043,9 +1093,19 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/EndEffector/RightMotorVelocityRPM",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#d993aa",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/EndEffector/Position/Target",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#5f4528",
                       "size": "normal"
                     }
                   }
@@ -1094,7 +1154,7 @@
               },
               "controllerUUID": "hasxa3gq788i8l063bz5gsr2bxjqbgm3",
               "renderer": null,
-              "controlsHeight": 310
+              "controlsHeight": 398
             },
             {
               "type": 1,

@@ -261,7 +261,7 @@ public class Constants {
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
 
     public final double k_stopSpeed = 0.0;
-    public final double k_forwardIndexFastSpeed = 300.0;
+    public final double k_forwardIndexFastSpeed = 275.0;
     public final double k_forwardIndexSlowSpeed = 80.0;
     public final double k_reverseIndexSpeed = -60.0;
     public final double k_branchSpeed = 300.0;
@@ -335,7 +335,7 @@ public class Constants {
 
   public static class HopperConstants {
     public final int k_hopperMotorId = 50;
-    public final double k_hopperSpeed = 0.3;
+    public final double k_hopperSpeed = 0.2;
 
     public final int k_maxCurrent = 20;
   }
