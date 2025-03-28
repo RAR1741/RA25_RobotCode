@@ -143,12 +143,20 @@ public class PoseAligner extends Subsystem {
     // y-translation -> along the shorter side of the field
     double offset = 0.0;
 
-    if (branch == Branch.RIGHT) {
-      offset = -RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
-    } else if (branch == Branch.LEFT) {
-      offset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
-    } else if (branch == Branch.ALGAE) {
-      offset = RobotConstants.robotConfig.AutoAlign.k_algaeHorizontalOffset;
+    if (Elevator.getInstance().getTargetState() == ElevatorState.L1) {
+      if (branch == Branch.RIGHT) {
+        offset = -RobotConstants.robotConfig.AutoAlign.k_scoringTroughHorizontalOffset;
+      } else if (branch == Branch.LEFT) {
+        offset = RobotConstants.robotConfig.AutoAlign.k_scoringTroughHorizontalOffset;
+      }
+    } else {
+      if (branch == Branch.RIGHT) {
+        offset = -RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+      } else if (branch == Branch.LEFT) {
+        offset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+      } else if (branch == Branch.ALGAE) {
+        offset = RobotConstants.robotConfig.AutoAlign.k_algaeHorizontalOffset;
+      }
     }
 
     Translation2d translation = new Translation2d(scoringDistance, offset);

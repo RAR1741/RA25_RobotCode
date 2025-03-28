@@ -3,7 +3,6 @@ package frc.robot.autonomous.modes;
 import java.util.ArrayList;
 
 import frc.robot.autonomous.tasks.ArmTask;
-import frc.robot.autonomous.tasks.DoNothingTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
@@ -12,7 +11,6 @@ import frc.robot.autonomous.tasks.HopperTask;
 import frc.robot.autonomous.tasks.IntakeTask;
 import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.SequentialTask;
-import frc.robot.autonomous.tasks.SkippableTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.autonomous.tasks.WaitTask;
 import frc.robot.autonomous.tasks.WaitTask.WaitCondition;

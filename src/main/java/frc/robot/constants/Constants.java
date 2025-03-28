@@ -199,7 +199,7 @@ public class Constants {
 
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
-    public final double k_L2Height = 25.64;
+    public final double k_L2Height = 26.0;
     public final double k_L3Height = 42.7;
     public final double k_L4Height = 60.5; // 59.6;
     public final double k_maxHeight = 60.5;
@@ -252,8 +252,6 @@ public class Constants {
     public final double k_rollerFF = 0.001;
 
     public final int k_maxCurrent = 20;
-
-    public final double k_speedScaleFactor = 1.0; //4.5 / 2.0; // Right diameter / left diameter
 
     // public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
     // public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
@@ -353,6 +351,7 @@ public class Constants {
     public final double k_l4ScoringDistance = 0.254;
     public final double k_otherScoringOffset = 0.0;
     public final double k_scoringHorizontalOffset = 0.175;
+    public final double k_scoringTroughHorizontalOffset = 0.46;
     public final double k_algaeHorizontalOffset = 0.0;
     public final double k_algaeReverseExtraDistance = -0.5;
 

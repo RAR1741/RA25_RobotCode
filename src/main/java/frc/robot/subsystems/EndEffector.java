@@ -146,7 +146,7 @@ public class EndEffector extends Subsystem {
 
     m_rightRollerPIDController.setReference(desiredSpeed, ControlType.kVelocity);
     m_leftRollerPIDController.setReference(
-        desiredSpeed * RobotConstants.robotConfig.EndEffector.k_speedScaleFactor,
+        desiredSpeed,
         ControlType.kVelocity);
   }
 
