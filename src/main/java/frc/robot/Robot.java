@@ -235,8 +235,8 @@ public class Robot extends LoggedRobot {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.EJECT);
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.EJECT);
       } else if (m_operatorController.getWantsIntakeEjectStopped()) {
-        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.END_EJECT);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.END_EJECT);
       } else {
         // if (!isSafeToIndex() || isSafeToExtend()) {
         // m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);

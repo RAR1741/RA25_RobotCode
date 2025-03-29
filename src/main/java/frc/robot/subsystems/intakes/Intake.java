@@ -224,6 +224,9 @@ public class Intake {
       case EJECT -> {
         return -RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
       }
+      case END_EJECT -> {
+        return 0.0;
+      }
       default -> {
         return 0.0;
       }
@@ -247,11 +250,10 @@ public class Intake {
         }
       }
       case EJECT -> {
-        if (m_intakeName.equalsIgnoreCase("Left")) {
-          return getPivotAngle();
-        } else {
-          return getPivotAngle();
-        }
+        return getPivotAngle();
+      }
+      case END_EJECT -> {
+        return getPivotAngle();
       }
       case STUCK -> {
         if (m_intakeName.equalsIgnoreCase("Left")) {
@@ -325,6 +327,7 @@ public class Intake {
     STOW,
     INTAKE,
     STUCK,
-    EJECT
+    EJECT,
+    END_EJECT
   }
 }
