@@ -289,7 +289,7 @@ public class Constants {
 
     public final double k_rollerGearRatio = (1.0 / 4.0);
 
-    public final double k_pivotMotorP = 4.0; // 15.0;
+    public final double k_pivotMotorP = 6.0; // 15.0;
     public final double k_pivotMotorI = 0.0;
     public final double k_pivotMotorD = 0.0;
 
