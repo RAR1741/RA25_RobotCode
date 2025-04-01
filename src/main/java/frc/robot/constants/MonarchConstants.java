@@ -26,9 +26,10 @@ public class MonarchConstants extends Constants {
     SwerveDrive.Turn.k_D = 1.0;
     SwerveDrive.Turn.k_IZone = 0.0;
 
-    // Arm.k_stowAngle = 0.26152366399765015; // TODO: This is a possible new L4 scoring pose
+    Arm.k_stowAngle = 0.26152366399765015;
     Arm.k_L4Angle = 0.5249119997024536;
-    Arm.k_L4Angle = 0.5834578275680542;
+    // TODO: This is a possible new L4 scoring pose
+    // Arm.k_L4Angle = 0.5834578275680542;
     Arm.k_horizontalAngle = 0.5074164867401123;
     Arm.k_sourceAngle = 0.35026;
 

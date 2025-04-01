@@ -347,8 +347,8 @@ public class Constants {
     public final double k_minSafeElevatorDistance = 2.0;
 
     // Scoring offsets
-    // public final double k_l4ScoringDistance = 0.100;
     // TODO: This is a possible new L4 scoring pose
+    // public final double k_l4ScoringDistance = 0.100;
 
     public final double k_l4ScoringDistance = 0.254;
     public final double k_otherScoringOffset = 0.0;
