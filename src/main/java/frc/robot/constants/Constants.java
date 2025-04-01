@@ -269,12 +269,13 @@ public class Constants {
   }
 
   public static class LaserCanConstants {
-    public final int k_indexId = 33;
+    public final int k_middleId = 33;
     public final int k_entranceId = 34;
     public final int k_exitId = 35;
 
     public final double k_entranceThreshold = 110.0;
     public final double k_exitThreshold = 40.0;
+    public final double k_middleThreshold = 40.0;
   }
 
   public static class IntakeConstants {

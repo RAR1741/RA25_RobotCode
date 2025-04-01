@@ -98,7 +98,9 @@ public class EndEffector extends Subsystem {
     SCORE_BRANCHES,
     SCORE_TROUGH,
     INDEXED,
-    L4_REVERSE
+    L4_REVERSE,
+
+    REINDEX
   }
 
   public void setState(EndEffectorState state) {
@@ -232,6 +234,10 @@ public class EndEffector extends Subsystem {
         return -RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
       }
 
+      case REINDEX -> {
+        return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
+      }
+
       default -> {
         return RobotConstants.robotConfig.EndEffector.k_stopSpeed;
       }
@@ -274,13 +280,19 @@ public class EndEffector extends Subsystem {
         if (!m_laserCan.getExitSeesCoral()) {
           setState(EndEffectorState.OFF);
         }
+
+        if(!m_laserCan.getMiddleSeesCoral()) {
+          setState(EndEffectorState.REINDEX);
+        }
+      }
+
+      case REINDEX -> {
+        if(m_laserCan.getMiddleSeesCoral()) {
+          setState(EndEffectorState.INDEXED);
+        }
       }
 
       case OFF -> {
-        // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
-        // && m_laserCan.getExitSeesCoral()) {
-        // reverse();
-        // } else
         if (m_laserCan.getEntranceSeesCoral()) {
           indexFast();
         }
@@ -302,8 +314,7 @@ public class EndEffector extends Subsystem {
         }
       }
 
-      default -> {
-      }
+      default -> {}
     }
   }
 }
