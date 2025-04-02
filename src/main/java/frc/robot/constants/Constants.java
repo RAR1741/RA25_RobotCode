@@ -77,7 +77,8 @@ public class Constants {
     public final double k_maxAngularAcceleration = 46.304; // Radians per second^2, pulled from Choreo
 
     public final double k_slowScaler = 0.5; // % reduction in speed
-    public final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed; // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
+    public final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed; // % increase in speed
+                                                                                  // (k_maxDriverBoostSpeed/k_maxDriverSpeed)
 
     public final double k_wheelRadiusIn = 2.0; // inches
     public final double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
@@ -265,7 +266,7 @@ public class Constants {
     public final double k_forwardIndexSlowSpeed = 80.0;
     public final double k_reverseIndexSpeed = -60.0;
     public final double k_branchSpeed = 300.0;
-    public final double k_troughSpeed = 300.0;
+    public final double k_troughSpeed = 900.0;
   }
 
   public static class LaserCanConstants {
@@ -308,7 +309,7 @@ public class Constants {
     public final double k_maxAcceleration = 4.0;
     public final double k_maxVelocity = 2.0;
 
-    public final double k_maxIntakeSpeed = 400.0; //300.0;
+    public final double k_maxIntakeSpeed = 400.0; // 300.0;
 
     public final double k_allowedPivotError = 0.01;
     public final double k_lowestRollerSpeed = -1000.0; // TODO: Make this work

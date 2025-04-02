@@ -91,16 +91,20 @@ public class EndEffector extends Subsystem {
   }
 
   public enum EndEffectorState {
+    // Indexing
     OFF,
     FORWARD_INDEX_FAST,
     FORWARD_INDEX_SLOW,
     REVERSE_INDEX,
-    SCORE_BRANCHES,
-    SCORE_TROUGH,
     INDEXED,
+
+    // 💩
+    REINDEX,
     L4_REVERSE,
 
-    REINDEX
+    // Scoring
+    SCORE_BRANCHES,
+    SCORE_TROUGH
   }
 
   public void setState(EndEffectorState state) {
@@ -281,13 +285,13 @@ public class EndEffector extends Subsystem {
           setState(EndEffectorState.OFF);
         }
 
-        if(!m_laserCan.getMiddleSeesCoral()) {
+        if (!m_laserCan.getMiddleSeesCoral()) {
           setState(EndEffectorState.REINDEX);
         }
       }
 
       case REINDEX -> {
-        if(m_laserCan.getMiddleSeesCoral()) {
+        if (m_laserCan.getMiddleSeesCoral()) {
           setState(EndEffectorState.INDEXED);
         }
       }
@@ -314,7 +318,8 @@ public class EndEffector extends Subsystem {
         }
       }
 
-      default -> {}
+      default -> {
+      }
     }
   }
 }

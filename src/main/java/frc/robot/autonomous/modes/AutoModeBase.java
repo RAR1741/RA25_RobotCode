@@ -114,7 +114,11 @@ public abstract class AutoModeBase {
     }
 
     // Score
-    tasks.add(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
+    if (elevatorState == ElevatorState.L1) {
+      tasks.add(new EndEffectorTask(EndEffectorState.SCORE_TROUGH));
+    } else {
+      tasks.add(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
+    }
 
     return tasks;
   }
