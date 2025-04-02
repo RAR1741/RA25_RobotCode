@@ -338,9 +338,7 @@ public class Robot extends LoggedRobot {
       m_elevator.setState(elevatorState);
       if (elevatorState == ElevatorState.L4) {
         m_arm.setArmState(ArmState.EXTEND);
-      } else if (elevatorState == ElevatorState.FEEDER_STATION) {
-        m_arm.setArmState(ArmState.EXTEND_FEEDER_STATION);
-      } else {
+      }else {
         m_arm.setArmState(ArmState.STOW);
       }
     }

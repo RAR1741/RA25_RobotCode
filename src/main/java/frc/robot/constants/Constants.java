@@ -65,7 +65,7 @@ public class Constants {
     public final double k_wheelBaseRadius = Math.hypot(k_xCenterDistance, k_yCenterDistance);
 
     // Max speeds
-    public final double k_maxDriverSpeed = 2.5; // Meters per second
+    public final double k_maxDriverSpeed = 1.0; // Meters per second
     public final double k_maxDriverBoostSpeed = 4.5; // Meters per second
     public final double k_maxPossibleSpeed = 4.574; // Meters per second
 
@@ -77,7 +77,7 @@ public class Constants {
     public final double k_maxAngularAcceleration = 46.304; // Radians per second^2, pulled from Choreo
 
     public final double k_slowScaler = 0.5; // % reduction in speed
-    public final double k_boostScaler = 4.5 / 2.5; // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
+    public final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed; // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
 
     public final double k_wheelRadiusIn = 2.0; // inches
     public final double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
@@ -308,7 +308,7 @@ public class Constants {
     public final double k_maxAcceleration = 4.0;
     public final double k_maxVelocity = 2.0;
 
-    public final double k_maxIntakeSpeed = 300.0;
+    public final double k_maxIntakeSpeed = 400.0; //300.0;
 
     public final double k_allowedPivotError = 0.01;
     public final double k_lowestRollerSpeed = -1000.0; // TODO: Make this work
