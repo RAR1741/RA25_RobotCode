@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -82,6 +84,7 @@ public class Robot extends LoggedRobot {
   private final SwerveSysId m_swerveSysId;
   private Alliance m_alliance;
   private Pose2d m_reefPose;
+  private Field2d m_field;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -123,6 +126,9 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_leds);
 
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
+
+    m_field = new Field2d();
+    SmartDashboard.putData(m_field);
   }
 
   @Override
@@ -162,6 +168,8 @@ public class Robot extends LoggedRobot {
     if (m_operatorController.getWantsResetElevator()) {
       m_elevator.reset();
     }
+
+    m_field.setRobotPose(m_odometry.getPose());
   }
 
   @Override
@@ -338,7 +346,7 @@ public class Robot extends LoggedRobot {
       m_elevator.setState(elevatorState);
       if (elevatorState == ElevatorState.L4) {
         m_arm.setArmState(ArmState.EXTEND);
-      }else {
+      } else {
         m_arm.setArmState(ArmState.STOW);
       }
     }
