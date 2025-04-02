@@ -228,6 +228,10 @@ public class Robot extends LoggedRobot {
       ySpeed *= slowScaler * boostScaler;
       rot *= slowScaler * boostScaler;
 
+      ElevatorState desiredElevatorState = m_operatorController.getDesiredElevatorState();
+      m_poseAligner.setDesiredElevatorState(desiredElevatorState);
+      m_leds.setColorFromElevatorState(desiredElevatorState);
+
       Pose2d currentPose = m_odometry.getPose();
       Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(
           currentPose,
@@ -267,9 +271,6 @@ public class Robot extends LoggedRobot {
       if (m_driverController.getWantsResetOdometry()) {
         m_odometry.reset();
       }
-
-      ElevatorState desiredElevatorState = m_operatorController.getDesiredElevatorState();
-      m_leds.setColorFromElevatorState(desiredElevatorState);
 
       if (m_driverController.getWantsAutoScoreLeft()) {
         m_leds.setLeftColor(Color.kGreen);
