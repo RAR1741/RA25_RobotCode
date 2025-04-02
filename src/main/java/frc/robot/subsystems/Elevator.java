@@ -146,6 +146,8 @@ public class Elevator extends Subsystem {
   }
 
   public void setState(ElevatorState state) {
+    PoseAligner.getInstance().setDesiredElevatorState(state);
+
     m_periodicIO.target_state = state;
   }
 
