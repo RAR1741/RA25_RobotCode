@@ -34,15 +34,15 @@ public class LaserCanHandler {
     try {
       m_entranceLaser.setRangingMode(LaserCan.RangingMode.SHORT);
       m_entranceLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      m_entranceLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      m_entranceLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
 
       m_middleLaser.setRangingMode(LaserCan.RangingMode.SHORT);
       m_middleLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
-      m_middleLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      m_middleLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
 
       m_exitLaser.setRangingMode(LaserCan.RangingMode.SHORT);
       m_exitLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
-      m_exitLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      m_exitLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
 
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
