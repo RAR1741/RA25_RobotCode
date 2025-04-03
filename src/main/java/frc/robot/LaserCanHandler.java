@@ -31,36 +31,47 @@ public class LaserCanHandler {
     m_middleLaser = new LaserCan(RobotConstants.robotConfig.LaserCan.k_middleId);
     m_exitLaser = new LaserCan(RobotConstants.robotConfig.LaserCan.k_exitId);
 
-    try {
-      m_entranceLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-      m_entranceLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      m_entranceLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
+    if (RobotBase.isReal()) {
+      try {
+        m_entranceLaser.setRangingMode(LaserCan.RangingMode.SHORT);
+        m_entranceLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+        m_entranceLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
 
-      m_middleLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-      m_middleLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
-      m_middleLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
+        m_middleLaser.setRangingMode(LaserCan.RangingMode.SHORT);
+        m_middleLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
+        m_middleLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
 
-      m_exitLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-      m_exitLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
-      m_exitLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
+        m_exitLaser.setRangingMode(LaserCan.RangingMode.SHORT);
+        m_exitLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 2, 2));
+        m_exitLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
 
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
+      } catch (ConfigurationFailedException e) {
+        System.out.println("Configuration failed! " + e);
+      }
     }
   }
 
   @AutoLogOutput(key = "LaserCans/Entrance/distance")
   public double getEntranceDistance() {
+    if (RobotBase.isSimulation()) {
+      return -1;
+    }
     return m_entranceLaser.getMeasurement().distance_mm;
   }
 
   @AutoLogOutput(key = "LaserCans/Exit/distance")
   public double getExitDistance() {
+    if (RobotBase.isSimulation()) {
+      return -1;
+    }
     return m_exitLaser.getMeasurement().distance_mm;
   }
 
   @AutoLogOutput(key = "LaserCans/Middle/distance")
   public double getMiddleDistance() {
+    if (RobotBase.isSimulation()) {
+      return -1;
+    }
     return m_middleLaser.getMeasurement().distance_mm;
   }
 
