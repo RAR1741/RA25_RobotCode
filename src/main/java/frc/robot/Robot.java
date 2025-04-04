@@ -174,7 +174,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    Elastic.selectTab("Autonomous");
     m_currentTask = m_autoRunner.getNextTask();
 
     // Start the first task
@@ -206,7 +205,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    Elastic.selectTab("Teleoperated");
+    // Elastic.selectTab("Teleoperated");
     m_endEffector.shouldBeIndexingCoral = false;
 
     m_swerve.setBrake(false);

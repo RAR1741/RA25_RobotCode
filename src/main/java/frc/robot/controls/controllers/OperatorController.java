@@ -2,8 +2,6 @@ package frc.robot.controls.controllers;
 
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.Elastic;
-import frc.robot.Elastic.Notification;
 import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class OperatorController extends FilteredController {
@@ -47,23 +45,23 @@ public class OperatorController extends FilteredController {
     return getRawButtonReleased(k_ejectButton);
   }
 
-  Notification notification = new Notification(Elastic.Notification.NotificationLevel.INFO,
-  "Queued Elevator State Changed",
-  "Queued state: L4",
-  1500);
+  // Notification notification = new Notification(Elastic.Notification.NotificationLevel.INFO,
+  // "Queued Elevator State Changed",
+  // "Queued state: L4",
+  // 1500);
 
   public ElevatorState getDesiredElevatorState() {
     if (getHatPressed(Direction.DOWN)) {
-      Elastic.sendNotification(notification.withDescription("Queued state: L1"));
+      // Elastic.sendNotification(notification.withDescription("Queued state: L1"));
       m_desiredElevatorState = ElevatorState.L1;
     } else if (getHatPressed(Direction.RIGHT)) {
-      Elastic.sendNotification(notification.withDescription("Queued state: L2"));
+      // Elastic.sendNotification(notification.withDescription("Queued state: L2"));
       m_desiredElevatorState = ElevatorState.L2;
     } else if (getHatPressed(Direction.LEFT)) {
-      Elastic.sendNotification(notification.withDescription("Queued state: L3"));
+      // Elastic.sendNotification(notification.withDescription("Queued state: L3"));
       m_desiredElevatorState = ElevatorState.L3;
     } else if (getHatPressed(Direction.UP)) {
-      Elastic.sendNotification(notification.withDescription("Queued state: L4"));
+      // Elastic.sendNotification(notification.withDescription("Queued state: L4"));
       m_desiredElevatorState = ElevatorState.L4;
     }
 
