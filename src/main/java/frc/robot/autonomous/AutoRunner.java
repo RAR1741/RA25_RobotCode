@@ -20,7 +20,7 @@ public class AutoRunner {
   private static AutoRunner m_autoRunner = null;
   private AutoChooser m_autoChooser;
   private AutoModeBase m_autoMode;
-  private LEDs m_leds;
+  // private LEDs m_leds;
 
   public enum AutoMode {
     DO_NOTHING,
@@ -34,7 +34,7 @@ public class AutoRunner {
   private AutoRunner() {
     // Use this to set the default auto mode
     AutoMode defaultAuto = AutoMode.CENTER;
-    m_leds = LEDs.getInstance();
+    // m_leds = LEDs.getInstance();
 
     m_autoChooser = AutoChooser.getInstance();
 
@@ -75,25 +75,25 @@ public class AutoRunner {
 
     switch (m_selectedAuto) {
       case DO_NOTHING -> {
-        m_leds.setAllColor(Color.kBlack);
+        // m_leds.setAllColor(Color.kBlack);
         m_autoMode = new DoNothingMode();
       }
       case TEST -> {
-        m_leds.setAllColorMode(LEDModes.rainbowChase);
+        // m_leds.setAllColorMode(LEDModes.rainbowChase);
         m_autoMode = new TestMode();
       }
       case LEFT -> {
-        m_leds.setRightColor(color);
-        m_leds.setLeftColor(Color.kBlack);
+        // m_leds.setRightColor(color);
+        // m_leds.setLeftColor(Color.kBlack);
         m_autoMode = new LeftMode();
       }
       case RIGHT -> {
-        m_leds.setLeftColor(color);
-        m_leds.setRightColor(Color.kBlack);
+        // m_leds.setLeftColor(color);
+        // m_leds.setRightColor(Color.kBlack);
         m_autoMode = new RightMode();
       }
       case CENTER -> {
-        m_leds.setAllColor(color);
+        // m_leds.setAllColor(color);
         m_autoMode = new CenterMode();
       }
       default -> {

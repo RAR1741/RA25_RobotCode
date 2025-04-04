@@ -34,7 +34,7 @@ public class EndEffector extends Subsystem {
   private LaserCanHandler m_laserCan;
   private Arm m_arm;
   private Elevator m_elevator;
-  private LEDs m_leds;
+  // private LEDs m_leds;
 
   public boolean shouldBeIndexingCoral = false;
 
@@ -59,7 +59,7 @@ public class EndEffector extends Subsystem {
     m_laserCan = LaserCanHandler.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
-    m_leds = LEDs.getInstance();
+    // m_leds = LEDs.getInstance();
 
     SparkBaseConfig rollerConfig = new SparkFlexConfig();
 
@@ -110,17 +110,17 @@ public class EndEffector extends Subsystem {
   public void setState(EndEffectorState state) {
     m_periodicIO.state = state;
 
-    switch (state) {
-      case OFF -> {
-        m_leds.setAllColor(Color.kRed);
-      }
-      case FORWARD_INDEX_FAST -> {
-        m_leds.setAllColor(Color.kYellow);
-      }
-      case INDEXED -> {
-        m_leds.setAllColor(Color.kGreen);
-      }
-    }
+    // switch (state) {
+    //   case OFF -> {
+    //     m_leds.setAllColor(Color.kRed);
+    //   }
+    //   case FORWARD_INDEX_FAST -> {
+    //     m_leds.setAllColor(Color.kYellow);
+    //   }
+    //   case INDEXED -> {
+    //     m_leds.setAllColor(Color.kGreen);
+    //   }
+    // }
   }
 
   private void off() {

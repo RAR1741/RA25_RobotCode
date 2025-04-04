@@ -68,7 +68,7 @@ public class Robot extends LoggedRobot {
   private final Intakes m_intakes;
   private final Hopper m_hopper;
   private final TaskScheduler m_taskScheduler;
-  private final LEDs m_leds;
+  // private final LEDs m_leds;
   private final DriverController m_driverController;
 
   private final AutoRunner m_autoRunner;
@@ -105,7 +105,7 @@ public class Robot extends LoggedRobot {
     m_intakes = Intakes.getInstance();
     m_hopper = Hopper.getInstance();
     m_taskScheduler = TaskScheduler.getInstance();
-    m_leds = LEDs.getInstance();
+    // m_leds = LEDs.getInstance();
 
     // CanBridge.runTCP(); // For LaserCan configuration
 
@@ -123,7 +123,7 @@ public class Robot extends LoggedRobot {
     m_subsystems.add(m_intakes);
     m_subsystems.add(m_hopper);
     m_subsystems.add(m_taskScheduler);
-    m_subsystems.add(m_leds);
+    // m_subsystems.add(m_leds);
 
     m_swerveSysId = new SwerveSysId(m_swerve.getSwerveModules(), "SwerveSysId");
 
@@ -231,7 +231,7 @@ public class Robot extends LoggedRobot {
 
       ElevatorState desiredElevatorState = m_operatorController.getDesiredElevatorState();
       m_poseAligner.setDesiredElevatorState(desiredElevatorState);
-      m_leds.setColorFromElevatorState(desiredElevatorState);
+      // m_leds.setColorFromElevatorState(desiredElevatorState);
 
       Pose2d currentPose = m_odometry.getPose();
       Pose2d desiredPose = m_poseAligner.getAndCalculateTargetPose(
@@ -274,8 +274,8 @@ public class Robot extends LoggedRobot {
       }
 
       if (m_driverController.getWantsAutoScoreLeft()) {
-        m_leds.setLeftColor(Color.kGreen);
-        m_leds.setRightColor(Color.kBlack);
+        // m_leds.setLeftColor(Color.kGreen);
+        // m_leds.setRightColor(Color.kBlack);
 
         ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.LEFT);
 
@@ -285,8 +285,8 @@ public class Robot extends LoggedRobot {
         }
         m_taskScheduler.scheduleTasks(tasks);
       } else if (m_driverController.getWantsAutoScoreRight()) {
-        m_leds.setRightColor(Color.kGreen);
-        m_leds.setLeftColor(Color.kBlack);
+        // m_leds.setRightColor(Color.kGreen);
+        // m_leds.setLeftColor(Color.kBlack);
 
         ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.RIGHT);
 
@@ -296,7 +296,7 @@ public class Robot extends LoggedRobot {
         }
         m_taskScheduler.scheduleTasks(tasks);
       } else if (m_driverController.getWantsDeAlgaeTasks()) {
-        m_leds.setAllColor(Color.kAqua);
+        // m_leds.setAllColor(Color.kAqua);
 
         m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
       }
