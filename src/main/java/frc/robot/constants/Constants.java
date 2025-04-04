@@ -266,7 +266,7 @@ public class Constants {
     public final double k_forwardIndexSlowSpeed = 80.0;
     public final double k_reverseIndexSpeed = -60.0;
     public final double k_branchSpeed = 300.0;
-    public final double k_troughSpeed = 900.0;
+    public final double k_troughSpeed = 500.0;
   }
 
   public static class LaserCanConstants {
