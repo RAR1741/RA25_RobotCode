@@ -79,7 +79,7 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean getWantsResetElevator() {
-    return this.getRawButtonPressed(Button.START);
+    return this.getRawButtonPressed(Button.LEFT_JOYSTICK) || this.getRawButtonPressed(Button.RIGHT_JOYSTICK);
   }
 
   private final int k_scoreButton = Button.X;
