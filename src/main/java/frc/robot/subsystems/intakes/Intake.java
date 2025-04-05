@@ -174,11 +174,14 @@ public class Intake {
         ff,
         ArbFFUnits.kVoltage);
 
+        
     if (getDesiredRollerSpeed() != 0.0) {
       m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
     } else {
       if (isAtState()) {
         m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
+      } else {
+        m_rollerPIDController.setReference(RobotConstants.robotConfig.Intake.k_stowingIntakeSpeed, ControlType.kVelocity);
       }
     }
   }

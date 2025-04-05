@@ -310,6 +310,7 @@ public class Constants {
     public final double k_maxVelocity = 2.0;
 
     public final double k_maxIntakeSpeed = 350.0; // 300.0;
+    public final double k_stowingIntakeSpeed = k_maxIntakeSpeed * 0.75;
 
     public final double k_allowedPivotError = 0.01;
     public final double k_lowestRollerSpeed = -1000.0; // TODO: Make this work
