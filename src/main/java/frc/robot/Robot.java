@@ -206,7 +206,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     // Elastic.selectTab("Teleoperated");
-    m_endEffector.shouldBeIndexingCoral = false;
+    m_endEffector.setShouldBeIndexingCoral(false);
 
     m_swerve.setBrake(false);
   }
@@ -285,7 +285,7 @@ public class Robot extends LoggedRobot {
 
         ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.LEFT);
 
-        if (m_driverController.getWantsAutoScorePlusAlgaePressed()) {
+        if (m_driverController.getWantsAutoScorePlusAlgae()) {
           tasks.add(new DriveToPoseTask(Branch.NONE));
           tasks.addAll(AutoModeBase.getDeAlgaeTasks());
         }
@@ -296,7 +296,7 @@ public class Robot extends LoggedRobot {
 
         ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.RIGHT);
 
-        if (m_driverController.getWantsAutoScorePlusAlgaePressed()) {
+        if (m_driverController.getWantsAutoScorePlusAlgae()) {
           tasks.add(new DriveToPoseTask(Branch.NONE));
           tasks.addAll(AutoModeBase.getDeAlgaeTasks());
         }

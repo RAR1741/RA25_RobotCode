@@ -19,9 +19,10 @@ public class IntakeTask extends Task {
   @Override
   public void prepare() {
     if (m_intakeState == IntakeState.STOW) {
-      EndEffector.getInstance().shouldBeIndexingCoral = true;
+      // EndEffector.getInstance().shouldBeIndexingCoral = true;
+      EndEffector.getInstance().setShouldBeIndexingCoral(true);
     } else {
-      EndEffector.getInstance().shouldBeIndexingCoral = false;
+      EndEffector.getInstance().setShouldBeIndexingCoral(false);
     }
 
     m_intakes.setIntakeState(m_intakeVariant, m_intakeState);

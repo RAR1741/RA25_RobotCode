@@ -55,7 +55,7 @@ public class DriverController extends FilteredController {
     return Branch.NONE;
   }
 
-  public boolean getWantsAutoScorePlusAlgaePressed() {
+  public boolean getWantsAutoScorePlusAlgae() {
     return this.getRawButton(Button.X);
   }
 
