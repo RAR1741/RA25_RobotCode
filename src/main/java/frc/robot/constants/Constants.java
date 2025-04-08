@@ -325,6 +325,7 @@ public class Constants {
       public double k_ejectPosition;
       public double k_horizontalPosition;
       public double k_stuckPosition;
+      public double k_algaePosition;
     }
 
     public class RightConstants {
@@ -333,6 +334,7 @@ public class Constants {
       public double k_ejectPosition;
       public double k_horizontalPosition;
       public double k_stuckPosition;
+      public double k_algaePosition;
     }
   }
 

@@ -25,6 +25,14 @@ public class OperatorController extends FilteredController {
     return getRawButtonReleased(k_leftIntakeButton);
   }
 
+  public boolean getWantsIntakeAlgae() {
+    return getFilteredAxis(Axis.LEFT_TRIGGER) >= 0.5;
+  }
+
+  public boolean getWantsScoreAlgae() {
+    return getFilteredAxis(Axis.RIGHT_TRIGGER) >= 0.5;
+  }
+
   private final int k_rightIntakeButton = Button.RIGHT_BUMPER;
 
   public boolean getWantsRightIntakeGround() {

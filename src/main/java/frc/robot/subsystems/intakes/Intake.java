@@ -87,7 +87,7 @@ public class Intake {
     // pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
     // }
 
-    rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
+    // rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
     pivotConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_pivotCurrentLimit);
 
     pivotConfig.inverted(true);
@@ -176,7 +176,11 @@ public class Intake {
 
         
     if (getDesiredRollerSpeed() != 0.0) {
-      m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
+      if(m_periodicIO.desiredIntakeState == IntakeState.ALGAE || m_periodicIO.desiredIntakeState == IntakeState.SCORE_ALGAE) {
+        m_rollerMotor.setVoltage(getDesiredRollerSpeed());
+      } else {
+        m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
+      }
     } else {
       if (isAtState()) {
         m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
@@ -230,6 +234,12 @@ public class Intake {
       case END_EJECT -> {
         return 0.0;
       }
+      case ALGAE -> {
+        return -3.5; //Volts
+      }
+      case SCORE_ALGAE -> {
+        return 3.5; // Volts
+      }
       default -> {
         return 0.0;
       }
@@ -257,6 +267,20 @@ public class Intake {
       }
       case END_EJECT -> {
         return getPivotAngle();
+      }
+      case ALGAE -> {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_algaePosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_algaePosition;
+        }
+      }
+      case SCORE_ALGAE -> {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_algaePosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_algaePosition;
+        }
       }
       case STUCK -> {
         if (m_intakeName.equalsIgnoreCase("Left")) {
@@ -331,6 +355,8 @@ public class Intake {
     INTAKE,
     STUCK,
     EJECT,
-    END_EJECT
+    END_EJECT,
+    ALGAE,
+    SCORE_ALGAE
   }
 }
