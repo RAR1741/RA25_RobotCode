@@ -263,13 +263,13 @@ public class Robot extends LoggedRobot {
         // } else {
         if (m_operatorController.getWantsLeftIntakeGround()) {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsLeftIntakeStow()) {
+        } else /*if (m_operatorController.getWantsLeftIntakeStow())*/ {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
         }
 
         if (m_operatorController.getWantsRightIntakeGround()) {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsRightIntakeStow()) {
+        } else /*if (m_operatorController.getWantsRightIntakeStow())*/ {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
         }
         // }
