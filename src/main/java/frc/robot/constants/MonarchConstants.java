@@ -45,5 +45,6 @@ public class MonarchConstants extends Constants {
     Intake.Right.k_ejectPosition = 0.7199869155883789;
     Intake.Right.k_horizontalPosition = 0.7199869155883789;
     Intake.Right.k_stuckPosition = 0.7980979681015015;
+    Intake.Right.k_algaePosition = 0.6147200465202332;
   }
 }
