@@ -65,7 +65,7 @@ public class Constants {
     public final double k_wheelBaseRadius = Math.hypot(k_xCenterDistance, k_yCenterDistance);
 
     // Max speeds
-    public final double k_maxDriverSpeed = 2.0; // Meters per second
+    public final double k_maxDriverSpeed = 1.0; // Meters per second
     public final double k_maxDriverBoostSpeed = 4.5; // Meters per second
     public final double k_maxPossibleSpeed = 4.574; // Meters per second
 
@@ -77,7 +77,8 @@ public class Constants {
     public final double k_maxAngularAcceleration = 46.304; // Radians per second^2, pulled from Choreo
 
     public final double k_slowScaler = 0.5; // % reduction in speed
-    public final double k_boostScaler = 4.5 / 2.0; // % increase in speed (k_maxDriverBoostSpeed/k_maxDriverSpeed)
+    public final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed; // % increase in speed
+                                                                                  // (k_maxDriverBoostSpeed/k_maxDriverSpeed)
 
     public final double k_wheelRadiusIn = 2.0; // inches
     public final double k_wheelCircumference = Units.inchesToMeters(k_wheelRadiusIn * 2.0 * Math.PI); // meters
@@ -199,11 +200,11 @@ public class Constants {
 
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
-    public final double k_L2Height = 25.64;
+    public final double k_L2Height = 26.0;
     public final double k_L3Height = 42.7;
     public final double k_L4Height = 60.5; // 59.6;
     public final double k_maxHeight = 60.5;
-    public final double k_feederHeight = 28.36;
+    public final double k_feederHeight = 29.57;
     // public final double k_groundAlgaeHeight = 0.0;
     public final double k_lowAlgaeHeight = 27.643;
     public final double k_highAlgaeHeight = 44.571;
@@ -246,14 +247,12 @@ public class Constants {
 
     public final double k_rollerGearRatio = 1.0 / 10.0;
 
-    public final double k_rollerP = 0.0010;
+    public final double k_rollerP = 0.0004;
     public final double k_rollerI = 0.000;
     public final double k_rollerD = 0.0;
     public final double k_rollerFF = 0.001;
 
     public final int k_maxCurrent = 20;
-
-    public final double k_speedScaleFactor = 4.5 / 2.0; // Right diameter / left diameter
 
     // public final double[] k_stopSpeeds = new double[] { 0.0, 0.0 };
     // public final double[] k_forwardIndexFastSpeeds = new double[] { 0.20, 0.20 };
@@ -263,20 +262,21 @@ public class Constants {
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
 
     public final double k_stopSpeed = 0.0;
-    public final double k_forwardIndexFastSpeed = 200.0;
+    public final double k_forwardIndexFastSpeed = 275.0;
     public final double k_forwardIndexSlowSpeed = 80.0;
-    public final double k_reverseIndexSpeed = -40.0;
-    public final double k_branchSpeed = 200.0;
-    public final double k_troughSpeed = 200.0;
+    public final double k_reverseIndexSpeed = -60.0;
+    public final double k_branchSpeed = 300.0;
+    public final double k_troughSpeed = 500.0;
   }
 
   public static class LaserCanConstants {
-    public final int k_indexId = 33;
+    public final int k_middleId = 33;
     public final int k_entranceId = 34;
     public final int k_exitId = 35;
 
     public final double k_entranceThreshold = 110.0;
     public final double k_exitThreshold = 40.0;
+    public final double k_middleThreshold = 40.0;
   }
 
   public static class IntakeConstants {
@@ -291,7 +291,7 @@ public class Constants {
 
     public final double k_rollerGearRatio = (1.0 / 4.0);
 
-    public final double k_pivotMotorP = 4.0; // 15.0;
+    public final double k_pivotMotorP = 6.0; // 15.0;
     public final double k_pivotMotorI = 0.0;
     public final double k_pivotMotorD = 0.0;
 
@@ -309,7 +309,8 @@ public class Constants {
     public final double k_maxAcceleration = 4.0;
     public final double k_maxVelocity = 2.0;
 
-    public final double k_maxIntakeSpeed = 300.0;
+    public final double k_maxIntakeSpeed = 350.0; // 300.0;
+    public final double k_stowingIntakeSpeed = k_maxIntakeSpeed * 0.75;
 
     public final double k_allowedPivotError = 0.01;
     public final double k_lowestRollerSpeed = -1000.0; // TODO: Make this work
@@ -324,6 +325,7 @@ public class Constants {
       public double k_ejectPosition;
       public double k_horizontalPosition;
       public double k_stuckPosition;
+      public double k_algaePosition;
     }
 
     public class RightConstants {
@@ -332,6 +334,7 @@ public class Constants {
       public double k_ejectPosition;
       public double k_horizontalPosition;
       public double k_stuckPosition;
+      public double k_algaePosition;
     }
   }
 
@@ -349,14 +352,18 @@ public class Constants {
     public final double k_minSafeElevatorDistance = 2.0;
 
     // Scoring offsets
-    // public final double k_l4ScoringDistance = 0.384;
+    // TODO: This is a possible new L4 scoring pose
+    // public final double k_l4ScoringDistance = 0.100;
+
     public final double k_l4ScoringDistance = 0.254;
     public final double k_otherScoringOffset = 0.0;
     public final double k_scoringHorizontalOffset = 0.175;
+    public final double k_scoringTroughHorizontalOffset = 0.46;
     public final double k_algaeHorizontalOffset = 0.0;
     public final double k_algaeReverseExtraDistance = -0.5;
 
     public final double k_maxApproachSpeed = 5.0;
+    public final double k_maxIndexApproachSpeed = 2.0;
     public final double k_fallOffDistance = 1.5;
 
     // Base feeder scoring pose

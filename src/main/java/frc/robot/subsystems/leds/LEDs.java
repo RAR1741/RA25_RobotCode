@@ -97,7 +97,7 @@ public class LEDs extends Subsystem {
 
   public void setColorFromElevatorState(ElevatorState state) {
     switch (state) {
-      case L2:
+      case L2 ->
         setAllColorModes(
             LEDModes.setColor(Color.kRed),
             LEDModes.setColor(Color.kRed),
@@ -107,8 +107,7 @@ public class LEDs extends Subsystem {
             LEDModes.setColor(Color.kBlack),
             LEDModes.setColor(Color.kRed),
             LEDModes.setColor(Color.kRed));
-        break;
-      case L3:
+      case L3 ->
         setAllColorModes(
             LEDModes.setColor(Color.kRed),
             LEDModes.setColor(Color.kRed),
@@ -118,8 +117,7 @@ public class LEDs extends Subsystem {
             LEDModes.setColor(Color.kRed),
             LEDModes.setColor(Color.kRed),
             LEDModes.setColor(Color.kRed));
-        break;
-      case L4:
+      case L4 ->
         setAllColorModes(
             LEDModes.setColor(Color.kRed),
             LEDModes.setColor(Color.kRed),
@@ -129,7 +127,8 @@ public class LEDs extends Subsystem {
             LEDModes.setColor(Color.kRed),
             LEDModes.setColor(Color.kRed),
             LEDModes.setColor(Color.kRed));
-        break;
+      default -> {
+      }
     }
   }
 

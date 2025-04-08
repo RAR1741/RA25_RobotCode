@@ -87,7 +87,7 @@ public class Intake {
     // pivotConfig.absoluteEncoder.zeroOffset(RobotConstants.robotConfig.Intake.k_rightPivotOffset);
     // }
 
-    rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
+    // rollerConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_rollerCurrentLimit);
     pivotConfig.smartCurrentLimit(RobotConstants.robotConfig.Intake.k_pivotCurrentLimit);
 
     pivotConfig.inverted(true);
@@ -174,11 +174,18 @@ public class Intake {
         ff,
         ArbFFUnits.kVoltage);
 
+        
     if (getDesiredRollerSpeed() != 0.0) {
-      m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
+      if(m_periodicIO.desiredIntakeState == IntakeState.ALGAE || m_periodicIO.desiredIntakeState == IntakeState.SCORE_ALGAE) {
+        m_rollerMotor.setVoltage(getDesiredRollerSpeed());
+      } else {
+        m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
+      }
     } else {
       if (isAtState()) {
         m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
+      } else {
+        m_rollerPIDController.setReference(RobotConstants.robotConfig.Intake.k_stowingIntakeSpeed, ControlType.kVelocity);
       }
     }
   }
@@ -224,6 +231,15 @@ public class Intake {
       case EJECT -> {
         return -RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
       }
+      case END_EJECT -> {
+        return 0.0;
+      }
+      case ALGAE -> {
+        return -3.5; //Volts
+      }
+      case SCORE_ALGAE -> {
+        return 3.5; // Volts
+      }
       default -> {
         return 0.0;
       }
@@ -247,10 +263,23 @@ public class Intake {
         }
       }
       case EJECT -> {
+        return getPivotAngle();
+      }
+      case END_EJECT -> {
+        return getPivotAngle();
+      }
+      case ALGAE -> {
         if (m_intakeName.equalsIgnoreCase("Left")) {
-          return getPivotAngle();
+          return RobotConstants.robotConfig.Intake.Left.k_algaePosition;
         } else {
-          return getPivotAngle();
+          return RobotConstants.robotConfig.Intake.Right.k_algaePosition;
+        }
+      }
+      case SCORE_ALGAE -> {
+        if (m_intakeName.equalsIgnoreCase("Left")) {
+          return RobotConstants.robotConfig.Intake.Left.k_algaePosition;
+        } else {
+          return RobotConstants.robotConfig.Intake.Right.k_algaePosition;
         }
       }
       case STUCK -> {
@@ -325,6 +354,9 @@ public class Intake {
     STOW,
     INTAKE,
     STUCK,
-    EJECT
+    EJECT,
+    END_EJECT,
+    ALGAE,
+    SCORE_ALGAE
   }
 }

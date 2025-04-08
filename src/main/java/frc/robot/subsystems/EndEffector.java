@@ -34,7 +34,7 @@ public class EndEffector extends Subsystem {
   private LaserCanHandler m_laserCan;
   private Arm m_arm;
   private Elevator m_elevator;
-  private LEDs m_leds;
+  // private LEDs m_leds;
 
   public static EndEffector getInstance() {
     if (m_instance == null) {
@@ -57,7 +57,7 @@ public class EndEffector extends Subsystem {
     m_laserCan = LaserCanHandler.getInstance();
     m_arm = Arm.getInstance();
     m_elevator = Elevator.getInstance();
-    m_leds = LEDs.getInstance();
+    // m_leds = LEDs.getInstance();
 
     SparkBaseConfig rollerConfig = new SparkFlexConfig();
 
@@ -86,33 +86,48 @@ public class EndEffector extends Subsystem {
 
   private static class PeriodicIO {
     EndEffectorState state = EndEffectorState.INDEXED;
+    boolean shouldBeIndexingCoral = false;
+  }
+
+  public boolean getShouldBeIndexingCoral() {
+    return m_periodicIO.shouldBeIndexingCoral;
+  }
+
+  public void setShouldBeIndexingCoral(boolean shouldBeIndexingCoral) {
+    m_periodicIO.shouldBeIndexingCoral = shouldBeIndexingCoral;
   }
 
   public enum EndEffectorState {
+    // Indexing
     OFF,
     FORWARD_INDEX_FAST,
     FORWARD_INDEX_SLOW,
     REVERSE_INDEX,
-    SCORE_BRANCHES,
-    SCORE_TROUGH,
     INDEXED,
-    L4_REVERSE
+
+    // 💩
+    REINDEX,
+    L4_REVERSE,
+
+    // Scoring
+    SCORE_BRANCHES,
+    SCORE_TROUGH
   }
 
   public void setState(EndEffectorState state) {
     m_periodicIO.state = state;
 
-    switch (state) {
-      case OFF -> {
-        m_leds.setAllColor(Color.kRed);
-      }
-      case FORWARD_INDEX_FAST -> {
-        m_leds.setAllColor(Color.kYellow);
-      }
-      case INDEXED -> {
-        m_leds.setAllColor(Color.kGreen);
-      }
-    }
+    // switch (state) {
+    //   case OFF -> {
+    //     m_leds.setAllColor(Color.kRed);
+    //   }
+    //   case FORWARD_INDEX_FAST -> {
+    //     m_leds.setAllColor(Color.kYellow);
+    //   }
+    //   case INDEXED -> {
+    //     m_leds.setAllColor(Color.kGreen);
+    //   }
+    // }
   }
 
   private void off() {
@@ -146,8 +161,13 @@ public class EndEffector extends Subsystem {
 
     m_rightRollerPIDController.setReference(desiredSpeed, ControlType.kVelocity);
     m_leftRollerPIDController.setReference(
-        desiredSpeed * RobotConstants.robotConfig.EndEffector.k_speedScaleFactor,
+        desiredSpeed,
         ControlType.kVelocity);
+  }
+
+  public boolean shouldDriveSlow() {
+    return m_periodicIO.shouldBeIndexingCoral
+        && (m_periodicIO.state == EndEffectorState.OFF || m_periodicIO.state == EndEffectorState.FORWARD_INDEX_FAST);
   }
 
   @AutoLogOutput(key = "EndEffector/RightMotorVoltage")
@@ -225,6 +245,10 @@ public class EndEffector extends Subsystem {
         return -RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
       }
 
+      case REINDEX -> {
+        return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
+      }
+
       default -> {
         return RobotConstants.robotConfig.EndEffector.k_stopSpeed;
       }
@@ -237,6 +261,12 @@ public class EndEffector extends Subsystem {
   }
 
   private void updateState() {
+    if (!m_laserCan.getExitSeesCoral() && getEndEffectorState() != EndEffectorState.FORWARD_INDEX_FAST
+        && getEndEffectorState() != EndEffectorState.OFF) {
+      setState(EndEffectorState.OFF);
+      return;
+    }
+
     switch (m_periodicIO.state) {
       case FORWARD_INDEX_FAST -> {
         if (m_laserCan.getExitSeesCoral()) {
@@ -246,8 +276,8 @@ public class EndEffector extends Subsystem {
 
       case FORWARD_INDEX_SLOW -> {
         if (!m_laserCan.getEntranceSeesCoral()) {
-          // setState(EndEffectorState.INDEXED);
-          setState(EndEffectorState.REVERSE_INDEX);
+          setState(EndEffectorState.INDEXED);
+          // setState(EndEffectorState.REVERSE_INDEX);
         }
       }
 
@@ -261,13 +291,19 @@ public class EndEffector extends Subsystem {
         if (!m_laserCan.getExitSeesCoral()) {
           setState(EndEffectorState.OFF);
         }
+
+        if (!m_laserCan.getMiddleSeesCoral()) {
+          setState(EndEffectorState.REINDEX);
+        }
+      }
+
+      case REINDEX -> {
+        if (m_laserCan.getMiddleSeesCoral()) {
+          setState(EndEffectorState.INDEXED);
+        }
       }
 
       case OFF -> {
-        // if (!(m_laserCan.getEntranceSeesCoral() || m_laserCan.getIndexSeesCoral())
-        // && m_laserCan.getExitSeesCoral()) {
-        // reverse();
-        // } else
         if (m_laserCan.getEntranceSeesCoral()) {
           indexFast();
         }

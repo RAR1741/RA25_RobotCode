@@ -3,7 +3,6 @@ package frc.robot.autonomous.modes;
 import java.util.ArrayList;
 
 import frc.robot.autonomous.tasks.ArmTask;
-import frc.robot.autonomous.tasks.DoNothingTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
@@ -12,7 +11,6 @@ import frc.robot.autonomous.tasks.HopperTask;
 import frc.robot.autonomous.tasks.IntakeTask;
 import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.SequentialTask;
-import frc.robot.autonomous.tasks.SkippableTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.autonomous.tasks.WaitTask;
 import frc.robot.autonomous.tasks.WaitTask.WaitCondition;
@@ -69,7 +67,7 @@ public abstract class AutoModeBase {
 
     tasks.add(new ParallelTask(
         new SequentialTask(
-            new WaitTask(0.5),
+            new WaitTask(0.2),
             new DriveToPoseTask(Branch.ALGAE_REVERSE)),
         new ArmTask(ArmState.STOW)));
 
@@ -81,6 +79,9 @@ public abstract class AutoModeBase {
   public static ArrayList<Task> getAutoScoreTasks(ElevatorState elevatorState, Branch branch) {
     ArrayList<Task> tasks = new ArrayList<>();
     ArmState armTarget;
+
+    boolean CURRENTLY_USING_SAFE_POSE = false;
+
     boolean useSafePose;
     DriveToPoseTask firstDriveTask;
 
@@ -91,7 +92,12 @@ public abstract class AutoModeBase {
     } else {
       armTarget = ArmState.STOW;
       useSafePose = false;
-      firstDriveTask = new DriveToPoseTask(Branch.NONE);
+
+      if (CURRENTLY_USING_SAFE_POSE) {
+        firstDriveTask = new DriveToPoseTask(Branch.NONE);
+      } else {
+        firstDriveTask = new DriveToPoseTask(branch);
+      }
     }
 
     tasks.add(new ParallelTask(
@@ -103,19 +109,24 @@ public abstract class AutoModeBase {
                 new ArmTask(armTarget)))));
 
     // Drive to score
-    // if (useSafePose) {
+    if (useSafePose || CURRENTLY_USING_SAFE_POSE) {
       tasks.add(new DriveToPoseTask(branch));
-    // }
+    }
 
     // Score
-    tasks.add(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
+    if (elevatorState == ElevatorState.L1) {
+      tasks.add(new EndEffectorTask(EndEffectorState.SCORE_TROUGH));
+    } else {
+      tasks.add(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
+    }
 
     return tasks;
   }
 
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
     score(elevatorState, branch, new DriveToPoseTask(feederStation));
-    // score(elevatorState, branch, new SkippableTask(new DriveToPoseTask(feederStation), 2.2, new DoNothingTask()));
+    // score(elevatorState, branch, new SkippableTask(new
+    // DriveToPoseTask(feederStation), 2.2, new DoNothingTask()));
   }
 
   public void autoScore(ElevatorState elevatorState, Branch branch) {

@@ -135,7 +135,7 @@ public class Arm extends Subsystem {
   }
 
   public enum ArmState {
-    STOW, EXTEND
+    STOW, EXTEND, EXTEND_FEEDER_STATION
   }
 
   @Override
@@ -167,6 +167,9 @@ public class Arm extends Subsystem {
       }
       case EXTEND -> {
         return RobotConstants.robotConfig.Arm.k_L4Angle;
+      }
+      case EXTEND_FEEDER_STATION -> {
+        return RobotConstants.robotConfig.Arm.k_sourceAngle;
       }
       default -> {
         return RobotConstants.robotConfig.Arm.k_stowAngle;

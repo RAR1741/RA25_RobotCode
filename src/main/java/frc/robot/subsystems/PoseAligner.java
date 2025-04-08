@@ -33,6 +33,7 @@ public class PoseAligner extends Subsystem {
   private static class PeriodicIO {
     Pose2d safePose = new Pose2d();
     Pose2d scoringPose = new Pose2d();
+    ElevatorState elevatorState = ElevatorState.STOW;
   }
 
   @Override
@@ -128,6 +129,10 @@ public class PoseAligner extends Subsystem {
   public void reset() {
   }
 
+  public void setDesiredElevatorState(ElevatorState elevatorState) {
+    m_periodicIO.elevatorState = elevatorState;
+  }
+
   public ElevatorState getDeAlgaeElevatorState() {
     if (Helpers.isBlueAlliance()) {
       return m_reefSide % 2 != 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
@@ -143,12 +148,22 @@ public class PoseAligner extends Subsystem {
     // y-translation -> along the shorter side of the field
     double offset = 0.0;
 
-    if (branch == Branch.RIGHT) {
-      offset = -RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
-    } else if (branch == Branch.LEFT) {
-      offset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
-    } else if (branch == Branch.ALGAE) {
+    if (branch == Branch.ALGAE) {
       offset = RobotConstants.robotConfig.AutoAlign.k_algaeHorizontalOffset;
+    } else {
+      if (m_periodicIO.elevatorState == ElevatorState.L1) {
+        if (branch == Branch.RIGHT) {
+          offset = -RobotConstants.robotConfig.AutoAlign.k_scoringTroughHorizontalOffset;
+        } else if (branch == Branch.LEFT) {
+          offset = RobotConstants.robotConfig.AutoAlign.k_scoringTroughHorizontalOffset;
+        }
+      } else {
+        if (branch == Branch.RIGHT) {
+          offset = -RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+        } else if (branch == Branch.LEFT) {
+          offset = RobotConstants.robotConfig.AutoAlign.k_scoringHorizontalOffset;
+        }
+      }
     }
 
     Translation2d translation = new Translation2d(scoringDistance, offset);

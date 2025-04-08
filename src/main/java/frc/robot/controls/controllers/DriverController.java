@@ -42,8 +42,7 @@ public class DriverController extends FilteredController {
   }
 
   public boolean getWantsAutoPosition() {
-    return getRawButton(Button.X) ||
-        getRawButton(Button.LEFT_BUMPER) ||
+    return getRawButton(Button.LEFT_BUMPER) ||
         getRawButton(Button.RIGHT_BUMPER);
   }
 
@@ -56,8 +55,8 @@ public class DriverController extends FilteredController {
     return Branch.NONE;
   }
 
-  public boolean getWantsAutoPositionPressed() {
-    return this.getRawButtonPressed(Button.X);
+  public boolean getWantsAutoScorePlusAlgae() {
+    return this.getRawButton(Button.X);
   }
 
   public boolean getWantsAutoPositionFeederStation() {

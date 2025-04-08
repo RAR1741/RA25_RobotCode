@@ -1,5 +1,6 @@
 package frc.robot.autonomous.tasks;
 
+import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
@@ -17,6 +18,13 @@ public class IntakeTask extends Task {
 
   @Override
   public void prepare() {
+    if (m_intakeState == IntakeState.STOW) {
+      // EndEffector.getInstance().shouldBeIndexingCoral = true;
+      EndEffector.getInstance().setShouldBeIndexingCoral(true);
+    } else {
+      EndEffector.getInstance().setShouldBeIndexingCoral(false);
+    }
+
     m_intakes.setIntakeState(m_intakeVariant, m_intakeState);
   }
 

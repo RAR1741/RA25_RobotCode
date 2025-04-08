@@ -9,6 +9,6 @@ public class LeftMode extends AutoModeBase {
   public void queueTasks() {
     autoScore(ElevatorState.L4, Branch.RIGHT, FeederStation.LEFT);
     autoScore(ElevatorState.L4, Branch.RIGHT, FeederStation.LEFT);
-    autoScore(ElevatorState.L3, Branch.LEFT, FeederStation.LEFT);
+    autoScore(ElevatorState.L4, Branch.LEFT, FeederStation.LEFT);
   }
 }

@@ -146,19 +146,13 @@ public class SwerveDrive extends Subsystem {
     // TODO be able to call RAROdometry from Swerve Drive (maybe pass modules as
     // parameters)
 
-    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculatePoseSpeeds(
-        currentPose,
-        targetPose,
-        RobotConstants.robotConfig.AutoAlign.k_maxApproachSpeed);
+    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculatePoseSpeeds(currentPose, targetPose);
 
     drive(driverChassisSpeeds.plus(targetPoseChassisSpeeds));
   }
 
   public void drive(Pose2d currentPose, Pose2d goalPose) {
-    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculatePoseSpeeds(
-        currentPose,
-        goalPose,
-        RobotConstants.robotConfig.AutoAlign.k_maxApproachSpeed);
+    ChassisSpeeds targetPoseChassisSpeeds = m_driveController.calculatePoseSpeeds(currentPose, goalPose);
 
     drive(targetPoseChassisSpeeds);
   }

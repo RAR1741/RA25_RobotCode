@@ -25,6 +25,14 @@ public class OperatorController extends FilteredController {
     return getRawButtonReleased(k_leftIntakeButton);
   }
 
+  public boolean getWantsIntakeAlgae() {
+    return getFilteredAxis(Axis.LEFT_TRIGGER) >= 0.5;
+  }
+
+  public boolean getWantsScoreAlgae() {
+    return getFilteredAxis(Axis.RIGHT_TRIGGER) >= 0.5;
+  }
+
   private final int k_rightIntakeButton = Button.RIGHT_BUMPER;
 
   public boolean getWantsRightIntakeGround() {
@@ -45,14 +53,23 @@ public class OperatorController extends FilteredController {
     return getRawButtonReleased(k_ejectButton);
   }
 
+  // Notification notification = new Notification(Elastic.Notification.NotificationLevel.INFO,
+  // "Queued Elevator State Changed",
+  // "Queued state: L4",
+  // 1500);
+
   public ElevatorState getDesiredElevatorState() {
     if (getHatPressed(Direction.DOWN)) {
+      // Elastic.sendNotification(notification.withDescription("Queued state: L1"));
       m_desiredElevatorState = ElevatorState.L1;
     } else if (getHatPressed(Direction.RIGHT)) {
+      // Elastic.sendNotification(notification.withDescription("Queued state: L2"));
       m_desiredElevatorState = ElevatorState.L2;
     } else if (getHatPressed(Direction.LEFT)) {
+      // Elastic.sendNotification(notification.withDescription("Queued state: L3"));
       m_desiredElevatorState = ElevatorState.L3;
     } else if (getHatPressed(Direction.UP)) {
+      // Elastic.sendNotification(notification.withDescription("Queued state: L4"));
       m_desiredElevatorState = ElevatorState.L4;
     }
 
@@ -70,7 +87,7 @@ public class OperatorController extends FilteredController {
   }
 
   public boolean getWantsResetElevator() {
-    return this.getRawButtonPressed(Button.START);
+    return this.getRawButtonPressed(Button.LEFT_JOYSTICK) || this.getRawButtonPressed(Button.RIGHT_JOYSTICK);
   }
 
   private final int k_scoreButton = Button.X;
