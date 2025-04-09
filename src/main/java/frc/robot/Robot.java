@@ -250,12 +250,12 @@ public class Robot extends LoggedRobot {
       } else if (m_operatorController.getWantsIntakeEjectStopped()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.END_EJECT);
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.END_EJECT);
-      } else if (m_operatorController.getWantsIntakeAlgae()) {
-        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.ALGAE);
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.ALGAE);
       } else if (m_operatorController.getWantsScoreAlgae()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.SCORE_ALGAE);
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.SCORE_ALGAE);
+      } else if (m_operatorController.getWantsIntakeAlgae()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.ALGAE);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.ALGAE);
       } else {
         // if (!isSafeToIndex() || isSafeToExtend()) {
         // m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
@@ -263,13 +263,13 @@ public class Robot extends LoggedRobot {
         // } else {
         if (m_operatorController.getWantsLeftIntakeGround()) {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsLeftIntakeStow()) {
+        } else /*if (m_operatorController.getWantsLeftIntakeStow())*/ {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
         }
 
         if (m_operatorController.getWantsRightIntakeGround()) {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsRightIntakeStow()) {
+        } else /*if (m_operatorController.getWantsRightIntakeStow())*/ {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
         }
         // }
