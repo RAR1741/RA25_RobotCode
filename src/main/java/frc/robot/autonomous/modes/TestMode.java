@@ -1,5 +1,8 @@
 package frc.robot.autonomous.modes;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.autonomous.tasks.DriveDistanceTask;
+
 public class TestMode extends AutoModeBase {
   @Override
   public void queueTasks() {
@@ -10,6 +13,8 @@ public class TestMode extends AutoModeBase {
     // autoScore(ElevatorState.L4, Branch.RIGHT, FeederStation.LEFT);
 
     // deAlgae();
-    queueTasks(getDeAlgaeTasks());
+    // queueTasks(getDeAlgaeTasks());
+
+    queueTask(new DriveDistanceTask(new Rotation2d(45)));
   }
 }

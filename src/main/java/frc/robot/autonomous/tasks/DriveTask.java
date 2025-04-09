@@ -23,7 +23,6 @@ public class DriveTask extends Task {
     m_targetDistance = distance;
     m_xSpeed = xSpeed;
     m_ySpeed = ySpeed;
-    // m_speed = speed;
   }
 
   @Override
