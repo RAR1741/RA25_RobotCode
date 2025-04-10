@@ -23,6 +23,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
+import frc.robot.LaserCanHandler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
@@ -220,7 +221,11 @@ public class Intake {
 
     switch (m_periodicIO.desiredIntakeState) {
       case STOW -> {
+        if(!LaserCanHandler.getInstance().getExitSeesCoral()) {
+          return RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;
+        }
         return 0.0;
+        // return RobotConstants.robotConfig.Intake.k_stowingIntakeSpeed;
       }
       case INTAKE -> {
         return RobotConstants.robotConfig.Intake.k_maxIntakeSpeed;

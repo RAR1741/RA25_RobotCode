@@ -49,12 +49,20 @@ public class DriveDistanceTask extends Task {
   public void updateSim() {
   }
 
+  int debounce = 0;
   @Override
   public boolean isFinished() {
     double translationError = m_currentPose.getTranslation().getDistance(m_goalPose.getTranslation());
     double rotationError = Math.abs(m_currentPose.getRotation().minus(m_goalPose.getRotation()).getDegrees());
 
-    return translationError <= k_translationErrorThreshold && rotationError <= k_rotationErrorThreshold;
+    // return translationError <= k_translationErrorThreshold && rotationError <= k_rotationErrorThreshold;
+    if(translationError <= k_translationErrorThreshold && rotationError <= k_rotationErrorThreshold) {
+      debounce++;
+    } else {
+      debounce = 0;
+    }
+    
+    return debounce >= 5;
   }
 
   @Override
