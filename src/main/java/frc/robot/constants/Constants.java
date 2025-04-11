@@ -206,8 +206,8 @@ public class Constants {
     public final double k_maxHeight = 60.5;
     public final double k_feederHeight = 29.57;
     // public final double k_groundAlgaeHeight = 0.0;
-    public final double k_lowAlgaeHeight = 27.643;
-    public final double k_highAlgaeHeight = 44.571;
+    public final double k_lowAlgaeHeight = 22.14;
+    public final double k_highAlgaeHeight = 39.0;
 
     public final double k_allowedError = 0.4;
   }
@@ -234,6 +234,8 @@ public class Constants {
     public double k_L4Angle;
     public double k_horizontalAngle;
     public double k_sourceAngle;
+    public double k_deAlgaeAngle;
+    public double k_netAngle;
 
     public final double k_maxAcceleration = 8.0;
     public final double k_maxVelocity = 2.0;
@@ -245,9 +247,9 @@ public class Constants {
     public final int k_leftMotorId = 31;
     public final int k_rightMotorId = 32;
 
-    public final double k_rollerGearRatio = 1.0 / 10.0;
+    public final double k_rollerGearRatio = 1.0 / 30.0;
 
-    public final double k_rollerP = 0.0004;
+    public final double k_rollerP = 0.002;
     public final double k_rollerI = 0.000;
     public final double k_rollerD = 0.0;
     public final double k_rollerFF = 0.001;
@@ -260,6 +262,8 @@ public class Constants {
     // public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
     // public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
+    public final double k_algeaGrabPower = -0.4; 
+    public final double k_algeaScorePower = 1.0;
 
     public final double k_stopSpeed = 0.0;
     public final double k_forwardIndexFastSpeed = 275.0;

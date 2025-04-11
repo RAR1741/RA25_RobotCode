@@ -89,4 +89,18 @@ public class DriverController extends FilteredController {
         this.getRawButtonReleased(k_autoScoreLeftButton) ||
         this.getRawButtonReleased(k_autoScoreRightButton);
   }
+
+  public boolean getWantsAlgaeGrab() {
+    return this.getFilteredAxis(Axis.LEFT_TRIGGER) > 0.5;
+  }
+
+  public boolean getWantsAlgaeScore() {
+    return this.getFilteredAxis(Axis.RIGHT_TRIGGER)> 0.5 ;
+  }
 }
+
+
+
+
+
+//sigma sigma boy

@@ -125,4 +125,6 @@ public class OperatorController extends FilteredController {
   public boolean getWantsReverseEndEffectorStopped() {
     return this.getRawButtonReleased(k_reverseButton);
   }
+
+
 }

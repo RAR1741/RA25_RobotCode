@@ -315,6 +315,14 @@ public class Robot extends LoggedRobot {
         }
       }
 
+      if(m_driverController.getWantsAlgaeGrab()) {
+        m_endEffector.algaeGrab();
+      }
+
+      if(m_driverController.getWantsAlgaeScore()) {
+        m_endEffector.algaeScore();
+      }
+
       if (m_operatorController.getWantsScore()) {
         if (m_elevator.getTargetState() == ElevatorState.L1) {
           m_endEffector.setState(EndEffectorState.SCORE_TROUGH);

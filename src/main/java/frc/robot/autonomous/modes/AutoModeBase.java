@@ -60,16 +60,16 @@ public abstract class AutoModeBase {
 
     tasks.add(new ParallelTask(
         new DriveToPoseTask(Branch.NONE),
-        new ArmTask(ArmState.EXTEND),
+        new ArmTask(ArmState.DEALGAE),
         new ElevatorTask(elevatorState)));
 
     tasks.add(new DriveToPoseTask(Branch.ALGAE));
+    tasks.add(new WaitTask(0.25));
 
     tasks.add(new ParallelTask(
         new SequentialTask(
-            new WaitTask(0.2),
             new DriveToPoseTask(Branch.ALGAE_REVERSE)),
-        new ArmTask(ArmState.STOW)));
+            new ArmTask(ArmState.STOW)));
 
     tasks.add(new ElevatorTask(ElevatorState.L1));
 
