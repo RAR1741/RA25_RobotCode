@@ -150,6 +150,7 @@ public class PoseAligner extends Subsystem {
 
     if (branch == Branch.ALGAE) {
       offset = RobotConstants.robotConfig.AutoAlign.k_algaeHorizontalOffset;
+      scoringDistance = RobotConstants.robotConfig.AutoAlign.k_algaeDistance;
     } else {
       if (m_periodicIO.elevatorState == ElevatorState.L1) {
         if (branch == Branch.RIGHT) {

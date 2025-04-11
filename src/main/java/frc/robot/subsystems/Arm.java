@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.EndEffector.EndEffectorState;
 
 public class Arm extends Subsystem {
   private static Arm m_arm = null;
@@ -163,6 +164,10 @@ public class Arm extends Subsystem {
   public double getArmTarget() {
     switch (m_periodicIO.arm_state) {
       case STOW -> {
+        EndEffectorState state = EndEffector.getInstance().getEndEffectorState();
+        if(state == EndEffectorState.ALGAE_GRAB || state == EndEffectorState.ALGAE_SCORE) {
+          return RobotConstants.robotConfig.Arm.k_algaeStowAngle;
+        }
         return RobotConstants.robotConfig.Arm.k_stowAngle;
       }
       case EXTEND -> {

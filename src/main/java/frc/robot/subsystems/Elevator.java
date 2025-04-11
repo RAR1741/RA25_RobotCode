@@ -101,6 +101,7 @@ public class Elevator extends Subsystem {
     L4,
     ALGAE_LOW,
     ALGAE_HIGH,
+    ALGAE_BETWEEN,
     FEEDER_STATION
   }
 
@@ -147,6 +148,7 @@ public class Elevator extends Subsystem {
 
   public void setState(ElevatorState state) {
     PoseAligner.getInstance().setDesiredElevatorState(state);
+    prevState = m_periodicIO.target_state;
 
     m_periodicIO.target_state = state;
   }
@@ -188,6 +190,7 @@ public class Elevator extends Subsystem {
     return m_periodicIO.target_state;
   }
 
+  ElevatorState prevState = ElevatorState.ALGAE_HIGH;
   @AutoLogOutput(key = "Elevator/Position/Target")
   private double getElevatorTarget() {
     switch (m_periodicIO.target_state) {
@@ -211,6 +214,12 @@ public class Elevator extends Subsystem {
       }
       case ALGAE_LOW -> {
         return RobotConstants.robotConfig.Elevator.k_lowAlgaeHeight;
+      }
+      case ALGAE_BETWEEN -> {
+        if(prevState == ElevatorState.ALGAE_HIGH) {
+          return RobotConstants.robotConfig.Elevator.k_highAlgaeHeight + 4.0;
+        }
+        return RobotConstants.robotConfig.Elevator.k_lowAlgaeHeight + 4.0;
       }
       case FEEDER_STATION -> {
         return RobotConstants.robotConfig.Elevator.k_feederHeight;

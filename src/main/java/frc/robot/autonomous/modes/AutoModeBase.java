@@ -3,6 +3,7 @@ package frc.robot.autonomous.modes;
 import java.util.ArrayList;
 
 import frc.robot.autonomous.tasks.ArmTask;
+import frc.robot.autonomous.tasks.DoNothingTask;
 import frc.robot.autonomous.tasks.DriveForwardTask;
 import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.ElevatorTask;
@@ -11,6 +12,7 @@ import frc.robot.autonomous.tasks.HopperTask;
 import frc.robot.autonomous.tasks.IntakeTask;
 import frc.robot.autonomous.tasks.ParallelTask;
 import frc.robot.autonomous.tasks.SequentialTask;
+import frc.robot.autonomous.tasks.SkippableTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.autonomous.tasks.WaitTask;
 import frc.robot.autonomous.tasks.WaitTask.WaitCondition;
@@ -58,13 +60,16 @@ public abstract class AutoModeBase {
     ArrayList<Task> tasks = new ArrayList<>();
     ElevatorState elevatorState = PoseAligner.getInstance().getDeAlgaeElevatorState();
 
+    tasks.add(new EndEffectorTask(EndEffectorState.ALGAE_GRAB));
     tasks.add(new ParallelTask(
         new DriveToPoseTask(Branch.NONE),
         new ArmTask(ArmState.DEALGAE),
         new ElevatorTask(elevatorState)));
 
-    tasks.add(new DriveToPoseTask(Branch.ALGAE));
-    tasks.add(new WaitTask(0.25));
+    // tasks.add(new DriveToPoseTask(Branch.ALGAE));
+
+    tasks.add(new SkippableTask(new DriveToPoseTask(Branch.ALGAE), 1.5, new DoNothingTask()));
+    tasks.add(new ElevatorTask(ElevatorState.ALGAE_BETWEEN));
 
     tasks.add(new ParallelTask(
         new SequentialTask(

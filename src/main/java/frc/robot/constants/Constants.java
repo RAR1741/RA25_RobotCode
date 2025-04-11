@@ -231,6 +231,7 @@ public class Constants {
     public final int k_maxCurrent = 30;
 
     public double k_stowAngle;
+    public double k_algaeStowAngle;
     public double k_L4Angle;
     public double k_horizontalAngle;
     public double k_sourceAngle;
@@ -360,6 +361,7 @@ public class Constants {
     // public final double k_l4ScoringDistance = 0.100;
 
     public final double k_l4ScoringDistance = 0.254;
+    public final double k_algaeDistance = 0.32;
     public final double k_otherScoringOffset = 0.0;
     public final double k_scoringHorizontalOffset = 0.175;
     public final double k_scoringTroughHorizontalOffset = 0.46;
