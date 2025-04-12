@@ -7,14 +7,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.RobotTelemetry;
 import frc.robot.autonomous.modes.AutoModeBase;
+import frc.robot.autonomous.modes.CenterBargeMode;
 import frc.robot.autonomous.modes.CenterMode;
 import frc.robot.autonomous.modes.DoNothingMode;
 import frc.robot.autonomous.modes.LeftMode;
 import frc.robot.autonomous.modes.RightMode;
 import frc.robot.autonomous.modes.TestMode;
 import frc.robot.autonomous.tasks.Task;
-import frc.robot.subsystems.leds.LEDModes;
-import frc.robot.subsystems.leds.LEDs;
 
 public class AutoRunner {
   private static AutoRunner m_autoRunner = null;
@@ -28,7 +27,8 @@ public class AutoRunner {
     TEST,
     LEFT,
     RIGHT,
-    CENTER
+    CENTER,
+    CENTER_BARGE
   }
 
   private AutoRunner() {
@@ -63,10 +63,11 @@ public class AutoRunner {
   }
 
   private void onAutoChange(String newAuto) {
-    // Color color = DriverStation.getAlliance().get().equals(Alliance.Blue) ? Color.kBlue : Color.kRed;
+    // Color color = DriverStation.getAlliance().get().equals(Alliance.Blue) ?
+    // Color.kBlue : Color.kRed;
     Optional<Alliance> alliance = DriverStation.getAlliance();
     Color color = Color.kWhite;
-    if(alliance.isPresent()) {
+    if (alliance.isPresent()) {
       color = alliance.get().equals(Alliance.Blue) ? Color.kBlue : Color.kRed;
     }
     RobotTelemetry.print("AUTO CHANGED");
@@ -95,6 +96,10 @@ public class AutoRunner {
       case CENTER -> {
         // m_leds.setAllColor(color);
         m_autoMode = new CenterMode();
+      }
+      case CENTER_BARGE -> {
+        // m_leds.setAllColor(color);
+        m_autoMode = new CenterBargeMode();
       }
       default -> {
         RobotTelemetry.print("Invalid auto mode selected. Defaulting to do nothing.");
