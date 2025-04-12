@@ -237,6 +237,7 @@ public class Constants {
     public double k_sourceAngle;
     public double k_deAlgaeAngle;
     public double k_netAngle;
+    public double k_upAngle;
 
     public final double k_maxAcceleration = 8.0;
     public final double k_maxVelocity = 2.0;
@@ -263,8 +264,8 @@ public class Constants {
     // public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
     // public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
-    public final double k_algeaGrabPower = -0.4; 
-    public final double k_algeaScorePower = 1.0;
+    public final double k_algaeGrabPower = -0.4; 
+    public final double k_algaeScorePower = 1.0;
 
     public final double k_stopSpeed = 0.0;
     public final double k_forwardIndexFastSpeed = 275.0;
@@ -365,7 +366,7 @@ public class Constants {
     public final double k_otherScoringOffset = 0.0;
     public final double k_scoringHorizontalOffset = 0.175;
     public final double k_scoringTroughHorizontalOffset = 0.46;
-    public final double k_algaeHorizontalOffset = 0.0;
+    public final double k_algaeHorizontalOffset = 0.005;
     public final double k_algaeReverseExtraDistance = -0.5;
 
     public final double k_maxApproachSpeed = 5.0;
@@ -376,6 +377,11 @@ public class Constants {
     public final double k_feederStationXOffset = 1.2;
     public final double k_feederStationYOffset = 0.92;
     public final double k_feederStationRotationOffset = 54.0;
+
+    // Base barge scoring pose
+    public final double k_bargeXOffset = 9.13;
+    public final double k_bargeYOffset = 2.537;
+    public final double k_bargeRotationOffset = 0.0;
   }
 
   public static class LEDConstants {

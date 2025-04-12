@@ -4,40 +4,51 @@ package frc.robot.controls.controllers;
 
 public class DPadButton {
 
-    FilteredController m_controller;
-    Direction m_direction;
+  FilteredController m_controller;
+  Direction m_direction;
 
-    public boolean m_pressed = false;
+  public boolean m_pressed = false;
 
-    public DPadButton(FilteredController controller, Direction direction) {
-        this.m_controller = controller;
-        this.m_direction = direction;
+  public DPadButton(FilteredController controller, Direction direction) {
+    this.m_controller = controller;
+    this.m_direction = direction;
+  }
+
+  public static enum Direction {
+    UP(0), RIGHT(90), DOWN(180), LEFT(270);
+
+    int direction;
+
+    private Direction(int direction) {
+      this.direction = direction;
     }
+  }
 
-    public static enum Direction {
-        UP(0), RIGHT(90), DOWN(180), LEFT(270);
+  public boolean get() {
+    return m_controller.getPOV() == m_direction.direction;
+  }
 
-        int direction;
-
-        private Direction(int direction) {
-            this.direction = direction;
-        }
+  public boolean getPressed() {
+    if (get()) {
+      if (!m_pressed) {
+        m_pressed = true;
+      }
+    } else {
+      m_pressed = false;
     }
+    return m_pressed;
+  }
 
-    public boolean get() {
-        return m_controller.getPOV() == m_direction.direction;
+  public boolean getReleased() {
+    if (m_pressed) {
+      if (get()) {
+        m_pressed = true;
+      } else {
+        m_pressed = false;
+        return true;
+      }
     }
-
-    public boolean getPressed() {
-        if (get()) {
-            if (!m_pressed) {
-                m_pressed = true;
-                return true;
-            }
-        } else {
-            m_pressed = false;
-        }
-        return false;
-    }
+    return false;
+  }
 
 }

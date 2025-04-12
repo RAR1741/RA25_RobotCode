@@ -271,11 +271,11 @@ public class EndEffector extends Subsystem {
       }
 
       case ALGAE_GRAB -> {
-        return RobotConstants.robotConfig.EndEffector.k_algeaGrabPower;
+        return RobotConstants.robotConfig.EndEffector.k_algaeGrabPower;
       }
 
       case ALGAE_SCORE -> {
-        return RobotConstants.robotConfig.EndEffector.k_algeaScorePower;
+        return RobotConstants.robotConfig.EndEffector.k_algaeScorePower;
       }
 
       default -> {

@@ -67,8 +67,16 @@ public class FilteredController extends GenericHID {
     return hatButtons[direction].getPressed();
   }
 
+  public boolean getHatReleased(int direction) {
+    return hatButtons[direction].getReleased();
+  }
+
   public boolean getHat(int direction) {
     return hatButtons[direction].get();
+  }
+
+  public boolean getAnyHatReleased() {
+    return getHatReleased(Direction.DOWN) || getHatReleased(Direction.UP) || getHatReleased(Direction.LEFT) || getHatReleased(Direction.RIGHT);
   }
 
   public interface Button {

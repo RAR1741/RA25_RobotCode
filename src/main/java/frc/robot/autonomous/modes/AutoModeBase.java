@@ -19,7 +19,9 @@ import frc.robot.autonomous.tasks.WaitTask.WaitCondition;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.PoseAligner;
+import frc.robot.subsystems.PoseAligner.Barge;
 import frc.robot.subsystems.PoseAligner.Branch;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
@@ -56,6 +58,22 @@ public abstract class AutoModeBase {
 
   public abstract void queueTasks();
 
+  public static ArrayList<Task> getNetTasks(int barge) {
+    ArrayList<Task> tasks = new ArrayList<>();
+    
+    tasks.add(new DriveToPoseTask(barge, false));
+    tasks.add(new ParallelTask(
+        new ArmTask(ArmState.NET),
+        new ElevatorTask(ElevatorState.L4)));
+    tasks.add(new WaitTask(1.0));
+    tasks.add(new ParallelTask(
+      new EndEffectorTask(EndEffectorState.ALGAE_SCORE),
+      new ArmTask(ArmState.UP)));
+    tasks.add(new EndEffectorTask(EndEffectorState.OFF));
+
+    return tasks;
+  }
+
   public static ArrayList<Task> getDeAlgaeTasks() {
     ArrayList<Task> tasks = new ArrayList<>();
     ElevatorState elevatorState = PoseAligner.getInstance().getDeAlgaeElevatorState();
@@ -65,8 +83,6 @@ public abstract class AutoModeBase {
         new DriveToPoseTask(Branch.NONE),
         new ArmTask(ArmState.DEALGAE),
         new ElevatorTask(elevatorState)));
-
-    // tasks.add(new DriveToPoseTask(Branch.ALGAE));
 
     tasks.add(new SkippableTask(new DriveToPoseTask(Branch.ALGAE), 1.5, new DoNothingTask()));
     tasks.add(new ElevatorTask(ElevatorState.ALGAE_BETWEEN));
@@ -129,7 +145,7 @@ public abstract class AutoModeBase {
   }
 
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
-    score(elevatorState, branch, new DriveToPoseTask(feederStation));
+    score(elevatorState, branch, new DriveToPoseTask(feederStation, true));
     // score(elevatorState, branch, new SkippableTask(new
     // DriveToPoseTask(feederStation), 2.2, new DoNothingTask()));
   }

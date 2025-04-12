@@ -24,14 +24,14 @@ public class DriveToPoseTask extends Task {
   private final double k_rotationErrorThreshold; // degrees
 
   private Branch m_branch;
-  private int m_station; // FeederStation
+  private int m_positionId; // FeederStation
   private int m_direction = -1;
+  private final boolean m_isFeederStation;
 
   public DriveToPoseTask(Branch branch) {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
     m_poseAligner = PoseAligner.getInstance();
-
     
     if (branch == Branch.NONE) {
       // Safe pose
@@ -45,17 +45,21 @@ public class DriveToPoseTask extends Task {
       k_translationErrorThreshold = Units.inchesToMeters(0.5);
       k_rotationErrorThreshold = 0.5;
     }
+
+    m_isFeederStation = false;
     
 
     m_branch = branch;
-    m_station = -1;
+    m_positionId = -1;
   }
 
-  public DriveToPoseTask(int direction) {
+  public DriveToPoseTask(int direction, boolean isFeederStation) {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
     m_poseAligner = PoseAligner.getInstance();
     m_direction = direction;
+
+    m_isFeederStation = isFeederStation;
 
     // Feeder poses
     k_translationErrorThreshold = Units.inchesToMeters(12);
@@ -67,24 +71,29 @@ public class DriveToPoseTask extends Task {
     if (m_direction != -1) {
       // go go gadget enable jank
       if (Helpers.isBlueAlliance()) {
-        m_station = m_direction - 4;
+        m_positionId = m_direction - 4;
       } else {
-        m_station = m_direction - 2;
+        m_positionId = m_direction - 2;
       }
 
       m_branch = null;
     }
 
-    if (m_station == -1) {
+    if (m_positionId == -1) {
       // we want to target the reef
       m_currentPose = m_odometry.getPose();
       m_goalPose = m_poseAligner.getAndCalculateTargetPose(m_currentPose, m_branch);
-    } else if (m_station > 3) {
+    } else if (m_positionId > 3) {
       RobotTelemetry.print("Bad direction passed to DriveToPoseTask");
     } else {
       // we want to target the feeder station
-      Pose2d[] stationPoses = m_poseAligner.getFeederStationPoses();
-      m_goalPose = stationPoses[m_station];
+      Pose2d[] poses;
+      if(m_isFeederStation) {
+        poses = m_poseAligner.getFeederStationPoses();
+      } else {
+        poses = m_poseAligner.getBargePoses();
+      }
+      m_goalPose = poses[m_positionId];
     }
     m_swerve.resetDriveController();
 
@@ -98,7 +107,7 @@ public class DriveToPoseTask extends Task {
     m_currentPose = m_odometry.getPose();
     m_swerve.drive(m_currentPose, m_goalPose);
 
-    Logger.recordOutput("PoseAligner/Station", m_station);
+    Logger.recordOutput("PoseAligner/PoseId", m_positionId);
     ASPoseHelper.addPose("PoseAligner/GoalPose", m_goalPose);
   }
 

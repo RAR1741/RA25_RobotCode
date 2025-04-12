@@ -30,6 +30,7 @@ import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
+import frc.robot.controls.controllers.FilteredController.Direction;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator;
@@ -38,6 +39,7 @@ import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
+import frc.robot.subsystems.PoseAligner.Barge;
 import frc.robot.subsystems.PoseAligner.Branch;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
@@ -305,6 +307,10 @@ public class Robot extends LoggedRobot {
         // m_leds.setAllColor(Color.kAqua);
 
         m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
+      } else if (m_driverController.getHatPressed(Direction.DOWN)) {
+        m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.NEAR));
+      } else if (m_driverController.getHatPressed(Direction.UP)) {
+        m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.FAR));
       }
 
       if (m_operatorController.getWantsStow()) {
@@ -317,10 +323,6 @@ public class Robot extends LoggedRobot {
 
       if(m_driverController.getWantsAlgaeGrab()) {
         m_endEffector.algaeGrab();
-      }
-
-      if(m_driverController.getWantsAlgaeScore()) {
-        m_endEffector.algaeScore();
       }
 
       if (m_operatorController.getWantsScore()) {
