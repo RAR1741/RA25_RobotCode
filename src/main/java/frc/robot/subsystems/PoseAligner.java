@@ -11,6 +11,7 @@ import frc.robot.ASPoseHelper;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.drivetrain.RAROdometry;
 
 public class PoseAligner extends Subsystem {
   private static PoseAligner m_poseAligner;
@@ -51,8 +52,16 @@ public class PoseAligner extends Subsystem {
     ASPoseHelper.addPose("Red/Reef/pose", RobotConstants.robotConfig.Field.k_redReefPose);
     ASPoseHelper.addPose("Blue/Reef/pose", RobotConstants.robotConfig.Field.k_blueReefPose);
 
-    Pose3d allianceReef = alliance == Alliance.Red ? RobotConstants.robotConfig.Field.k_redReefPose
-        : RobotConstants.robotConfig.Field.k_blueReefPose;
+    Pose3d allianceReef;
+    // if (branch == Branch.ALGAE || branch == Branch.NONE) {
+    // Only for dealgae
+    allianceReef = getCurrentSideReef(currentPose);
+    // } else {
+    // // Any normal use
+    // allianceReef = alliance == Alliance.Red ?
+    // RobotConstants.robotConfig.Field.k_redReefPose
+    // : RobotConstants.robotConfig.Field.k_blueReefPose;
+    // }
 
     ASPoseHelper.addPose("TargetAngle", new Pose2d[] { currentPose, allianceReef.toPose2d() });
 
@@ -87,6 +96,17 @@ public class PoseAligner extends Subsystem {
 
     m_periodicIO.safePose = safePose;
     m_periodicIO.scoringPose = scoringPose;
+  }
+
+  public boolean isCurrentSideAllianceBlue(Pose2d currentPose) {
+    return currentPose.getX() < (RobotConstants.robotConfig.Field.k_length / 2);
+  }
+
+  public Pose3d getCurrentSideReef(Pose2d currentPose) {
+    if (isCurrentSideAllianceBlue(currentPose)) {
+      return RobotConstants.robotConfig.Field.k_blueReefPose;
+    }
+    return RobotConstants.robotConfig.Field.k_redReefPose;
   }
 
   public Pose2d getAndCalculateTargetPose(Pose2d currentPose, Branch branch) {
@@ -134,7 +154,7 @@ public class PoseAligner extends Subsystem {
   }
 
   public ElevatorState getDeAlgaeElevatorState() {
-    if (Helpers.isBlueAlliance()) {
+    if (isCurrentSideAllianceBlue(RAROdometry.getInstance().getPose())) {
       return m_reefSide % 2 != 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
     } else {
       return m_reefSide % 2 == 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
