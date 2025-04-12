@@ -84,7 +84,7 @@ public abstract class AutoModeBase {
         new ArmTask(ArmState.DEALGAE),
         new ElevatorTask(elevatorState)));
 
-    tasks.add(new SkippableTask(new DriveToPoseTask(Branch.ALGAE), 1.5, new DoNothingTask()));
+    tasks.add(new SkippableTask(new DriveToPoseTask(Branch.ALGAE), 1.0, new DoNothingTask()));
     tasks.add(new ElevatorTask(ElevatorState.ALGAE_BETWEEN));
 
     tasks.add(new ParallelTask(

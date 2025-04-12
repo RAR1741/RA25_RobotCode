@@ -38,6 +38,7 @@ public class DriveToPoseTask extends Task {
       k_translationErrorThreshold = Units.inchesToMeters(4);
       k_rotationErrorThreshold = 1.0;
     } else if(branch == Branch.ALGAE) {
+      // Dealgae pose
       k_translationErrorThreshold = Units.inchesToMeters(1);
       k_rotationErrorThreshold = 0.5;
     } else {
@@ -45,7 +46,7 @@ public class DriveToPoseTask extends Task {
       k_translationErrorThreshold = Units.inchesToMeters(0.5);
       k_rotationErrorThreshold = 0.5;
     }
-
+    
     m_isFeederStation = false;
     
 

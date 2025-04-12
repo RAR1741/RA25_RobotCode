@@ -122,7 +122,7 @@ public class Arm extends Subsystem {
 
     Logger.recordOutput(loggingKey + "/ff", ff);
 
-    if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold) {
+    if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold && !shouldHaveAlgae()) {
       m_motor.setVoltage(RobotConstants.robotConfig.Arm.k_constantVoltage);
     } else {
       // Set PID controller to new state
@@ -160,12 +160,17 @@ public class Arm extends Subsystem {
     return m_motor.getEncoder().getPosition();
   }
 
+  @AutoLogOutput(key = "Arm/ShouldHaveAlgae")
+  public boolean shouldHaveAlgae() {
+    EndEffectorState state = EndEffector.getInstance().getEndEffectorState();
+    return state == EndEffectorState.ALGAE_GRAB || state == EndEffectorState.ALGAE_SCORE;
+  }
+
   @AutoLogOutput(key = "Arm/Position/Target")
   public double getArmTarget() {
     switch (m_periodicIO.arm_state) {
       case STOW -> {
-        EndEffectorState state = EndEffector.getInstance().getEndEffectorState();
-        if(state == EndEffectorState.ALGAE_GRAB || state == EndEffectorState.ALGAE_SCORE) {
+        if(shouldHaveAlgae()) {
           return RobotConstants.robotConfig.Arm.k_algaeStowAngle;
         }
         return RobotConstants.robotConfig.Arm.k_stowAngle;
