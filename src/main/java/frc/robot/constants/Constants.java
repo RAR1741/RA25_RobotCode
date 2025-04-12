@@ -200,8 +200,8 @@ public class Constants {
 
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
-    public final double k_L2Height = 26.0;
-    public final double k_L3Height = 42.7;
+    public final double k_L2Height = 26.25;
+    public final double k_L3Height = 42.95;
     public final double k_L4Height = 60.5; // 59.6;
     public final double k_maxHeight = 60.5;
     public final double k_feederHeight = 29.57;
@@ -209,7 +209,7 @@ public class Constants {
     public final double k_lowAlgaeHeight = 22.14;
     public final double k_highAlgaeHeight = 39.0;
 
-    public final double k_algaeBetweenOffset = 4.1;
+    public final double k_algaeBetweenOffset = 4.0;
 
     public final double k_allowedError = 0.4;
   }
@@ -272,7 +272,7 @@ public class Constants {
 
     public final double k_stopSpeed = 0.0;
     public final double k_forwardIndexFastSpeed = 275.0;
-    public final double k_forwardIndexSlowSpeed = 80.0;
+    public final double k_forwardIndexSlowSpeed = 160.0;
     public final double k_reverseIndexSpeed = -60.0;
     public final double k_branchSpeed = 3000.0;
     public final double k_troughSpeed = 5000.0;

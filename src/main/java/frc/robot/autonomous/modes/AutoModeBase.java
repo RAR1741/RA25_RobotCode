@@ -65,7 +65,7 @@ public abstract class AutoModeBase {
         new ArmTask(ArmState.NET),
         new ElevatorTask(ElevatorState.L4)));
 
-    tasks.add(new WaitTask(0.5));
+    tasks.add(new WaitTask(0.25));
 
     tasks.add(new ParallelTask(
         new EndEffectorTask(EndEffectorState.ALGAE_SCORE),
@@ -78,8 +78,32 @@ public abstract class AutoModeBase {
     if (stowAfter) {
       tasks.add(new ParallelTask(
           new ArmTask(ArmState.STOW),
-          new ElevatorTask(ElevatorState.STOW)));
+          new SequentialTask(
+              new WaitTask(0.25),
+              new ElevatorTask(ElevatorState.STOW))));
     }
+
+    return tasks;
+  }
+
+  public static ArrayList<Task> getDeAlgaeTasks(ElevatorState elevatorState) {
+    ArrayList<Task> tasks = new ArrayList<>();
+
+    tasks.add(new EndEffectorTask(EndEffectorState.ALGAE_GRAB));
+    tasks.add(new ParallelTask(
+        new DriveToPoseTask(Branch.NONE),
+        new ArmTask(ArmState.DEALGAE),
+        new ElevatorTask(elevatorState)));
+
+    tasks.add(new SkippableTask(new DriveToPoseTask(Branch.ALGAE), 1.0, new DoNothingTask()));
+    tasks.add(new ElevatorTask(ElevatorState.ALGAE_BETWEEN));
+
+    tasks.add(new ParallelTask(
+        new DriveToPoseTask(Branch.ALGAE_REVERSE),
+        new SequentialTask(
+            new WaitTask(0.5),
+            new ParallelTask(
+                new ArmTask(ArmState.STOW)))));
 
     return tasks;
   }
