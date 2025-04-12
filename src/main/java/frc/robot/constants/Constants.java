@@ -209,6 +209,8 @@ public class Constants {
     public final double k_lowAlgaeHeight = 22.14;
     public final double k_highAlgaeHeight = 39.0;
 
+    public final double k_algaeBetweenOffset = 4.1;
+
     public final double k_allowedError = 0.4;
   }
 
@@ -264,16 +266,16 @@ public class Constants {
     // public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
     // public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
-    public final double k_algaeGrabPower = -1.0
-    ; 
+
+    public final double k_algaeGrabPower = -0.8;
     public final double k_algaeScorePower = 1.0;
 
     public final double k_stopSpeed = 0.0;
     public final double k_forwardIndexFastSpeed = 275.0;
     public final double k_forwardIndexSlowSpeed = 80.0;
     public final double k_reverseIndexSpeed = -60.0;
-    public final double k_branchSpeed = 300.0;
-    public final double k_troughSpeed = 500.0;
+    public final double k_branchSpeed = 3000.0;
+    public final double k_troughSpeed = 5000.0;
   }
 
   public static class LaserCanConstants {

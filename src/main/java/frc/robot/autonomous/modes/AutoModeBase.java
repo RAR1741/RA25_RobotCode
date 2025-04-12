@@ -65,11 +65,13 @@ public abstract class AutoModeBase {
         new ArmTask(ArmState.NET),
         new ElevatorTask(ElevatorState.L4)));
 
-    tasks.add(new WaitTask(1.0));
+    tasks.add(new WaitTask(0.5));
 
     tasks.add(new ParallelTask(
         new EndEffectorTask(EndEffectorState.ALGAE_SCORE),
         new ArmTask(ArmState.UP)));
+
+    tasks.add(new WaitTask(0.5));
 
     tasks.add(new EndEffectorTask(EndEffectorState.OFF));
 
@@ -100,8 +102,8 @@ public abstract class AutoModeBase {
         new SequentialTask(
             new WaitTask(0.5),
             new ParallelTask(
-                new ArmTask(ArmState.STOW),
-                new ElevatorTask(ElevatorState.L1)))));
+                new ArmTask(ArmState.STOW)))));
+    // new ElevatorTask(ElevatorState.L1)))));
 
     return tasks;
   }

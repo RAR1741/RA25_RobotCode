@@ -191,6 +191,7 @@ public class Elevator extends Subsystem {
   }
 
   ElevatorState prevState = ElevatorState.ALGAE_HIGH;
+
   @AutoLogOutput(key = "Elevator/Position/Target")
   private double getElevatorTarget() {
     switch (m_periodicIO.target_state) {
@@ -216,10 +217,12 @@ public class Elevator extends Subsystem {
         return RobotConstants.robotConfig.Elevator.k_lowAlgaeHeight;
       }
       case ALGAE_BETWEEN -> {
-        if(prevState == ElevatorState.ALGAE_HIGH) {
-          return RobotConstants.robotConfig.Elevator.k_highAlgaeHeight + 4.0;
+        if (prevState == ElevatorState.ALGAE_HIGH) {
+          return RobotConstants.robotConfig.Elevator.k_highAlgaeHeight
+              + RobotConstants.robotConfig.Elevator.k_algaeBetweenOffset;
         }
-        return RobotConstants.robotConfig.Elevator.k_lowAlgaeHeight + 4.0;
+        return RobotConstants.robotConfig.Elevator.k_lowAlgaeHeight
+            + RobotConstants.robotConfig.Elevator.k_algaeBetweenOffset;
       }
       case FEEDER_STATION -> {
         return RobotConstants.robotConfig.Elevator.k_feederHeight;
