@@ -96,11 +96,12 @@ public abstract class AutoModeBase {
     tasks.add(new ElevatorTask(ElevatorState.ALGAE_BETWEEN));
 
     tasks.add(new ParallelTask(
+        new DriveToPoseTask(Branch.ALGAE_REVERSE),
         new SequentialTask(
-            new DriveToPoseTask(Branch.ALGAE_REVERSE)),
-        new ArmTask(ArmState.STOW)));
-
-    tasks.add(new ElevatorTask(ElevatorState.L1));
+            new WaitTask(0.5),
+            new ParallelTask(
+                new ArmTask(ArmState.STOW),
+                new ElevatorTask(ElevatorState.L1)))));
 
     return tasks;
   }
@@ -161,6 +162,12 @@ public abstract class AutoModeBase {
   }
 
   public void autoScoreAndDealgae(ElevatorState elevatorState, Branch branch) {
+    queueTasks(getScoreAndDealgaeTasks(elevatorState, branch));
+  }
+
+  public static ArrayList<Task> getScoreAndDealgaeTasks(ElevatorState elevatorState, Branch branch) {
+    ArrayList<Task> tasks = new ArrayList<>();
+
     ArmState armTarget;
     if (elevatorState == ElevatorState.L4) {
       armTarget = ArmState.EXTEND;
@@ -169,7 +176,7 @@ public abstract class AutoModeBase {
     }
 
     // Drive to safe
-    queueTask(new ParallelTask(
+    tasks.add(new ParallelTask(
         new DriveToPoseTask(Branch.NONE),
         new SequentialTask(
             new WaitTask(WaitCondition.END_EFFECTOR_INDEXED),
@@ -178,15 +185,18 @@ public abstract class AutoModeBase {
                 new ArmTask(armTarget)))));
 
     // Drive to score
-    queueTask(new DriveToPoseTask(branch));
+    tasks.add(new DriveToPoseTask(branch));
 
     // Score
-    queueTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
+    tasks.add(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
 
     // Drive to safe pose
-    queueTask(new DriveToPoseTask(Branch.NONE));
+    tasks.add(new DriveToPoseTask(Branch.NONE));
 
-    queueTasks(getDeAlgaeTasks());
+    // Dealgae
+    tasks.addAll(getDeAlgaeTasks());
+
+    return tasks;
   }
 
   public void autoDeAlgae() {

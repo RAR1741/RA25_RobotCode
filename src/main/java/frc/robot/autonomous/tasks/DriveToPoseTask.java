@@ -32,12 +32,12 @@ public class DriveToPoseTask extends Task {
     m_swerve = SwerveDrive.getInstance();
     m_odometry = RAROdometry.getInstance();
     m_poseAligner = PoseAligner.getInstance();
-    
-    if (branch == Branch.NONE) {
+
+    if (branch == Branch.NONE || branch == Branch.ALGAE_REVERSE) {
       // Safe pose
       k_translationErrorThreshold = Units.inchesToMeters(4);
       k_rotationErrorThreshold = 1.0;
-    } else if(branch == Branch.ALGAE) {
+    } else if (branch == Branch.ALGAE) {
       // Dealgae pose
       k_translationErrorThreshold = Units.inchesToMeters(1);
       k_rotationErrorThreshold = 0.5;
@@ -46,9 +46,8 @@ public class DriveToPoseTask extends Task {
       k_translationErrorThreshold = Units.inchesToMeters(0.5);
       k_rotationErrorThreshold = 0.5;
     }
-    
+
     m_isFeederStation = false;
-    
 
     m_branch = branch;
     m_positionId = -1;
@@ -89,7 +88,7 @@ public class DriveToPoseTask extends Task {
     } else {
       // we want to target the feeder station
       Pose2d[] poses;
-      if(m_isFeederStation) {
+      if (m_isFeederStation) {
         poses = m_poseAligner.getFeederStationPoses();
       } else {
         poses = m_poseAligner.getBargePoses();

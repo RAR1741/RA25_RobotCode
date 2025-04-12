@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.modes.AutoModeBase;
-import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
@@ -283,22 +282,22 @@ public class Robot extends LoggedRobot {
         // m_leds.setLeftColor(Color.kGreen);
         // m_leds.setRightColor(Color.kBlack);
 
-        ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.LEFT);
-
+        ArrayList<Task> tasks;
         if (m_driverController.getWantsAutoScorePlusAlgaePressed()) {
-          tasks.add(new DriveToPoseTask(Branch.NONE));
-          tasks.addAll(AutoModeBase.getDeAlgaeTasks());
+          tasks = AutoModeBase.getScoreAndDealgaeTasks(desiredElevatorState, Branch.LEFT);
+        } else {
+          tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.LEFT);
         }
         m_taskScheduler.scheduleTasks(tasks);
       } else if (m_driverController.getWantsAutoScoreRight()) {
         // m_leds.setRightColor(Color.kGreen);
         // m_leds.setLeftColor(Color.kBlack);
 
-        ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.RIGHT);
-
+        ArrayList<Task> tasks;
         if (m_driverController.getWantsAutoScorePlusAlgaePressed()) {
-          tasks.add(new DriveToPoseTask(Branch.NONE));
-          tasks.addAll(AutoModeBase.getDeAlgaeTasks());
+          tasks = AutoModeBase.getScoreAndDealgaeTasks(desiredElevatorState, Branch.RIGHT);
+        } else {
+          tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.RIGHT);
         }
         m_taskScheduler.scheduleTasks(tasks);
       } else if (m_driverController.getWantsDeAlgaeTasks()) {
@@ -309,6 +308,11 @@ public class Robot extends LoggedRobot {
         m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.NEAR, false));
       } else if (m_driverController.getHatPressed(Direction.UP)) {
         m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.FAR, false));
+      } else if (m_driverController.getHatPressed(Direction.LEFT)) {
+        // m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.FAR, false));
+        m_endEffector.algaeGrab();
+      } else if (m_driverController.getHatPressed(Direction.RIGHT)) {
+        m_endEffector.algaeScore();
       }
 
       if (m_operatorController.getWantsStow()) {
