@@ -19,9 +19,7 @@ import frc.robot.autonomous.tasks.WaitTask.WaitCondition;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.PoseAligner;
-import frc.robot.subsystems.PoseAligner.Barge;
 import frc.robot.subsystems.PoseAligner.Branch;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
@@ -58,18 +56,28 @@ public abstract class AutoModeBase {
 
   public abstract void queueTasks();
 
-  public static ArrayList<Task> getNetTasks(int barge) {
+  public static ArrayList<Task> getNetTasks(int barge, boolean stowAfter) {
     ArrayList<Task> tasks = new ArrayList<>();
-    
+
     tasks.add(new DriveToPoseTask(barge, false));
+
     tasks.add(new ParallelTask(
         new ArmTask(ArmState.NET),
         new ElevatorTask(ElevatorState.L4)));
+
     tasks.add(new WaitTask(1.0));
+
     tasks.add(new ParallelTask(
-      new EndEffectorTask(EndEffectorState.ALGAE_SCORE),
-      new ArmTask(ArmState.UP)));
+        new EndEffectorTask(EndEffectorState.ALGAE_SCORE),
+        new ArmTask(ArmState.UP)));
+
     tasks.add(new EndEffectorTask(EndEffectorState.OFF));
+
+    if (stowAfter) {
+      tasks.add(new ParallelTask(
+          new ArmTask(ArmState.STOW),
+          new ElevatorTask(ElevatorState.STOW)));
+    }
 
     return tasks;
   }
@@ -90,7 +98,7 @@ public abstract class AutoModeBase {
     tasks.add(new ParallelTask(
         new SequentialTask(
             new DriveToPoseTask(Branch.ALGAE_REVERSE)),
-            new ArmTask(ArmState.STOW)));
+        new ArmTask(ArmState.STOW)));
 
     tasks.add(new ElevatorTask(ElevatorState.L1));
 
@@ -146,12 +154,47 @@ public abstract class AutoModeBase {
 
   public void autoScore(ElevatorState elevatorState, Branch branch, int feederStation) {
     score(elevatorState, branch, new DriveToPoseTask(feederStation, true));
-    // score(elevatorState, branch, new SkippableTask(new
-    // DriveToPoseTask(feederStation), 2.2, new DoNothingTask()));
   }
 
   public void autoScore(ElevatorState elevatorState, Branch branch) {
     score(elevatorState, branch, new DriveToPoseTask(Branch.NONE));
+  }
+
+  public void autoScoreAndDealgae(ElevatorState elevatorState, Branch branch) {
+    ArmState armTarget;
+    if (elevatorState == ElevatorState.L4) {
+      armTarget = ArmState.EXTEND;
+    } else {
+      armTarget = ArmState.STOW;
+    }
+
+    // Drive to safe
+    queueTask(new ParallelTask(
+        new DriveToPoseTask(Branch.NONE),
+        new SequentialTask(
+            new WaitTask(WaitCondition.END_EFFECTOR_INDEXED),
+            new ParallelTask(
+                new ElevatorTask(elevatorState),
+                new ArmTask(armTarget)))));
+
+    // Drive to score
+    queueTask(new DriveToPoseTask(branch));
+
+    // Score
+    queueTask(new EndEffectorTask(EndEffectorState.SCORE_BRANCHES));
+
+    // Drive to safe pose
+    queueTask(new DriveToPoseTask(Branch.NONE));
+
+    queueTasks(getDeAlgaeTasks());
+  }
+
+  public void autoDeAlgae() {
+    queueTasks(getDeAlgaeTasks());
+  }
+
+  public void autoNet(int barge) {
+    queueTasks(getNetTasks(barge, true));
   }
 
   private void score(ElevatorState elevatorState, Branch branch, Task finalDriveTask) {

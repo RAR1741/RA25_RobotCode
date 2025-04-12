@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
@@ -28,9 +27,9 @@ import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
+import frc.robot.controls.controllers.FilteredController.Direction;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
-import frc.robot.controls.controllers.FilteredController.Direction;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmState;
 import frc.robot.subsystems.Elevator;
@@ -50,7 +49,6 @@ import frc.robot.subsystems.drivetrain.SwerveSysId;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
-import frc.robot.subsystems.leds.LEDs;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -265,13 +263,13 @@ public class Robot extends LoggedRobot {
         // } else {
         if (m_operatorController.getWantsLeftIntakeGround()) {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-        } else /*if (m_operatorController.getWantsLeftIntakeStow())*/ {
+        } else /* if (m_operatorController.getWantsLeftIntakeStow()) */ {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
         }
 
         if (m_operatorController.getWantsRightIntakeGround()) {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-        } else /*if (m_operatorController.getWantsRightIntakeStow())*/ {
+        } else /* if (m_operatorController.getWantsRightIntakeStow()) */ {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
         }
         // }
@@ -308,9 +306,9 @@ public class Robot extends LoggedRobot {
 
         m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
       } else if (m_driverController.getHatPressed(Direction.DOWN)) {
-        m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.NEAR));
+        m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.NEAR, false));
       } else if (m_driverController.getHatPressed(Direction.UP)) {
-        m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.FAR));
+        m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.FAR, false));
       }
 
       if (m_operatorController.getWantsStow()) {
@@ -321,7 +319,7 @@ public class Robot extends LoggedRobot {
         }
       }
 
-      if(m_driverController.getWantsAlgaeGrab()) {
+      if (m_driverController.getWantsAlgaeGrab()) {
         m_endEffector.algaeGrab();
       }
 
