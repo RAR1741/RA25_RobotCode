@@ -215,7 +215,7 @@ public class Constants {
   public static class ArmConstants {
     public final int k_motorId = 30;
 
-    public final double k_P = 5.0;
+    public final double k_P = 3.0;
     public final double k_I = 0.0;
     public final double k_D = 0.0;
     public final double k_IZone = 0.0;
@@ -239,7 +239,7 @@ public class Constants {
     public double k_netAngle;
     public double k_upAngle;
 
-    public final double k_maxAcceleration = 8.0;
+    public final double k_maxAcceleration = 6.0;
     public final double k_maxVelocity = 2.0;
 
     public final double k_allowedError = 0.02;
@@ -264,7 +264,8 @@ public class Constants {
     // public final double[] k_reverseIndexSpeeds = new double[] { -0.05, -0.05 };
     // public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
-    public final double k_algaeGrabPower = -0.4; 
+    public final double k_algaeGrabPower = -1.0
+    ; 
     public final double k_algaeScorePower = 1.0;
 
     public final double k_stopSpeed = 0.0;
