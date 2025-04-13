@@ -36,8 +36,6 @@ public class EndEffector extends Subsystem {
   private Elevator m_elevator;
   // private LEDs m_leds;
 
-  public boolean shouldBeIndexingCoral = false;
-
   public static EndEffector getInstance() {
     if (m_instance == null) {
       m_instance = new EndEffector();
@@ -88,6 +86,15 @@ public class EndEffector extends Subsystem {
 
   private static class PeriodicIO {
     EndEffectorState state = EndEffectorState.INDEXED;
+    boolean shouldBeIndexingCoral = false;
+  }
+
+  public boolean getShouldBeIndexingCoral() {
+    return m_periodicIO.shouldBeIndexingCoral;
+  }
+
+  public void setShouldBeIndexingCoral(boolean shouldBeIndexingCoral) {
+    m_periodicIO.shouldBeIndexingCoral = shouldBeIndexingCoral;
   }
 
   public enum EndEffectorState {
@@ -182,7 +189,7 @@ public class EndEffector extends Subsystem {
   }
 
   public boolean shouldDriveSlow() {
-    return shouldBeIndexingCoral
+    return m_periodicIO.shouldBeIndexingCoral
         && (m_periodicIO.state == EndEffectorState.OFF || m_periodicIO.state == EndEffectorState.FORWARD_INDEX_FAST);
   }
 

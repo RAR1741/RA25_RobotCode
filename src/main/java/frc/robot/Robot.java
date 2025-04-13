@@ -205,7 +205,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     // Elastic.selectTab("Teleoperated");
-    m_endEffector.shouldBeIndexingCoral = false;
+    m_endEffector.setShouldBeIndexingCoral(false);
 
     m_swerve.setBrake(false);
   }
