@@ -54,7 +54,7 @@ public class PoseAligner extends Subsystem {
 
     Pose3d allianceReef;
     // if (branch == Branch.ALGAE || branch == Branch.NONE) {
-    // Only for dealgae
+    // Only for deAlgae
     allianceReef = getCurrentSideReef(currentPose);
     // } else {
     // // Any normal use
