@@ -100,9 +100,3 @@ public class DriverController extends FilteredController {
     return this.getHatPressed(Direction.RIGHT);
   }
 }
-
-
-
-
-
-//sigma sigma boy
