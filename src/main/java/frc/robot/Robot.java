@@ -379,7 +379,7 @@ public class Robot extends LoggedRobot {
       m_endEffector.setState(EndEffectorState.INDEXED);
     }
 
-    if (m_driverController.getWantsClearTellyTasks()) {
+    if (m_driverController.getWantsClearTeleTasks()) {
       m_taskScheduler.reset();
     }
   }

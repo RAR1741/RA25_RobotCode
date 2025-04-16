@@ -85,7 +85,7 @@ public class DriverController extends FilteredController {
   }
 
   private final int k_autoNetScore = Direction.RIGHT;
-  public boolean getWantsClearTellyTasks() {
+  public boolean getWantsClearTeleTasks() {
     return this.getRawButtonReleased(k_deAlgaeButton) ||
         this.getRawButtonReleased(k_autoScoreLeftButton) ||
         this.getRawButtonReleased(k_autoScoreRightButton) ||
