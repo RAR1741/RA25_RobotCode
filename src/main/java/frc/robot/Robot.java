@@ -283,7 +283,7 @@ public class Robot extends LoggedRobot {
         // m_leds.setRightColor(Color.kBlack);
 
         ArrayList<Task> tasks;
-        if (m_driverController.getWantsAutoScorePlusAlgaePressed()) {
+        if (m_driverController.getWantsAutoScorePlusAlgae()) {
           tasks = AutoModeBase.getScoreAndDealgaeTasks(desiredElevatorState, Branch.LEFT);
         } else {
           tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.LEFT);
@@ -294,7 +294,7 @@ public class Robot extends LoggedRobot {
         // m_leds.setLeftColor(Color.kBlack);
 
         ArrayList<Task> tasks;
-        if (m_driverController.getWantsAutoScorePlusAlgaePressed()) {
+        if (m_driverController.getWantsAutoScorePlusAlgae()) {
           tasks = AutoModeBase.getScoreAndDealgaeTasks(desiredElevatorState, Branch.RIGHT);
         } else {
           tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.RIGHT);
