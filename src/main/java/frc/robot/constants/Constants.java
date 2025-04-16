@@ -271,8 +271,8 @@ public class Constants {
     public final double k_algaeScorePower = 1.0;
 
     public final double k_stopSpeed = 0.0;
-    public final double k_forwardIndexFastSpeed = 275.0;
-    public final double k_forwardIndexSlowSpeed = 160.0;
+    public final double k_forwardIndexFastSpeed = 320.0;
+    public final double k_forwardIndexSlowSpeed = 200.0;
     public final double k_reverseIndexSpeed = -60.0;
     public final double k_branchSpeed = 3000.0;
     public final double k_troughSpeed = 5000.0;
