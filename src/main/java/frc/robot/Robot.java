@@ -17,17 +17,16 @@ import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.modes.AutoModeBase;
-import frc.robot.autonomous.tasks.DriveToPoseTask;
 import frc.robot.autonomous.tasks.Task;
 import frc.robot.constants.RobotConstants;
 import frc.robot.controls.controllers.DriverController;
 import frc.robot.controls.controllers.FilteredController;
+import frc.robot.controls.controllers.FilteredController.Direction;
 import frc.robot.controls.controllers.OperatorController;
 import frc.robot.controls.controllers.VirtualRobotController;
 import frc.robot.subsystems.Arm;
@@ -38,6 +37,7 @@ import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorState;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PoseAligner;
+import frc.robot.subsystems.PoseAligner.Barge;
 import frc.robot.subsystems.PoseAligner.Branch;
 import frc.robot.subsystems.SignalManager;
 import frc.robot.subsystems.Subsystem;
@@ -48,7 +48,6 @@ import frc.robot.subsystems.drivetrain.SwerveSysId;
 import frc.robot.subsystems.intakes.Intake.IntakeState;
 import frc.robot.subsystems.intakes.Intakes;
 import frc.robot.subsystems.intakes.Intakes.IntakeVariant;
-import frc.robot.subsystems.leds.LEDs;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -250,12 +249,12 @@ public class Robot extends LoggedRobot {
       } else if (m_operatorController.getWantsIntakeEjectStopped()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.END_EJECT);
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.END_EJECT);
-      } else if (m_operatorController.getWantsIntakeAlgae()) {
-        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.ALGAE);
-        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.ALGAE);
       } else if (m_operatorController.getWantsScoreAlgae()) {
         m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.SCORE_ALGAE);
         m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.SCORE_ALGAE);
+      } else if (m_operatorController.getWantsIntakeAlgae()) {
+        m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.ALGAE);
+        m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.ALGAE);
       } else {
         // if (!isSafeToIndex() || isSafeToExtend()) {
         // m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
@@ -263,13 +262,13 @@ public class Robot extends LoggedRobot {
         // } else {
         if (m_operatorController.getWantsLeftIntakeGround()) {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsLeftIntakeStow()) {
+        } else /* if (m_operatorController.getWantsLeftIntakeStow()) */ {
           m_intakes.setIntakeState(IntakeVariant.LEFT, IntakeState.STOW);
         }
 
         if (m_operatorController.getWantsRightIntakeGround()) {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.INTAKE);
-        } else if (m_operatorController.getWantsRightIntakeStow()) {
+        } else /* if (m_operatorController.getWantsRightIntakeStow()) */ {
           m_intakes.setIntakeState(IntakeVariant.RIGHT, IntakeState.STOW);
         }
         // }
@@ -283,28 +282,37 @@ public class Robot extends LoggedRobot {
         // m_leds.setLeftColor(Color.kGreen);
         // m_leds.setRightColor(Color.kBlack);
 
-        ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.LEFT);
-
+        ArrayList<Task> tasks;
         if (m_driverController.getWantsAutoScorePlusAlgae()) {
-          tasks.add(new DriveToPoseTask(Branch.NONE));
-          tasks.addAll(AutoModeBase.getDeAlgaeTasks());
+          tasks = AutoModeBase.getScoreAndDealgaeTasks(desiredElevatorState, Branch.LEFT);
+        } else {
+          tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.LEFT);
         }
         m_taskScheduler.scheduleTasks(tasks);
       } else if (m_driverController.getWantsAutoScoreRight()) {
         // m_leds.setRightColor(Color.kGreen);
         // m_leds.setLeftColor(Color.kBlack);
 
-        ArrayList<Task> tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.RIGHT);
-
+        ArrayList<Task> tasks;
         if (m_driverController.getWantsAutoScorePlusAlgae()) {
-          tasks.add(new DriveToPoseTask(Branch.NONE));
-          tasks.addAll(AutoModeBase.getDeAlgaeTasks());
+          tasks = AutoModeBase.getScoreAndDealgaeTasks(desiredElevatorState, Branch.RIGHT);
+        } else {
+          tasks = AutoModeBase.getAutoScoreTasks(desiredElevatorState, Branch.RIGHT);
         }
         m_taskScheduler.scheduleTasks(tasks);
       } else if (m_driverController.getWantsDeAlgaeTasks()) {
         // m_leds.setAllColor(Color.kAqua);
 
         m_taskScheduler.scheduleTasks(AutoModeBase.getDeAlgaeTasks());
+      } else if (m_driverController.getHatPressed(Direction.DOWN)) {
+        m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.NEAR, false));
+      } else if (m_driverController.getHatPressed(Direction.UP)) {
+        m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.FAR, false));
+      } else if (m_driverController.getHatPressed(Direction.LEFT)) {
+        // m_taskScheduler.scheduleTasks(AutoModeBase.getNetTasks(Barge.FAR, false));
+        m_endEffector.algaeGrab();
+      } else if (m_driverController.getHatPressed(Direction.RIGHT)) {
+        m_endEffector.algaeScore();
       }
 
       if (m_operatorController.getWantsStow()) {
@@ -313,6 +321,10 @@ public class Robot extends LoggedRobot {
         } else if (isSafeToExtendArm()) {
           stow();
         }
+      }
+
+      if (m_driverController.getWantsAlgaeGrab()) {
+        m_endEffector.algaeGrab();
       }
 
       if (m_operatorController.getWantsScore()) {
@@ -367,7 +379,7 @@ public class Robot extends LoggedRobot {
       m_endEffector.setState(EndEffectorState.INDEXED);
     }
 
-    if (m_driverController.getWantsClearTellyTasks()) {
+    if (m_driverController.getWantsClearTeleTasks()) {
       m_taskScheduler.reset();
     }
   }

@@ -11,6 +11,7 @@ import frc.robot.ASPoseHelper;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.drivetrain.RAROdometry;
 
 public class PoseAligner extends Subsystem {
   private static PoseAligner m_poseAligner;
@@ -51,8 +52,16 @@ public class PoseAligner extends Subsystem {
     ASPoseHelper.addPose("Red/Reef/pose", RobotConstants.robotConfig.Field.k_redReefPose);
     ASPoseHelper.addPose("Blue/Reef/pose", RobotConstants.robotConfig.Field.k_blueReefPose);
 
-    Pose3d allianceReef = alliance == Alliance.Red ? RobotConstants.robotConfig.Field.k_redReefPose
-        : RobotConstants.robotConfig.Field.k_blueReefPose;
+    Pose3d allianceReef;
+    // if (branch == Branch.ALGAE || branch == Branch.NONE) {
+    // Only for deAlgae
+    allianceReef = getCurrentSideReef(currentPose);
+    // } else {
+    // // Any normal use
+    // allianceReef = alliance == Alliance.Red ?
+    // RobotConstants.robotConfig.Field.k_redReefPose
+    // : RobotConstants.robotConfig.Field.k_blueReefPose;
+    // }
 
     ASPoseHelper.addPose("TargetAngle", new Pose2d[] { currentPose, allianceReef.toPose2d() });
 
@@ -87,6 +96,17 @@ public class PoseAligner extends Subsystem {
 
     m_periodicIO.safePose = safePose;
     m_periodicIO.scoringPose = scoringPose;
+  }
+
+  public boolean isCurrentSideAllianceBlue(Pose2d currentPose) {
+    return currentPose.getX() < (RobotConstants.robotConfig.Field.k_length / 2);
+  }
+
+  public Pose3d getCurrentSideReef(Pose2d currentPose) {
+    if (isCurrentSideAllianceBlue(currentPose)) {
+      return RobotConstants.robotConfig.Field.k_blueReefPose;
+    }
+    return RobotConstants.robotConfig.Field.k_redReefPose;
   }
 
   public Pose2d getAndCalculateTargetPose(Pose2d currentPose, Branch branch) {
@@ -134,7 +154,7 @@ public class PoseAligner extends Subsystem {
   }
 
   public ElevatorState getDeAlgaeElevatorState() {
-    if (Helpers.isBlueAlliance()) {
+    if (isCurrentSideAllianceBlue(RAROdometry.getInstance().getPose())) {
       return m_reefSide % 2 != 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
     } else {
       return m_reefSide % 2 == 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
@@ -150,6 +170,7 @@ public class PoseAligner extends Subsystem {
 
     if (branch == Branch.ALGAE) {
       offset = RobotConstants.robotConfig.AutoAlign.k_algaeHorizontalOffset;
+      scoringDistance = RobotConstants.robotConfig.AutoAlign.k_algaeDistance;
     } else {
       if (m_periodicIO.elevatorState == ElevatorState.L1) {
         if (branch == Branch.RIGHT) {
@@ -192,6 +213,25 @@ public class PoseAligner extends Subsystem {
     return feederStationPoses[allianceOffset + direction];
   }
 
+  public Pose2d getBargeTargetPose(Pose2d currentPose) {
+    int direction;
+    int allianceOffset = Helpers.isBlueAlliance() ? 0 : 2;
+
+    boolean isLeft = currentPose.getY() > RobotConstants.robotConfig.Field.k_width / 2;
+    isLeft = Helpers.isBlueAlliance() ? isLeft : !isLeft;
+
+    // Left is 0, right is 1
+    if (isLeft) {
+      direction = 0;
+    } else {
+      direction = 1;
+    }
+
+    Pose2d[] bargePoses = getBargePoses();
+
+    return bargePoses[allianceOffset + direction];
+  }
+
   /**
    * Generates a new Pose2d for scoring on all 6 sides of the given alliance reef.
    *
@@ -226,6 +266,31 @@ public class PoseAligner extends Subsystem {
 
     poses[ReefStartingPoses.CLOSE_LEFT] = new Pose2d(reefX + offset * 0.5, reefY - offset * 0.866,
         Rotation2d.fromDegrees(120));
+
+    return poses;
+  }
+
+  public Pose2d[] getBargePoses() {
+    Pose2d[] poses = new Pose2d[4];
+
+    double fieldWidth = RobotConstants.robotConfig.Field.k_width;
+    double fieldLength = RobotConstants.robotConfig.Field.k_length;
+
+    double xOffset = RobotConstants.robotConfig.AutoAlign.k_bargeXOffset;
+    double yOffset = RobotConstants.robotConfig.AutoAlign.k_bargeYOffset;
+    double rotOffset = RobotConstants.robotConfig.AutoAlign.k_bargeRotationOffset;
+
+    poses[Barge.BLUE_FAR] = new Pose2d(xOffset, fieldWidth - yOffset, Rotation2d.fromDegrees(-rotOffset));
+
+    poses[Barge.RED_NEAR] = new Pose2d(xOffset, yOffset, Rotation2d.fromDegrees(rotOffset));
+
+    poses[Barge.RED_FAR] = new Pose2d(fieldLength - xOffset, yOffset,
+        Rotation2d.fromDegrees(180 - rotOffset));
+
+    poses[Barge.BLUE_NEAR] = new Pose2d(fieldLength - xOffset, fieldWidth - yOffset,
+        Rotation2d.fromDegrees(rotOffset - 180));
+
+    ASPoseHelper.addPose("PoseAligner/BargePoses", poses);
 
     return poses;
   }
@@ -279,5 +344,14 @@ public class PoseAligner extends Subsystem {
     int RED_RIGHT = 3;
     int LEFT = 4;
     int RIGHT = 5;
+  }
+
+  public interface Barge {
+    int BLUE_NEAR = 0;
+    int BLUE_FAR = 1;
+    int RED_NEAR = 2;
+    int RED_FAR = 3;
+    int NEAR = 4;
+    int FAR = 5;
   }
 }

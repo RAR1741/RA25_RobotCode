@@ -84,9 +84,19 @@ public class DriverController extends FilteredController {
     return this.getRawButtonPressed(k_autoScoreRightButton);
   }
 
-  public boolean getWantsClearTellyTasks() {
+  private final int k_autoNetScore = Direction.RIGHT;
+  public boolean getWantsClearTeleTasks() {
     return this.getRawButtonReleased(k_deAlgaeButton) ||
         this.getRawButtonReleased(k_autoScoreLeftButton) ||
-        this.getRawButtonReleased(k_autoScoreRightButton);
+        this.getRawButtonReleased(k_autoScoreRightButton) ||
+        getAnyHatReleased();
+  }
+
+  public boolean getWantsAlgaeGrab() {
+    return this.getHatPressed(Direction.LEFT);
+  }
+
+  public boolean getWantsAlgaeScore() {
+    return this.getHatPressed(Direction.RIGHT);
   }
 }

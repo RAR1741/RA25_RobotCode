@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Helpers;
 import frc.robot.constants.RobotConstants;
+import frc.robot.subsystems.EndEffector.EndEffectorState;
 
 public class Arm extends Subsystem {
   private static Arm m_arm = null;
@@ -121,7 +122,7 @@ public class Arm extends Subsystem {
 
     Logger.recordOutput(loggingKey + "/ff", ff);
 
-    if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold) {
+    if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold && !shouldHaveAlgae()) {
       m_motor.setVoltage(RobotConstants.robotConfig.Arm.k_constantVoltage);
     } else {
       // Set PID controller to new state
@@ -135,7 +136,7 @@ public class Arm extends Subsystem {
   }
 
   public enum ArmState {
-    STOW, EXTEND, EXTEND_FEEDER_STATION
+    STOW, EXTEND, EXTEND_FEEDER_STATION, NET, DEALGAE, UP
   }
 
   @Override
@@ -159,10 +160,19 @@ public class Arm extends Subsystem {
     return m_motor.getEncoder().getPosition();
   }
 
+  @AutoLogOutput(key = "Arm/ShouldHaveAlgae")
+  public boolean shouldHaveAlgae() {
+    EndEffectorState state = EndEffector.getInstance().getEndEffectorState();
+    return state == EndEffectorState.ALGAE_GRAB || state == EndEffectorState.ALGAE_SCORE;
+  }
+
   @AutoLogOutput(key = "Arm/Position/Target")
   public double getArmTarget() {
     switch (m_periodicIO.arm_state) {
       case STOW -> {
+        if(shouldHaveAlgae()) {
+          return RobotConstants.robotConfig.Arm.k_algaeStowAngle;
+        }
         return RobotConstants.robotConfig.Arm.k_stowAngle;
       }
       case EXTEND -> {
@@ -170,6 +180,15 @@ public class Arm extends Subsystem {
       }
       case EXTEND_FEEDER_STATION -> {
         return RobotConstants.robotConfig.Arm.k_sourceAngle;
+      }
+      case NET -> {
+        return RobotConstants.robotConfig.Arm.k_netAngle;
+      }
+      case DEALGAE -> {
+        return RobotConstants.robotConfig.Arm.k_deAlgaeAngle;
+      }
+      case UP -> {
+        return RobotConstants.robotConfig.Arm.k_upAngle;
       }
       default -> {
         return RobotConstants.robotConfig.Arm.k_stowAngle;

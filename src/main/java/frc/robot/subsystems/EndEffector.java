@@ -111,22 +111,26 @@ public class EndEffector extends Subsystem {
 
     // Scoring
     SCORE_BRANCHES,
-    SCORE_TROUGH
+    SCORE_TROUGH,
+
+    // Algae
+    ALGAE_GRAB,
+    ALGAE_SCORE
   }
 
   public void setState(EndEffectorState state) {
     m_periodicIO.state = state;
 
     // switch (state) {
-    //   case OFF -> {
-    //     m_leds.setAllColor(Color.kRed);
-    //   }
-    //   case FORWARD_INDEX_FAST -> {
-    //     m_leds.setAllColor(Color.kYellow);
-    //   }
-    //   case INDEXED -> {
-    //     m_leds.setAllColor(Color.kGreen);
-    //   }
+    // case OFF -> {
+    // m_leds.setAllColor(Color.kRed);
+    // }
+    // case FORWARD_INDEX_FAST -> {
+    // m_leds.setAllColor(Color.kYellow);
+    // }
+    // case INDEXED -> {
+    // m_leds.setAllColor(Color.kGreen);
+    // }
     // }
   }
 
@@ -146,28 +150,52 @@ public class EndEffector extends Subsystem {
     setState(EndEffectorState.SCORE_TROUGH);
   }
 
+  public void algaeGrab() {
+    setState(EndEffectorState.ALGAE_GRAB);
+  }
+
+  public void algaeScore() {
+    setState(EndEffectorState.ALGAE_SCORE);
+  }
+
   @Override
   public void reset() {
   }
 
   @Override
   public void periodic() {
-    updateState();
+    if (isAlgae()) {
+      //TODO: Algae Logic?
+    } else {
+      updateState();
+    }
   }
 
   @Override
   public void writePeriodicOutputs() {
     double desiredSpeed = getDesiredRollerSpeed();
 
-    m_rightRollerPIDController.setReference(desiredSpeed, ControlType.kVelocity);
-    m_leftRollerPIDController.setReference(
-        desiredSpeed,
-        ControlType.kVelocity);
+    if(isAlgae()) {
+      m_rightMotor.set(desiredSpeed);
+      m_leftMotor.set(desiredSpeed);
+    } else {
+      m_rightRollerPIDController.setReference(
+          desiredSpeed,
+          ControlType.kVelocity);
+      m_leftRollerPIDController.setReference(
+          desiredSpeed,
+          ControlType.kVelocity);
+    }
   }
 
   public boolean shouldDriveSlow() {
     return m_periodicIO.shouldBeIndexingCoral
         && (m_periodicIO.state == EndEffectorState.OFF || m_periodicIO.state == EndEffectorState.FORWARD_INDEX_FAST);
+  }
+
+  public boolean isAlgae() {
+    EndEffectorState state = getEndEffectorState();
+    return state == EndEffectorState.ALGAE_GRAB || state == EndEffectorState.ALGAE_SCORE;
   }
 
   @AutoLogOutput(key = "EndEffector/RightMotorVoltage")
@@ -247,6 +275,14 @@ public class EndEffector extends Subsystem {
 
       case REINDEX -> {
         return RobotConstants.robotConfig.EndEffector.k_reverseIndexSpeed;
+      }
+
+      case ALGAE_GRAB -> {
+        return RobotConstants.robotConfig.EndEffector.k_algaeGrabPower;
+      }
+
+      case ALGAE_SCORE -> {
+        return RobotConstants.robotConfig.EndEffector.k_algaeScorePower;
       }
 
       default -> {

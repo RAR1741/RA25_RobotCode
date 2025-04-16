@@ -200,14 +200,16 @@ public class Constants {
 
     public final double k_stowHeight = 0.0;
     public final double k_L1Height = 16.0;
-    public final double k_L2Height = 26.0;
-    public final double k_L3Height = 42.7;
+    public final double k_L2Height = 26.25;
+    public final double k_L3Height = 42.95;
     public final double k_L4Height = 60.5; // 59.6;
     public final double k_maxHeight = 60.5;
     public final double k_feederHeight = 29.57;
     // public final double k_groundAlgaeHeight = 0.0;
-    public final double k_lowAlgaeHeight = 27.643;
-    public final double k_highAlgaeHeight = 44.571;
+    public final double k_lowAlgaeHeight = 22.14;
+    public final double k_highAlgaeHeight = 39.0;
+
+    public final double k_algaeBetweenOffset = 4.0;
 
     public final double k_allowedError = 0.4;
   }
@@ -215,7 +217,7 @@ public class Constants {
   public static class ArmConstants {
     public final int k_motorId = 30;
 
-    public final double k_P = 5.0;
+    public final double k_P = 3.0;
     public final double k_I = 0.0;
     public final double k_D = 0.0;
     public final double k_IZone = 0.0;
@@ -231,11 +233,15 @@ public class Constants {
     public final int k_maxCurrent = 30;
 
     public double k_stowAngle;
+    public double k_algaeStowAngle;
     public double k_L4Angle;
     public double k_horizontalAngle;
     public double k_sourceAngle;
+    public double k_deAlgaeAngle;
+    public double k_netAngle;
+    public double k_upAngle;
 
-    public final double k_maxAcceleration = 8.0;
+    public final double k_maxAcceleration = 6.0;
     public final double k_maxVelocity = 2.0;
 
     public final double k_allowedError = 0.02;
@@ -245,9 +251,9 @@ public class Constants {
     public final int k_leftMotorId = 31;
     public final int k_rightMotorId = 32;
 
-    public final double k_rollerGearRatio = 1.0 / 10.0;
+    public final double k_rollerGearRatio = 1.0 / 30.0;
 
-    public final double k_rollerP = 0.0004;
+    public final double k_rollerP = 0.002;
     public final double k_rollerI = 0.000;
     public final double k_rollerD = 0.0;
     public final double k_rollerFF = 0.001;
@@ -261,12 +267,15 @@ public class Constants {
     // public final double[] k_branchSpeeds = new double[] { 0.6, 0.45 };
     // public final double[] k_troughSpeeds = new double[] { 0.3, 0.5 };
 
+    public final double k_algaeGrabPower = -0.8;
+    public final double k_algaeScorePower = 1.0;
+
     public final double k_stopSpeed = 0.0;
-    public final double k_forwardIndexFastSpeed = 275.0;
-    public final double k_forwardIndexSlowSpeed = 80.0;
+    public final double k_forwardIndexFastSpeed = 320.0;
+    public final double k_forwardIndexSlowSpeed = 200.0;
     public final double k_reverseIndexSpeed = -60.0;
-    public final double k_branchSpeed = 300.0;
-    public final double k_troughSpeed = 500.0;
+    public final double k_branchSpeed = 3000.0;
+    public final double k_troughSpeed = 5000.0;
   }
 
   public static class LaserCanConstants {
@@ -356,10 +365,11 @@ public class Constants {
     // public final double k_l4ScoringDistance = 0.100;
 
     public final double k_l4ScoringDistance = 0.254;
+    public final double k_algaeDistance = 0.32;
     public final double k_otherScoringOffset = 0.0;
     public final double k_scoringHorizontalOffset = 0.175;
     public final double k_scoringTroughHorizontalOffset = 0.46;
-    public final double k_algaeHorizontalOffset = 0.0;
+    public final double k_algaeHorizontalOffset = 0.005;
     public final double k_algaeReverseExtraDistance = -0.5;
 
     public final double k_maxApproachSpeed = 5.0;
@@ -370,6 +380,11 @@ public class Constants {
     public final double k_feederStationXOffset = 1.2;
     public final double k_feederStationYOffset = 0.92;
     public final double k_feederStationRotationOffset = 54.0;
+
+    // Base barge scoring pose
+    public final double k_bargeXOffset = 9.13;
+    public final double k_bargeYOffset = 2.537;
+    public final double k_bargeRotationOffset = 0.0;
   }
 
   public static class LEDConstants {

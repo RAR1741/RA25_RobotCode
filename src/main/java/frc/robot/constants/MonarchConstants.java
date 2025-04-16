@@ -32,6 +32,10 @@ public class MonarchConstants extends Constants {
     // Arm.k_L4Angle = 0.5834578275680542;
     Arm.k_horizontalAngle = 0.5074164867401123;
     Arm.k_sourceAngle = 0.35026;
+    Arm.k_netAngle = 0.6391290426254272;
+    Arm.k_deAlgaeAngle = 0.3625;
+    Arm.k_algaeStowAngle = 0.31031906604766846;
+    Arm.k_upAngle = 0.76;
 
     Intake.Left.k_stowPosition = 0.551323413848877;
     Intake.Left.k_groundPosition = 0.18343025035858154;
@@ -45,5 +49,6 @@ public class MonarchConstants extends Constants {
     Intake.Right.k_ejectPosition = 0.7199869155883789;
     Intake.Right.k_horizontalPosition = 0.7199869155883789;
     Intake.Right.k_stuckPosition = 0.7980979681015015;
+    Intake.Right.k_algaePosition = 0.6147200465202332;
   }
 }
