@@ -122,7 +122,7 @@ public class Arm extends Subsystem {
 
     Logger.recordOutput(loggingKey + "/ff", ff);
 
-    if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold && !shouldHaveAlgae()) {
+    if (m_periodicIO.arm_state == ArmState.STOW && Math.abs(getArmPosition() - getArmTarget()) <= RobotConstants.robotConfig.Arm.k_stowThreshold) {
       m_motor.setVoltage(RobotConstants.robotConfig.Arm.k_constantVoltage);
     } else {
       // Set PID controller to new state
@@ -170,9 +170,9 @@ public class Arm extends Subsystem {
   public double getArmTarget() {
     switch (m_periodicIO.arm_state) {
       case STOW -> {
-        if(shouldHaveAlgae()) {
-          return RobotConstants.robotConfig.Arm.k_algaeStowAngle;
-        }
+        // if(shouldHaveAlgae()) {
+        //   return RobotConstants.robotConfig.Arm.k_algaeStowAngle;
+        // }
         return RobotConstants.robotConfig.Arm.k_stowAngle;
       }
       case EXTEND -> {

@@ -165,7 +165,9 @@ public class EndEffector extends Subsystem {
   @Override
   public void periodic() {
     if (isAlgae()) {
-      //TODO: Algae Logic?
+      if(m_laserCan.getEntranceSeesCoral()) {
+        setState(EndEffectorState.FORWARD_INDEX_FAST);
+      }
     } else {
       updateState();
     }
