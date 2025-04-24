@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -154,7 +156,9 @@ public class PoseAligner extends Subsystem {
   }
 
   public ElevatorState getDeAlgaeElevatorState() {
-    if (isCurrentSideAllianceBlue(RAROdometry.getInstance().getPose())) {
+    boolean isOnBlueSide = isCurrentSideAllianceBlue(RAROdometry.getInstance().getPose());
+    Logger.recordOutput("PoseAligner/isOnBlueSide", isOnBlueSide);
+    if (isOnBlueSide) {
       return m_reefSide % 2 != 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;
     } else {
       return m_reefSide % 2 == 0 ? ElevatorState.ALGAE_HIGH : ElevatorState.ALGAE_LOW;

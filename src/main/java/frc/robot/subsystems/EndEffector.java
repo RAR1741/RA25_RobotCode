@@ -165,7 +165,9 @@ public class EndEffector extends Subsystem {
   @Override
   public void periodic() {
     if (isAlgae()) {
-      //TODO: Algae Logic?
+      if(m_laserCan.getEntranceSeesCoral()) {
+        setState(EndEffectorState.FORWARD_INDEX_FAST);
+      }
     } else {
       updateState();
     }
@@ -259,7 +261,7 @@ public class EndEffector extends Subsystem {
 
       case SCORE_BRANCHES -> {
         if (m_arm.getArmState() == ArmState.EXTEND || m_elevator.getTargetState() == ElevatorState.L4) {
-          return -RobotConstants.robotConfig.EndEffector.k_branchSpeed;
+          return RobotConstants.robotConfig.EndEffector.k_l4Speed;
         }
 
         return RobotConstants.robotConfig.EndEffector.k_branchSpeed;
@@ -312,8 +314,8 @@ public class EndEffector extends Subsystem {
 
       case FORWARD_INDEX_SLOW -> {
         if (!m_laserCan.getEntranceSeesCoral()) {
-          setState(EndEffectorState.INDEXED);
-          // setState(EndEffectorState.REVERSE_INDEX);
+          // setState(EndEffectorState.INDEXED);
+          setState(EndEffectorState.REVERSE_INDEX);
         }
       }
 

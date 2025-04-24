@@ -65,7 +65,7 @@ public abstract class AutoModeBase {
         new ArmTask(ArmState.NET),
         new ElevatorTask(ElevatorState.L4)));
 
-    tasks.add(new WaitTask(0.25));
+    tasks.add(new WaitTask(1.0));
 
     tasks.add(new ParallelTask(
         new EndEffectorTask(EndEffectorState.ALGAE_SCORE),
