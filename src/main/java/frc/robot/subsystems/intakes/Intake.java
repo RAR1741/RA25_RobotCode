@@ -35,16 +35,10 @@ public class Intake {
   private final SparkMax m_pivotMotor;
   private final SparkFlex m_rollerMotor;
 
-  private final SparkClosedLoopController m_pivotPIDController;
-  private final SparkClosedLoopController m_rollerPIDController;
+  private final SparkClosedLoopController m_pivotClosedLoop;
+  private final SparkClosedLoopController m_rollerClosedLoop;
 
   private final ArmFeedforward m_pivotFeedforward;
-
-  // TODO: Use SmartMotion or MAXMotion
-  private TrapezoidProfile m_profile;
-  private TrapezoidProfile.State m_currentState = new TrapezoidProfile.State();
-  private TrapezoidProfile.State m_goalState = new TrapezoidProfile.State();
-  private double m_previousUpdateTime = Timer.getFPGATimestamp();
 
   private static class PeriodicIO {
     IntakeState desiredIntakeState = IntakeState.STOW;
@@ -60,15 +54,10 @@ public class Intake {
         RobotConstants.robotConfig.Intake.k_pivotMotorKV,
         RobotConstants.robotConfig.Intake.k_pivotMotorKA);
 
-    m_profile = new TrapezoidProfile(
-        new TrapezoidProfile.Constraints(
-            RobotConstants.robotConfig.Intake.k_maxVelocity,
-            RobotConstants.robotConfig.Intake.k_maxAcceleration));
-
     m_pivotMotor = new SparkMax(pivotMotorId, MotorType.kBrushless);
     m_rollerMotor = new SparkFlex(rollerMotorId, MotorType.kBrushless);
-    m_pivotPIDController = m_pivotMotor.getClosedLoopController();
-    m_rollerPIDController = m_rollerMotor.getClosedLoopController();
+    m_pivotClosedLoop = m_pivotMotor.getClosedLoopController();
+    m_rollerClosedLoop = m_rollerMotor.getClosedLoopController();
 
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
     SparkFlexConfig rollerConfig = new SparkFlexConfig();
@@ -100,6 +89,9 @@ public class Intake {
         RobotConstants.robotConfig.Intake.k_pivotMotorD);
 
     pivotConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+
+    pivotConfig.closedLoop.maxMotion.maxVelocity(RobotConstants.robotConfig.Intake.k_maxVelocity);
+    pivotConfig.closedLoop.maxMotion.maxAcceleration(RobotConstants.robotConfig.Intake.k_maxAcceleration);
 
     m_pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -146,30 +138,19 @@ public class Intake {
   }
 
   public void reset() {
-    m_currentState.position = getPivotAngle();
-    m_currentState.velocity = 0.0;
+
   }
 
   public void writePeriodicOutputs() {
-    double currentTime = Timer.getFPGATimestamp();
-    double deltaTime = currentTime - m_previousUpdateTime;
 
-    m_previousUpdateTime = currentTime;
+    double ff = m_pivotFeedforward.calculate(getPivotReferenceToHorizontal(), m_pivotMotor.getEncoder().getVelocity());//m_currentState.velocity);
 
-    // Update goal
-    m_goalState.position = getTargetPivotAngle();
-
-    // Calculate new state
-    m_currentState = m_profile.calculate(deltaTime, m_currentState, m_goalState);
-
-    double ff = m_pivotFeedforward.calculate(getPivotReferenceToHorizontal(), m_currentState.velocity);
-
-    Logger.recordOutput("Intakes/" + m_intakeName + "/Feedforward", ff);
+    // Logger.recordOutput("Intakes/" + m_intakeName + "/Feedforward", ff);
 
     // Set PID controller to new state
-    m_pivotPIDController.setReference(
-        m_currentState.position,
-        ControlType.kPosition,
+    m_pivotClosedLoop.setReference(
+        getTargetPivotAngle(),
+        ControlType.kMAXMotionPositionControl,
         ClosedLoopSlot.kSlot0,
         ff,
         ArbFFUnits.kVoltage);
@@ -179,13 +160,13 @@ public class Intake {
       if(m_periodicIO.desiredIntakeState == IntakeState.ALGAE || m_periodicIO.desiredIntakeState == IntakeState.SCORE_ALGAE) {
         m_rollerMotor.setVoltage(getDesiredRollerSpeed());
       } else {
-        m_rollerPIDController.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
+        m_rollerClosedLoop.setReference(getDesiredRollerSpeed(), ControlType.kVelocity);
       }
     } else {
       if (isAtState()) {
-        m_rollerPIDController.setReference(0.0, ControlType.kVoltage);
+        m_rollerClosedLoop.setReference(0.0, ControlType.kVoltage);
       } else {
-        m_rollerPIDController.setReference(RobotConstants.robotConfig.Intake.k_stowingIntakeSpeed, ControlType.kVelocity);
+        m_rollerClosedLoop.setReference(RobotConstants.robotConfig.Intake.k_stowingIntakeSpeed, ControlType.kVelocity);
       }
     }
   }
@@ -320,6 +301,7 @@ public class Intake {
       return (getPivotAngle() - RobotConstants.robotConfig.Intake.Left.k_horizontalPosition) * (2.0 * Math.PI);
     } else if (m_intakeName.equalsIgnoreCase("Right")) {
       return (getPivotAngle() - RobotConstants.robotConfig.Intake.Right.k_horizontalPosition) * (2.0 * Math.PI);
+
     }
 
     return 0.0;
@@ -327,7 +309,8 @@ public class Intake {
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/Desired/PivotSetpoint")
   private double getArmSetpoint() {
-    return m_currentState.position;
+    // return m_currentState.position;
+    return 0.0;
   }
 
   @AutoLogOutput(key = "Intakes/{m_intakeName}/PivotVoltage")

@@ -301,7 +301,7 @@ public class Constants {
 
     public final double k_rollerGearRatio = (1.0 / 4.0);
 
-    public final double k_pivotMotorP = 6.0; // 15.0;
+    public final double k_pivotMotorP = 1.0; // 15.0;
     public final double k_pivotMotorI = 0.0;
     public final double k_pivotMotorD = 0.0;
 
@@ -316,8 +316,8 @@ public class Constants {
     public final double k_rollerMotorD = 0.0;
     public final double k_rollerMotorFF = 0.0006;
 
-    public final double k_maxAcceleration = 4.0;
-    public final double k_maxVelocity = 2.0;
+    public final double k_maxAcceleration = 185.0;
+    public final double k_maxVelocity = 170.0;
 
     public final double k_maxIntakeSpeed = 350.0; // 300.0;
     public final double k_stowingIntakeSpeed = k_maxIntakeSpeed * 0.75;
