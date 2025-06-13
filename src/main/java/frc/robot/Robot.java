@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -128,6 +129,32 @@ public class Robot extends LoggedRobot {
 
     m_field = new Field2d();
     SmartDashboard.putData(m_field);
+  }
+
+  public static RobotMode getOperation() {
+    if(DriverStation.isEnabled()) {
+      if(DriverStation.isAutonomous()) {
+        return RobotMode.AUTO;
+      }
+      if(DriverStation.isTest()) {
+        return RobotMode.TEST;
+      }
+      if(DriverStation.isTeleop()) {
+        return RobotMode.TELEOP;
+      }
+    }
+    return RobotMode.DISABLED;
+  }
+
+  public static boolean getMode(RobotMode mode) {
+    if(getMode() == mode) {
+      return true;
+    }
+    return false;
+  }
+
+  public enum RobotMode {
+    DISABLED, AUTO, TEST, TELEOP
   }
 
   @Override

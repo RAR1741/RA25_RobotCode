@@ -19,10 +19,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotTelemetry;
-import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Limelight.IMUMode;
-import frc.robot.subsystems.Limelight.LimelightType;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.vision.Limelight;
+import frc.robot.subsystems.vision.Limelight.IMUMode;
+import frc.robot.subsystems.vision.Limelight.LimelightType;
 
 public class RAROdometry extends Subsystem {
   private static RAROdometry m_instance;
